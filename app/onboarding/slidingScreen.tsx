@@ -14,7 +14,7 @@ import {
 } from 'react-native'
 import { SvgProps } from 'react-native-svg'
 
-import WelcomeSVG from '@/assets/images/onboarding/splash.svg'
+import WelcomeSVG from '@/assets/images/onboarding/welcome.svg'
 import FindSVG from '@/assets/images/onboarding/find.svg'
 import SizeSVG from '@/assets/images/onboarding/size.svg'
 import BuySVG from '@/assets/images/onboarding/buy.svg'
@@ -57,14 +57,14 @@ const SLIDES: Slide[] = [
   {
     id: 'size',
     SVG: SizeSVG,
-    title: 'Your Size,\nEverywhere.',
+    title: 'Your Size.\nEverywhere.',
     subtitle: 'Set your size once and instantly filter every listing to exactly what fits you.',
     buttonText: 'Next',
   },
   {
     id: 'buy',
     SVG: BuySVG,
-    title: 'Buy It.\nMobile. Ship It.',
+    title: 'Buy It.\nHold It.\nPick It Up.',
     subtitle: 'Checkout in seconds from your phone and track your order every step of the way.',
     buttonText: 'Start Exploring',
   },
@@ -86,11 +86,10 @@ const SlidePage: React.FC<SlidePageProps> = ({
   isFirst,
 }) => {
   const { SVG, title, titleHighlight, subtitle, buttonText } = slide
-  const showSkip = !isFirst && !isLast
+  const showSkip =  !isLast
 
   return (
     <View style={{ width, flex: 1, backgroundColor: 'white' }}>
-      {/* Full‑width image container with overflow hidden to crop */}
       <View style={{ width, height: IMAGE_HEIGHT, overflow: 'hidden' }}>
         <ShowPicture
           SvgComponent={SVG}
@@ -103,7 +102,7 @@ const SlidePage: React.FC<SlidePageProps> = ({
 
       {/* Skip button under the image */}
       {showSkip && (
-        <View className="items-center mt-4">
+        <View className="items-end mt-4 px-4">
           <TouchableOpacity onPress={onSkip} activeOpacity={0.7}>
             <Text className="text-gray-500 text-base font-medium">Skip</Text>
           </TouchableOpacity>
