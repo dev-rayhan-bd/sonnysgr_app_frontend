@@ -31,7 +31,7 @@ export default function Button({
   variant = 'solid',
   backgroundColor = '#4A90D9',
   textColor,
-  borderColor = '#D1D5DB',
+  borderColor,
   borderWidth = 1,
   borderRadius = 12,
   paddingVertical = 16,
@@ -74,6 +74,11 @@ export default function Button({
       {text}
     </Text>
   );
+
+  const borderStyle: ViewStyle = {
+    borderWidth: isOutline && borderColor ? borderWidth : 0,
+    borderColor: borderColor ?? 'transparent',
+  };
 
   if (useGradient && !isOutline) {
     return (
@@ -128,10 +133,9 @@ export default function Button({
           alignItems: 'center',
           justifyContent: 'center',
           backgroundColor: isOutline ? 'transparent' : backgroundColor,
-          borderWidth: isOutline ? borderWidth : 0,
-          borderColor: isOutline ? borderColor : 'transparent',
           opacity: disabled ? 0.5 : opacity,
         },
+        borderStyle,
         shadowStyle,
         style,
       ]}

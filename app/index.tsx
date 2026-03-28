@@ -5,5 +5,5 @@ SplashScreen.preventAutoHideAsync();
 
 export default function Index() {
     SplashScreen.hideAsync();
-    return <Redirect href="/onboarding/splashScreen" />;
+    return <Redirect href="/auth/createAccountScreen" />;
 }

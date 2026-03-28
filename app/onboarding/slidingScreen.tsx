@@ -45,7 +45,7 @@ const SLIDES: Slide[] = [
     title: 'Welcome to ',
     titleHighlight: 'GdSNKR',
     subtitle: 'Discover, track, and buy the sneakers you love — all in one place.',
-    buttonText: 'Get Started',
+    buttonText: 'Explore Nearby Stores',
   },
   {
     id: 'find',
@@ -75,7 +75,6 @@ interface SlidePageProps {
   onNext: () => void
   onSkip: () => void
   isLast: boolean
-  isFirst: boolean
 }
 
 const SlidePage: React.FC<SlidePageProps> = ({
@@ -83,10 +82,9 @@ const SlidePage: React.FC<SlidePageProps> = ({
   onNext,
   onSkip,
   isLast,
-  isFirst,
 }) => {
   const { SVG, title, titleHighlight, subtitle, buttonText } = slide
-  const showSkip =  !isLast
+  const showSkip = !isLast
 
   return (
     <View style={{ width, flex: 1, backgroundColor: 'white' }}>
@@ -95,12 +93,11 @@ const SlidePage: React.FC<SlidePageProps> = ({
           SvgComponent={SVG}
           width={width}
           height={IMAGE_HEIGHT}
-          preserveAspectRatio="xMidYMid slice" // fills container like 'cover'
+          preserveAspectRatio="xMidYMid slice"
           resizeMode="cover"
         />
       </View>
 
-      {/* Skip button under the image */}
       {showSkip && (
         <View className="items-end mt-4 px-4">
           <TouchableOpacity onPress={onSkip} activeOpacity={0.7}>
@@ -109,7 +106,6 @@ const SlidePage: React.FC<SlidePageProps> = ({
         </View>
       )}
 
-      {/* Text content */}
       <View className="px-7 flex-1 justify-center">
         <Text className="text-3xl font-bold text-gray-900 leading-tight mb-3">
           {title}
@@ -117,10 +113,11 @@ const SlidePage: React.FC<SlidePageProps> = ({
             <Text style={{ color: GREEN }}>{titleHighlight}</Text>
           )}
         </Text>
-        <Text className="text-gray-500 text-base leading-6">{subtitle}</Text>
+        <Text className="text-gray-500 text-base leading-6">
+          {subtitle}
+        </Text>
       </View>
 
-      {/* Button – explicit width prevents flex issues */}
       <View className="px-7 pb-8">
         <Button
           text={buttonText}
@@ -132,7 +129,7 @@ const SlidePage: React.FC<SlidePageProps> = ({
           fontSize={16}
           fontWeight="600"
           textColor="#FFFFFF"
-          width="100%"   // ← fixes the missing text issue
+          width="100%"
         />
       </View>
     </View>
@@ -160,14 +157,13 @@ const SlidingScreen: React.FC = () => {
   const {
     currentIndex,
     isLast,
-    isFirst,
     flatListRef,
     goNext,
     goToIndex,
     onMomentumScrollEnd,
   } = useSliding<Slide>({
     totalSlides: SLIDES.length,
-    onFinish: () => router.replace('/onboarding/slidingScreen'),
+    onFinish: () => router.replace('/auth/createAccountScreen'),
   })
 
   const handleSkip = () => goToIndex(SLIDES.length - 1)
@@ -178,7 +174,6 @@ const SlidingScreen: React.FC = () => {
       onNext={goNext}
       onSkip={handleSkip}
       isLast={isLast}
-      isFirst={isFirst}
     />
   )
 
