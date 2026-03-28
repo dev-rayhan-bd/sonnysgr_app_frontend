@@ -8,9 +8,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   orientation: "portrait",
   icon: "./assets/images/icon.png",
   scheme: "gosnkr",
+  userInterfaceStyle: "automatic",
   splash: {
     image: "./assets/images/splash-icon.png",
     resizeMode: "contain",
+
   },
   ios: { supportsTablet: true },
   android: {
