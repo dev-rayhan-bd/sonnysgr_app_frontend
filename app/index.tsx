@@ -5,5 +5,5 @@ SplashScreen.preventAutoHideAsync();
 
 export default function Index() {
     SplashScreen.hideAsync();
-    return <Redirect href="/auth/createAccountScreen" />;
+    return <Redirect href="/profilesetup/size" />;
 }

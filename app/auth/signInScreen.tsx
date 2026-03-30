@@ -17,9 +17,7 @@ export default function SigninScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: '#111827' }}>
-
-      {/* ── White status bar text ── */}
-      <StatusBar barStyle="light-content" backgroundColor="#111827" />
+      <StatusBar barStyle="light-content" />
 
       {/* ── Dark header ── */}
       <View
@@ -53,7 +51,7 @@ export default function SigninScreen() {
       <View
         style={{
           flex: 1,
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#F8F9FA',
           borderTopLeftRadius: 32,
           borderTopRightRadius: 32,
           marginTop: -32,
@@ -82,7 +80,10 @@ export default function SigninScreen() {
             updateField={updateField}
             handleSignin={() => handleSignin(onSuccess)}
             handleFaceID={() => handleFaceID(onSuccess)}
-            onForgotPassword={() => router.push('/auth/ForgetPasswordScreen')}
+            onForgotPassword={() => router.push({
+              pathname: '/auth/verifyEmailScreen',
+              params: { from: 'forgot-password' },
+            })}
             onCreateAccount={() => router.replace('/auth/createAccountScreen')}
           />
 

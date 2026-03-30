@@ -10,13 +10,15 @@ import ShowPicture from '@/components/shared/ShowPicture'
 export default function createAccountScreen() {
   const { form, errors, loading, updateField, handleCreateAccount } =
     useCreateAccount()
-
   const onSuccess = () => {
-    router.replace('/')
-  }
+    router.replace({
+      pathname: '/auth/verifyEmailScreen',
+      params: { from: 'registration' },
+    });
+  };
 
   return (
-    <BaseContainer backgroundColor='#ffff' scrollable>
+    <BaseContainer backgroundColor='#F8F9FA' scrollable>
       <View className="flex-1 justify-center px-6 py-10">
 
         {/* ── Header ────────────────────────────────────────── */}

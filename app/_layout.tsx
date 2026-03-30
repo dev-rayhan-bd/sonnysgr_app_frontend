@@ -9,7 +9,7 @@ import { Stack } from "expo-router";
 export default function RootLayout() {
   return (
     <SafeAreaProvider>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+        <StatusBar barStyle="dark-content" />
       <Stack screenOptions={{ headerShown: false, animation: "none" }} />
       <ShowToast />
     </SafeAreaProvider>
