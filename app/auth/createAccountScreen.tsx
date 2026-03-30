@@ -1,9 +1,11 @@
 // app/auth/registrationScreen.tsx
 import { View, Text, TouchableOpacity } from 'react-native'
 import { router } from 'expo-router'
-import BaseContainer    from '@/components/shared/BaseContainer'
+import BaseContainer from '@/components/shared/BaseContainer'
 import CreateAccountForm from '@/components/auth/CreateAccountForm'
 import { useCreateAccount } from '@/services/hooks/auth/useCreateAccount'
+import GoSnkrLogo from "@/assets/images/auth/create_account.svg"
+import ShowPicture from '@/components/shared/ShowPicture'
 
 export default function createAccountScreen() {
   const { form, errors, loading, updateField, handleCreateAccount } =
@@ -14,28 +16,31 @@ export default function createAccountScreen() {
   }
 
   return (
-    <BaseContainer scrollable>
-
+    <BaseContainer backgroundColor='#ffff' scrollable>
       <View className="flex-1 justify-center px-6 py-10">
 
         {/* ── Header ────────────────────────────────────────── */}
-        <View className="items-center mb-8">
-
-          {/* Logo */}
-          <View className="flex-row items-center mb-5">
-            <View className="w-10 h-10 rounded-xl bg-[#22C55E] items-center justify-center mr-2">
-              <Text className="text-white font-black text-lg">G</Text>
-            </View>
-            <Text className="text-3xl font-black text-gray-900 tracking-wide">
-              Gd<Text className="text-[#22C55E]">SNKR</Text>
-            </Text>
+        <View className="items-center mb-4">
+          <View  className='mt-4'>
+            <ShowPicture
+              SvgComponent={GoSnkrLogo}
+              width={200}
+              height={80}
+              preserveAspectRatio="xMidYMid meet"
+            />
           </View>
+        </View>
 
-          <Text className="text-3xl font-bold text-gray-900 mb-1.5">
+        {/* Left-aligned text block */}
+        <View className="mb-8">
+          <Text className="text-base font-semibold text-[#22C55E] tracking-widest uppercase mb-3">
             Create Account
           </Text>
-          <Text className="text-sm text-gray-500 text-center leading-5">
-            Create one account to use both web and app
+          <Text className="text-3xl font-black text-gray-900 mb-1.5">
+            Join GoSNKR
+          </Text>
+          <Text className="text-base text-gray-500 leading-5">
+            The sneaker map is waiting.
           </Text>
         </View>
 
@@ -57,14 +62,31 @@ export default function createAccountScreen() {
             activeOpacity={0.7}
             onPress={() => router.replace('/auth/signInScreen')}
           >
-            <Text className="text-sm text-[#4584CA] font-semibold">
+            <Text className="text-sm text-[#22C55E] font-semibold">
               Sign in
             </Text>
           </TouchableOpacity>
         </View>
 
-      </View>
+        {/* ── Terms ─────────────────────────────────────────── */}
+        <View className="mt-4 px-4">
+          <Text className="text-xs text-gray-400 text-center leading-5">
+            By continuing, you agree to our{' '}
+            <Text
+              className="text-xs text-[#22C55E] font-semibold"
+            >
+              Terms
+            </Text>
+            {' '}and{' '}
+            <Text
+              className="text-xs text-[#22C55E] font-semibold"
+            >
+              Privacy Policy
+            </Text>
+          </Text>
+        </View>
 
+      </View>
     </BaseContainer>
   )
 }

@@ -1,20 +1,29 @@
 // components/auth/createAccountForm.tsx
 import React from 'react'
 import { View, Text, TouchableOpacity } from 'react-native'
-import Feather       from '@expo/vector-icons/Feather'
-import TextField     from '@/components/shared/TextField'
-import EmailField    from '@/components/shared/EmailField'
+import Feather from '@expo/vector-icons/Feather'
+import TextField from '@/components/shared/TextField'
+import EmailField from '@/components/shared/EmailField'
 import PasswordField from '@/components/shared/PasswordField'
-import Button        from '@/components/shared/Button'
-import SocialButton  from '@/components/shared/SocialButton'
-import GoogleIcon    from '@/assets/images/auth/google.svg'
-import AppleIcon     from '@/assets/images/auth/apple.svg'
+import Button from '@/components/shared/Button'
+import SocialButton from '@/components/shared/SocialButton'
+import DropdownField from '@/components/shared/DropdownField'
+import GoogleIcon from '@/assets/images/auth/google.svg'
+import AppleIcon from '@/assets/images/auth/apple.svg'
+
+const ACCOUNT_TYPE_OPTIONS = [
+  { label: 'Sneaker Buyer',    value: 'buyer',    subtitle: 'Shop & discover sneakers near me',   icon: <Feather name="shopping-bag" size={18} color="#111827" /> },
+  { label: 'Store / Retailer', value: 'seller',   subtitle: 'List my inventory & manage orders',  icon: <Feather name="grid"         size={18} color="#111827" /> },
+  { label: 'Trusted Reseller', value: 'reseller', subtitle: 'Sell my inventory to stores',        icon: <Feather name="tag"          size={18} color="#111827" /> },
+  { label: 'Collector',        value: 'collector',subtitle: 'Track & showcase my collection',     icon: <Feather name="star"         size={18} color="#111827" /> },
+]
 
 interface FormState {
   fullName:        string
   email:           string
   password:        string
   confirmPassword: string
+  accountType:     string | null
   agreed:          boolean
 }
 
@@ -23,15 +32,16 @@ interface FormErrors {
   email?:           string
   password?:        string
   confirmPassword?: string
+  accountType?:     string
   agreed?:          string
 }
 
 interface CreateAccountFormProps {
-  form:                 FormState
-  errors:               FormErrors
-  loading:              boolean
-  updateField:          (field: keyof FormState, value: string | boolean | null) => void
-  handlecreateAccount:  () => void
+  form:                FormState
+  errors:              FormErrors
+  loading:             boolean
+  updateField:         (field: keyof FormState, value: string | boolean | null) => void
+  handlecreateAccount: () => void
 }
 
 export default function CreateAccountForm({
@@ -44,59 +54,54 @@ export default function CreateAccountForm({
   return (
     <View className="rounded-2xl p-4 gap-3">
 
-      {/* ── Full Name ───────────────────────────────────────── */}
-      <View className="gap-1">
-        <TextField
-          placeholder="Full name"
-          value={form.fullName}
-          onChangeText={(val) => updateField('fullName', val)}
-          leftIcon={<Feather name="user" size={18} />}
-          error={errors.fullName}
-        />
-        {errors.fullName && (
-          <Text className="text-xs text-red-500 ml-1">{errors.fullName}</Text>
-        )}
-      </View>
+      {/* ── Full Name ── */}
+      <TextField
+        focusedBorderColor='#22C55E'
+        placeholder="Full name"
+        value={form.fullName}
+        onChangeText={(val: string) => updateField('fullName', val)}
+        leftIcon={<Feather name="user" size={18} />}
+        error={errors.fullName}
+      />
 
-      {/* ── Email ───────────────────────────────────────────── */}
-      <View className="gap-1">
-        <EmailField
-          value={form.email}
-          onChangeText={(val) => updateField('email', val)}
-          error={errors.email}
-        />
-        {errors.email && (
-          <Text className="text-xs text-red-500 ml-1">{errors.email}</Text>
-        )}
-      </View>
+      {/* ── Email ── */}
+      <EmailField
+        focusedBorderColor='#22C55E'
+        value={form.email}
+        onChangeText={(val: string) => updateField('email', val)}
+        error={errors.email}
+      />
 
-      {/* ── Password ────────────────────────────────────────── */}
-      <View className="gap-1">
-        <PasswordField
-          value={form.password}
-          onChangeText={(val) => updateField('password', val)}
-          placeholder="Password"
-          error={errors.password}
-        />
-        {errors.password && (
-          <Text className="text-xs text-red-500 ml-1">{errors.password}</Text>
-        )}
-      </View>
+      {/* ── Account Type ── */}
+      <DropdownField
+        options={ACCOUNT_TYPE_OPTIONS}
+        value={form.accountType}
+        onChange={(val: string) => updateField('accountType', val)}
+        placeholder="Select account type"
+        focusedBorderColor='#22C55E'
+        leftIcon={<Feather name="tag" size={18} color="#000" />}
+        error={errors.accountType}
+      />
 
-      {/* ── Confirm Password ────────────────────────────────── */}
-      <View className="gap-1">
-        <PasswordField
-          value={form.confirmPassword}
-          onChangeText={(val) => updateField('confirmPassword', val)}
-          placeholder="Confirm Password"
-          error={errors.confirmPassword}
-        />
-        {errors.confirmPassword && (
-          <Text className="text-xs text-red-500 ml-1">{errors.confirmPassword}</Text>
-        )}
-      </View>
+      {/* ── Password ── */}
+      <PasswordField
+        focusedBorderColor='#22C55E'
+        value={form.password}
+        onChangeText={(val: string) => updateField('password', val)}
+        placeholder="Password"
+        error={errors.password}
+      />
 
-      {/* ── Terms & Conditions ──────────────────────────────── */}
+      {/* ── Confirm Password ── */}
+      <PasswordField
+        focusedBorderColor='#22C55E'
+        value={form.confirmPassword}
+        onChangeText={(val: string) => updateField('confirmPassword', val)}
+        placeholder="Confirm Password"
+        error={errors.confirmPassword}
+      />
+
+      {/* ── Terms & Conditions ── */}
       <View className="gap-1">
         <TouchableOpacity
           onPress={() => updateField('agreed', !form.agreed)}
@@ -105,30 +110,26 @@ export default function CreateAccountForm({
         >
           <View
             className={`w-[18px] h-[18px] rounded border-2 items-center justify-center ${
-              form.agreed
-                ? 'bg-[#4584CA] border-[#4584CA]'
-                : 'bg-white border-gray-300'
+              form.agreed ? 'bg-[#22C55E] border-[#22C55E]' : 'bg-white border-gray-300'
             }`}
           >
-            {form.agreed && (
-              <Feather name="check" size={11} color="#FFFFFF" />
-            )}
+            {form.agreed && <Feather name="check" size={11} color="#FFFFFF" />}
           </View>
           <Text className="text-sm text-gray-500 flex-1">
             I agree to{' '}
-            <Text className="text-[#4584CA] font-semibold">
-              Terms &amp; Conditions
-            </Text>
+            <Text className="text-[#22C55E] font-semibold">Terms &amp; Conditions</Text>
           </Text>
         </TouchableOpacity>
+
+        {/* Only the agreed error needs a manual Text since the checkbox has no built-in error display */}
         {errors.agreed && (
           <Text className="text-xs text-red-500 ml-7">{errors.agreed}</Text>
         )}
       </View>
 
-      {/* ── Create Account Button ────────────────────────────── */}
+      {/* ── Create Account Button ── */}
       <Button
-        text={loading ? 'Creating Account...' : 'Create Account'}
+        text={loading ? 'Creating Account…' : 'Create Account'}
         variant="solid"
         backgroundColor="#000000"
         height={60}
@@ -140,14 +141,14 @@ export default function CreateAccountForm({
         onPress={handlecreateAccount}
       />
 
-      {/* ── Divider ─────────────────────────────────────────── */}
+      {/* ── Divider ── */}
       <View className="flex-row items-center gap-2 my-1">
         <View className="flex-1 h-px bg-gray-300" />
         <Text className="text-sm text-gray-400">or continue with</Text>
         <View className="flex-1 h-px bg-gray-300" />
       </View>
 
-      {/* ── Google ──────────────────────────────────────────── */}
+      {/* ── Google ── */}
       <SocialButton
         text="Continue with Google"
         SvgIcon={GoogleIcon}
@@ -156,7 +157,7 @@ export default function CreateAccountForm({
         onPress={() => {}}
       />
 
-      {/* ── Apple ───────────────────────────────────────────── */}
+      {/* ── Apple ── */}
       <SocialButton
         text="Continue with Apple"
         SvgIcon={AppleIcon}
@@ -165,9 +166,9 @@ export default function CreateAccountForm({
         onPress={() => {}}
       />
 
-      {/* ── Privacy ─────────────────────────────────────────── */}
+      {/* ── Privacy ── */}
       <TouchableOpacity className="mt-1">
-        <Text className="text-center text-sm text-[#4584CA]">
+        <Text className="text-center text-sm text-[#22C55E]">
           Terms of Use &amp; Privacy Policy
         </Text>
       </TouchableOpacity>
