@@ -6,7 +6,6 @@ import {
   Image,
   StyleSheet,
   Animated,
-  Dimensions,
 } from 'react-native';
 import { AdBanner } from '@/services/hooks/discover/useDiscover';
 
@@ -15,186 +14,247 @@ interface DiscoverAdProps {
   onPress?: (ad: AdBanner) => void;
 }
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
-
+/**
+ * Figma exact (Image 2 — the "DROPPING SOON" variant):
+ * - Dark card (#0D1B14 / very dark green-black) with borderRadius 18
+ * - "DROPPING SOON" small gray pill/text centered at top
+ * - Full-width sneaker image fills the card height
+ * - Bottom overlay: brand+name left in white, date below in gray
+ * - CTA button: green pill bottom-left "Notify Me"
+ *
+ * Image 1 variant (AD Adidas / Get By 70%):
+ * - Same dark card
+ * - "AD  Adidas" small row top-left
+ * - Product name + date left
+ * - CTA "Get By 70% 🔥"
+ * - Image on RIGHT side (partial)
+ *
+ * We implement BOTH variants via ctaVariant prop from the hook.
+ */
 export const DiscoverAd: React.FC<DiscoverAdProps> = ({ ad, onPress }) => {
-  const shimmerAnim = useRef(new Animated.Value(0)).current;
   const pulseAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
-    // Shimmer loop on the CTA badge
     Animated.loop(
       Animated.sequence([
-        Animated.timing(shimmerAnim, {
-          toValue: 1,
-          duration: 1400,
-          useNativeDriver: true,
-        }),
-        Animated.timing(shimmerAnim, {
-          toValue: 0,
-          duration: 1400,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-
-    // Subtle pulse on the CTA
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulseAnim, {
-          toValue: 1.05,
-          duration: 800,
-          useNativeDriver: true,
-        }),
-        Animated.timing(pulseAnim, {
-          toValue: 1,
-          duration: 800,
-          useNativeDriver: true,
-        }),
+        Animated.timing(pulseAnim, { toValue: 1.04, duration: 900, useNativeDriver: true }),
+        Animated.timing(pulseAnim, { toValue: 1, duration: 900, useNativeDriver: true }),
       ])
     ).start();
   }, []);
 
-  const shimmerOpacity = shimmerAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0.6, 1],
-  });
-
-  return (
-    <TouchableOpacity
-      style={styles.container}
-      onPress={() => onPress?.(ad)}
-      activeOpacity={0.92}
-    >
-      {/* Background dark card */}
-      <View style={styles.card}>
-        {/* Left content */}
-        <View style={styles.leftContent}>
-          <View style={styles.adLabelRow}>
-            <View style={styles.adLabel}>
-              <Text style={styles.adLabelText}>AD</Text>
-            </View>
-            <Text style={styles.brandName}>{ad.brand}</Text>
-          </View>
-
-          <Text style={styles.productTitle}>{ad.title}</Text>
-          <Text style={styles.releaseDate}>{ad.subtitle}</Text>
-
-          {/* CTA Badge */}
-          <Animated.View
-            style={[styles.ctaBadge, { transform: [{ scale: pulseAnim }] }]}
-          >
-            <Animated.Text style={[styles.ctaText, { opacity: shimmerOpacity }]}>
-              {ad.ctaLabel} 🔥
-            </Animated.Text>
-          </Animated.View>
-        </View>
-
-        {/* Right: product image */}
-        <View style={styles.imageWrapper}>
-          <Image
-            source={{ uri: ad.image }}
-            style={styles.productImage}
-            resizeMode="cover"
-          />
-          {/* Green glow overlay */}
-          <View style={styles.imageGlow} />
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
+  if (ad.ctaVariant === 'discount') {
+    return <AdDiscount ad={ad} onPress={onPress} pulseAnim={pulseAnim} />;
+  }
+  return <AdDropping ad={ad} onPress={onPress} pulseAnim={pulseAnim} />;
 };
 
+// ── Variant A: "DROPPING SOON" full-image card ──────────────────────────
+const AdDropping: React.FC<{
+  ad: AdBanner;
+  onPress?: (ad: AdBanner) => void;
+  pulseAnim: Animated.Value;
+}> = ({ ad, onPress, pulseAnim }) => (
+  <TouchableOpacity
+    style={styles.droppingCard}
+    onPress={() => onPress?.(ad)}
+    activeOpacity={0.92}
+  >
+    {/* Background image fills card */}
+    <Image source={{ uri: ad.image }} style={styles.droppingImage} resizeMode="cover" />
+
+    {/* Dark overlay gradient sim */}
+    <View style={styles.droppingOverlay} />
+
+    {/* "DROPPING SOON" top center */}
+    <View style={styles.droppingTagWrap}>
+      <Text style={styles.droppingTag}>{ad.tag}</Text>
+    </View>
+
+    {/* Bottom content */}
+    <View style={styles.droppingBottom}>
+      <Text style={styles.droppingBrand}>{ad.brandLabel}</Text>
+      <Text style={styles.droppingName}>{ad.productName}</Text>
+      <Text style={styles.droppingDate}>{ad.releaseDate}</Text>
+
+      <Animated.View style={{ transform: [{ scale: pulseAnim }], alignSelf: 'flex-start', marginTop: 10 }}>
+        <View style={styles.ctaGreen}>
+          <Text style={styles.ctaText}>{ad.ctaLabel}</Text>
+        </View>
+      </Animated.View>
+    </View>
+  </TouchableOpacity>
+);
+
+// ── Variant B: "AD Adidas / Get By 70%" side-image card ─────────────────
+const AdDiscount: React.FC<{
+  ad: AdBanner;
+  onPress?: (ad: AdBanner) => void;
+  pulseAnim: Animated.Value;
+}> = ({ ad, onPress, pulseAnim }) => (
+  <TouchableOpacity
+    style={styles.discountCard}
+    onPress={() => onPress?.(ad)}
+    activeOpacity={0.92}
+  >
+    {/* Left content */}
+    <View style={styles.discountLeft}>
+      <View style={styles.adRow}>
+        <View style={styles.adLabel}>
+          <Text style={styles.adLabelText}>AD</Text>
+        </View>
+        <Text style={styles.adBrand}>{ad.brandLabel}</Text>
+      </View>
+
+      <Text style={styles.discountName}>{ad.productName}</Text>
+      <Text style={styles.discountDate}>{ad.releaseDate}</Text>
+
+      <Animated.View style={{ transform: [{ scale: pulseAnim }], alignSelf: 'flex-start', marginTop: 12 }}>
+        <View style={styles.ctaGreen}>
+          <Text style={styles.ctaText}>{ad.ctaLabel}</Text>
+        </View>
+      </Animated.View>
+    </View>
+
+    {/* Right image */}
+    <View style={styles.discountImgWrap}>
+      <Image source={{ uri: ad.image }} style={styles.discountImg} resizeMode="cover" />
+    </View>
+  </TouchableOpacity>
+);
+
 const styles = StyleSheet.create({
-  container: {
+  // ── Dropping card
+  droppingCard: {
     marginHorizontal: 20,
     marginTop: 20,
-    borderRadius: 20,
+    borderRadius: 18,
     overflow: 'hidden',
-    shadowColor: '#00D46A',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.2,
-    shadowRadius: 16,
-    elevation: 8,
+    height: 180,
+    position: 'relative',
+    backgroundColor: '#0D1B14',
   },
-  card: {
-    flexDirection: 'row',
-    backgroundColor: '#0F1923',
-    borderRadius: 20,
-    padding: 20,
+  droppingImage: {
+    ...StyleSheet.absoluteFillObject,
+    width: '100%',
+    height: '100%',
+  },
+  droppingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.52)',
+  },
+  droppingTagWrap: {
+    position: 'absolute',
+    top: 12,
+    left: 0,
+    right: 0,
     alignItems: 'center',
-    minHeight: 130,
+  },
+  droppingTag: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: 'rgba(255,255,255,0.6)',
+    letterSpacing: 1.5,
+  },
+  droppingBottom: {
+    position: 'absolute',
+    bottom: 16,
+    left: 16,
+    right: 16,
+  },
+  droppingBrand: {
+    fontSize: 11,
+    color: 'rgba(255,255,255,0.55)',
+    fontWeight: '600',
+    letterSpacing: 0.3,
+  },
+  droppingName: {
+    fontSize: 17,
+    fontWeight: '800',
+    color: '#fff',
+    letterSpacing: -0.3,
+    marginTop: 2,
+  },
+  droppingDate: {
+    fontSize: 12,
+    color: 'rgba(255,255,255,0.5)',
+    marginTop: 2,
+  },
+
+  // ── Discount card
+  discountCard: {
+    marginHorizontal: 20,
+    marginTop: 20,
+    borderRadius: 18,
     overflow: 'hidden',
+    backgroundColor: '#0D1B14',
+    flexDirection: 'row',
+    padding: 18,
+    alignItems: 'center',
+    minHeight: 140,
   },
-  leftContent: {
+  discountLeft: {
     flex: 1,
-    gap: 4,
   },
-  adLabelRow: {
+  adRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    marginBottom: 2,
+    marginBottom: 6,
   },
   adLabel: {
-    backgroundColor: '#00D46A',
+    backgroundColor: '#00C853',
     paddingHorizontal: 5,
     paddingVertical: 1,
     borderRadius: 4,
   },
   adLabelText: {
-    fontSize: 9,
+    fontSize: 8,
     fontWeight: '900',
     color: '#fff',
     letterSpacing: 0.5,
   },
-  brandName: {
+  adBrand: {
     fontSize: 12,
+    color: 'rgba(255,255,255,0.55)',
     fontWeight: '600',
-    color: '#aaa',
-    letterSpacing: 0.5,
   },
-  productTitle: {
+  discountName: {
     fontSize: 16,
     fontWeight: '800',
-    color: '#ffffff',
+    color: '#fff',
     letterSpacing: -0.3,
     lineHeight: 21,
   },
-  releaseDate: {
-    fontSize: 12,
-    color: '#888',
-    fontWeight: '500',
-    marginTop: 2,
+  discountDate: {
+    fontSize: 11,
+    color: 'rgba(255,255,255,0.45)',
+    marginTop: 3,
   },
-  ctaBadge: {
-    marginTop: 10,
-    alignSelf: 'flex-start',
-    backgroundColor: '#00D46A',
-    paddingHorizontal: 14,
-    paddingVertical: 7,
-    borderRadius: 20,
-  },
-  ctaText: {
-    fontSize: 12,
-    fontWeight: '800',
-    color: '#fff',
-    letterSpacing: 0.2,
-  },
-  imageWrapper: {
+  discountImgWrap: {
     width: 110,
     height: 110,
     borderRadius: 12,
     overflow: 'hidden',
-    position: 'relative',
+    flexShrink: 0,
+    backgroundColor: '#1a3322',
   },
-  productImage: {
+  discountImg: {
     width: '100%',
     height: '100%',
   },
-  imageGlow: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 212, 106, 0.12)',
+
+  // ── Shared CTA
+  ctaGreen: {
+    backgroundColor: '#00C853',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 22,
+  },
+  ctaText: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#fff',
   },
 });
 

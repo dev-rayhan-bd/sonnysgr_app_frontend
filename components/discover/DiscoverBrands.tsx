@@ -6,67 +6,72 @@ import {
   Image,
   StyleSheet,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { Brand } from '@/services/hooks/discover/useDiscover';
+import { BrandProduct, StockStatus } from '@/services/hooks/discover/useDiscover';
 
 interface DiscoverBrandsProps {
-  brands: Brand[];
+  brands: BrandProduct[];
   onSeeAll?: () => void;
-  onBuyPress?: (brand: Brand) => void;
-  onBrandPress?: (brand: Brand) => void;
+  onBuyPress?: (b: BrandProduct) => void;
+  onBrandPress?: (b: BrandProduct) => void;
 }
 
+/**
+ * Figma exact (both images):
+ * - White card list, each row has:
+ *   LEFT:  square thumbnail image (~58px), with a small colored letter badge (J/N/A) overlaid top-left
+ *   MIDDLE: product name bold (1 line), store + distance small gray below
+ *   RIGHT: price bold top, then stock pill + "Buy" button below (stacked vertically)
+ * - Stock pill: "In Stock" green filled, "Low Stock" orange filled — small pill
+ * - "Buy" is a small green rounded button
+ * - Rows separated by thin #F5F5F5 divider
+ * - Outer card: white bg, rounded 16, shadow
+ */
+
+type StockConfig = { label: string; bg: string; text: string };
+
+const STOCK: Record<StockStatus, StockConfig> = {
+  'In Stock':      { label: 'In Stock',      bg: '#00C853', text: '#fff' },
+  'Low Stock':     { label: 'Low Stock',     bg: '#FF6D00', text: '#fff' },
+  'Dropping Soon': { label: 'Dropping Soon', bg: '#1565C0', text: '#fff' },
+};
+
 const BrandRow: React.FC<{
-  brand: Brand;
+  brand: BrandProduct;
+  isLast: boolean;
   onPress?: () => void;
   onBuy?: () => void;
-  isLast?: boolean;
-}> = ({ brand, onPress, onBuy, isLast }) => {
-  // Placeholder brand logos via colored circles
-  const brandColors: Record<string, string> = {
-    Jordan: '#C41E3A',
-    Nike: '#111111',
-    Adidas: '#000000',
-    'New Balance': '#CF2F2F',
-    Puma: '#FF0000',
-  };
-  const brandColor = brandColors[brand.logo] || '#333';
-
+}> = ({ brand, isLast, onPress, onBuy }) => {
+  const stock = STOCK[brand.stockStatus];
   return (
     <TouchableOpacity
       style={[styles.row, !isLast && styles.rowBorder]}
       onPress={onPress}
       activeOpacity={0.85}
     >
-      {/* Brand Logo Circle */}
-      <View style={[styles.logoBg, { backgroundColor: brandColor + '15' }]}>
-        <View style={[styles.logoInner, { backgroundColor: brandColor }]}>
-          <Text style={styles.logoInitial}>{brand.logo.charAt(0)}</Text>
+      {/* Left: image thumbnail with brand badge overlay */}
+      <View style={styles.thumbWrap}>
+        <Image source={{ uri: brand.image }} style={styles.thumb} resizeMode="cover" />
+        {/* Brand letter badge */}
+        <View style={[styles.brandBadge, { backgroundColor: brand.brandColor }]}>
+          <Text style={styles.brandInitial}>{brand.brandInitial}</Text>
         </View>
       </View>
 
-      {/* Text Info */}
-      <View style={styles.textBlock}>
-        <Text style={styles.productName} numberOfLines={1}>
-          {brand.name}
-        </Text>
-        <Text style={styles.storeMeta}>{brand.product}</Text>
+      {/* Middle: text */}
+      <View style={styles.mid}>
+        <Text style={styles.productName} numberOfLines={1}>{brand.name}</Text>
+        <Text style={styles.storeMeta}>{brand.store}</Text>
+        <Text style={styles.storeMeta}>{brand.distance}</Text>
       </View>
 
-      {/* Right side */}
-      <View style={styles.rightBlock}>
+      {/* Right: price + stock + buy */}
+      <View style={styles.right}>
         <Text style={styles.price}>${brand.price}</Text>
-        <TouchableOpacity
-          style={[
-            styles.buyBtn,
-            brand.tag === 'Low Stock' && styles.buyBtnLowStock,
-          ]}
-          onPress={onBuy}
-          activeOpacity={0.8}
-        >
-          <Text style={styles.buyBtnText}>
-            {brand.tag === 'Low Stock' ? 'Low Stock' : 'Buy'}
-          </Text>
+        <View style={[styles.stockPill, { backgroundColor: stock.bg }]}>
+          <Text style={[styles.stockText, { color: stock.text }]}>{stock.label}</Text>
+        </View>
+        <TouchableOpacity style={styles.buyBtn} onPress={onBuy} activeOpacity={0.8}>
+          <Text style={styles.buyText}>Buy</Text>
         </TouchableOpacity>
       </View>
     </TouchableOpacity>
@@ -78,140 +83,155 @@ export const DiscoverBrands: React.FC<DiscoverBrandsProps> = ({
   onSeeAll,
   onBuyPress,
   onBrandPress,
-}) => {
-  return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>From Your Brands</Text>
-        <TouchableOpacity onPress={onSeeAll} activeOpacity={0.7}>
-          <Text style={styles.seeAll}>See all →</Text>
-        </TouchableOpacity>
-      </View>
-
-      <Text style={styles.subheading}>Based on your brands</Text>
-
-      {/* Brand List Card */}
-      <View style={styles.listCard}>
-        {brands.map((brand, index) => (
-          <BrandRow
-            key={brand.id}
-            brand={brand}
-            onPress={() => onBrandPress?.(brand)}
-            onBuy={() => onBuyPress?.(brand)}
-            isLast={index === brands.length - 1}
-          />
-        ))}
-      </View>
+}) => (
+  <View style={styles.section}>
+    {/* Header */}
+    <View style={styles.sectionHeader}>
+      <Text style={styles.sectionTitle}>From Your Brands</Text>
+      <TouchableOpacity onPress={onSeeAll} activeOpacity={0.7}>
+        <Text style={styles.seeAll}>See all →</Text>
+      </TouchableOpacity>
     </View>
-  );
-};
+    <Text style={styles.subTitle}>Based on your brands</Text>
+
+    {/* Card */}
+    <View style={styles.card}>
+      {brands.map((b, i) => (
+        <BrandRow
+          key={b.id}
+          brand={b}
+          isLast={i === brands.length - 1}
+          onPress={() => onBrandPress?.(b)}
+          onBuy={() => onBuyPress?.(b)}
+        />
+      ))}
+    </View>
+  </View>
+);
+
+const THUMB = 62;
 
 const styles = StyleSheet.create({
-  container: {
-    marginTop: 28,
+  section: {
+    marginTop: 26,
     paddingHorizontal: 20,
   },
   sectionHeader: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 2,
+    alignItems: 'center',
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '800',
     color: '#1a1a1a',
-    letterSpacing: -0.3,
+    letterSpacing: -0.2,
   },
   seeAll: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#00D46A',
+    color: '#00C853',
   },
-  subheading: {
-    fontSize: 12,
-    color: '#aaa',
-    fontWeight: '500',
-    marginBottom: 14,
+  subTitle: {
+    fontSize: 11,
+    color: '#B0B0B0',
+    fontWeight: '400',
+    marginTop: 2,
+    marginBottom: 12,
   },
-  listCard: {
+  card: {
     backgroundColor: '#fff',
-    borderRadius: 18,
+    borderRadius: 16,
+    overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.07,
     shadowRadius: 10,
     elevation: 3,
-    overflow: 'hidden',
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 13,
     gap: 12,
   },
   rowBorder: {
     borderBottomWidth: 1,
     borderBottomColor: '#F5F5F5',
   },
-  logoBg: {
-    width: 48,
-    height: 48,
-    borderRadius: 14,
+  thumbWrap: {
+    width: THUMB,
+    height: THUMB,
+    borderRadius: 12,
+    overflow: 'hidden',
+    position: 'relative',
+    backgroundColor: '#EBEBEB',
+    flexShrink: 0,
+  },
+  thumb: {
+    width: '100%',
+    height: '100%',
+  },
+  brandBadge: {
+    position: 'absolute',
+    top: 4,
+    left: 4,
+    width: 20,
+    height: 20,
+    borderRadius: 6,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  logoInner: {
-    width: 32,
-    height: 32,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  logoInitial: {
-    fontSize: 14,
+  brandInitial: {
+    fontSize: 11,
     fontWeight: '900',
     color: '#fff',
   },
-  textBlock: {
+  mid: {
     flex: 1,
-    gap: 3,
+    gap: 1,
   },
   productName: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '700',
     color: '#1a1a1a',
   },
   storeMeta: {
     fontSize: 11,
-    color: '#aaa',
-    fontWeight: '500',
+    color: '#B0B0B0',
+    fontWeight: '400',
   },
-  rightBlock: {
+  right: {
     alignItems: 'flex-end',
-    gap: 6,
+    gap: 4,
+    flexShrink: 0,
   },
   price: {
     fontSize: 15,
     fontWeight: '800',
     color: '#1a1a1a',
   },
+  stockPill: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 20,
+  },
+  stockText: {
+    fontSize: 9,
+    fontWeight: '800',
+    letterSpacing: 0.1,
+  },
   buyBtn: {
-    backgroundColor: '#00D46A',
-    paddingHorizontal: 14,
+    backgroundColor: '#00C853',
+    paddingHorizontal: 16,
     paddingVertical: 5,
     borderRadius: 20,
   },
-  buyBtnLowStock: {
-    backgroundColor: '#FF9500',
-  },
-  buyBtnText: {
-    fontSize: 11,
+  buyText: {
+    fontSize: 12,
     fontWeight: '800',
     color: '#fff',
-    letterSpacing: 0.2,
   },
 });
 

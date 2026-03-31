@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
-  ScrollView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { FollowedStore } from '@/services/hooks/discover/useDiscover';
@@ -13,148 +12,176 @@ import { FollowedStore } from '@/services/hooks/discover/useDiscover';
 interface DiscoverStoresProps {
   stores: FollowedStore[];
   onManagePress?: () => void;
-  onStorePress?: (store: FollowedStore) => void;
-  onFollowToggle?: (storeId: string) => void;
+  onStorePress?: (s: FollowedStore) => void;
+  onFollowToggle?: (id: string) => void;
+  onBuyPress?: (s: FollowedStore) => void;
+  /** 'follow' shows Following/Follow pill (Image 1). 'buy' shows In Stock badge + Buy btn (Image 2). Default: 'follow' */
+  variant?: 'follow' | 'buy';
 }
 
-const StoreCard: React.FC<{
-  store: FollowedStore;
-  onPress?: () => void;
-  onFollowToggle?: () => void;
-}> = ({ store, onPress, onFollowToggle }) => (
-  <TouchableOpacity style={styles.storeCard} onPress={onPress} activeOpacity={0.88}>
-    {/* Store Image */}
-    <View style={styles.imageWrapper}>
-      <Image
-        source={{ uri: store.image }}
-        style={styles.storeImage}
-        resizeMode="cover"
-      />
-      {/* Online indicator */}
-      <View style={styles.onlineIndicator} />
-    </View>
-
-    {/* Info */}
-    <View style={styles.storeInfo}>
-      <Text style={styles.storeName} numberOfLines={1}>{store.name}</Text>
-      <View style={styles.locationRow}>
-        <Ionicons name="location-outline" size={11} color="#aaa" />
-        <Text style={styles.locationText}>
-          {store.location} · {store.distance}
-        </Text>
-      </View>
-    </View>
-
-    {/* Follow Button */}
-    <TouchableOpacity
-      style={[styles.followBtn, store.isFollowing && styles.followBtnActive]}
-      onPress={onFollowToggle}
-      activeOpacity={0.8}
-    >
-      <Text style={[styles.followBtnText, store.isFollowing && styles.followBtnTextActive]}>
-        {store.isFollowing ? 'Following' : 'Follow'}
-      </Text>
-    </TouchableOpacity>
-  </TouchableOpacity>
-);
-
+/**
+ * Image 1 variant:
+ *   - Store image thumbnail left with green online dot
+ *   - Pin icon + "Apple City · 0.8km"
+ *   - "Following" outlined green pill right
+ *
+ * Image 2 variant:
+ *   - Same left side
+ *   - "In Stock" green badge + "Buy" green button stacked right
+ */
 export const DiscoverStores: React.FC<DiscoverStoresProps> = ({
   stores,
   onManagePress,
   onStorePress,
   onFollowToggle,
-}) => {
-  return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>From Followed Stores</Text>
-        <TouchableOpacity onPress={onManagePress} activeOpacity={0.7}>
-          <Text style={styles.manageText}>Manage →</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Store Cards */}
-      {stores.map(store => (
-        <StoreCard
-          key={store.id}
-          store={store}
-          onPress={() => onStorePress?.(store)}
-          onFollowToggle={() => onFollowToggle?.(store.id)}
-        />
-      ))}
-
-      {stores.length === 0 && (
-        <View style={styles.emptyState}>
-          <Ionicons name="storefront-outline" size={36} color="#ddd" />
-          <Text style={styles.emptyText}>No followed stores yet</Text>
-          <Text style={styles.emptySubtext}>Follow stores to see their drops here</Text>
-        </View>
-      )}
+  onBuyPress,
+  variant = 'follow',
+}) => (
+  <View style={styles.section}>
+    {/* Header */}
+    <View style={styles.sectionHeader}>
+      <Text style={styles.sectionTitle}>From Followed Stores</Text>
+      <TouchableOpacity onPress={onManagePress} activeOpacity={0.7}>
+        <Text style={styles.manageText}>Manage →</Text>
+      </TouchableOpacity>
     </View>
-  );
-};
+
+    {stores.map(store => (
+      <TouchableOpacity
+        key={store.id}
+        style={styles.storeRow}
+        onPress={() => onStorePress?.(store)}
+        activeOpacity={0.88}
+      >
+        {/* Thumbnail + online dot */}
+        <View style={styles.thumbWrap}>
+          <Image source={{ uri: store.image }} style={styles.thumb} resizeMode="cover" />
+          <View style={styles.onlineDot} />
+        </View>
+
+        {/* Info */}
+        <View style={styles.info}>
+          <Text style={styles.storeName}>{store.name}</Text>
+          <View style={styles.locationRow}>
+            <Ionicons name="location-outline" size={11} color="#B0B0B0" />
+            <Text style={styles.locationText}>
+              {store.location} · {store.distance}
+            </Text>
+          </View>
+        </View>
+
+        {/* Right action */}
+        {variant === 'follow' ? (
+          <TouchableOpacity
+            style={[
+              styles.followPill,
+              store.isFollowing && styles.followPillActive,
+            ]}
+            onPress={() => onFollowToggle?.(store.id)}
+            activeOpacity={0.8}
+          >
+            <Text style={[
+              styles.followPillText,
+              store.isFollowing && styles.followPillTextActive,
+            ]}>
+              {store.isFollowing ? 'Following' : 'Follow'}
+            </Text>
+          </TouchableOpacity>
+        ) : (
+          <View style={styles.buyColumn}>
+            {store.stockStatus && (
+              <View style={styles.inStockBadge}>
+                <Text style={styles.inStockText}>In Stock</Text>
+              </View>
+            )}
+            {store.price != null && (
+              <Text style={styles.storePrice}>${store.price}</Text>
+            )}
+            <TouchableOpacity
+              style={styles.buyBtn}
+              onPress={() => onBuyPress?.(store)}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.buyText}>Buy</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </TouchableOpacity>
+    ))}
+
+    {stores.length === 0 && (
+      <View style={styles.empty}>
+        <Ionicons name="storefront-outline" size={32} color="#ddd" />
+        <Text style={styles.emptyText}>No followed stores yet</Text>
+      </View>
+    )}
+  </View>
+);
+
+const THUMB = 52;
 
 const styles = StyleSheet.create({
-  container: {
-    marginTop: 28,
+  section: {
+    marginTop: 26,
     paddingHorizontal: 20,
     paddingBottom: 32,
   },
   sectionHeader: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 14,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '800',
     color: '#1a1a1a',
-    letterSpacing: -0.3,
+    letterSpacing: -0.2,
   },
   manageText: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#00D46A',
+    color: '#00C853',
   },
-  storeCard: {
+  storeRow: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#fff',
-    borderRadius: 16,
+    borderRadius: 14,
     padding: 12,
     marginBottom: 12,
     gap: 12,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.06,
-    shadowRadius: 8,
+    shadowRadius: 6,
     elevation: 2,
   },
-  imageWrapper: {
-    position: 'relative',
-    width: 52,
-    height: 52,
-    borderRadius: 14,
+  thumbWrap: {
+    width: THUMB,
+    height: THUMB,
+    borderRadius: 12,
     overflow: 'hidden',
+    position: 'relative',
+    backgroundColor: '#EBEBEB',
+    flexShrink: 0,
   },
-  storeImage: {
+  thumb: {
     width: '100%',
     height: '100%',
   },
-  onlineIndicator: {
+  onlineDot: {
     position: 'absolute',
     bottom: 3,
     right: 3,
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: '#00D46A',
+    backgroundColor: '#00C853',
     borderWidth: 2,
     borderColor: '#fff',
   },
-  storeInfo: {
+  info: {
     flex: 1,
     gap: 3,
   },
@@ -166,47 +193,77 @@ const styles = StyleSheet.create({
   locationRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 3,
+    gap: 2,
   },
   locationText: {
     fontSize: 11,
-    color: '#aaa',
-    fontWeight: '500',
+    color: '#B0B0B0',
+    fontWeight: '400',
   },
-  followBtn: {
+  // Follow variant
+  followPill: {
     paddingHorizontal: 16,
     paddingVertical: 7,
-    borderRadius: 20,
-    backgroundColor: '#F2F2F2',
+    borderRadius: 22,
     borderWidth: 1.5,
-    borderColor: 'transparent',
+    borderColor: '#C8C8C8',
+    backgroundColor: 'transparent',
   },
-  followBtnActive: {
-    backgroundColor: '#00D46A15',
-    borderColor: '#00D46A',
+  followPillActive: {
+    borderColor: '#00C853',
+    backgroundColor: 'transparent',
   },
-  followBtnText: {
+  followPillText: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#666',
+    color: '#777',
   },
-  followBtnTextActive: {
-    color: '#00D46A',
+  followPillTextActive: {
+    color: '#00C853',
   },
-  emptyState: {
+  // Buy variant
+  buyColumn: {
+    alignItems: 'flex-end',
+    gap: 4,
+    flexShrink: 0,
+  },
+  inStockBadge: {
+    backgroundColor: '#00C853',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 20,
+  },
+  inStockText: {
+    fontSize: 9,
+    fontWeight: '800',
+    color: '#fff',
+  },
+  storePrice: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: '#1a1a1a',
+  },
+  buyBtn: {
+    backgroundColor: '#00C853',
+    paddingHorizontal: 16,
+    paddingVertical: 5,
+    borderRadius: 20,
+  },
+  buyText: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#fff',
+  },
+  // Empty
+  empty: {
     alignItems: 'center',
-    paddingVertical: 32,
+    paddingVertical: 28,
     gap: 8,
   },
   emptyText: {
-    fontSize: 15,
-    fontWeight: '700',
+    fontSize: 14,
     color: '#ccc',
-  },
-  emptySubtext: {
-    fontSize: 12,
-    color: '#ddd',
-    textAlign: 'center',
+    fontWeight: '500',
   },
 });
 

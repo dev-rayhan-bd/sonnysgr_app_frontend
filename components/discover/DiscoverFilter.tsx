@@ -1,138 +1,195 @@
-import React, { useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  StyleSheet,
-  Animated,
+    View,
+    Text,
+    TouchableOpacity,
+    ScrollView,
+    TextInput,
+    Animated,
+    Keyboard,
 } from 'react-native';
-import { FilterCategory } from '@/services/hooks/discover/useDiscover';
-interface DiscoverFilterProps {
-  categories: FilterCategory[];
-  activeFilter: FilterCategory;
-  onFilterChange: (filter: FilterCategory) => void;
-  greeting?: string;
-  userName?: string;
+
+interface DiscoverFilterProps<FilterCategory extends string> {
+    filters: FilterCategory[];
+    active: FilterCategory;
+    onChange: (filter: FilterCategory) => void;
+    greeting: string;
+    userName: string;
+    onCustomSize?: (size: string) => void;
 }
 
-export const DiscoverFilter: React.FC<DiscoverFilterProps> = ({
-  categories,
-  activeFilter,
-  onFilterChange,
-  greeting = 'Good morning',
-  userName = 'User',
-}) => {
-  const scaleAnims = useRef(
-    categories.reduce((acc, cat) => {
-      acc[cat] = new Animated.Value(1);
-      return acc;
-    }, {} as Record<string, Animated.Value>)
-  ).current;
+const DiscoverFilter = <FilterCategory extends string>({
+    filters,
+    active,
+    onChange,
+    greeting,
+    userName,
+    onCustomSize,
+}: DiscoverFilterProps<FilterCategory>) => {
+    const [customExpanded, setCustomExpanded] = useState(false);
+    const [customValue, setCustomValue] = useState('');
+    const [customError, setCustomError] = useState('');
+    const expandAnim = useRef(new Animated.Value(0)).current;
+    const inputRef = useRef<TextInput>(null);
 
-  const handlePress = (cat: FilterCategory) => {
-    Animated.sequence([
-      Animated.timing(scaleAnims[cat], {
-        toValue: 0.93,
-        duration: 80,
-        useNativeDriver: true,
-      }),
-      Animated.timing(scaleAnims[cat], {
-        toValue: 1,
-        duration: 80,
-        useNativeDriver: true,
-      }),
-    ]).start();
-    onFilterChange(cat);
-  };
+    const openCustomInput = () => {
+        setCustomExpanded(true);
+        setCustomError('');
+        Animated.spring(expandAnim, {
+            toValue: 1,
+            useNativeDriver: false,
+        }).start(() => inputRef.current?.focus());
+    };
 
-  return (
-    <View style={styles.container}>
-      {/* Greeting */}
-      <Text style={styles.greeting}>
-        {greeting}, <Text style={styles.userName}>{userName} 👋</Text>
-      </Text>
+    const closeCustomInput = () => {
+        Keyboard.dismiss();
+        Animated.timing(expandAnim, {
+            toValue: 0,
+            duration: 180,
+            useNativeDriver: false,
+        }).start(() => {
+            setCustomExpanded(false);
+            setCustomValue('');
+            setCustomError('');
+        });
+    };
 
-      {/* Filter Pills */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-        style={styles.scroll}
-      >
-        {categories.map(cat => {
-          const isActive = cat === activeFilter;
-          return (
-            <Animated.View
-              key={cat}
-              style={{ transform: [{ scale: scaleAnims[cat] }] }}
-            >
-              <TouchableOpacity
-                style={[styles.pill, isActive && styles.pillActive]}
-                onPress={() => handlePress(cat)}
-                activeOpacity={0.85}
-              >
-                <Text style={[styles.pillText, isActive && styles.pillTextActive]}>
-                  {cat}
+    const handleCustomConfirm = () => {
+        const trimmed = customValue.trim();
+        if (!trimmed) {
+            setCustomError('Enter a size');
+            return;
+        }
+        onCustomSize?.(trimmed);
+        onChange('Custom' as FilterCategory);
+        closeCustomInput();
+    };
+
+    const handlePillPress = (f: FilterCategory) => {
+        if (f === ('Custom' as FilterCategory)) {
+            customExpanded ? closeCustomInput() : openCustomInput();
+            return;
+        }
+        if (customExpanded) closeCustomInput();
+        onChange(f);
+    };
+
+    const inputHeight = expandAnim.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, 80],
+    });
+
+    const inputOpacity = expandAnim.interpolate({
+        inputRange: [0, 0.5, 1],
+        outputRange: [0, 0, 1],
+    });
+
+    return (
+        <View>
+
+            {/* Greeting */}
+            <View className="bg-[#F2FFF7] px-5 pt-4 pb-3">
+                <Text className="text-base text-gray-500">
+                    {greeting},{' '}
+                    <Text className="text-gray-900 font-bold text-base">
+                        {userName} 👋
+                    </Text>
                 </Text>
-              </TouchableOpacity>
-            </Animated.View>
-          );
-        })}
-      </ScrollView>
-    </View>
-  );
-};
+            </View>
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#ffffff',
-    paddingBottom: 8,
-  },
-  greeting: {
-    fontSize: 15,
-    color: '#555',
-    fontWeight: '400',
-    paddingHorizontal: 20,
-    marginBottom: 14,
-  },
-  userName: {
-    color: '#1a1a1a',
-    fontWeight: '700',
-  },
-  scroll: {
-    flexGrow: 0,
-  },
-  scrollContent: {
-    paddingHorizontal: 20,
-    gap: 8,
-    paddingRight: 32,
-  },
-  pill: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: '#F2F2F2',
-    borderWidth: 1.5,
-    borderColor: 'transparent',
-  },
-  pillActive: {
-    backgroundColor: '#00D46A',
-    borderColor: '#00D46A',
-    shadowColor: '#00D46A',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.35,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  pillText: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#666',
-  },
-  pillTextActive: {
-    color: '#fff',
-  },
-});
+            {/* Pills */}
+            <View className="flex-row items-center bg-white">
+
+                {/* Sticky "For You" */}
+                <View className="flex-row items-center bg-white z-10">
+                    <View className="bg-gray-900 px-5 py-2.5 ml-4 my-3 rounded-full">
+                        <Text className="text-white text-base font-bold">For You</Text>
+                    </View>
+                </View>
+
+                <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    className="flex-1"
+                    contentContainerStyle={{
+                        paddingRight: 24,
+                        paddingVertical: 12,
+                        gap: 10,
+                        paddingLeft: 6,
+                    }}
+                >
+                    {filters.map((f) => {
+                        const isActive = f === active;
+                        const isCustomOpen = f === ('Custom' as FilterCategory) && customExpanded;
+
+                        return (
+                            <TouchableOpacity
+                                key={f}
+                                onPress={() => handlePillPress(f)}
+                                activeOpacity={0.8}
+                                className={`px-4 py-2 rounded-full
+                  ${isCustomOpen ? 'bg-gray-900'
+                                        : isActive ? 'bg-green-600'
+                                            : 'bg-gray-100'}
+                `}
+                            >
+                                <Text
+                                    className={`text-base font-semibold
+                    ${isCustomOpen || isActive ? 'text-white' : 'text-gray-700'}
+                  `}
+                                >
+                                    {f}
+                                </Text>
+                            </TouchableOpacity>
+                        );
+                    })}
+                </ScrollView>
+            </View>
+
+            {/* Custom Input */}
+            <Animated.View
+                style={{ height: inputHeight, opacity: inputOpacity }}
+                className="overflow-hidden px-4 bg-gray-50 border-t border-gray-200"
+            >
+                <View className="flex-row items-center gap-2 py-3">
+
+                    <TextInput
+                        ref={inputRef}
+                        value={customValue}
+                        onChangeText={(t) => {
+                            setCustomValue(t);
+                            if (customError) setCustomError('');
+                        }}
+                        placeholder="e.g. 10.5 or 11W"
+                        placeholderTextColor="#9CA3AF"
+                        returnKeyType="done"
+                        onSubmitEditing={handleCustomConfirm}
+                        className={`flex-1 h-11 px-3 rounded-xl text-base font-semibold bg-white border
+              ${customError ? 'border-red-500' : 'border-gray-300'}
+            `}
+                    />
+
+                    <TouchableOpacity
+                        onPress={handleCustomConfirm}
+                        className="h-11 px-5 rounded-xl bg-gray-900 justify-center items-center"
+                    >
+                        <Text className="text-white font-bold text-base">Add</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        onPress={closeCustomInput}
+                        className="h-11 w-11 rounded-xl border border-gray-300 justify-center items-center bg-white"
+                    >
+                        <Text className="text-gray-500 text-base">✕</Text>
+                    </TouchableOpacity>
+                </View>
+
+                {!!customError && (
+                    <Text className="text-red-500 text-xs ml-1 -mt-1">{customError}</Text>
+                )}
+            </Animated.View>
+        </View>
+    );
+};
 
 export default DiscoverFilter;

@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.05,
     shadowRadius: 20,
-    elevation: 10,
+    elevation: 40,
   },
   tabItem: {
     flex: 1,
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     marginTop: 10, // Position it under the icon
   },
   label: {
-    fontSize: 11,
+    fontSize: 16,
     marginTop: 4,
   },
 });

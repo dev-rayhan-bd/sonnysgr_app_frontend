@@ -4,189 +4,113 @@ import {
   StyleSheet,
   ScrollView,
   RefreshControl,
-  StatusBar,
-  Platform,
 } from 'react-native';
 
-// Components
 import DiscoverHeader from '@/components/discover/DiscoverHeader';
 import DiscoverFilter from '@/components/discover/DiscoverFilter';
 import DiscoverNearBy from '@/components/discover/DiscoverNearBy';
-import DiscoverAd from '@/components/discover/DiscoverAd';
 import DiscoverBrands from '@/components/discover/DiscoverBrands';
+import DiscoverAd from '@/components/discover/DiscoverAd';
 import DiscoverStores from '@/components/discover/DiscoverStores';
-
-// Hook & types
-import { useDiscover, SneakerProduct, Brand, FollowedStore, AdBanner } from '@/services/hooks/discover/useDiscover';
-
-// Navigation (adjust to your navigation lib)
-// import { NativeStackScreenProps } from '@react-navigation/native-stack';
-// type Props = NativeStackScreenProps<RootStackParamList, 'Discover'>;
+import BaseContainer from '@/components/shared/BaseContainer';
+import { useDiscover, NearbyProduct, BrandProduct, FollowedStore, AdBanner } from '@/services/hooks/discover/useDiscover';
 
 export const DiscoverScreen: React.FC = () => {
   const {
+    filters,
     activeFilter,
     nearbyProducts,
     brandProducts,
-    followedStores,
     adBanner,
+    followedStores,
     isRefreshing,
+    greeting,
     userName,
-    filterCategories,
     handleFilterChange,
     toggleWishlist,
-    toggleFollowStore,
+    toggleFollow,
     handleRefresh,
   } = useDiscover();
 
-  /* ─── Handlers ─── */
-  const handleProductPress = useCallback((product: SneakerProduct) => {
-    console.log('Product pressed:', product.id);
-    // navigation.navigate('ProductDetail', { productId: product.id });
-  }, []);
-
-  const handleBrandPress = useCallback((brand: Brand) => {
-    console.log('Brand pressed:', brand.id);
-    // navigation.navigate('BrandDetail', { brandId: brand.id });
-  }, []);
-
-  const handleBuyPress = useCallback((brand: Brand) => {
-    console.log('Buy pressed:', brand.id);
-    // navigation.navigate('Checkout', { brandId: brand.id });
-  }, []);
-
-  const handleStorePress = useCallback((store: FollowedStore) => {
-    console.log('Store pressed:', store.id);
-    // navigation.navigate('StoreDetail', { storeId: store.id });
-  }, []);
-
-  const handleAdPress = useCallback((ad: AdBanner) => {
-    console.log('Ad pressed:', ad.id);
-    // navigation.navigate('AdDetail', { adId: ad.id });
-  }, []);
-
-  const handleNotifications = useCallback(() => {
-    console.log('Notifications pressed');
-    // navigation.navigate('Notifications');
-  }, []);
-
-  const handleAvatar = useCallback(() => {
-    console.log('Avatar pressed');
-    // navigation.navigate('Profile');
-  }, []);
-
-  const handleSeeAllNearby = useCallback(() => {
-    console.log('See all nearby');
-    // navigation.navigate('NearbyProducts');
-  }, []);
-
-  const handleSeeAllBrands = useCallback(() => {
-    console.log('See all brands');
-    // navigation.navigate('Brands');
-  }, []);
-
-  const handleManageStores = useCallback(() => {
-    console.log('Manage stores');
-    // navigation.navigate('ManageStores');
-  }, []);
+  const onProductPress = useCallback((p: NearbyProduct) => console.log('product pressed', p.id), []);
+  const onBrandPress = useCallback((b: BrandProduct) => console.log('brand pressed', b.id), []);
+  const onBuyBrand = useCallback((b: BrandProduct) => console.log('buy brand', b.id), []);
+  const onAdPress = useCallback((ad: AdBanner) => console.log('ad pressed', ad.id), []);
+  const onStorePress = useCallback((s: FollowedStore) => console.log('store pressed', s.id), []);
+  const onBuyStore = useCallback((s: FollowedStore) => console.log('buy store', s.id), []);
 
   return (
-    <View style={styles.root}>
-      <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
-
-      {/* Sticky Header + Filter */}
-      <View style={styles.stickyTop}>
-        <DiscoverHeader
-          userName={userName}
-          notificationCount={2}
-          onNotificationPress={handleNotifications}
-          onAvatarPress={handleAvatar}
-        />
-        <DiscoverFilter
-          categories={filterCategories}
-          activeFilter={activeFilter}
-          onFilterChange={handleFilterChange}
-          greeting={getGreeting()}
-          userName={userName}
-        />
-      </View>
-
-      {/* Scrollable Content */}
-      <ScrollView
-        style={styles.scroll}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-        refreshControl={
-          <RefreshControl
-            refreshing={isRefreshing}
-            onRefresh={handleRefresh}
-            tintColor="#00D46A"
-            colors={['#00D46A']}
+    <BaseContainer scrollable backgroundColor="#fff">
+      <View className="flex-1 justify-center">
+        <View>
+          <DiscoverHeader
+            notificationCount={2}
+            onNotificationPress={() => console.log('notifications')}
+            onAvatarPress={() => console.log('avatar')}
           />
-        }
-      >
-        {/* Nearby Section */}
-        <DiscoverNearBy
-          products={nearbyProducts}
-          onSeeAll={handleSeeAllNearby}
-          onProductPress={handleProductPress}
-          onWishlistToggle={toggleWishlist}
-        />
 
-        {/* From Your Brands */}
-        <DiscoverBrands
-          brands={brandProducts}
-          onSeeAll={handleSeeAllBrands}
-          onBuyPress={handleBuyPress}
-          onBrandPress={handleBrandPress}
-        />
+          <DiscoverFilter<typeof activeFilter>
+            filters={filters}
+            active={activeFilter}
+            onChange={handleFilterChange}
+            greeting={greeting}
+            userName={userName}
+          />
+        </View>
 
-        {/* Ad Banner (between brands and stores) */}
-        <DiscoverAd
-          ad={adBanner}
-          onPress={handleAdPress}
-        />
+        <ScrollView
+          style={styles.scroll}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefreshing}
+              onRefresh={handleRefresh}
+              tintColor="#00C853"
+              colors={['#00C853']}
+            />
+          }
+        >
+          <DiscoverNearBy
+            products={nearbyProducts}
+            onSeeAll={() => console.log('see all nearby')}
+            onProductPress={onProductPress}
+            onWishlistToggle={toggleWishlist}
+          />
 
-        {/* From Followed Stores */}
-        <DiscoverStores
-          stores={followedStores}
-          onManagePress={handleManageStores}
-          onStorePress={handleStorePress}
-          onFollowToggle={toggleFollowStore}
-        />
-      </ScrollView>
-    </View>
+          <DiscoverBrands
+            brands={brandProducts}
+            onSeeAll={() => console.log('see all brands')}
+            onBrandPress={onBrandPress}
+            onBuyPress={onBuyBrand}
+          />
+
+          <DiscoverAd
+            ad={adBanner}
+            onPress={onAdPress}
+          />
+
+          <DiscoverStores
+            stores={followedStores}
+            variant="buy"
+            onManagePress={() => console.log('manage stores')}
+            onStorePress={onStorePress}
+            onFollowToggle={toggleFollow}
+            onBuyPress={onBuyStore}
+          />
+        </ScrollView>
+      </View>
+    </BaseContainer>
   );
 };
 
-/* ─── Helpers ─── */
-function getGreeting(): string {
-  const hour = new Date().getHours();
-  if (hour < 12) return 'Good morning';
-  if (hour < 17) return 'Good afternoon';
-  return 'Good evening';
-}
-
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: '#F6F7F9',
-  },
-  stickyTop: {
-    backgroundColor: '#ffffff',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    elevation: 4,
-    zIndex: 10,
-    paddingBottom: 10,
-  },
+
   scroll: {
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 100, // room for tab bar
+    paddingBottom: 100,
   },
 });
 

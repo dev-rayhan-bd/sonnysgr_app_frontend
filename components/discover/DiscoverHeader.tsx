@@ -1,123 +1,65 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Platform,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons'; // or use your icon library
+import { View, Text, TouchableOpacity, Platform } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 interface DiscoverHeaderProps {
-  userName: string;
   notificationCount?: number;
   onNotificationPress?: () => void;
   onAvatarPress?: () => void;
 }
 
 export const DiscoverHeader: React.FC<DiscoverHeaderProps> = ({
-  userName,
-  notificationCount = 2,
+  notificationCount = 2, 
   onNotificationPress,
   onAvatarPress,
 }) => {
   return (
-    <View style={styles.container}>
-      {/* Logo */}
-      <Text style={styles.logo}>
-        <Text style={styles.logoGo}>GO</Text>
-        <Text style={styles.logoSnkr}>SNKR</Text>
+    <View 
+      className={`flex-row items-center justify-between px-6 bg-white border-b border-gray-100 ${
+        Platform.OS === 'ios' ? 'pt-[60px]' : 'pt-[40px]'
+      }`}
+      style={{ paddingBottom: 16 }}
+    >
+      {/* Brand Logo - Bigger and bolder as requested, matching image colors */}
+      <Text className="text-3xl font-black">
+        <Text className="text-black">GO</Text>
+        <Text className="text-[#36B161]">SNKR</Text>
       </Text>
 
-      {/* Right Actions */}
-      <View style={styles.actions}>
-        {/* Notification Bell */}
+      <View className="flex-row items-center space-x-5">
+        
+        {/* Notification Bell - Larger, exactly like the image */}
         <TouchableOpacity
-          style={styles.notifWrapper}
           onPress={onNotificationPress}
-          activeOpacity={0.75}
+          activeOpacity={0.7}
+          hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
+          className="relative items-center justify-center w-10 h-10"
         >
-          <Ionicons name="notifications-outline" size={22} color="#1a1a1a" />
+          {/* Sizing increased for visibility on modern screens */}
+          <Ionicons name="notifications-outline" size={32} color="#1C1C1E" />
           {notificationCount > 0 && (
-            <View style={styles.badge}>
-              <Text style={styles.badgeText}>{notificationCount}</Text>
-            </View>
+            // Larger, bolder red dot exactly matching the image's positioning
+            <View 
+              className="absolute top-0 right-0 w-3.5 h-3.5 bg-[#ED4F4F] rounded-full border-[2.5px] border-white shadow-sm"
+            />
           )}
         </TouchableOpacity>
-
-        {/* Avatar */}
         <TouchableOpacity
-          style={styles.avatarWrapper}
           onPress={onAvatarPress}
-          activeOpacity={0.8}
+          activeOpacity={0.75}
+          className="items-center justify-center"
         >
-          <View style={styles.avatar}>
-            <Ionicons name="person" size={16} color="#fff" />
+          <View 
+            className="w-18 h-18 rounded-full border-[2px] border-[#36B161] items-center justify-center bg-[#F1F3F5] shadow-sm"
+          >
+            {/* Person outline icon, slightly larger to match new circle size */}
+            <Ionicons name="person-outline" size={30} color="#727981" />
           </View>
         </TouchableOpacity>
+        
       </View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingTop: Platform.OS === 'ios' ? 56 : 20,
-    paddingBottom: 10,
-    backgroundColor: '#ffffff',
-  },
-  logo: {
-    fontSize: 20,
-    fontWeight: '900',
-    letterSpacing: -0.5,
-  },
-  logoGo: {
-    color: '#1a1a1a',
-  },
-  logoSnkr: {
-    color: '#00D46A', // primary green
-  },
-  actions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  notifWrapper: {
-    position: 'relative',
-    padding: 4,
-  },
-  badge: {
-    position: 'absolute',
-    top: 2,
-    right: 2,
-    backgroundColor: '#00D46A',
-    borderRadius: 10,
-    minWidth: 16,
-    height: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 3,
-  },
-  badgeText: {
-    color: '#fff',
-    fontSize: 9,
-    fontWeight: '700',
-  },
-  avatarWrapper: {
-    padding: 2,
-  },
-  avatar: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    backgroundColor: '#1a1a1a',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
 
 export default DiscoverHeader;
