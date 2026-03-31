@@ -18,7 +18,7 @@ export default function createAccountScreen() {
   };
 
   return (
-    <BaseContainer backgroundColor='#F8F9FA' scrollable>
+    <BaseContainer backgroundColor='#fff' scrollable>
       <View className="flex-1 justify-center px-6 py-10">
 
         {/* ── Header ────────────────────────────────────────── */}

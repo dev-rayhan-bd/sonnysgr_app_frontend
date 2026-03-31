@@ -12,7 +12,7 @@ export default function SigninScreen() {
     useSignin()
 
   const onSuccess = () => {
-    router.replace('/')
+    router.replace('/tabs/discoverScreen')
   }
 
   return (
@@ -60,7 +60,7 @@ export default function SigninScreen() {
           paddingBottom: 40,
         }}
       >
-        <BaseContainer backgroundColor="transparent" scrollable>
+        <BaseContainer backgroundColor="#fff" scrollable>
 
           {/* Heading */}
           <View style={{ marginBottom: 28 }}>

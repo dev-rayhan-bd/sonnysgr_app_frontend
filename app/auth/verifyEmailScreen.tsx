@@ -24,7 +24,7 @@ export default function VerifyEmailScreen() {
   };
 
   return (
-    <BaseContainer backgroundColor="#F8F9FA" scrollable>
+    <BaseContainer backgroundColor="#fff" scrollable>
     
         <View style={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 24, paddingVertical: 40 }}>
 

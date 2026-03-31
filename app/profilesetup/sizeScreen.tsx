@@ -8,7 +8,7 @@ import GenderTabBar from '@/components/profilesetup/GenderTabBar'
 import SizeGrid from '@/components/profilesetup/SizeGrid'
 import SelectedSizeChips from '@/components/profilesetup/SelectedSizeChips'
 import CustomSizeModal from '@/components/profilesetup/CustomizedModal'
-
+import BaseContainer from '@/components/shared/BaseContainer'
 export default function SizeScreen() {
     const {
         activeTab,
@@ -26,13 +26,13 @@ export default function SizeScreen() {
     const [modalVisible, setModalVisible] = useState(false)
 
     const onContinue = () => {
-        handleContinue(() => router.push('/'))
+        handleContinue(() => router.push('/profilesetup/locationScreen'))
     }
 
     const hasSelection = allSelectedSizes.length > 0
 
     return (
-        <View style={styles.root}>
+        <BaseContainer backgroundColor="#fff" scrollable>
 
             {/* Scrollable body */}
             <ScrollView
@@ -67,19 +67,19 @@ export default function SizeScreen() {
 
             {/* Sticky footer */}
             <View style={styles.footer}>
-  <Button
-  text={loading ? 'Saving' : 'Continue'}
-  onPress={onContinue}
-  variant="solid"
-  backgroundColor="#000000"
-  height={56}
-  borderRadius={14}
-  fontSize={17}
-  fontWeight="700"
-  disabled={loading}
-  opacity={loading ? 0.7 : 1}
-  style={{ flex: 0, alignSelf: 'stretch' }}
-/>
+                <Button
+                    text={loading ? 'Saving' : 'Continue'}
+                    onPress={onContinue}
+                    variant="solid"
+                    backgroundColor="#000000"
+                    height={56}
+                    borderRadius={14}
+                    fontSize={17}
+                    fontWeight="700"
+                    disabled={loading}
+                    opacity={loading ? 0.7 : 1}
+                    style={{ flex: 0, alignSelf: 'stretch' }}
+                />
 
                 <TouchableOpacity
                     style={styles.skipBtn}
@@ -98,8 +98,7 @@ export default function SizeScreen() {
                 onConfirm={addCustomSize}
                 onClose={() => setModalVisible(false)}
             />
-
-        </View>
+        </BaseContainer>
     )
 }
 
@@ -142,9 +141,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingBottom: 28,
         paddingTop: 12,
-        borderTopWidth: 1,
-        borderTopColor: '#F3F4F6',
-        backgroundColor: '#FFFFFF',
         gap: 10,
     },
     skipBtn: {

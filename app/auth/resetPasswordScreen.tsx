@@ -16,7 +16,7 @@ export default function ResetPasswordScreen() {
   const strengthLabels = ['Weak', 'Fair', 'Good', 'Strong'];
 
   return (
-    <BaseContainer backgroundColor="#F8F9FA" scrollable>
+    <BaseContainer backgroundColor="#fff" scrollable>
 
         <View
           style={{

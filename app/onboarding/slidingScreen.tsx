@@ -178,7 +178,7 @@ const SlidingScreen: React.FC = () => {
   )
 
   return (
-    <BaseContainer backgroundColor="#FFFFFF">
+    <BaseContainer backgroundColor="#fff">
       <FlatList<Slide>
         ref={flatListRef}
         data={SLIDES}

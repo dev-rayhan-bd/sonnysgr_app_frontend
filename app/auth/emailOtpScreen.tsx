@@ -15,12 +15,12 @@ export default function EmailOtpScreen() {
     if (from === 'forgot-password') {
       router.replace('/auth/resetPasswordScreen');
     } else {
-      router.replace('/profilesetup/size');
+      router.replace('/profilesetup/sizeScreen');
     }
   };
 
   return (
-    <BaseContainer backgroundColor="#F8F9FA" scrollable>
+    <BaseContainer backgroundColor="#fff" scrollable>
         <View style={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 24, paddingVertical: 40 }}>
 
 
