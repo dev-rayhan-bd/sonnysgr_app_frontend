@@ -26,10 +26,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   plugins: [
     "expo-router",
     "expo-font",
+    "expo-secure-store",
     [
       "expo-navigation-bar",
       {
-        "barStyle": "light-content", // ✅ kept — still valid
+        "barStyle": "light-content", 
       }
     ]
   ],

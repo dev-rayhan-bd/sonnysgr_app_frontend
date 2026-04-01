@@ -21,7 +21,7 @@ export const DiscoverScreen: React.FC = () => {
     activeFilter,
     nearbyProducts,
     brandProducts,
-    adBanner,
+    adBanners,
     followedStores,
     isRefreshing,
     greeting,
@@ -29,6 +29,8 @@ export const DiscoverScreen: React.FC = () => {
     handleFilterChange,
     toggleWishlist,
     toggleFollow,
+    toggleBrandWishlist,
+    toggleStoreWishlist,
     handleRefresh,
   } = useDiscover();
 
@@ -83,21 +85,23 @@ export const DiscoverScreen: React.FC = () => {
             onSeeAll={() => console.log('see all brands')}
             onBrandPress={onBrandPress}
             onBuyPress={onBuyBrand}
+                onWishlistToggle={toggleBrandWishlist}
           />
 
           <DiscoverAd
-            ad={adBanner}
+            ads={adBanners}
             onPress={onAdPress}
           />
 
-          <DiscoverStores
-            stores={followedStores}
-            variant="buy"
-            onManagePress={() => console.log('manage stores')}
-            onStorePress={onStorePress}
-            onFollowToggle={toggleFollow}
-            onBuyPress={onBuyStore}
-          />
+<DiscoverStores
+  stores={followedStores}
+  onManagePress={() => console.log('manage stores')}
+  onStorePress={onStorePress}
+  onFollowToggle={toggleFollow}
+  onBuyPress={onBuyStore}
+  // FIX: Add this line to connect the hook to the component
+  onWishlistToggle={toggleStoreWishlist} 
+/>
         </ScrollView>
       </View>
     </BaseContainer>
