@@ -76,15 +76,7 @@ export default function SettingsScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 60 }}
       >
-        {/* ── Grid Section (Image 1) ── */}
-        <View className="px-4 pt-6 flex-row gap-3">
-          <GridItem icon={<Feather name="shopping-bag" size={24} color="#22C55E" />} label="My Orders" />
-          <GridItem icon={<Feather name="heart" size={24} color="#EF4444" />} label="Wishlist" count="14" />
-        </View>
-        <View className="px-4 pt-3 flex-row gap-3">
-          <GridItem icon={<Feather name="bell" size={24} color="#3B82F6" />} label="Wanted Pairs" />
-          <GridItem icon={<Feather name="star" size={24} color="#F59E0B" />} label="My Reviews" />
-        </View>
+
 
         {/* ── PAYMENTS (Image 4) ── */}
         <SectionHeader title="Payments" />

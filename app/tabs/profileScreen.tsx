@@ -34,10 +34,10 @@ const ProfileScreen = () => {
         <View className="relative px-5 pt-3 pb-1">
           <View className="absolute right-5 top-3 flex-row gap-4">
             <TouchableOpacity>
-              <Feather name="share-2" size={20} color="#374151" />
+              <Feather name="share-2" size={26} color="#374151" />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => router.push('/screens/settingsScreen')}>
-              <Feather name="settings" size={20} color="#374151" />
+              <Feather name="settings" size={26} color="#374151" />
             </TouchableOpacity>
           </View>
         </View>
