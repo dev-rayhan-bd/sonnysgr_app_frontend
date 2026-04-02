@@ -12,27 +12,37 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   splash: {
     image: "./assets/images/splash-icon.png",
     resizeMode: "contain",
-
   },
-  ios: { supportsTablet: true },
+  ios: {
+    supportsTablet: true,
+    config: {
+      googleMapsApiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY // 👈 iOS
+    },
+  },
   android: {
-    package: "com.ayonghosh.Testora",
+    package: "com.ali.gosnkr",
     softwareKeyboardLayoutMode: "pan",
+    config: {
+      googleMaps: {
+        apiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY  // 👈 Android
+      },
+    },
   },
   androidStatusBar: {
-    barStyle: "dark-content", // ✅ kept — still valid
+    barStyle: "dark-content",
   },
   web: { bundler: "metro", output: "static" },
   plugins: [
     "expo-router",
     "expo-font",
     "expo-secure-store",
+    "expo-location",
     [
       "expo-navigation-bar",
       {
-        "barStyle": "light-content", 
-      }
-    ]
+        barStyle: "light-content",
+      },
+    ],
   ],
-  experiments: { typedRoutes: true }
+  experiments: { typedRoutes: true },
 });

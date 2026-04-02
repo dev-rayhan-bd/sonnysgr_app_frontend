@@ -47,11 +47,10 @@ export default function SigninScreen() {
         </Text>
       </View>
 
-      {/* ── White body — negative marginTop pulls it up over the dark header ── */}
       <View
         style={{
           flex: 1,
-          backgroundColor: '#F8F9FA',
+          backgroundColor: '#fff',
           borderTopLeftRadius: 32,
           borderTopRightRadius: 32,
           marginTop: -32,

@@ -9,23 +9,23 @@ export interface Brand {
 }
 
 const DEFAULT_BRANDS: Brand[] = [
-  { id: 'nike',           name: 'Nike',          emoji: '✔️' },
-  { id: 'jordan',         name: 'Jordan',        emoji: '🏀' },
-  { id: 'adidas',         name: 'Adidas',        emoji: '⚽' },
-  { id: 'yeezy',          name: 'Yeezy',         emoji: '👕' },
-  { id: 'new_balance',    name: 'New Balance',   emoji: '🏃' },
-  { id: 'puma',           name: 'Puma',          emoji: '🐆' },
-  { id: 'reebok',         name: 'Reebok',        emoji: '💪' },
-  { id: 'converse',       name: 'Converse',      emoji: '⭐' },
-  { id: 'vans',           name: 'Vans',          emoji: '🛹' },
-  { id: 'asics',          name: 'ASICS',         emoji: '👟' },
-  { id: 'salehe',         name: 'Salehe Bembury', emoji: '🍕' },
-  { id: 'on_running',     name: 'On Running',    emoji: '💧' },
-  { id: 'hoka',           name: 'Hoka',          emoji: '🏔️' },
-  { id: 'brooks',         name: 'Brooks',        emoji: '🏃' },
-  { id: 'saucony',        name: 'Saucony',       emoji: '👞' },
-  { id: 'timberland',     name: 'Timberland',    emoji: '🌲' },
-  { id: 'ugg',            name: 'UGG',           emoji: '🐑' },
+  { id: 'nike', name: 'Nike', emoji: '✔️' },
+  { id: 'jordan', name: 'Jordan', emoji: '🏀' },
+  { id: 'adidas', name: 'Adidas', emoji: '⚽' },
+  { id: 'yeezy', name: 'Yeezy', emoji: '👕' },
+  { id: 'new_balance', name: 'New Balance', emoji: '🏃' },
+  { id: 'puma', name: 'Puma', emoji: '🐆' },
+  { id: 'reebok', name: 'Reebok', emoji: '💪' },
+  { id: 'converse', name: 'Converse', emoji: '⭐' },
+  { id: 'vans', name: 'Vans', emoji: '🛹' },
+  { id: 'asics', name: 'ASICS', emoji: '👟' },
+  { id: 'salehe', name: 'Salehe Bembury', emoji: '🍕' },
+  { id: 'on_running', name: 'On Running', emoji: '💧' },
+  { id: 'hoka', name: 'Hoka', emoji: '🏔️' },
+  { id: 'brooks', name: 'Brooks', emoji: '🏃' },
+  { id: 'saucony', name: 'Saucony', emoji: '👞' },
+  { id: 'timberland', name: 'Timberland', emoji: '🌲' },
+  { id: 'ugg', name: 'UGG', emoji: '🐑' },
 ]
 
 export function usePickBrands() {
@@ -77,6 +77,7 @@ export function usePickBrands() {
   return {
     brands: filteredBrands,
     selectedIds,
+    setSelectedIds, // 👈 add this
     search,
     setSearch,
     toggleBrand,

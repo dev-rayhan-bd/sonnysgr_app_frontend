@@ -5,5 +5,5 @@ SplashScreen.preventAutoHideAsync();
 
 export default function Index() {
     SplashScreen.hideAsync();
-    return <Redirect href="/tabs/discoverScreen" />;
+    return <Redirect href="/tabs/profileScreen" />;
 }

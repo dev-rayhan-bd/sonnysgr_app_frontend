@@ -1,7 +1,6 @@
-// app/profilesetup/size.tsx
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native'
-import { router } from 'expo-router'
+import { router, useLocalSearchParams } from 'expo-router'
 import { useSizeSelection } from '@/services/hooks/profilesetup/useSizeSelection'
 import Button from '@/components/shared/Button'
 import GenderTabBar from '@/components/profilesetup/GenderTabBar'
@@ -9,7 +8,10 @@ import SizeGrid from '@/components/profilesetup/SizeGrid'
 import SelectedSizeChips from '@/components/profilesetup/SelectedSizeChips'
 import CustomSizeModal from '@/components/profilesetup/CustomizedModal'
 import BaseContainer from '@/components/shared/BaseContainer'
+
 export default function SizeScreen() {
+    const params = useLocalSearchParams<{ sizes?: string }>()
+
     const {
         activeTab,
         setActiveTab,
@@ -20,28 +22,38 @@ export default function SizeScreen() {
         handleContinue,
         allSelectedSizes,
         removeSelectedSize,
+        setSelectedSizes, // make sure hook exposes this
         loading,
     } = useSizeSelection()
 
     const [modalVisible, setModalVisible] = useState(false)
 
-    const onContinue = () => {
-        handleContinue(() => router.push('/profilesetup/locationScreen'))
-    }
+    // Preselect sizes from params
+    useEffect(() => {
+        if (params.sizes) {
+            const paramSizes = params.sizes.split(',')
+      setSelectedSizes(paramSizes as any)
+        }
+    }, [params.sizes, setSelectedSizes])
 
-    const hasSelection = allSelectedSizes.length > 0
+    const onContinue = () => {
+        if (params.sizes) {
+            // Came from profile edit → save then go back
+            handleContinue(() => router.back())
+        } else {
+            // Came from onboarding → go to next screen
+            handleContinue(() => router.push('/profilesetup/locationScreen'))
+        }
+    }
 
     return (
         <BaseContainer backgroundColor="#fff" scrollable>
-
-            {/* Scrollable body */}
             <ScrollView
                 style={styles.body}
                 contentContainerStyle={styles.scrollContent}
                 showsVerticalScrollIndicator={false}
                 keyboardShouldPersistTaps="handled"
             >
-
                 <Text style={styles.eyebrow}>Personalize</Text>
                 <Text style={styles.heading}>What's your{'\n'}size?</Text>
                 <Text style={styles.subheading}>
@@ -62,10 +74,8 @@ export default function SizeScreen() {
                     selectedSizes={allSelectedSizes}
                     onRemove={removeSelectedSize}
                 />
-
             </ScrollView>
 
-            {/* Sticky footer */}
             <View style={styles.footer}>
                 <Button
                     text={loading ? 'Saving' : 'Continue'}
@@ -80,18 +90,18 @@ export default function SizeScreen() {
                     opacity={loading ? 0.7 : 1}
                     style={{ flex: 0, alignSelf: 'stretch' }}
                 />
-
-                <TouchableOpacity
-                    style={styles.skipBtn}
-                    onPress={() => router.push('/')}
-                    activeOpacity={0.7}
-                    disabled={loading}
-                >
-                    <Text style={styles.skipBtnText}>Skip for now</Text>
-                </TouchableOpacity>
+                {!params.sizes && (
+                    <TouchableOpacity
+                        style={styles.skipBtn}
+                        onPress={() => router.push('/')}
+                        activeOpacity={0.7}
+                        disabled={loading}
+                    >
+                        <Text style={styles.skipBtnText}>Skip for now</Text>
+                    </TouchableOpacity>
+                )}
             </View>
 
-            {/* Custom size modal */}
             <CustomSizeModal
                 visible={modalVisible}
                 activeTab={activeTab}

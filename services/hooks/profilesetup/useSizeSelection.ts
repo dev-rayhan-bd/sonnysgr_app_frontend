@@ -107,6 +107,7 @@ export function useSizeSelection() {
     setActiveTab,
     currentConfig,
     currentSelected,
+    setSelectedSizes,
     selectSize,
     addCustomSize,
     handleContinue,

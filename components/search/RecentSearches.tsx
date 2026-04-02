@@ -80,7 +80,7 @@ const RecentSearches = ({
                                 letterSpacing: -0.1,
                             }}
                         >
-                            {term}
+                            {`  ${term}`}
                         </Text>
                     </TouchableOpacity>
 

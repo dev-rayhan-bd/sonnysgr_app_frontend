@@ -21,7 +21,7 @@
         "foregroundImage": "./assets/images/android-icon-foreground.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.ayonghosh.GOSNKR"
+      "package": "com.ali.gosnkr"
     },
     "web": {
       "bundler": "metro",

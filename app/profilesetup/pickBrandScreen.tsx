@@ -1,23 +1,21 @@
-// app/profilesetup/pickBrandsScreen.tsx
-import {
-    View,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    StyleSheet,
-    ScrollView,
-} from 'react-native'
-import { router } from 'expo-router'
+import React from 'react'
+import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native'
+import { useRouter, useLocalSearchParams } from 'expo-router'
 import { usePickBrands } from '@/services/hooks/profilesetup/usePickBrands'
 import BrandCard from '@/components/profilesetup/BrandCard'
 import Button from '@/components/shared/Button'
 import BaseContainer from '@/components/shared/BaseContainer'
+
 const NUM_COLUMNS = 3
 
 export default function PickBrandsScreen() {
+    const router = useRouter()
+    const params = useLocalSearchParams<{ brands?: string }>()
+
     const {
         brands,
         selectedIds,
+        setSelectedIds,
         search,
         setSearch,
         toggleBrand,
@@ -26,11 +24,24 @@ export default function PickBrandsScreen() {
         selectedCount,
     } = usePickBrands()
 
+    // Preselect brands from params
+    React.useEffect(() => {
+        if (params.brands) {
+            const paramIds = params.brands.split(',')
+            setSelectedIds(new Set(paramIds))
+        }
+    }, [params.brands, setSelectedIds])
+
     const onContinue = () => {
-        handleContinue(() => router.push('/tabs/discoverScreen'))
+        if (params.brands) {
+            // Came from profile edit → save then go back
+            handleContinue(() => router.back())
+        } else {
+            // Came from onboarding → go to next screen
+            handleContinue(() => router.push('/tabs/discoverScreen'))
+        }
     }
 
-    // Chunk brands into rows of 3
     const rows: typeof brands[] = []
     for (let i = 0; i < brands.length; i += NUM_COLUMNS) {
         rows.push(brands.slice(i, i + NUM_COLUMNS))
@@ -39,20 +50,18 @@ export default function PickBrandsScreen() {
     return (
         <BaseContainer backgroundColor="#fff" scrollable>
             <View className="flex-1 justify-center px-6 pt-20">
-                {/* Header */}
-                <View style={styles.header}>
-                    <Text style={styles.heading}>Pick your brands</Text>
-                    <Text style={styles.subheading}>
+                <View className="mb-5">
+                    <Text className="text-3xl font-extrabold text-gray-900 mb-1">Pick your brands</Text>
+                    <Text className="text-sm text-gray-500 leading-5">
                         See drops and restocks from the brands you actually wear.
                     </Text>
                 </View>
 
-                {/* Search + selected badge */}
-                <View style={styles.searchRow}>
-                    <View style={styles.searchBox}>
-                        <Text style={styles.searchIcon}>🔍</Text>
+                <View className="flex-row items-center gap-2 mb-4">
+                    <View className="flex-1 flex-row items-center bg-gray-100 rounded-xl px-3 py-2 border border-gray-200">
+                        <Text className="text-sm mr-2">🔍</Text>
                         <TextInput
-                            style={styles.searchInput}
+                            className="flex-1 text-sm text-gray-900 p-0"
                             placeholder="Search brands..."
                             placeholderTextColor="#9CA3AF"
                             value={search}
@@ -61,16 +70,15 @@ export default function PickBrandsScreen() {
                         />
                     </View>
                     {selectedCount > 0 && (
-                        <View style={styles.selectedBadge}>
-                            <Text style={styles.selectedBadgeText}>{selectedCount} selected</Text>
+                        <View className="bg-gray-900 rounded-full px-3 py-1">
+                            <Text className="text-xs font-bold text-white">{selectedCount} selected</Text>
                         </View>
                     )}
                 </View>
 
-                {/* Brand grid */}
-                <View style={styles.grid}>
+                <ScrollView className="mb-4">
                     {rows.map((row, rowIndex) => (
-                        <View key={rowIndex} style={styles.row}>
+                        <View key={rowIndex} className="flex-row gap-2 mb-2">
                             {row.map(brand => (
                                 <BrandCard
                                     key={brand.id}
@@ -79,28 +87,24 @@ export default function PickBrandsScreen() {
                                     onPress={toggleBrand}
                                 />
                             ))}
-                            {/* Fill empty cells in last row */}
                             {row.length < NUM_COLUMNS &&
                                 Array.from({ length: NUM_COLUMNS - row.length }).map((_, i) => (
-                                    <View key={`empty-${i}`} style={styles.emptyCell} />
+                                    <View key={`empty-${i}`} className="flex-1" />
                                 ))}
                         </View>
                     ))}
 
-                    {/* More brands button */}
-                    <View style={styles.row}>
-                        <TouchableOpacity style={styles.moreBrandsBtn} activeOpacity={0.7}>
-                            <Text style={styles.moreBrandsIcon}>+</Text>
-                            <Text style={styles.moreBrandsText}>More brands</Text>
+                    <View className="flex-row gap-2 mb-2">
+                        <TouchableOpacity className="flex-1 aspect-square rounded-xl border border-dashed border-gray-300 bg-gray-100 items-center justify-center gap-1">
+                            <Text className="text-lg text-gray-500 font-light">+</Text>
+                            <Text className="text-[10px] font-semibold text-gray-500 text-center">More brands</Text>
                         </TouchableOpacity>
-                        <View style={styles.emptyCell} />
-                        <View style={styles.emptyCell} />
+                        <View className="flex-1" />
+                        <View className="flex-1" />
                     </View>
-                </View>
+                </ScrollView>
 
-
-                {/* Sticky footer */}
-                <View style={styles.footer}>
+                <View className="px-5 pb-7 pt-3 items-center gap-2">
                     <Button
                         text={loading ? 'Saving...' : 'Continue'}
                         onPress={onContinue}
@@ -114,17 +118,17 @@ export default function PickBrandsScreen() {
                         opacity={selectedCount === 0 || loading ? 0.5 : 1}
                         style={{ flex: 0, alignSelf: 'stretch' }}
                     />
-
-                    <TouchableOpacity
-                        style={styles.skipBtn}
-                        onPress={() => router.push('/')}
-                        activeOpacity={0.7}
-                        disabled={loading}
-                    >
-                        <Text style={styles.skipText}>Skip for now</Text>
-                    </TouchableOpacity>
-
-                    <Text style={styles.hint}>
+                    {!params.brands && (
+                        <TouchableOpacity
+                            className="py-1"
+                            onPress={() => router.push('/')}
+                            activeOpacity={0.7}
+                            disabled={loading}
+                        >
+                            <Text className="text-xs font-medium text-gray-400">Skip for now</Text>
+                        </TouchableOpacity>
+                    )}
+                    <Text className="text-[11px] text-gray-300 text-center">
                         You can change this anytime in Settings
                     </Text>
                 </View>
@@ -132,135 +136,3 @@ export default function PickBrandsScreen() {
         </BaseContainer>
     )
 }
-
-const styles = StyleSheet.create({
-    root: {
-        flex: 1,
-        backgroundColor: '#FFFFFF',
-    },
-    scroll: {
-        flex: 1,
-    },
-    scrollContent: {
-        paddingHorizontal: 16,
-        paddingTop: 28,
-        paddingBottom: 16,
-    },
-
-    // Header
-    header: {
-        marginBottom: 20,
-    },
-    heading: {
-        fontSize: 28,
-        fontWeight: '900',
-        color: '#111827',
-        marginBottom: 6,
-    },
-    subheading: {
-        fontSize: 14,
-        color: '#6B7280',
-        lineHeight: 20,
-    },
-
-    // Search
-    searchRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 10,
-        marginBottom: 16,
-    },
-    searchBox: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#F9FAFB',
-        borderRadius: 12,
-        paddingHorizontal: 12,
-        paddingVertical: 10,
-        gap: 8,
-        borderWidth: 1,
-        borderColor: '#F3F4F6',
-    },
-    searchIcon: {
-        fontSize: 14,
-    },
-    searchInput: {
-        flex: 1,
-        fontSize: 14,
-        color: '#111827',
-        padding: 0,
-    },
-    selectedBadge: {
-        backgroundColor: '#111827',
-        borderRadius: 20,
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-    },
-    selectedBadgeText: {
-        fontSize: 12,
-        fontWeight: '700',
-        color: '#FFFFFF',
-    },
-
-    // Grid
-    grid: {
-        gap: 10,
-    },
-    row: {
-        flexDirection: 'row',
-        gap: 10,
-    },
-    emptyCell: {
-        flex: 1,
-    },
-
-    // More brands
-    moreBrandsBtn: {
-        flex: 1,
-        aspectRatio: 1,
-        borderRadius: 14,
-        backgroundColor: '#F9FAFB',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 4,
-        borderWidth: 1.5,
-        borderColor: '#E5E7EB',
-        borderStyle: 'dashed',
-    },
-    moreBrandsIcon: {
-        fontSize: 22,
-        color: '#6B7280',
-        fontWeight: '300',
-    },
-    moreBrandsText: {
-        fontSize: 10,
-        fontWeight: '600',
-        color: '#6B7280',
-        textAlign: 'center',
-    },
-
-    // Footer
-    footer: {
-        paddingHorizontal: 20,
-        paddingBottom: 28,
-        paddingTop: 12,
-  
-        backgroundColor: '#FFFFFF',
-        alignItems: 'center',
-        gap: 8,
-    },
-    skipBtn: {
-        paddingVertical: 4,
-    },
-    skipText: {
-        fontSize: 13,
-        color: '#9CA3AF',
-        fontWeight: '500',
-    },
-    hint: {
-        fontSize: 11,
-        color: '#D1D5DB',
-        textAlign: 'center',
-    },
-})
