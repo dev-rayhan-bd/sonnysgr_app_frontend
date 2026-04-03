@@ -2,6 +2,7 @@
 import React from 'react'
 import { View, Text, TouchableOpacity } from 'react-native'
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons'
+import { useRouter } from 'expo-router' // Added router
 import OrderStatusBadge from './OrderStatusBadge'
 import type { Order } from '@/services/hooks/profile/useOrders'
 
@@ -16,31 +17,31 @@ const TileIcon: React.FC<{ status: Order['status'] }> = ({ status }) => {
     switch (status) {
         case 'Completed':
             return (
-                <View className="w-6 h-6 rounded-full bg-green-500 items-center justify-center">
+                <View className="w-6 h-6 rounded-full bg-green-500 items-center justify-center border-2 border-white">
                     <Feather name="check" size={13} color="#fff" />
                 </View>
             )
         case 'Pick Up Ready':
             return (
-                <View className="w-6 h-6 rounded-full bg-blue-500 items-center justify-center">
+                <View className="w-6 h-6 rounded-full bg-blue-500 items-center justify-center border-2 border-white">
                     <Feather name="circle" size={10} color="#fff" />
                 </View>
             )
         case 'On Hold':
             return (
-                <View className="w-6 h-6 rounded-full bg-yellow-400 items-center justify-center">
+                <View className="w-6 h-6 rounded-full bg-yellow-400 items-center justify-center border-2 border-white">
                     <Feather name="pause" size={12} color="#fff" />
                 </View>
             )
         case 'Cancelled':
             return (
-                <View className="w-6 h-6 rounded-full bg-red-500 items-center justify-center">
+                <View className="w-6 h-6 rounded-full bg-red-500 items-center justify-center border-2 border-white">
                     <Feather name="x" size={13} color="#fff" />
                 </View>
             )
         default:
             return (
-                <View className="w-6 h-6 rounded-full bg-blue-400 items-center justify-center">
+                <View className="w-6 h-6 rounded-full bg-blue-400 items-center justify-center border-2 border-white">
                     <Feather name="activity" size={12} color="#fff" />
                 </View>
             )
@@ -50,10 +51,19 @@ const TileIcon: React.FC<{ status: Order['status'] }> = ({ status }) => {
 // ─── Component ────────────────────────────────────────────────────────────────
 
 const OrderCard: React.FC<OrderCardProps> = ({ order, onPress }) => {
+    const router = useRouter();
+
+    const handleReviewPress = (e: any) => {
+        // Stop propagation so the main card onPress doesn't fire
+        e.stopPropagation();
+        router.push("/screens/settings/leaveReviewScreen"); 
+    };
+
     return (
         <TouchableOpacity
             onPress={() => onPress(order.id)}
             activeOpacity={0.75}
+            className="mb-2 bg-white"
         >
             {/* Main row */}
             <View className="flex-row items-center px-4 py-3.5 gap-3.5">
@@ -97,11 +107,24 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onPress }) => {
 
             {/* Pickup deadline banner */}
             {order.pickupDeadline && (
-                <View className="mx-4 mb-2 px-3 py-2 bg-red-50 rounded-xl flex-row items-center gap-2">
+                <View className="mx-4 mb-3 px-3 py-2 bg-red-50 rounded-xl flex-row items-center gap-2">
                     <Feather name="clock" size={12} color="#EF4444" />
                     <Text className="text-xs font-semibold text-red-500">
                         {order.pickupDeadline}
                     </Text>
+                </View>
+            )}
+
+            {/* Leave a Review Button - Only visible when Completed */}
+            {order.status === 'Completed' && (
+                <View className="mx-4 mb-3">
+                    <TouchableOpacity 
+                        onPress={handleReviewPress}
+                        className="w-full py-2.5 rounded-xl border border-gray-200 flex-row items-center justify-center gap-2"
+                    >
+                        <Feather name="star" size={14} color="#374151" />
+                        <Text className="text-xs font-bold text-gray-700">Leave a Review</Text>
+                    </TouchableOpacity>
                 </View>
             )}
         </TouchableOpacity>

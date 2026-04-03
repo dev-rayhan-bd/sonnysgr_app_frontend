@@ -4,7 +4,6 @@ import {
   View,
   Text,
   ScrollView,
-  SafeAreaView,
   TouchableOpacity,
 } from 'react-native'
 import { Feather } from '@expo/vector-icons'

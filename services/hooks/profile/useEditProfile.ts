@@ -1,12 +1,21 @@
-// hooks/profile/useEditProfile.ts
 import { useState, useCallback } from 'react'
 import Toast from 'react-native-toast-message'
+
+export interface PrivacySettings {
+  profileVisibility: boolean
+  wishlist: boolean
+  purchaseHistory: boolean
+  lockerCollection: boolean
+  vipStatus: boolean
+  activity: boolean
+}
 
 export interface EditProfileForm {
   username: string
   fullName: string
   email: string
   bio: string
+  privacy: PrivacySettings
 }
 
 export interface EditProfileErrors {
@@ -21,6 +30,14 @@ const INITIAL_FORM: EditProfileForm = {
   fullName: 'Sonny Garcia',
   email: 'sonny@example.com',
   bio: '',
+  privacy: {
+    profileVisibility: true,
+    wishlist: true,
+    purchaseHistory: false,
+    lockerCollection: true,
+    vipStatus: true,
+    activity: false,
+  }
 }
 
 export const useEditProfile = () => {
@@ -29,7 +46,7 @@ export const useEditProfile = () => {
   const [loading, setLoading] = useState(false)
 
   const updateField = useCallback(
-    (field: keyof EditProfileForm, value: string) => {
+    (field: keyof Omit<EditProfileForm, 'privacy'>, value: string) => {
       setForm(prev => ({ ...prev, [field]: value }))
       if (errors[field]) {
         setErrors(prev => ({ ...prev, [field]: undefined }))
@@ -37,6 +54,28 @@ export const useEditProfile = () => {
     },
     [errors]
   )
+
+const updatePrivacy = useCallback((field: keyof PrivacySettings, label: string) => {
+    setForm(prev => {
+      const newValue = !prev.privacy[field];
+      Toast.show({
+        type: 'success',
+        text1: `${label} Updated`,
+        text2: `Setting changed to ${newValue ? 'Public' : 'Private'}`,
+        position: 'top', // Bottom is usually better for small toggles
+        bottomOffset: 100,
+        visibilityTime: 2000,
+      });
+
+      return {
+        ...prev,
+        privacy: {
+          ...prev.privacy,
+          [field]: newValue
+        }
+      };
+    });
+  }, []);
 
   const validate = (): boolean => {
     const newErrors: EditProfileErrors = {}
@@ -71,7 +110,6 @@ export const useEditProfile = () => {
 
       try {
         setLoading(true)
-        // TODO: replace with real API call
         await new Promise(res => setTimeout(res, 800))
 
         Toast.show({
@@ -99,7 +137,6 @@ export const useEditProfile = () => {
   )
 
   const handleChangePhoto = useCallback(() => {
-    // TODO: integrate expo-image-picker
     console.log('Change profile photo')
   }, [])
 
@@ -108,6 +145,7 @@ export const useEditProfile = () => {
     errors,
     loading,
     updateField,
+    updatePrivacy,
     handleSave,
     handleChangePhoto,
   }
