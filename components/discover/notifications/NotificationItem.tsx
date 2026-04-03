@@ -2,19 +2,17 @@
 import React from 'react'
 import { View, Text, TouchableOpacity } from 'react-native'
 import { Feather, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
 import type { Notification } from '@/services/hooks/discover/useNotifications'
 
 interface NotificationItemProps {
   item: Notification
-  onPress: (id: string) => void
+  onPress?: (id: string) => void
 }
 
 // ─── Icon by type ─────────────────────────────────────────────────────────────
 
-const NotifIcon: React.FC<{ icon: Notification['icon']; read: boolean }> = ({
-  icon,
-  read,
-}) => {
+const NotifIcon: React.FC<{ icon: Notification['icon']; read: boolean }> = ({ icon, read }) => {
   const bg = read ? 'bg-gray-100' : 'bg-green-50'
 
   const renderIcon = () => {
@@ -39,20 +37,49 @@ const NotifIcon: React.FC<{ icon: Notification['icon']; read: boolean }> = ({
   )
 }
 
+// ─── Routing logic ────────────────────────────────────────────────────────────
+//
+//  icon === 'restock'  → /notifications/restock/[id]
+//  icon === 'store'    → /notifications/offer/[id]
+//  everything else     → generic handler / onPress callback
+//
+const useNotificationRoute = () => {
+  const router = useRouter()
+
+  return (item: Notification) => {
+    switch (item.icon) {
+      case 'restock':
+        router.push(`/screens/discover/restock/[id]`)
+        break
+      case 'store':
+        router.push(`/screens/discover/offer/[id]`)
+        break
+      default:
+        // fallback — caller's onPress or no-op
+        break
+    }
+  }
+}
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 const NotificationItem: React.FC<NotificationItemProps> = ({ item, onPress }) => {
+  const routeToScreen = useNotificationRoute()
+
+  const handlePress = () => {
+    routeToScreen(item)
+    onPress?.(item.id)
+  }
+
   return (
     <TouchableOpacity
-      onPress={() => onPress(item.id)}
+      onPress={handlePress}
       activeOpacity={0.7}
       className="flex-row items-center px-4 py-3.5 gap-3"
     >
       {/* Unread dot */}
       <View className="w-2 items-center">
-        {!item.read && (
-          <View className="w-2 h-2 rounded-full bg-green-500" />
-        )}
+        {!item.read && <View className="w-2 h-2 rounded-full bg-green-500" />}
       </View>
 
       {/* Icon */}
