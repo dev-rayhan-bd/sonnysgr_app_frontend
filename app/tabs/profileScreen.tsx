@@ -86,7 +86,7 @@ const ProfileScreen = () => {
             wantedPairs={profile.wantedPairs}
             reviewsCount={profile.reviewsCount}
             onOrders={() => router.push("/screens/profile/orderScreen")}
-            onWishlist={() => console.log('Wishlist')}
+            onWishlist={() => router.push("/screens/profile/wishlistScreen")}
             onWantedPairs={() => console.log('Wanted Pairs')}
             onReviews={() => console.log('My Reviews')}
           />
