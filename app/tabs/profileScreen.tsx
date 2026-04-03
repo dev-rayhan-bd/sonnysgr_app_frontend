@@ -87,7 +87,7 @@ const ProfileScreen = () => {
             reviewsCount={profile.reviewsCount}
             onOrders={() => router.push("/screens/profile/orderScreen")}
             onWishlist={() => router.push("/screens/profile/wishlistScreen")}
-            onWantedPairs={() => console.log('Wanted Pairs')}
+            onWantedPairs={() => router.push("/screens/profile/wantedPairScreen")}
             onReviews={() => console.log('My Reviews')}
           />
           <MyLocker
