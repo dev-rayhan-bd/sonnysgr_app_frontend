@@ -31,7 +31,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile, tierColor }) => 
 
         {/* Edit badge - Sized at w-8 with overlap and navigation */}
         <TouchableOpacity
-          onPress={() => router.push('/screens/editProfileScreen' )}
+          onPress={() => router.push('/screens/profilesetup/editProfileScreen' )}
           className="absolute -bottom-1 -right-1 w-8 h-8 bg-white rounded-full border border-gray-200 items-center justify-center shadow-sm"
           style={{ elevation: 3 }}
         >

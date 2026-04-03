@@ -124,7 +124,7 @@ const EditProfileScreen = () => {
           </Text>
 
           <TouchableOpacity
-            onPress={() => router.push('/screens/changePasswordScreen')}
+            onPress={() => router.push('/screens/profilesetup/changePasswordScreen')}
             activeOpacity={0.7}
             className="flex-row items-center justify-between bg-gray-50 rounded-2xl px-5 py-5 mb-3"
           >

@@ -56,7 +56,7 @@ export default function SettingsScreen() {
   return (
     <BaseContainer scrollable backgroundColor='#fff'>
       {/* ── Header ── */}
-      <View className="flex-row items-center px-5 py-4 pt-12 border-b border-gray-50 relative">
+      <View className="flex-row items-center px-5 py-4 pt-12  relative">
         <TouchableOpacity 
           onPress={() => router.back()} 
           className="z-10 p-1"

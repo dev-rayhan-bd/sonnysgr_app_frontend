@@ -1,6 +1,6 @@
 // screens/ProfileScreen.tsx
 import React from 'react'
-import { View, Text, ScrollView, SafeAreaView, TouchableOpacity } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native'
 import { Feather } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
 import { useProfile } from '@/services/hooks/profile/useProfile'
@@ -13,6 +13,7 @@ import QuickActions from '@/components/profile/QuickActions'
 import MyLocker from '@/components/profile/MyLocker'
 import ReferralRow from '@/components/profile/ReferralRow'
 import BaseContainer from '@/components/shared/BaseContainer'
+
 const ProfileScreen = () => {
   const router = useRouter()
   const {
@@ -29,40 +30,47 @@ const ProfileScreen = () => {
   } = useProfile()
 
   return (
-    <BaseContainer scrollable backgroundColor='#ffff'>
-      <View className='pt-10 pb-10'>
-        <View className="relative px-5 pt-3 pb-1">
-          <View className="absolute right-5 top-3 flex-row gap-4">
-            <TouchableOpacity>
+    <BaseContainer backgroundColor="#ffff">
+      <View style={{ flex: 1 }}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingHorizontal: 16,
+            paddingBottom: 40,
+            paddingTop: 30,
+          }}
+        >
+          {/* --- MOVED INSIDE: Header Icons Row --- */}
+          <View
+            className="flex-row justify-end gap-4 bg-white mb-2"
+            style={{ zIndex: 10 }}
+          >
+            <TouchableOpacity
+              onPress={() => console.log('Share')}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              style={{ padding: 6 }}
+            >
               <Feather name="share-2" size={26} color="#374151" />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => router.push('/screens/settingsScreen')}>
+
+            <TouchableOpacity
+              onPress={() => router.push('/screens/profilesetup/settingsScreen')}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              style={{ padding: 6 }}
+            >
               <Feather name="settings" size={26} color="#374151" />
             </TouchableOpacity>
           </View>
-        </View>
 
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 40 }}
-        >
-          {/* Avatar · username · tier badge */}
+          {/* --- Rest of Content --- */}
           <ProfileHeader profile={profile} tierColor={tierColor} />
-
-          {/* Drops / Wishlist / Reviews / Size */}
           <ProfileStats stats={profile.stats} />
-
-          {/* My Sizes */}
           <MySizes sizes={profile.sizes} onEdit={editSizes} />
-
-          {/* Favorite Brands */}
           <FavoriteBrands
             brands={profile.favoriteBrands}
             onEdit={editBrands}
             onAdd={addBrand}
           />
-
-          {/* Membership + progress */}
           <MembershipCard
             memberTier={profile.memberTier}
             nextTier={profile.nextTier}
@@ -72,20 +80,16 @@ const ProfileScreen = () => {
             tierColor={tierColor}
             onViewBenefits={viewBenefits}
           />
-
-          {/* 2×2 quick-action grid */}
           <QuickActions
             orders={profile.orders}
             wishlistCount={profile.wishlistCount}
             wantedPairs={profile.wantedPairs}
             reviewsCount={profile.reviewsCount}
-            onOrders={() => console.log('My Orders')}
+            onOrders={() => router.push("/screens/profile/orderScreen")}
             onWishlist={() => console.log('Wishlist')}
             onWantedPairs={() => console.log('Wanted Pairs')}
             onReviews={() => console.log('My Reviews')}
           />
-
-          {/* Locker */}
           <MyLocker
             items={profile.lockerItems}
             lockerCount={profile.lockerCount}
@@ -94,8 +98,6 @@ const ProfileScreen = () => {
             onAddItem={addToLocker}
             onViewAll={() => console.log('View all locker')}
           />
-
-          {/* Referral */}
           <ReferralRow
             referralCode={profile.referralCode}
             onPress={() => console.log('Referral tapped')}

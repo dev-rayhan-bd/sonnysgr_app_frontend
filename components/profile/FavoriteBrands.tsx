@@ -49,13 +49,7 @@ const FavoriteBrands: React.FC<FavoriteBrandsProps> = ({ brands, onEdit, onAdd }
         </View>
       ))}
 
-      {/* Add Button - Scaled to match the brand circles */}
-      <TouchableOpacity
-        onPress={onAdd}
-        className="w-14 h-14 rounded-full border-2 border-dashed border-gray-200 items-center justify-center bg-gray-50/50"
-      >
-        <Feather name="plus" size={20} color="#9CA3AF" />
-      </TouchableOpacity>
+
     </View>
   </View>
 )

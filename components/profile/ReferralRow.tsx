@@ -9,6 +9,7 @@ interface ReferralRowProps {
 }
 
 const ReferralRow: React.FC<ReferralRowProps> = ({ referralCode, onPress }) => (
+  <View className='pb-6'>
   <TouchableOpacity
     onPress={onPress}
     activeOpacity={0.8}
@@ -40,6 +41,7 @@ const ReferralRow: React.FC<ReferralRowProps> = ({ referralCode, onPress }) => (
       <Feather name="chevron-right" size={20} color="#6B7280" />
     </View>
   </TouchableOpacity>
+  </View>
 )
 
 export default ReferralRow

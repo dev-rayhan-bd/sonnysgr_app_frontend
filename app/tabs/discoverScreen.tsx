@@ -47,7 +47,6 @@ export const DiscoverScreen: React.FC = () => {
         <View>
           <DiscoverHeader
             notificationCount={2}
-            onNotificationPress={() => console.log('notifications')}
             onAvatarPress={() => console.log('avatar')}
           />
 
