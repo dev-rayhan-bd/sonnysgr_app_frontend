@@ -47,6 +47,7 @@ export const JoinWaitlistScreen: React.FC = () => {
     alertPriceDrop,
     loading,
     joined,
+    selectedStores,
     handleSelectLocation,
     handleTogglePriceDrop,
     handleChooseStores,
@@ -55,20 +56,20 @@ export const JoinWaitlistScreen: React.FC = () => {
   } = useJoinWaitlist(product)
 
   // Dynamic values for the demand bar
-  const demandColorClass = 
-    product.demand === 'high' ? 'bg-red-500' : 
-    product.demand === 'medium' ? 'bg-amber-500' : 'bg-green-500';
-  
-  const demandTextClass = 
-    product.demand === 'high' ? 'text-red-500' : 
-    product.demand === 'medium' ? 'text-amber-500' : 'text-green-500';
+  const demandColorClass =
+    product.demand === 'high' ? 'bg-red-500' :
+      product.demand === 'medium' ? 'bg-amber-500' : 'bg-green-500';
+
+  const demandTextClass =
+    product.demand === 'high' ? 'text-red-500' :
+      product.demand === 'medium' ? 'text-amber-500' : 'text-green-500';
 
   const progressWidth = Math.min((product.waitingCount / 100) * 100, 100);
 
   return (
     <BaseContainer scrollable backgroundColor="#fff">
       <View className="flex-1 pt-10">
-        
+
         {/* Header */}
         <View className="flex-row items-center justify-between px-4 py-3 bg-white border-b border-gray-50">
           <TouchableOpacity onPress={() => router.back()} className="w-9 items-center">
@@ -97,7 +98,7 @@ export const JoinWaitlistScreen: React.FC = () => {
               />
             ) : (
               <View className="w-36 h-24 items-center justify-center mb-3 bg-gray-100 rounded-xl">
-                 <Ionicons name="footsteps-outline" size={48} color="#9ca3af" />
+                <Ionicons name="footsteps-outline" size={48} color="#9ca3af" />
               </View>
             )}
 
@@ -126,9 +127,9 @@ export const JoinWaitlistScreen: React.FC = () => {
               {product.waitingCount} people are waiting for this size
             </Text>
             <View className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
-              <View 
-                className={`h-full rounded-full ${demandColorClass}`} 
-                style={{ width: `${progressWidth}%` }} 
+              <View
+                className={`h-full rounded-full ${demandColorClass}`}
+                style={{ width: `${progressWidth}%` }}
               />
             </View>
             {product.demand === 'high' && (
@@ -139,11 +140,11 @@ export const JoinWaitlistScreen: React.FC = () => {
             )}
           </View>
 
-          {/* Notify Location Selector */}
           <NotifyLocationSelector
             selected={notifyLocation}
             onSelect={handleSelectLocation}
-            onChooseStores={handleChooseStores}
+            onChooseStores={handleChooseStores}   // now passes string[] up
+            selectedStoreIds={selectedStores}
           />
 
           {/* Price Drop Toggle */}

@@ -45,13 +45,10 @@ export function useJoinWaitlist(product: WaitlistProduct, onSuccess?: () => void
     })
   }
 
-  const handleChooseStores = () => {
-    Toast.show({
-      type: 'info',
-      text1: 'Store Selector',
-      text2: 'Pick from nearby stores to watch.',
-    })
-  }
+// Replace the handleChooseStores stub with:
+const handleChooseStores = (storeIds: string[]) => {
+  setSelectedStores(storeIds)
+}
 
   const handleJoinWaitlist = async () => {
     if (joined) {

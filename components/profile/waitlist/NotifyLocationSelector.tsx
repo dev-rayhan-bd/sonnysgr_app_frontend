@@ -1,23 +1,40 @@
 // components/profile/waitlist/NotifyLocationSelector.tsx
-import React from 'react'
+import React, { useState } from 'react'
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 import { NotifyLocation } from '@/services/hooks/profile/useJoinWaitlist'
+import { StorePickerModal } from './StorePickerModal'
 
 interface NotifyLocationSelectorProps {
   selected: NotifyLocation
   onSelect: (loc: NotifyLocation) => void
-  onChooseStores: () => void
+  onChooseStores: (storeIds: string[]) => void
+  selectedStoreIds?: string[]
 }
 
 export const NotifyLocationSelector: React.FC<NotifyLocationSelectorProps> = ({
   selected,
   onSelect,
   onChooseStores,
+  selectedStoreIds = [],
 }) => {
+  const [modalVisible, setModalVisible] = useState(false)
+  const [confirmedStores, setConfirmedStores] = useState<string[]>(selectedStoreIds)
+
+  const handleConfirm = (ids: string[]) => {
+    setConfirmedStores(ids)
+    onChooseStores(ids)
+  }
+
+  const handleSpecificPress = () => {
+    onSelect('specific')
+    setModalVisible(true)
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.label}>Notify me when available at:</Text>
       <View style={styles.options}>
+
         {/* Anywhere nearby */}
         <TouchableOpacity
           style={[styles.option, selected === 'anywhere' && styles.optionSelected]}
@@ -36,21 +53,37 @@ export const NotifyLocationSelector: React.FC<NotifyLocationSelectorProps> = ({
           <Text style={styles.optionSub}>Within 10 miles</Text>
         </TouchableOpacity>
 
-        {/* Specific stores */}
+        {/* Specific stores — entire card opens modal */}
         <TouchableOpacity
           style={[styles.option, selected === 'specific' && styles.optionSelected]}
-          onPress={() => onSelect('specific')}
+          onPress={handleSpecificPress}
           activeOpacity={0.8}
         >
           <Text style={styles.optionIcon}>🏪</Text>
+          {selected === 'specific' && (
+            <View style={styles.checkBadge}>
+              <Text style={styles.checkText}>✓</Text>
+            </View>
+          )}
           <Text style={[styles.optionTitle, selected === 'specific' && styles.optionTitleSelected]}>
             Specific stores only
           </Text>
-          <TouchableOpacity onPress={onChooseStores}>
-            <Text style={styles.chooseStores}>Choose stores →</Text>
-          </TouchableOpacity>
+          {selected === 'specific' && confirmedStores.length > 0 ? (
+            <Text style={styles.storeCount}>
+              {confirmedStores.length} store{confirmedStores.length > 1 ? 's' : ''} selected
+            </Text>
+          ) : (
+            <Text style={styles.optionSub}>Tap to choose</Text>
+          )}
         </TouchableOpacity>
       </View>
+
+      <StorePickerModal
+        visible={modalVisible}
+        selectedStores={confirmedStores}
+        onConfirm={handleConfirm}
+        onClose={() => setModalVisible(false)}
+      />
     </View>
   )
 }
@@ -118,11 +151,10 @@ const styles = StyleSheet.create({
     color: '#888',
     textAlign: 'center',
   },
-  chooseStores: {
-    fontSize: 11,
+  storeCount: {
+    fontSize: 10,
     color: '#22c55e',
     fontWeight: '600',
     textAlign: 'center',
-    marginTop: 2,
   },
 })

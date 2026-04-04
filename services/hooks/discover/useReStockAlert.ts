@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 
 export interface StoreInfo {
+  id: string
   name: string
   initials: string
   distance: string
@@ -61,6 +62,7 @@ async function fetchRestockAlert(notificationId: string): Promise<RestockAlert> 
     stockLeft: 2,
     viewerCount: 47,
     store: {
+      id: 'store-1',
       name: "Sonny's Kicks",
       initials: 'SK',
       distance: '1.1 mi away',

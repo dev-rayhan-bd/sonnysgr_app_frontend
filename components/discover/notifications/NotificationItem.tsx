@@ -1,4 +1,4 @@
-// components/notifications/NotificationItem.tsx
+// components/discover/notifications/NotificationItem.tsx
 import React from 'react'
 import { View, Text, TouchableOpacity } from 'react-native'
 import { Feather, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
@@ -37,37 +37,38 @@ const NotifIcon: React.FC<{ icon: Notification['icon']; read: boolean }> = ({ ic
   )
 }
 
-// ─── Routing logic ────────────────────────────────────────────────────────────
-//
-//  icon === 'restock'  → /notifications/restock/[id]
-//  icon === 'store'    → /notifications/offer/[id]
-//  everything else     → generic handler / onPress callback
-//
-const useNotificationRoute = () => {
-  const router = useRouter()
-
-  return (item: Notification) => {
-    switch (item.icon) {
-      case 'restock':
-        router.push(`/screens/discover/restock/[id]`)
-        break
-      case 'store':
-        router.push(`/screens/discover/offer/[id]`)
-        break
-      default:
-        // fallback — caller's onPress or no-op
-        break
-    }
-  }
-}
-
 // ─── Component ────────────────────────────────────────────────────────────────
 
 const NotificationItem: React.FC<NotificationItemProps> = ({ item, onPress }) => {
-  const routeToScreen = useNotificationRoute()
+  const router = useRouter()
 
   const handlePress = () => {
-    routeToScreen(item)
+    // ✅ FIX: Pass the actual item.id — NOT a literal string "[id]"
+    // This was the root cause of the blank screen flash.
+    switch (item.icon) {
+      case 'restock':
+        router.push(`/screens/discover/reStockAlertScreen?id=${item.id}`)
+        break
+      case 'store':
+        router.push(`/screens/discover/offerFromStoreScreen?id=${item.id}`)
+        break
+      // In NotificationItem.tsx — add this case inside handlePress switch:
+
+      case 'drop':
+  router.push({
+  pathname: '/screens/discover/setDropReminderScreen',
+  params: {
+    id: item.id,
+    brand: item.brand ?? '',
+    name: item.title,
+    dropTime: item.subtitle ?? '',
+    imageUri: item.imageUri ?? '',
+  },
+})
+        break
+      default:
+        break
+    }
     onPress?.(item.id)
   }
 
@@ -88,9 +89,8 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ item, onPress }) =>
       {/* Text block */}
       <View className="flex-1">
         <Text
-          className={`text-sm leading-snug ${
-            item.read ? 'font-medium text-gray-700' : 'font-bold text-gray-900'
-          }`}
+          className={`text-sm leading-snug ${item.read ? 'font-medium text-gray-700' : 'font-bold text-gray-900'
+            }`}
           numberOfLines={2}
         >
           {item.title}
@@ -101,7 +101,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ item, onPress }) =>
         <Text className="text-[11px] text-gray-400 mt-1">{item.time}</Text>
       </View>
 
-      {/* Chevron */}
+      {/* Chevron — Expo vector icon */}
       <Feather name="chevron-right" size={16} color="#D1D5DB" />
     </TouchableOpacity>
   )

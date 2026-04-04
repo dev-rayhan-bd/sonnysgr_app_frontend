@@ -4,7 +4,7 @@ import { useState, useCallback, useMemo } from 'react'
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export type NotificationCategory = 'All' | 'Restocks' | 'Orders' | 'Drops' | 'Stores'
-export type NotificationGroup    = 'NOW' | 'TODAY' | 'YESTERDAY' | 'THIS WEEK'
+export type NotificationGroup = 'NOW' | 'TODAY' | 'YESTERDAY' | 'THIS WEEK'
 
 export interface Notification {
   id: string
@@ -14,6 +14,9 @@ export interface Notification {
   subtitle: string
   time: string
   read: boolean
+  // ✅ ADD THESE
+  brand?: string
+  imageUri?: string
   icon: 'restock' | 'order' | 'drop' | 'store' | 'system'
 }
 

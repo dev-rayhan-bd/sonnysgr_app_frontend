@@ -31,7 +31,7 @@ const ProfileScreen = () => {
 
   return (
     <BaseContainer backgroundColor="#ffff">
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1 } } className='pb-10 pt-5'>
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
@@ -89,6 +89,8 @@ const ProfileScreen = () => {
             onWishlist={() => router.push("/screens/profile/wishlistScreen")}
             onWantedPairs={() => router.push("/screens/profile/wantedPairScreen")}
             onReviews={() => console.log('My Reviews')}
+            onFollowings={() => router.push('/screens/profile/followingScreen')}
+            onCollections={() => router.push('/')}
           />
           <MyLocker
             items={profile.lockerItems}
