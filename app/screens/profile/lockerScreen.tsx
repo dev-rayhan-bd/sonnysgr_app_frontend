@@ -31,7 +31,7 @@ const AddToLockerButton: React.FC<{ onPress: () => void }> = ({ onPress }) => (
         }}
     >
         <Feather name="plus" size={20} color="#fff" />
-        <Text className="text-base font-black text-white tracking-wide">Add Items</Text>
+        <Text className="text-base font-black text-black tracking-wide">Add Item</Text>
     </TouchableOpacity>
 )
 

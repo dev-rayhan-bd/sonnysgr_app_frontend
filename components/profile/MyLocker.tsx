@@ -91,20 +91,6 @@ const MyLocker: React.FC<MyLockerProps> = ({
           <Feather name="plus" size={28} color="#9CA3AF" />
         </TouchableOpacity>
       </ScrollView>
-
-      {/* Footer */}
-      <View className="px-5 pb-5">
-        <TouchableOpacity 
-          onPress={onViewAll} 
-          activeOpacity={0.7}
-          className="flex-row items-center justify-between mt-1"
-        >
-          <Text className="text-sm font-bold text-gray-400">
-            {lockerCount} items collected
-          </Text>
-          <Feather name="arrow-right" size={16} color="#9CA3AF" />
-        </TouchableOpacity>
-      </View>
     </View>
   );
 };

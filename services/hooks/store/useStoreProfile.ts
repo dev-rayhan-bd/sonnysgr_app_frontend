@@ -27,6 +27,10 @@ export interface StoreProfile {
   followers: number
   posts: number
   distance: string
+
+  latitude: number       // ✅ add this
+  longitude: number      // ✅ add this
+
   isFollowing: boolean
   isVerified: boolean
   isFastPickup: boolean
@@ -59,6 +63,10 @@ const MOCK: StoreProfile = {
   followers: 247,
   posts: 83,
   distance: '1.1 mi',
+
+  latitude: 100.7617,     // Miami example
+  longitude: -80.1918,   // Miami example
+
   isFollowing: false,
   isVerified: true,
   isFastPickup: true,
@@ -73,23 +81,22 @@ const MOCK: StoreProfile = {
   pairsInSize: 83,
   notificationsOn: false,
   products: [
-    { id: 'p1', name: "Air Jordan 4 'Black Cat'", size: 'Size 10.5', price: 220, imageUri: undefined },
-    { id: 'p2', name: "Air Jordan 4 'B'", size: 'Size 10.5', price: 220, badge: 'In Stock', badgeColor: '#22C55E', imageUri: undefined },
+    { id: 'p1', name: "Air Jordan 4 'Black Cat'", size: 'Size 10.5', price: 220 },
+    { id: 'p2', name: "Air Jordan 4 'B'", size: 'Size 10.5', price: 220, badge: 'In Stock', badgeColor: '#22C55E' },
   ],
   reviewScore: 4.8,
   reviewBreakdown: [
     { star: 5, percent: 70 },
     { star: 4, percent: 50 },
-    { star: 3, percent: 6  },
-    { star: 2, percent: 2  },
-    { star: 1, percent: 1  },
+    { star: 3, percent: 6 },
+    { star: 2, percent: 2 },
+    { star: 1, percent: 1 },
   ],
   customerService: 4.9,
   authenticity: 5.0,
   pickupSpeed: 4.7,
   pricing: 4.6,
 }
-
 export function useStoreProfile(storeId?: string) {
   const [store, setStore] = useState<StoreProfile>(MOCK)
   const [activeTag, setActiveTag] = useState<string>('Your Size 10.5')

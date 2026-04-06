@@ -46,15 +46,15 @@ export default function FollowingScreen() {
         <ScrollView showsVerticalScrollIndicator={false}>
           <AlertFilterChips active={activeAlertFilters} onToggle={toggleAlertFilter} />
           <View className="bg-white mx-4 rounded-2xl overflow-hidden shadow-sm">
-{stores.map((s, i) => (
-  <StoreRow
-    key={s.id}
-    store={s}
-    isLast={i === stores.length - 1}
-    onToggleNotif={() => toggleStoreNotification(s.id)}
-  onVisit={() => router.push(`/screens/store/storeProfileScreen?id=${s.id}`)}
-  />
-))}
+            {stores.map((s, i) => (
+              <StoreRow
+                key={s.id}
+                store={s}
+                isLast={i === stores.length - 1}
+                onToggleNotif={() => toggleStoreNotification(s.id)}
+                onVisit={() => router.push(`/screens/store/storeProfileScreen?id=${s.id}`)}
+              />
+            ))}
           </View>
         </ScrollView>
       )}
@@ -65,7 +65,7 @@ export default function FollowingScreen() {
           <View className="flex-row flex-wrap">
             {brands.map(b => (
               <View key={b.id} style={{ width: '50%' }}>
-                <BrandCard brand={b} onPress={() => {}} />
+                <BrandCard brand={b} onPress={() => { }} />
               </View>
             ))}
           </View>

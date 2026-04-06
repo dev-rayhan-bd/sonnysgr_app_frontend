@@ -15,7 +15,6 @@ import StoreProductCard from '@/components/store/StoreProductCard'
 import StoreReviewBar from '@/components/store/StoreReviewBar'
 import StoreScoreGrid from '@/components/store/StoreScoreGrid'
 import Button from '@/components/shared/Button'
-
 import BaseContainer from '@/components/shared/BaseContainer'
 export default function StoreProfileScreen() {
     const router = useRouter()
@@ -27,6 +26,17 @@ export default function StoreProfileScreen() {
         handleSeeAll, handleSeeAllReviews,
     } = useStoreProfile(id)
 
+const openMaps = () => {
+  router.push({
+    pathname: '/tabs/mapScreen',
+    params: {
+      lat: store.latitude.toString(),
+      lng: store.longitude.toString(),
+      name: store.name,
+    },
+  })
+}
+
     const onShare = () =>
         handleShare(async () => {
             await Share.share({ message: `Check out ${store.name} on the app!` })
@@ -34,7 +44,7 @@ export default function StoreProfileScreen() {
 
     return (
         <BaseContainer scrollable backgroundColor='#fff'>
-      <StatusBar barStyle="light-content" />
+            <StatusBar barStyle="light-content" />
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ paddingBottom: 40 }}
@@ -84,8 +94,8 @@ export default function StoreProfileScreen() {
                         <TouchableOpacity
                             onPress={toggleFollow}
                             className={`flex-1 flex-row items-center justify-center gap-2 py-3 rounded-2xl border ${store.isFollowing
-                                    ? 'border-white/30 bg-transparent'
-                                    : 'border-transparent bg-white'
+                                ? 'border-white/30 bg-transparent'
+                                : 'border-transparent bg-white'
                                 }`}
                         >
                             <Ionicons
@@ -104,8 +114,8 @@ export default function StoreProfileScreen() {
                         <TouchableOpacity
                             onPress={toggleNotifications}
                             className={`w-12 h-12 rounded-2xl items-center justify-center border ${store.notificationsOn
-                                    ? 'bg-green-500 border-green-500'
-                                    : 'border-white/30'
+                                ? 'bg-green-500 border-green-500'
+                                : 'border-white/30'
                                 }`}
                         >
                             <Ionicons
@@ -115,7 +125,23 @@ export default function StoreProfileScreen() {
                             />
                         </TouchableOpacity>
                     </View>
+                    <View className="flex-row items-center mt-3">
+                        {/* Left icon */}
+                        <Feather name="map-pin" size={18} color="#22C55E" />
 
+                        {/* Address */}
+                        <Text className="ml-2 text-sm text-gray-200 flex-1">
+                            {store.address}
+                        </Text>
+
+                        {/* Right icon button (same style as notification) */}
+                        <TouchableOpacity
+                            onPress={() => openMaps()}
+                            className="w-10 h-10 rounded-xl items-center justify-center bg-green-500"
+                        >
+                            <Feather name="navigation" size={18} color="#fff" />
+                        </TouchableOpacity>
+                    </View>
                     {/* Trust badges */}
                     <StoreTrustBadges
                         isVerified={store.isVerified}

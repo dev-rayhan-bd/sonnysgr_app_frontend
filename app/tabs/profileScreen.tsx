@@ -90,7 +90,7 @@ const ProfileScreen = () => {
             onWantedPairs={() => router.push("/screens/profile/wantedPairScreen")}
             onReviews={() => console.log('My Reviews')}
             onFollowings={() => router.push('/screens/profile/followingScreen')}
-            onCollections={() => router.push('/')}
+            onCollections={() => router.push('/screens/profile/lockerBrowserScreen')}
           />
           <MyLocker
             items={profile.lockerItems}

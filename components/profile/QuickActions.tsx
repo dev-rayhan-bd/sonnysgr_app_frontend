@@ -78,7 +78,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({
     },
     {
       id: 'collections',
-      label: 'My Collections',
+      label: 'Discover Collections',
       count: collectionsCount,
       icon: <MaterialCommunityIcons name="shoe-sneaker" size={30} color="#EC4899" />,
       onPress: onCollections,
