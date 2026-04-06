@@ -75,7 +75,7 @@ const ReserveForPickupScreen: React.FC = () => {
       text2: `Pick up at ${store?.name} at ${selectedSlot}.`,
       visibilityTime: 4500,
     })
-    router.back()
+    router.push("/screens/order/orderConfirmedScreen")
   }, [selectedSlot, store, router])
 
   if (loading || !product || !store) {

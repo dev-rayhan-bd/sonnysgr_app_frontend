@@ -101,7 +101,7 @@ export const useProfile = () => {
   }, [router, profile.favoriteBrands])
 
   const addBrand = useCallback(() => console.log('Open brand picker'), [])
-  const viewBenefits = useCallback(() => console.log('View benefits'), [])
+  const viewBenefits = useCallback(() => router.push("/screens/profile/vipStatusScreen"), [])
   const addToLocker = useCallback(() => console.log('Add to locker'), [])
 
   return {

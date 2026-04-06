@@ -24,7 +24,7 @@ const RestockActionButtons: React.FC<Props> = ({
       className="bg-gray-900 rounded-xl py-4 flex-row items-center justify-center gap-2"
     >
       <Feather name="shopping-bag" size={16} color="#fff" />
-      <Text className="text-white font-bold text-sm">Buy Now — Secure This Pair →</Text>
+      <Text className="text-white font-bold text-sm">Buy Now — Secure This Pair   <Feather name="shopping-bag" size={16} color="#fff" /></Text>
     </TouchableOpacity>
 
     {/* Hold with Deposit */}
@@ -35,17 +35,9 @@ const RestockActionButtons: React.FC<Props> = ({
     >
       <MaterialCommunityIcons name="lock-outline" size={16} color="#fff" />
       <Text className="text-white font-bold text-sm">Hold with Deposit</Text>
+      <MaterialCommunityIcons name="lock-outline" size={16} color="#fff" />
     </TouchableOpacity>
 
-    {/* Reserve for Pickup */}
-    <TouchableOpacity
-      onPress={onReserve}
-      activeOpacity={0.85}
-      className="bg-green-500 rounded-xl py-4 flex-row items-center justify-center gap-2"
-    >
-      <Feather name="map-pin" size={16} color="#fff" />
-      <Text className="text-white font-bold text-sm">Reserve for Pickup</Text>
-    </TouchableOpacity>
 
     {/* See other stores — text link */}
     <TouchableOpacity onPress={onSeeOtherStores} activeOpacity={0.7} className="items-center py-1">

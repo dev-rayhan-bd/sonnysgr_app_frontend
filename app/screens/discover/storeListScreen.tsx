@@ -223,7 +223,7 @@ const StoreListScreen: React.FC = () => {
   if (loading) {
     return (
       <BaseContainer backgroundColor="#fff">
-        <View className="flex-1 items-center justify-center">
+        <View className="flex-1 items-center justify-center ">
           <ActivityIndicator size="large" color="#22C55E" />
         </View>
       </BaseContainer>

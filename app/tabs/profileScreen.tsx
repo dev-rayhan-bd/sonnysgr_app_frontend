@@ -1,6 +1,5 @@
-// screens/ProfileScreen.tsx
 import React from 'react'
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native'
+import { View, ScrollView, TouchableOpacity } from 'react-native'
 import { Feather } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
 import { useProfile } from '@/services/hooks/profile/useProfile'
@@ -10,6 +9,7 @@ import MySizes from '@/components/profile/MySizes'
 import FavoriteBrands from '@/components/profile/FavoriteBrands'
 import MembershipCard from '@/components/profile/MemberShipCard'
 import QuickActions from '@/components/profile/QuickActions'
+import MySales from '@/components/profile/mysales/MySales'
 import MyLocker from '@/components/profile/MyLocker'
 import ReferralRow from '@/components/profile/ReferralRow'
 import BaseContainer from '@/components/shared/BaseContainer'
@@ -30,8 +30,8 @@ const ProfileScreen = () => {
   } = useProfile()
 
   return (
-    <BaseContainer backgroundColor="#ffff">
-      <View style={{ flex: 1 } } className='pb-10 pt-5'>
+    <BaseContainer backgroundColor="#ffffff">
+      <View style={{ flex: 1 }} className="pb-10">
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
@@ -40,11 +40,8 @@ const ProfileScreen = () => {
             paddingTop: 30,
           }}
         >
-          {/* --- MOVED INSIDE: Header Icons Row --- */}
-          <View
-            className="flex-row justify-end gap-4 bg-white mb-2"
-            style={{ zIndex: 10 }}
-          >
+          {/* Icons row */}
+          <View className="flex-row justify-end gap-4 bg-white mb-2" style={{ zIndex: 10 }}>
             <TouchableOpacity
               onPress={() => console.log('Share')}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
@@ -52,7 +49,6 @@ const ProfileScreen = () => {
             >
               <Feather name="share-2" size={26} color="#374151" />
             </TouchableOpacity>
-
             <TouchableOpacity
               onPress={() => router.push('/screens/profilesetup/settingsScreen')}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
@@ -62,7 +58,6 @@ const ProfileScreen = () => {
             </TouchableOpacity>
           </View>
 
-          {/* --- Rest of Content --- */}
           <ProfileHeader profile={profile} tierColor={tierColor} />
           <ProfileStats stats={profile.stats} />
           <MySizes sizes={profile.sizes} onEdit={editSizes} />
@@ -85,13 +80,19 @@ const ProfileScreen = () => {
             wishlistCount={profile.wishlistCount}
             wantedPairs={profile.wantedPairs}
             reviewsCount={profile.reviewsCount}
-            onOrders={() => router.push("/screens/profile/orderScreen")}
-            onWishlist={() => router.push("/screens/profile/wishlistScreen")}
-            onWantedPairs={() => router.push("/screens/profile/wantedPairScreen")}
+            onOrders={() => router.push('/screens/profile/orderScreen')}
+            onWishlist={() => router.push('/screens/profile/wishlistScreen')}
+            onWantedPairs={() => router.push('/screens/profile/wantedPairScreen')}
             onReviews={() => console.log('My Reviews')}
             onFollowings={() => router.push('/screens/profile/followingScreen')}
             onCollections={() => router.push('/screens/profile/lockerBrowserScreen')}
           />
+
+          {/* My Sales — taps navigate to full screen */}
+          <MySales
+            onSeeAll={() => router.push('/screens/profile/mySalesScreen')}
+          />
+
           <MyLocker
             items={profile.lockerItems}
             lockerCount={profile.lockerCount}
@@ -102,7 +103,7 @@ const ProfileScreen = () => {
           />
           <ReferralRow
             referralCode={profile.referralCode}
-            onPress={() => console.log('Referral tapped')}
+            onPress={() => router.push('/screens/profile/referralScreen')}
           />
         </ScrollView>
       </View>

@@ -26,16 +26,16 @@ export default function StoreProfileScreen() {
         handleSeeAll, handleSeeAllReviews,
     } = useStoreProfile(id)
 
-const openMaps = () => {
-  router.push({
-    pathname: '/tabs/mapScreen',
-    params: {
-      lat: store.latitude.toString(),
-      lng: store.longitude.toString(),
-      name: store.name,
-    },
-  })
-}
+    const openMaps = () => {
+        router.push({
+            pathname: '/tabs/mapScreen',
+            params: {
+                lat: store.latitude.toString(),
+                lng: store.longitude.toString(),
+                name: store.name,
+            },
+        })
+    }
 
     const onShare = () =>
         handleShare(async () => {
@@ -250,7 +250,7 @@ const openMaps = () => {
                     <View className="px-4 pt-4 pb-10">
                         <Button
                             text="Sell to Store"
-                            onPress={() => router.push(`/`)}
+                            onPress={() => router.push(`/screens/store/sellToStoreScreen`)}
                             useGradient
                             gradientColors={['#1a1a1a', '#111827']}
                             borderRadius={16}
@@ -259,7 +259,26 @@ const openMaps = () => {
                             fontWeight="800"
                         />
                     </View>
-
+                    {/* Report Store */}
+                    <View className="px-4 pb-10 pt-2">
+                        <TouchableOpacity
+                            onPress={() =>
+                                router.push({
+                                    pathname: '/screens/store/reportStoreScreen',
+                                    params: {
+                                        storeId: id,
+                                        storeName: store.name,
+                                        storeAddress: store.address,
+                                    },
+                                })
+                            }
+                            activeOpacity={0.7}
+                            className="flex-row items-center justify-center gap-2 py-3"
+                        >
+                            <Feather name="flag" size={14} color="#9CA3AF" />
+                            <Text className="text-sm text-gray-400 font-semibold">Report this store</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </ScrollView>
         </BaseContainer>

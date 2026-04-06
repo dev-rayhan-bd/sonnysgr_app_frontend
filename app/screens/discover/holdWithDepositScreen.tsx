@@ -61,7 +61,7 @@ const HoldWithDepositScreen: React.FC = () => {
       text2: `Your pair is reserved for ${selectedHours} hrs.`,
       visibilityTime: 4500,
     })
-    router.back()
+    router.push("/screens/order/paymentScreen")
   }, [selectedHours, router])
 
   if (loading || !product) {

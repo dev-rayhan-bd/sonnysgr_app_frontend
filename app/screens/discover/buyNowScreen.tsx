@@ -60,7 +60,7 @@ const BuyNowScreen: React.FC = () => {
       text2: `Your ${product?.name} is on its way.`,
       visibilityTime: 4000,
     })
-    router.back()
+    router.push("/screens/order/paymentScreen")
   }, [product, router])
 
   if (loading || !product) {
@@ -138,55 +138,7 @@ const BuyNowScreen: React.FC = () => {
           </View>
         </View>
 
-        {/* ── Payment method ── */}
-        <View className="px-4 mt-6">
-          <Text className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">
-            Payment Method
-          </Text>
-          <View className="gap-2">
-            {PAYMENT_METHODS.map(method => {
-              const selected = selectedPayment === method.id
-              return (
-                <TouchableOpacity
-                  key={method.id}
-                  onPress={() => setSelectedPayment(method.id)}
-                  activeOpacity={0.7}
-                  className={`flex-row items-center gap-3 px-4 py-3.5 rounded-2xl border-2 ${
-                    selected ? 'border-gray-900 bg-gray-50' : 'border-gray-100 bg-white'
-                  }`}
-                >
-                  <View
-                    className={`w-8 h-8 rounded-full items-center justify-center ${
-                      selected ? 'bg-gray-900' : 'bg-gray-100'
-                    }`}
-                  >
-                    <Feather
-                      name={method.icon}
-                      size={15}
-                      color={selected ? '#fff' : '#9CA3AF'}
-                    />
-                  </View>
-                  <Text
-                    className={`flex-1 text-sm font-semibold ${
-                      selected ? 'text-gray-900' : 'text-gray-500'
-                    }`}
-                  >
-                    {method.label}
-                  </Text>
-                  <View
-                    className={`w-5 h-5 rounded-full border-2 items-center justify-center ${
-                      selected ? 'border-gray-900' : 'border-gray-300'
-                    }`}
-                  >
-                    {selected && (
-                      <View className="w-2.5 h-2.5 rounded-full bg-gray-900" />
-                    )}
-                  </View>
-                </TouchableOpacity>
-              )
-            })}
-          </View>
-        </View>
+
 
         {/* ── Order summary ── */}
         <View className="px-4 mt-6">

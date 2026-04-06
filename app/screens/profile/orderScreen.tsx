@@ -14,6 +14,7 @@ import OrderFilterTabs from '@/components/profile/orders/OrderFilterTabs'
 import OrderGroup from '@/components/profile/orders/OrderGroup'
 import OrdersEmptyState from '@/components/profile/orders/OrdersEmptyState'
 import OrderFilterSheet from '@/components/profile/orders/OrderFilterSheet'
+import { router } from 'expo-router'
 
 const OrdersScreen = () => {
   const filter = useOrderFilter()
@@ -21,8 +22,7 @@ const OrdersScreen = () => {
   const { grouped, activeTab, setActiveTab } = useOrders(filter.applied)
 
   const handleOrderPress = (id: string) => {
-    // TODO: navigate to order detail
-    console.log('Order pressed:', id)
+    router.push("/screens/order/orderStatusScreen")
   }
 
   return (

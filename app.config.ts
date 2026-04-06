@@ -24,7 +24,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     softwareKeyboardLayoutMode: "pan",
     config: {
       googleMaps: {
-        apiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY  // 👈 Android
+        apiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY
       },
     },
   },
@@ -37,6 +37,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     "expo-font",
     "expo-secure-store",
     "expo-location",
+    "expo-sharing",
     [
       "expo-navigation-bar",
       {

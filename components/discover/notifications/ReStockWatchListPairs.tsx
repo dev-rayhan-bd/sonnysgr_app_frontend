@@ -65,7 +65,7 @@ const RestockWatchlistPairs: React.FC<Props> = ({ pairs }) => {
               activeOpacity={0.8}
               className="bg-gray-900 rounded-lg px-4 py-2"
             >
-              <Text className="text-white text-xs font-bold">Buy →</Text>
+              <Text className="text-white text-xs font-bold">Buy</Text>
             </TouchableOpacity>
           </View>
         )

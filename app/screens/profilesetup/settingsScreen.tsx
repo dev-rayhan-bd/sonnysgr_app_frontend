@@ -134,7 +134,7 @@ export default function SettingsScreen() {
           <Row
             icon={<Feather name="help-circle" size={20} color="#374151" />}
             label="Help Center"
-            onPress={() => {}}
+            onPress={() => {router.push("/screens/settings/getHelpScreen")}}
           />
           <Divider />
           <Row
