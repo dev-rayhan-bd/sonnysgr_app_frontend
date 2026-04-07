@@ -14,6 +14,7 @@ import DiscoverAd from '@/components/discover/DiscoverAd';
 import DiscoverStores from '@/components/discover/DiscoverStores';
 import BaseContainer from '@/components/shared/BaseContainer';
 import { useDiscover, NearbyProduct, BrandProduct, FollowedStore, AdBanner } from '@/services/hooks/discover/useDiscover';
+import { router } from 'expo-router';
 
 export const DiscoverScreen: React.FC = () => {
   const {
@@ -74,7 +75,7 @@ export const DiscoverScreen: React.FC = () => {
         >
           <DiscoverNearBy
             products={nearbyProducts}
-            onSeeAll={() => console.log('see all nearby')}
+            onSeeAll={() => router.push("/screens/discover/exploreScreen")}
             onProductPress={onProductPress}
             onWishlistToggle={toggleWishlist}
           />

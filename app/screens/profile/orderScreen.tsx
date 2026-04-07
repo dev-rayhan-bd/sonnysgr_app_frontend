@@ -21,10 +21,15 @@ const OrdersScreen = () => {
 
   const { grouped, activeTab, setActiveTab } = useOrders(filter.applied)
 
-  const handleOrderPress = (id: string) => {
-    router.push("/screens/order/orderStatusScreen")
+// In OrdersScreen.tsx — update handleOrderPress
+const handleOrderPress = (id: string) => {
+  const order = grouped.flatMap(g => g.items).find(o => o.id === id)
+  if (order?.status === 'Cancelled') {
+    router.push(`/screens/order/orderDetailsScreen?id=${id}`)
+  } else {
+    router.push(`/screens/order/orderStatusScreen?id=${id}`)
   }
-
+}
   return (
     <BaseContainer scrollable backgroundColor='#fff'>
       <View className='pt-10'>
