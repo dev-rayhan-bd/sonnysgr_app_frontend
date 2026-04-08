@@ -10,6 +10,7 @@ import HomeActions from '@/components/retailer/home/HomeActions';
 import HomeRecentOrders from '@/components/retailer/home/HomeRecentOrders';
 import HomeLiveSync from '@/components/retailer/home/HomeLiveSync';
 import { useHome } from '@/services/hooks/retailer/home/useHome';
+import { router } from 'expo-router';
 export const HomeScreen: React.FC = () => {
     const {
         storeInfo,
@@ -33,7 +34,7 @@ export const HomeScreen: React.FC = () => {
                     <HomeHeader
                         notificationCount={2}
                         avatarLabel="SK"
-                        onBellPress={() => console.log('bell')}
+                        onBellPress={() => router.push("/screens/retailer/home/notifications/notificationsScreen")}
                         onAvatarPress={() => console.log('avatar')}
                     />
                     <HomeStoreInfo

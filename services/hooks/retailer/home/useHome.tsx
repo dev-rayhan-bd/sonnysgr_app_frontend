@@ -57,7 +57,7 @@ export const useHome = () => {
       icon: 'shopping-bag',
       iconColor: '#F97316',
       badgeCount: 5,
-      onPress: () => console.log('orders'),
+      onPress: () =>   router.push("/retailerTabs/orders"),
     },
     {
       id: 'analytics',
@@ -71,7 +71,7 @@ export const useHome = () => {
       label: 'More',
       icon: 'grid',
       iconColor: '#6B7280',
-      onPress: () => console.log('more'),
+      onPress: () => router.push("/screens/retailer/home/more/moreScreen"),
     },
   ];
 
@@ -123,7 +123,7 @@ export const useHome = () => {
   }, []);
 
   const handleViewAlert = useCallback((alert: StockAlert) => {
-    console.log('view alert', alert.id);
+    router.push("/retailerTabs/home");
   }, []);
 
   return {
