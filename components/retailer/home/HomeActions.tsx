@@ -1,12 +1,13 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
 export interface ActionItem {
   id: string;
   label: string;
-  icon: string;
+  icon: any;
   iconColor: string;
+  bgColor: string; // e.g., '#F0FDF4' for green, '#FFFBEB' for yellow
   badgeCount?: number;
   onPress: () => void;
 }
@@ -15,53 +16,91 @@ interface HomeActionsProps {
   actions: ActionItem[];
 }
 
+
+
 const HomeActions: React.FC<HomeActionsProps> = ({ actions }) => {
   return (
-    <View style={{
-      flexDirection: 'row', flexWrap: 'wrap',
-      paddingHorizontal: 14, paddingBottom: 14,
-      backgroundColor: '#fff', gap: 10,
-    }}>
-      {actions.map(action => (
+    <View style={styles.container}>
+      {actions.map((action) => (
         <TouchableOpacity
           key={action.id}
           onPress={action.onPress}
           activeOpacity={0.7}
-          style={{
-            // exactly 2 per row accounting for gap
-            width: '47.5%',
-            backgroundColor: '#fff',
-            borderWidth: 1, borderColor: '#E5E7EB',
-            borderRadius: 16,
-            paddingVertical: 18, paddingHorizontal: 12,
-            alignItems: 'center', gap: 6,
-          }}
+          style={[styles.card, { backgroundColor: action.bgColor }]}
         >
-          {/* Icon + optional badge */}
-          <View style={{ position: 'relative' }}>
-            <Feather name={action.icon as any} size={22} color={action.iconColor} />
-            {action.badgeCount != null && action.badgeCount > 0 && (
-              <View style={{
-                position: 'absolute', top: -6, right: -8,
-                backgroundColor: '#F97316', borderRadius: 10,
-                width: 16, height: 16, alignItems: 'center', justifyContent: 'center',
-              }}>
-                <Text style={{ color: '#fff', fontSize: 9, fontWeight: '700' }}>
-                  {action.badgeCount}
-                </Text>
-              </View>
-            )}
-          </View>
+      
+          {action.badgeCount ? (
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>{action.badgeCount}</Text>
+            </View>
+          ) : null}
 
-          <Text style={{ fontSize: 13, fontWeight: '600', color: '#374151', textAlign: 'center' }}>
-            {action.badgeCount != null
-              ? `${action.label} (${action.badgeCount} new)`
-              : action.label}
+          {/* Icon */}
+          <Feather name={action.icon} size={28} color={action.iconColor} />
+
+          {/* Label */}
+          <Text style={styles.label}>
+            {action.label}
           </Text>
+          
+          {/* Subtext for new items if applicable */}
+          {action.badgeCount ? (
+            <Text style={styles.subLabel}>({action.badgeCount} new)</Text>
+          ) : null}
         </TouchableOpacity>
       ))}
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    padding: 16,
+    justifyContent: 'space-between',
+    rowGap: 12,
+    backgroundColor: '#fff',
+  },
+  card: {
+    width: '48%',
+    height: 120, 
+    borderRadius: 24,
+    padding: 16,
+    alignItems: 'center',    
+    justifyContent: 'center',  
+    position: 'relative',      
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#111',
+    marginTop: 8,
+    textAlign: 'center',
+  },
+  subLabel: {
+    fontSize: 11,
+    color: '#6B7280',
+    fontWeight: '600',
+    marginTop: 2,
+  },
+  badge: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    backgroundColor: '#F59E0B',
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1,
+  },
+  badgeText: {
+    color: '#fff',
+    fontSize: 10,
+    fontWeight: '800',
+  },
+});
 
 export default HomeActions;
