@@ -5,6 +5,7 @@ import { StockAlert } from '@/components/retailer/home/HomeAlert';
 import { ActionItem } from '@/components/retailer/home/HomeActions';
 import { RecentOrder } from '@/components/retailer/home/HomeRecentOrders';
 import { SyncStatus } from '@/components/retailer/home/HomeLiveSync';
+import { router } from 'expo-router';
 export const useHome = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -48,7 +49,7 @@ export const useHome = () => {
       label: 'Add Product',
       icon: 'plus',
       iconColor: '#8B5CF6',
-      onPress: () => console.log('add product'),
+      onPress: () => router.push("/screens/retailer/home/product/AddProductScreen"),
     },
     {
       id: 'orders',

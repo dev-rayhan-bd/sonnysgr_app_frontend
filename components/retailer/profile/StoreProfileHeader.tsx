@@ -1,41 +1,57 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
 
-interface StoreProfileHeaderProps {
-  onSave?: () => void;
-  isSaving?: boolean;
-}
-
-const StoreProfileHeader: React.FC<StoreProfileHeaderProps> = ({
-  onSave,
-  isSaving = false,
-}) => {
+// Removed onSave and isSaving props as they are no longer needed here
+const StoreProfileHeader: React.FC = () => {
   return (
-    <View style={{
-      flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-      backgroundColor: '#fff',
-      paddingHorizontal: 16, paddingTop: 16, paddingBottom: 10,
-    }}>
-      <TouchableOpacity onPress={() => router.back()}>
-        <Feather name="chevron-left" size={24} color="#111" />
+    <View style={styles.headerContainer}>
+      <TouchableOpacity 
+        onPress={() => router.back()} 
+        style={styles.backButton}
+        activeOpacity={0.7}
+      >
+        <Feather name="chevron-left" size={26} color="#111" />
       </TouchableOpacity>
 
-      <Text style={{ fontSize: 17, fontWeight: '700', color: '#111' }}>
+      <Text style={styles.headerTitle}>
         Store Profile
       </Text>
 
-      <TouchableOpacity onPress={onSave} disabled={isSaving}>
-        <Text style={{
-          fontSize: 15, fontWeight: '700',
-          color: isSaving ? '#9CA3AF' : '#00C853',
-        }}>
-          {isSaving ? 'Saving…' : 'Save'}
-        </Text>
-      </TouchableOpacity>
+      {/* 
+         Empty View on the right to keep the title perfectly centered 
+         using the "space-between" layout 
+      */}
+      <View style={styles.placeholder} />
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#fff',
+    paddingHorizontal: 16,
+    paddingBottom: 12,
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+  },
+  headerTitle: {
+    fontSize: 17,
+    fontWeight: '700',
+    color: '#111',
+    letterSpacing: -0.3,
+  },
+  placeholder: {
+    width: 40, // Matches backButton width to ensure center alignment
+  },
+});
 
 export default StoreProfileHeader;

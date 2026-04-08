@@ -28,7 +28,7 @@ export const StoreProfileScreen: React.FC = () => {
       <View style={styles.container}>
 
         {/* ── Fixed header ── */}
-        <StoreProfileHeader onSave={handleSave} isSaving={isSaving} />
+        <StoreProfileHeader/>
 
         {/* ── Scrollable body ── */}
         <ScrollView

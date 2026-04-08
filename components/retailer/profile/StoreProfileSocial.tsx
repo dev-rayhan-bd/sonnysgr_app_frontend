@@ -11,7 +11,7 @@ const SECTION_LABEL_STYLE = {
   fontSize: 10, fontWeight: '700' as const,
   color: '#9CA3AF', letterSpacing: 0.8,
   paddingHorizontal: 16, paddingTop: 14, paddingBottom: 6,
-  backgroundColor: '#F5F5F5',
+  backgroundColor: '#fff',
 } as const;
 
 const StoreProfileSocial: React.FC<StoreProfileSocialProps> = ({
