@@ -64,7 +64,7 @@ export const useHome = () => {
       label: 'Analytics',
       icon: 'bar-chart-2',
       iconColor: '#3B82F6',
-      onPress: () => console.log('analytics'),
+      onPress: () => router.push("/screens/retailer/home/analytics/analyticsScreen"),
     },
     {
       id: 'more',
