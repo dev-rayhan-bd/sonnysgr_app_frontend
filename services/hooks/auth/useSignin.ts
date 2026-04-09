@@ -35,10 +35,11 @@ export function useSignin() {
 
   const validate = (): boolean => {
     const newErrors: SigninErrors = {}
+    const email = form.email.trim()
 
-    if (!form.email.trim()) {
+    if (!email) {
       newErrors.email = 'Email is required'
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       newErrors.email = 'Enter a valid email address'
     }
 
@@ -56,18 +57,21 @@ export function useSignin() {
    * TEMP role resolver (replace with backend later)
    */
   const resolveRole = (email: string): UserRole => {
-    if (email === 'retailer@gmail.com') return 'retailer'
-    if (email === 'reseller@gmail.com') return 'reseller'
+    const normalizedEmail = email.trim().toLowerCase()
+
+    if (normalizedEmail === 'retailer@gmail.com') return 'retailer'
+    if (normalizedEmail === 'reseller@gmail.com') return 'reseller'
     return 'buyer'
   }
 
   const redirectByRole = (role: UserRole) => {
+    console.log(role)
     switch (role) {
       case 'retailer':
         router.replace('/retailerTabs/home')
         break
       case 'reseller':
-        router.replace('/tabs/discoverScreen')
+        router.replace('/resellerTabs/dashboard')
         break
       case 'buyer':
       default:

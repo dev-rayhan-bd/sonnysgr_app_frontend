@@ -175,7 +175,7 @@ export default function SettingsScreen() {
             icon={<Feather name="log-out" size={20} color="#EF4444" />}
             label="Sign Out"
             destructive
-            onPress={() => console.log('Sign Out')}
+            onPress={() => router.push("/auth/signInScreen")}
           />
           <Divider />
           <Row

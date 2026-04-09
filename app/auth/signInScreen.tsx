@@ -11,10 +11,6 @@ export default function SigninScreen() {
   const { form, errors, loading, updateField, handleSignin, handleFaceID } =
     useSignin()
 
-  const onSuccess = () => {
-    router.replace('/tabs/discoverScreen')
-  }
-
   return (
     <View style={{ flex: 1, backgroundColor: '#111827' }}>
       <StatusBar barStyle="light-content" />
@@ -71,14 +67,13 @@ export default function SigninScreen() {
             </Text>
           </View>
 
-          {/* Form */}
           <SigninForm
             form={form}
             errors={errors}
             loading={loading}
             updateField={updateField}
-            handleSignin={() => handleSignin(onSuccess)}
-            handleFaceID={() => handleFaceID(onSuccess)}
+            handleSignin={handleSignin}
+            handleFaceID={handleFaceID}
             onForgotPassword={() => router.push({
               pathname: '/auth/verifyEmailScreen',
               params: { from: 'forgot-password' },
