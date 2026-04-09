@@ -5,5 +5,5 @@ SplashScreen.preventAutoHideAsync();
 
 export default function Index() {
     SplashScreen.hideAsync();
-    return <Redirect href="/retailerTabs/home" />;
+    return <Redirect href="/resellerTabs/dashboard" />;
 }
