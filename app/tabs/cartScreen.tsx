@@ -84,7 +84,7 @@ const CartScreen = () => {
               Your cart is empty
             </Text>
             <Text className="text-sm text-gray-400 mt-1">
-              Add some sneakers to get started
+              Add some sneakers or clothing to get started
             </Text>
           </View>
         ) : (

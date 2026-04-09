@@ -12,7 +12,7 @@ import GoogleIcon from '@/assets/images/auth/google.svg'
 import AppleIcon from '@/assets/images/auth/apple.svg'
 
 const ACCOUNT_TYPE_OPTIONS = [
-  { label: 'Sneaker Buyer',    value: 'buyer',    subtitle: 'Shop & discover sneakers near me',   icon: <Feather name="shopping-bag" size={18} color="#111827" /> },
+  { label: 'Sneaker Buyer',    value: 'buyer',    subtitle: 'Shop sneakers and clothing near me', icon: <Feather name="shopping-bag" size={18} color="#111827" /> },
   { label: 'Store / Retailer', value: 'seller',   subtitle: 'List my inventory & manage orders',  icon: <Feather name="grid"         size={18} color="#111827" /> },
   { label: 'Trusted Reseller', value: 'reseller', subtitle: 'Sell my inventory to stores',        icon: <Feather name="tag"          size={18} color="#111827" /> },
 ]

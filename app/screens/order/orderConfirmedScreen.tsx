@@ -32,7 +32,7 @@ export default function OrderConfirmedScreen() {
           </View>
           <Text className="text-2xl font-extrabold text-gray-900">Order Confirmed!</Text>
           <Text className="text-sm text-gray-400 mt-1 text-center">
-            Your pair is secured. Get ready to pick it up.
+            Your item is secured. Get ready to pick it up.
           </Text>
           <Text className="text-xs text-green-500 font-bold mt-2">{order.orderNumber}</Text>
         </View>

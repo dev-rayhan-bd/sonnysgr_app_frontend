@@ -3,7 +3,7 @@ import React from "react";
 import { View } from "react-native";
 import { useRouter } from "expo-router";
 
-import { useSearch } from "@/services/hooks/search/useSearch";
+import { SearchResult, useSearch } from "@/services/hooks/search/useSearch";
 import BaseContainer from "@/components/shared/BaseContainer";
 import SearchHeader from "@/components/search/SearchHeader";
 import SearchInput from "@/components/search/SearchInput";
@@ -47,12 +47,8 @@ const SearchScreen = () => {
     isError,
   } = useSearch();
 
-  const handleSelectResult = (item: any) => {
-    if (item.fullName) {
-      router.push("/");
-    } else {
-      router.push("/");
-    }
+  const handleSelectResult = (_item: SearchResult) => {
+    router.push("/");
   };
 
   return (

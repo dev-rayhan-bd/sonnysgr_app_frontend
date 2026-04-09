@@ -1,31 +1,25 @@
-import React from 'react';
+import React from 'react'
 import {
-  View, FlatList, StyleSheet, RefreshControl,
-} from 'react-native';
-
-import BaseContainer from '@/components/shared/BaseContainer';
-import InventoryHeader from '@/components/retailer/inventory/InventoryHeader';
-import InventoryStats from '@/components/retailer/inventory/InventoryStats';
-import InventoryFilter from '@/components/retailer/inventory/InventoryFilter';
-import InventoryCard from '@/components/retailer/inventory/InventoryCard';
+  View,
+  FlatList,
+  RefreshControl,
+  StyleSheet,
+} from 'react-native'
+import BaseContainer from '@/components/shared/BaseContainer'
+import InventoryCard from '@/components/retailer/inventory/InventoryCard'
+import InventoryFilter from '@/components/retailer/inventory/InventoryFilter'
+import InventoryHeader from '@/components/retailer/inventory/InventoryHeader'
+import InventoryStats from '@/components/retailer/inventory/InventoryStats'
 import {
   useInventory,
   InventoryProduct,
-  FilterTab,
-} from '@/services/hooks/retailer/inventory/useInventory';
-
-// Tab display counts — update from real data in production
-const TAB_COUNTS: Record<FilterTab, number> = {
-  All:            83,
-  'In Stock':     71,
-  'Low Stock':    12,
-  'Out of Stock':  5,
-};
+} from '@/services/hooks/retailer/inventory/useInventory'
 
 export const InventoryScreen: React.FC = () => {
   const {
     activeFilter,
     filterTabs,
+    filterCounts,
     summary,
     syncInfo,
     filteredProducts,
@@ -34,7 +28,7 @@ export const InventoryScreen: React.FC = () => {
     handleRefresh,
     handleEditProduct,
     handleProductPress,
-  } = useInventory();
+  } = useInventory()
 
   const renderItem = ({ item }: { item: InventoryProduct }) => (
     <InventoryCard
@@ -42,13 +36,11 @@ export const InventoryScreen: React.FC = () => {
       onPress={handleProductPress}
       onEditPress={handleEditProduct}
     />
-  );
+  )
 
   return (
-    <BaseContainer backgroundColor="#fff" >
+    <BaseContainer backgroundColor="#fff">
       <View style={styles.container}>
-
-        {/* ── Fixed top ── */}
         <View>
           <InventoryHeader
             onSearchPress={() => console.log('search')}
@@ -58,15 +50,14 @@ export const InventoryScreen: React.FC = () => {
           <InventoryFilter
             tabs={filterTabs}
             active={activeFilter}
-            counts={TAB_COUNTS}
+            counts={filterCounts}
             onChange={handleFilterChange}
           />
         </View>
 
-        {/* ── Product list ── */}
         <FlatList
           data={filteredProducts}
-          keyExtractor={item => item.id}
+          keyExtractor={(item) => item.id}
           renderItem={renderItem}
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
@@ -81,18 +72,18 @@ export const InventoryScreen: React.FC = () => {
         />
       </View>
     </BaseContainer>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop:40
+    paddingTop: 40,
   },
   listContent: {
     padding: 12,
     paddingBottom: 32,
   },
-});
+})
 
-export default InventoryScreen;
+export default InventoryScreen

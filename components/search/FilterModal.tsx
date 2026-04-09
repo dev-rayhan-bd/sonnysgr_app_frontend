@@ -1,5 +1,4 @@
-// components/search/FilterModal.tsx
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from 'react'
 import {
   Dimensions,
   Modal,
@@ -8,9 +7,9 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
-} from "react-native";
-import { BlurView } from "expo-blur";
-import { Feather } from "@expo/vector-icons";
+} from 'react-native'
+import { BlurView } from 'expo-blur'
+import { Feather } from '@expo/vector-icons'
 import {
   BRAND_OPTIONS,
   DEFAULT_FILTERS,
@@ -18,34 +17,33 @@ import {
   SIZE_OPTIONS,
   SizeOption,
   STORE_OPTIONS,
-} from "@/services/hooks/search/useSearch";
+} from '@/services/hooks/search/useSearch'
+import { PRODUCT_TYPE_OPTIONS, ProductType } from '@/types/catalog'
 
-const { height: SCREEN_HEIGHT } = Dimensions.get("window");
-const GREEN = "#22C55E";
-const SHEET_HEIGHT = SCREEN_HEIGHT * 0.82;
-
-// ─── Sub-components ───────────────────────────────────────────────────────────
+const { height: SCREEN_HEIGHT } = Dimensions.get('window')
+const GREEN = '#22C55E'
+const SHEET_HEIGHT = SCREEN_HEIGHT * 0.82
 
 const SectionTitle = ({ title }: { title: string }) => (
   <Text
     style={{
       fontSize: 12,
-      fontWeight: "700",
-      color: "#8A8A9A",
+      fontWeight: '700',
+      color: '#8A8A9A',
       letterSpacing: 1,
-      textTransform: "uppercase",
+      textTransform: 'uppercase',
       marginBottom: 12,
       marginTop: 24,
     }}
   >
     {title}
   </Text>
-);
+)
 
 interface PillProps {
-  label: string;
-  selected: boolean;
-  onPress: () => void;
+  label: string
+  selected: boolean
+  onPress: () => void
 }
 
 const Pill = ({ label, selected, onPress }: PillProps) => (
@@ -56,9 +54,9 @@ const Pill = ({ label, selected, onPress }: PillProps) => (
       paddingHorizontal: 16,
       paddingVertical: 9,
       borderRadius: 100,
-      backgroundColor: selected ? GREEN : "#F5F5F7",
+      backgroundColor: selected ? GREEN : '#F5F5F7',
       borderWidth: 1.5,
-      borderColor: selected ? GREEN : "transparent",
+      borderColor: selected ? GREEN : 'transparent',
       marginRight: 8,
       marginBottom: 10,
     }}
@@ -66,22 +64,20 @@ const Pill = ({ label, selected, onPress }: PillProps) => (
     <Text
       style={{
         fontSize: 14,
-        fontWeight: "600",
-        color: selected ? "#FFFFFF" : "#3A3A4A",
+        fontWeight: '600',
+        color: selected ? '#FFFFFF' : '#3A3A4A',
       }}
     >
       {label}
     </Text>
   </TouchableOpacity>
-);
-
-// ─── Main component ───────────────────────────────────────────────────────────
+)
 
 interface FilterModalProps {
-  visible: boolean;
-  initialFilters: SearchFilters;
-  onApply: (filters: SearchFilters) => void;
-  onClose: () => void;
+  visible: boolean
+  initialFilters: SearchFilters
+  onApply: (filters: SearchFilters) => void
+  onClose: () => void
 }
 
 const FilterModal = ({
@@ -90,45 +86,57 @@ const FilterModal = ({
   onApply,
   onClose,
 }: FilterModalProps) => {
-  const [draft, setDraft] = useState<SearchFilters>(initialFilters);
+  const [draft, setDraft] = useState<SearchFilters>(initialFilters)
 
   useEffect(() => {
-    if (visible) setDraft(initialFilters);
-  }, [visible, initialFilters]);
+    if (visible) setDraft(initialFilters)
+  }, [visible, initialFilters])
 
   const setSize = useCallback(
-    (size: SizeOption) => setDraft((d) => ({ ...d, size })),
+    (size: SizeOption) => setDraft((current) => ({ ...current, size })),
     [],
-  );
+  )
+
+  const toggleProductType = useCallback(
+    (type: ProductType) =>
+      setDraft((current) => ({
+        ...current,
+        productTypes: current.productTypes.includes(type)
+          ? current.productTypes.filter((item) => item !== type)
+          : [...current.productTypes, type],
+      })),
+    [],
+  )
 
   const toggleBrand = useCallback(
     (brand: string) =>
-      setDraft((d) => ({
-        ...d,
-        brands: d.brands.includes(brand)
-          ? d.brands.filter((b) => b !== brand)
-          : [...d.brands, brand],
+      setDraft((current) => ({
+        ...current,
+        brands: current.brands.includes(brand)
+          ? current.brands.filter((item) => item !== brand)
+          : [...current.brands, brand],
       })),
     [],
-  );
+  )
 
   const toggleStore = useCallback(
     (store: string) =>
-      setDraft((d) => ({
-        ...d,
-        stores: d.stores.includes(store)
-          ? d.stores.filter((s) => s !== store)
-          : [...d.stores, store],
+      setDraft((current) => ({
+        ...current,
+        stores: current.stores.includes(store)
+          ? current.stores.filter((item) => item !== store)
+          : [...current.stores, store],
       })),
     [],
-  );
+  )
 
-  const handleReset = useCallback(() => setDraft(DEFAULT_FILTERS), []);
+  const handleReset = useCallback(() => setDraft(DEFAULT_FILTERS), [])
 
   const activeCount =
-    (draft.size !== "Default" ? 1 : 0) +
+    draft.productTypes.length +
+    (draft.size !== 'Default' ? 1 : 0) +
     draft.brands.length +
-    draft.stores.length;
+    draft.stores.length
 
   return (
     <Modal
@@ -138,13 +146,12 @@ const FilterModal = ({
       statusBarTranslucent
       onRequestClose={onClose}
     >
-      {/* ── Blurred backdrop — tap to dismiss ──────────────────────────── */}
       <TouchableWithoutFeedback onPress={onClose}>
         <BlurView
           intensity={40}
           tint="dark"
           style={{
-            position: "absolute",
+            position: 'absolute',
             top: 0,
             left: 0,
             right: 0,
@@ -153,42 +160,39 @@ const FilterModal = ({
         />
       </TouchableWithoutFeedback>
 
-      {/* ── Bottom sheet ────────────────────────────────────────────────── */}
       <View
         style={{
-          position: "absolute",
+          position: 'absolute',
           bottom: 0,
           left: 0,
           right: 0,
           height: SHEET_HEIGHT,
-          backgroundColor: "#FFFFFF",
+          backgroundColor: '#FFFFFF',
           borderTopLeftRadius: 24,
           borderTopRightRadius: 24,
-          overflow: "hidden",
+          overflow: 'hidden',
         }}
       >
-        {/* Drag handle */}
-        <View style={{ alignItems: "center", paddingTop: 12, paddingBottom: 4 }}>
+        <View style={{ alignItems: 'center', paddingTop: 12, paddingBottom: 4 }}>
           <View
             style={{
               width: 36,
               height: 4,
               borderRadius: 2,
-              backgroundColor: "#E0E0EA",
+              backgroundColor: '#E0E0EA',
             }}
           />
         </View>
 
-        {/* Header */}
         <View
           style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
             paddingHorizontal: 20,
             paddingVertical: 14,
             borderBottomWidth: 1,
-            borderBottomColor: "#F0F0F5",
+            borderBottomColor: '#F0F0F5',
           }}
         >
           <TouchableOpacity
@@ -198,7 +202,7 @@ const FilterModal = ({
             <Feather name="x" size={22} color="#0F0F0F" />
           </TouchableOpacity>
 
-          <Text style={{ fontSize: 17, fontWeight: "700", color: "#0F0F0F" }}>
+          <Text style={{ fontSize: 17, fontWeight: '700', color: '#0F0F0F' }}>
             Filters
           </Text>
 
@@ -206,70 +210,77 @@ const FilterModal = ({
             onPress={handleReset}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
-            <Text style={{ fontSize: 14, fontWeight: "600", color: "#8A8A9A" }}>
+            <Text style={{ fontSize: 14, fontWeight: '600', color: '#8A8A9A' }}>
               Reset
             </Text>
           </TouchableOpacity>
         </View>
 
-        {/* Scrollable body */}
         <ScrollView
           contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 120 }}
           showsVerticalScrollIndicator={false}
         >
-          {/* Size — single select */}
+          <SectionTitle title="Product Type" />
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+            {PRODUCT_TYPE_OPTIONS.map((type) => (
+              <Pill
+                key={type}
+                label={type}
+                selected={draft.productTypes.includes(type)}
+                onPress={() => toggleProductType(type)}
+              />
+            ))}
+          </View>
+
           <SectionTitle title="Size" />
-          <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-            {SIZE_OPTIONS.map((s) => (
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+            {SIZE_OPTIONS.map((size) => (
               <Pill
-                key={s}
-                label={s}
-                selected={draft.size === s}
-                onPress={() => setSize(s)}
+                key={size}
+                label={size}
+                selected={draft.size === size}
+                onPress={() => setSize(size)}
               />
             ))}
           </View>
 
-          {/* Brand — multi select */}
           <SectionTitle title="Brand" />
-          <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-            {BRAND_OPTIONS.map((b) => (
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+            {BRAND_OPTIONS.map((brand) => (
               <Pill
-                key={b}
-                label={b}
-                selected={draft.brands.includes(b)}
-                onPress={() => toggleBrand(b)}
+                key={brand}
+                label={brand}
+                selected={draft.brands.includes(brand)}
+                onPress={() => toggleBrand(brand)}
               />
             ))}
           </View>
 
-          {/* Store — multi select */}
           <SectionTitle title="Store" />
-          <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-            {STORE_OPTIONS.map((s) => (
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+            {STORE_OPTIONS.map((store) => (
               <Pill
-                key={s}
-                label={s}
-                selected={draft.stores.includes(s)}
-                onPress={() => toggleStore(s)}
+                key={store}
+                label={store}
+                selected={draft.stores.includes(store)}
+                onPress={() => toggleStore(store)}
               />
             ))}
           </View>
         </ScrollView>
 
-        {/* Sticky Apply button */}
         <View
           style={{
-            position: "absolute",
+            position: 'absolute',
             bottom: 0,
             left: 0,
             right: 0,
             paddingHorizontal: 20,
             paddingTop: 16,
             paddingBottom: 36,
-            backgroundColor: "#FFFFFF",
+            backgroundColor: '#FFFFFF',
             borderTopWidth: 1,
-            borderTopColor: "#F0F0F5",
+            borderTopColor: '#F0F0F5',
           }}
         >
           <TouchableOpacity
@@ -279,13 +290,13 @@ const FilterModal = ({
               height: 54,
               borderRadius: 14,
               backgroundColor: GREEN,
-              alignItems: "center",
-              justifyContent: "center",
-              flexDirection: "row",
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexDirection: 'row',
               gap: 8,
             }}
           >
-            <Text style={{ fontSize: 16, fontWeight: "700", color: "#FFFFFF" }}>
+            <Text style={{ fontSize: 16, fontWeight: '700', color: '#FFFFFF' }}>
               Apply Filters
             </Text>
             {activeCount > 0 && (
@@ -294,13 +305,13 @@ const FilterModal = ({
                   width: 22,
                   height: 22,
                   borderRadius: 11,
-                  backgroundColor: "#FFFFFF",
-                  alignItems: "center",
-                  justifyContent: "center",
+                  backgroundColor: '#FFFFFF',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
                 <Text
-                  style={{ fontSize: 12, fontWeight: "700", color: GREEN }}
+                  style={{ fontSize: 12, fontWeight: '700', color: GREEN }}
                 >
                   {activeCount}
                 </Text>
@@ -310,7 +321,7 @@ const FilterModal = ({
         </View>
       </View>
     </Modal>
-  );
-};
+  )
+}
 
-export default FilterModal;
+export default FilterModal

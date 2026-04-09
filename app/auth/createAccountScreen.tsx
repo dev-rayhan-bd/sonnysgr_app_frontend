@@ -42,7 +42,7 @@ export default function createAccountScreen() {
             Join GoSNKR
           </Text>
           <Text className="text-base text-gray-500 leading-5">
-            The sneaker map is waiting.
+            The local fashion map is waiting.
           </Text>
         </View>
 

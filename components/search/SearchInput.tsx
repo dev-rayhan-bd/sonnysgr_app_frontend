@@ -30,7 +30,7 @@ const SearchInput = ({
   onFilterPress,
   activeFilterCount = 0,
   isFetching = false,
-  placeholder = "Shoe name, brand, SKU...",
+  placeholder = "Sneakers, clothing, brands, SKU...",
 }: SearchInputProps) => {
   const hasValue = value.length > 0;
   const hasFilters = activeFilterCount > 0;

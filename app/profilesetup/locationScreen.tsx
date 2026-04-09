@@ -35,7 +35,7 @@ export default function LocationScreen() {
           </Text>
 
           <Text className="font-black text-gray-900 mb-3 text-center" style={styles.heading}>
-            Find sneakers & cloths{'\n'}around you
+            Find sneakers & clothing{'\n'}around you
           </Text>
 
           <Text className="text-sm text-gray-500 text-center mb-5" style={{ lineHeight: 21 }}>

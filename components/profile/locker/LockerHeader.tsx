@@ -57,7 +57,7 @@ const LockerHeader: React.FC<LockerHeaderProps> = ({
 
     {/* Subtitle row */}
     <View className="flex-row items-center justify-center gap-3 mt-1">
-      <Text className="text-xs font-semibold text-gray-500">{pairCount} pairs</Text>
+      <Text className="text-xs font-semibold text-gray-500">{pairCount} items</Text>
 
       {/* ✅ StyleSheet instead of conditional className */}
       <View style={[styles.badge, isPublic ? styles.badgePublic : styles.badgePrivate]}>

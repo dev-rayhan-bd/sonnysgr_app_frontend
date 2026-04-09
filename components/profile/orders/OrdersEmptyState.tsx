@@ -1,4 +1,3 @@
-// components/orders/OrdersEmptyState.tsx
 import React from 'react'
 import { View, Text } from 'react-native'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
@@ -12,7 +11,7 @@ const OrdersEmptyState: React.FC<OrdersEmptyStateProps> = ({
 }) => {
   return (
     <View className="items-center justify-center py-16">
-      <MaterialCommunityIcons name="shoe-sneaker" size={40} color="#E5E7EB" />
+      <MaterialCommunityIcons name="package-variant-closed" size={40} color="#E5E7EB" />
       <Text className="text-sm text-gray-400 mt-4 font-medium">{message}</Text>
     </View>
   )

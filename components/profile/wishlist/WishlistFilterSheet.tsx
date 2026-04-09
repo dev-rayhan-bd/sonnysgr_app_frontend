@@ -9,8 +9,10 @@ interface WishlistFilterSheetProps {
   visible: boolean
   draft: WishlistFilterState
   sortOptions: WishlistSortOption[]
+  categoryOptions: WishlistFilterState['category'][]
   onClose: () => void
   onSetSort: (sort: WishlistSortOption) => void
+  onSetCategory: (category: WishlistFilterState['category']) => void
   onReset: () => void
   onApply: () => void
 }
@@ -19,8 +21,10 @@ export default function WishlistFilterSheet({
   visible,
   draft,
   sortOptions,
+  categoryOptions,
   onClose,
   onSetSort,
+  onSetCategory,
   onReset,
   onApply,
 }: WishlistFilterSheetProps) {
@@ -31,10 +35,8 @@ export default function WishlistFilterSheet({
       animationType="slide"
       onRequestClose={onClose}
     >
-      {/* Backdrop */}
       <Pressable onPress={onClose} className="flex-1 bg-black/40" />
 
-      {/* Sheet */}
       <View
         className="bg-white rounded-t-3xl px-5 pt-5 pb-20"
         style={{
@@ -44,10 +46,8 @@ export default function WishlistFilterSheet({
           elevation: 10,
         }}
       >
-        {/* Handle */}
         <View className="w-10 h-1 bg-gray-200 rounded-full self-center mb-5" />
 
-        {/* Header */}
         <View className="flex-row justify-between items-center mb-5">
           <Text className="text-lg font-extrabold text-gray-900">Filter & Sort</Text>
           <TouchableOpacity onPress={onClose}>
@@ -55,21 +55,20 @@ export default function WishlistFilterSheet({
           </TouchableOpacity>
         </View>
 
-        {/* Sort section */}
         <Text className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-3">
-          Sort By
+          Product Type
         </Text>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={{ gap: 8, marginBottom: 24 }}
         >
-          {sortOptions.map(opt => {
-            const isActive = draft.sort === opt
+          {categoryOptions.map((option) => {
+            const isActive = draft.category === option
             return (
               <TouchableOpacity
-                key={opt}
-                onPress={() => onSetSort(opt)}
+                key={option}
+                onPress={() => onSetCategory(option)}
                 className={`px-4 py-2.5 rounded-xl border ${
                   isActive ? 'bg-gray-900 border-gray-900' : 'bg-white border-gray-200'
                 }`}
@@ -79,14 +78,43 @@ export default function WishlistFilterSheet({
                     isActive ? 'text-white' : 'text-gray-600'
                   }`}
                 >
-                  {opt}
+                  {option}
                 </Text>
               </TouchableOpacity>
             )
           })}
         </ScrollView>
 
-        {/* Action buttons */}
+        <Text className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-3">
+          Sort By
+        </Text>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ gap: 8, marginBottom: 24 }}
+        >
+          {sortOptions.map((option) => {
+            const isActive = draft.sort === option
+            return (
+              <TouchableOpacity
+                key={option}
+                onPress={() => onSetSort(option)}
+                className={`px-4 py-2.5 rounded-xl border ${
+                  isActive ? 'bg-gray-900 border-gray-900' : 'bg-white border-gray-200'
+                }`}
+              >
+                <Text
+                  className={`text-sm font-semibold ${
+                    isActive ? 'text-white' : 'text-gray-600'
+                  }`}
+                >
+                  {option}
+                </Text>
+              </TouchableOpacity>
+            )
+          })}
+        </ScrollView>
+
         <View className="flex-row gap-3">
           <TouchableOpacity
             onPress={onReset}

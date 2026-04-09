@@ -1,7 +1,6 @@
 import { useState, useCallback, useMemo } from 'react'
-import type { LockerItem, LockerState, ViewMode, ConditionLabel } from '@/types/locker'
+import type { LockerItem, ViewMode, ConditionLabel } from '@/types/locker'
 
-// ─── Mock Data ────────────────────────────────────────────────────────────────
 const MOCK_ITEMS: LockerItem[] = [
   {
     id: '1',
@@ -15,13 +14,13 @@ const MOCK_ITEMS: LockerItem[] = [
   },
   {
     id: '2',
-    name: "Nike Dunk Low 'Panda'",
-    brand: 'Nike',
-    image: 'https://images.stockx.com/images/Nike-Dunk-Low-Retro-White-Black-2021-Product.jpg',
+    name: 'Essentials Pullover Hoodie',
+    brand: 'Essentials',
+    image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800',
     condition: '9/10',
-    estimatedValue: 180,
-    size: '10',
-    colorway: 'White/Black',
+    estimatedValue: 120,
+    size: 'L',
+    colorway: 'Stretch Limo',
   },
   {
     id: '3',
@@ -35,13 +34,13 @@ const MOCK_ITEMS: LockerItem[] = [
   },
   {
     id: '4',
-    name: "Air Max 90 'Infrared'",
+    name: 'Nike Sportswear Club Tee',
     brand: 'Nike',
-    image: 'https://images.stockx.com/images/Nike-Air-Max-90-Infrared-Product.jpg',
+    image: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=800',
     condition: '9/10',
-    estimatedValue: 160,
-    size: '10',
-    colorway: 'White/Black-Infrared',
+    estimatedValue: 40,
+    size: 'M',
+    colorway: 'White/Black',
   },
   {
     id: '5',
@@ -55,17 +54,16 @@ const MOCK_ITEMS: LockerItem[] = [
   },
   {
     id: '6',
-    name: 'New Balance 550',
-    brand: 'New Balance',
-    image: 'https://images.stockx.com/images/New-Balance-550-White-Green-Product.jpg',
+    name: 'Stussy Varsity Jacket',
+    brand: 'Stussy',
+    image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800',
     condition: '9/10',
-    estimatedValue: 160,
-    size: '10',
-    colorway: 'White/Green',
+    estimatedValue: 310,
+    size: 'L',
+    colorway: 'Black/Cream',
   },
 ]
 
-// ─── Hook ─────────────────────────────────────────────────────────────────────
 export const useLocker = () => {
   const [items, setItems] = useState<LockerItem[]>(MOCK_ITEMS)
   const [isPublic, setIsPublic] = useState(true)
@@ -74,18 +72,17 @@ export const useLocker = () => {
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null)
   const [showActionSheet, setShowActionSheet] = useState(false)
 
-  // ── Derived Stats ──────────────────────────────────────────────────────────
   const stats = useMemo(() => {
-    const conditionToNumber = (c: ConditionLabel): number => {
-      if (c === 'DS') return 10
-      if (c === 'VNDS') return 9.5
-      return parseFloat(c.replace('/10', ''))
+    const conditionToNumber = (condition: ConditionLabel): number => {
+      if (condition === 'DS') return 10
+      if (condition === 'VNDS') return 9.5
+      return parseFloat(condition.replace('/10', ''))
     }
 
-    const totalValue = items.reduce((sum, i) => sum + i.estimatedValue, 0)
+    const totalValue = items.reduce((sum, item) => sum + item.estimatedValue, 0)
     const avgCondition =
       items.length > 0
-        ? items.reduce((sum, i) => sum + conditionToNumber(i.condition), 0) / items.length
+        ? items.reduce((sum, item) => sum + conditionToNumber(item.condition), 0) / items.length
         : 0
 
     return {
@@ -95,11 +92,10 @@ export const useLocker = () => {
     }
   }, [items])
 
-  // ── Actions ────────────────────────────────────────────────────────────────
-  const toggleVisibility = useCallback(() => setIsPublic((v) => !v), [])
+  const toggleVisibility = useCallback(() => setIsPublic((value) => !value), [])
 
   const toggleViewMode = useCallback(
-    () => setViewMode((v) => (v === 'grid' ? 'list' : 'grid')),
+    () => setViewMode((value) => (value === 'grid' ? 'list' : 'grid')),
     [],
   )
 
@@ -132,12 +128,11 @@ export const useLocker = () => {
   }, [])
 
   const selectedItem = useMemo(
-    () => items.find((i) => i.id === selectedItemId) ?? null,
+    () => items.find((item) => item.id === selectedItemId) ?? null,
     [items, selectedItemId],
   )
 
   return {
-    // State
     items,
     isPublic,
     viewMode,
@@ -145,7 +140,6 @@ export const useLocker = () => {
     stats,
     selectedItem,
     showActionSheet,
-    // Actions
     toggleVisibility,
     toggleViewMode,
     openItemMenu,

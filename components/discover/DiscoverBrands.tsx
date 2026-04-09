@@ -1,21 +1,21 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, Image } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { BrandProduct, StockStatus } from '@/services/hooks/discover/useDiscover';
+import React from 'react'
+import { View, Text, TouchableOpacity, Image } from 'react-native'
+import { Ionicons } from '@expo/vector-icons'
+import { BrandProduct, StockStatus } from '@/services/hooks/discover/useDiscover'
 
 interface DiscoverBrandsProps {
-  brands: BrandProduct[];
-  onSeeAll?: () => void;
-  onBuyPress?: (b: BrandProduct) => void;
-  onBrandPress?: (b: BrandProduct) => void;
-  onWishlistToggle?: (id: string) => void;
+  brands: BrandProduct[]
+  onSeeAll?: () => void
+  onBuyPress?: (brand: BrandProduct) => void
+  onBrandPress?: (brand: BrandProduct) => void
+  onWishlistToggle?: (id: string) => void
 }
 
 const STOCK_BG: Record<StockStatus, string> = {
   'In Stock': '#00C853',
   'Low Stock': '#FF6D00',
   'Dropping Soon': '#1565C0',
-};
+}
 
 const BrandRow = ({
   brand,
@@ -24,18 +24,17 @@ const BrandRow = ({
   onBuy,
   onWishlist,
 }: {
-  brand: BrandProduct;
-  isLast: boolean;
-  onPress?: () => void;
-  onBuy?: () => void;
-  onWishlist?: () => void;
+  brand: BrandProduct
+  isLast: boolean
+  onPress?: () => void
+  onBuy?: () => void
+  onWishlist?: () => void
 }) => (
   <TouchableOpacity
     onPress={onPress}
     activeOpacity={0.85}
     className={`flex-row items-center px-4 py-4 gap-4 ${!isLast ? 'border-b border-neutral-100' : ''}`}
   >
-    {/* Left: Image (bigger now) */}
     <View className="w-[120px] h-[120px] rounded-xl overflow-hidden bg-neutral-200 relative">
       <Image
         source={{ uri: brand.image }}
@@ -43,7 +42,6 @@ const BrandRow = ({
         resizeMode="cover"
       />
 
-      {/* Stock badge */}
       <View
         className="absolute top-2 left-2 px-2.5 py-0.5 rounded-full"
         style={{ backgroundColor: STOCK_BG[brand.stockStatus] }}
@@ -53,19 +51,17 @@ const BrandRow = ({
         </Text>
       </View>
 
-      {/* Heart icon (clickable) */}
       <TouchableOpacity
         onPress={onWishlist}
         className="absolute top-2 right-2 w-10 h-10 items-center justify-center"
       >
         <Ionicons
           name={brand.isWishlisted ? 'heart' : 'heart-outline'}
-          size={28} 
+          size={28}
           color={brand.isWishlisted ? '#FF3B6B' : '#fff'}
         />
       </TouchableOpacity>
 
-      {/* Brand initial badge */}
       <View
         className="absolute bottom-2 left-2 px-2.5 py-0.5 rounded-md"
         style={{ backgroundColor: brand.brandColor }}
@@ -76,8 +72,10 @@ const BrandRow = ({
       </View>
     </View>
 
-    {/* Middle: Info */}
     <View className="flex-1">
+      <Text className="text-[11px] font-bold text-green-600 uppercase tracking-wide">
+        {brand.productType} · {brand.audience}
+      </Text>
       <Text
         numberOfLines={1}
         className="text-lg font-bold text-neutral-900"
@@ -94,7 +92,6 @@ const BrandRow = ({
       </Text>
     </View>
 
-    {/* Right: Price, stock, buy */}
     <View className="items-end gap-2">
       <Text className="text-xl font-extrabold text-neutral-900">
         ${brand.price}
@@ -119,7 +116,7 @@ const BrandRow = ({
       </TouchableOpacity>
     </View>
   </TouchableOpacity>
-);
+)
 
 export const DiscoverBrands: React.FC<DiscoverBrandsProps> = ({
   brands,
@@ -129,7 +126,6 @@ export const DiscoverBrands: React.FC<DiscoverBrandsProps> = ({
   onWishlistToggle,
 }) => (
   <View className="mt-7 px-5">
-    {/* Header */}
     <View className="flex-row items-center justify-between">
       <Text className="text-2xl font-extrabold text-neutral-900">
         From Your Brands
@@ -143,23 +139,22 @@ export const DiscoverBrands: React.FC<DiscoverBrandsProps> = ({
     </View>
 
     <Text className="text-sm text-neutral-400 mt-1 mb-3">
-      Based on your brands
+      Sneakers and apparel from the brands you follow
     </Text>
 
-    {/* Brand list card */}
     <View className="bg-white rounded-2xl overflow-hidden shadow-sm">
-      {brands.map((b, i) => (
+      {brands.map((brand, index) => (
         <BrandRow
-          key={b.id}
-          brand={b}
-          isLast={i === brands.length - 1}
-          onPress={() => onBrandPress?.(b)}
-          onBuy={() => onBuyPress?.(b)}
-          onWishlist={() => onWishlistToggle?.(b.id)}
+          key={brand.id}
+          brand={brand}
+          isLast={index === brands.length - 1}
+          onPress={() => onBrandPress?.(brand)}
+          onBuy={() => onBuyPress?.(brand)}
+          onWishlist={() => onWishlistToggle?.(brand.id)}
         />
       ))}
     </View>
   </View>
-);
+)
 
-export default DiscoverBrands;
+export default DiscoverBrands

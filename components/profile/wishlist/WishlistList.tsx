@@ -16,7 +16,7 @@ function EmptyState() {
         Nothing saved here yet
       </Text>
       <Text className="text-[13px] text-gray-300 text-center px-8">
-        Tap the heart on any sneaker to add it to your wishlist.
+        Tap the heart on any sneaker or clothing item to add it to your wishlist.
       </Text>
     </View>
   )

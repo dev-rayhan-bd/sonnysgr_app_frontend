@@ -23,7 +23,7 @@ const SearchHeader = () => {
           fontWeight: "400",
         }}
       >
-        Find your next pair.
+        Find your next sneakers or clothing piece.
       </Text>
     </View>
   );

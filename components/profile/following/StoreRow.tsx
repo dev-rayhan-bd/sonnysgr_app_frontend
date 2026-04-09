@@ -25,7 +25,7 @@ const StoreRow: React.FC<Props> = ({ store, isLast, onVisit, onToggleNotif }) =>
     <View className="flex-1">
       <Text className="text-sm font-bold text-gray-900">{store.name}</Text>
       <Text className="text-xs text-green-500 font-medium mt-0.5">
-        {store.pairsInSize} pairs in your size
+        {store.itemsNearYou} items in your size
       </Text>
       <Text className="text-xs text-gray-400">{store.distance}</Text>
     </View>

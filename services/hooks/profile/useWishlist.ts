@@ -1,5 +1,6 @@
-import { useState, useMemo } from 'react'
-import type { WishlistSortOption } from './useWishlistFilter'
+import { useMemo, useState } from 'react'
+import type { ProductType } from '@/types/catalog'
+import type { WishlistFilterState } from './useWishlistFilter'
 
 export type StockStatus = 'In Stock' | 'Low Stock' | 'Sold Out'
 export type FilterTab = 'All' | StockStatus
@@ -14,7 +15,8 @@ export interface WishlistItem {
   originalPrice?: number
   discount?: number
   status: StockStatus
-  image: string            // URI or local require path (string for simplicity)
+  image: string
+  productType: ProductType
   isPriceDropped?: boolean
   isLiked: boolean
 }
@@ -31,29 +33,32 @@ const MOCK_ITEMS: WishlistItem[] = [
     discount: 20,
     status: 'In Stock',
     image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=200',
+    productType: 'Sneakers',
     isPriceDropped: true,
     isLiked: true,
   },
   {
     id: '2',
-    brand: 'NIKE',
-    name: "Nike Dunk Low 'Panda'",
-    size: '10.5',
+    brand: 'ESSENTIALS',
+    name: 'Pullover Hoodie',
+    size: 'M',
     storesNearby: 5,
     price: 120,
     status: 'In Stock',
-    image: 'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=200',
+    image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=200',
+    productType: 'Clothing',
     isLiked: true,
   },
   {
     id: '3',
-    brand: 'ADIDAS',
-    name: "Yeezy Boost 350 'Carbon'",
-    size: '10.5',
+    brand: 'STUSSY',
+    name: 'Varsity Jacket',
+    size: 'L',
     storesNearby: 1,
     price: 320,
     status: 'Low Stock',
-    image: 'https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=200',
+    image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=200',
+    productType: 'Clothing',
     isLiked: true,
   },
   {
@@ -65,44 +70,58 @@ const MOCK_ITEMS: WishlistItem[] = [
     price: 140,
     status: 'Sold Out',
     image: 'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=200',
+    productType: 'Sneakers',
     isLiked: true,
   },
 ]
 
-export function useWishlist(sort: WishlistSortOption = 'Default') {
+export function useWishlist(appliedFilter: WishlistFilterState) {
   const [items, setItems] = useState<WishlistItem[]>(MOCK_ITEMS)
   const [activeFilter, setActiveFilter] = useState<FilterTab>('All')
 
   const filteredItems = useMemo(() => {
-    let result = activeFilter === 'All'
-      ? items
-      : items.filter(item => item.status === activeFilter)
+    let result =
+      activeFilter === 'All'
+        ? items
+        : items.filter((item) => item.status === activeFilter)
 
-    if (sort === 'Price: Low to High')  result = [...result].sort((a, b) => a.price - b.price)
-    if (sort === 'Price: High to Low')  result = [...result].sort((a, b) => b.price - a.price)
-    if (sort === 'Name: A–Z')           result = [...result].sort((a, b) => a.name.localeCompare(b.name))
+    if (appliedFilter.category !== 'All') {
+      result = result.filter((item) => item.productType === appliedFilter.category)
+    }
+
+    if (appliedFilter.sort === 'Price: Low to High') {
+      result = [...result].sort((a, b) => a.price - b.price)
+    }
+
+    if (appliedFilter.sort === 'Price: High to Low') {
+      result = [...result].sort((a, b) => b.price - a.price)
+    }
+
+    if (appliedFilter.sort === 'Name: A-Z') {
+      result = [...result].sort((a, b) => a.name.localeCompare(b.name))
+    }
 
     return result
-  }, [items, activeFilter, sort])
+  }, [items, activeFilter, appliedFilter])
 
   const toggleLike = (id: string) => {
-    setItems(prev =>
-      prev.map(item =>
+    setItems((prev) =>
+      prev.map((item) =>
         item.id === id ? { ...item, isLiked: !item.isLiked } : item,
       ),
     )
   }
 
   const removeItem = (id: string) => {
-    setItems(prev => prev.filter(item => item.id !== id))
+    setItems((prev) => prev.filter((item) => item.id !== id))
   }
 
   const filterCounts: Record<FilterTab, number> = useMemo(
     () => ({
       All: items.length,
-      'In Stock': items.filter(i => i.status === 'In Stock').length,
-      'Low Stock': items.filter(i => i.status === 'Low Stock').length,
-      'Sold Out': items.filter(i => i.status === 'Sold Out').length,
+      'In Stock': items.filter((item) => item.status === 'In Stock').length,
+      'Low Stock': items.filter((item) => item.status === 'Low Stock').length,
+      'Sold Out': items.filter((item) => item.status === 'Sold Out').length,
     }),
     [items],
   )

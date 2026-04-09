@@ -1,239 +1,386 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import * as Location from "expo-location";
+import { useCallback, useEffect, useRef, useState } from 'react'
+import * as Location from 'expo-location'
 import {
   DEFAULT_FILTERS,
   SearchFilters,
-} from "@/services/hooks/search/useSearch";
+} from '@/services/hooks/search/useSearch'
+import type { Audience, ProductType } from '@/types/catalog'
 
 export interface StoreProduct {
-  id: string;
-  name: string;
-  price: string;
-  image: string;
-  isHot?: boolean;
-  sizes: string[];
+  id: string
+  name: string
+  brand: string
+  price: string
+  image: string
+  isHot?: boolean
+  sizes: string[]
+  productType: ProductType
+  audience: Audience
 }
 
 export interface Store {
-  id: string;
-  name: string;
-  stock: number;
-  latitude: number;
-  longitude: number;
-  distance: string;
-  hours: string;
-  tag: string;
-  rating: number;
-  isFollowing?: boolean;
-  products: StoreProduct[];
+  id: string
+  name: string
+  stock: number
+  latitude: number
+  longitude: number
+  distance: string
+  hours: string
+  tag: string
+  rating: number
+  isFollowing?: boolean
+  products: StoreProduct[]
 }
 
 export interface MapRegion {
-  latitude: number;
-  longitude: number;
-  latitudeDelta: number;
-  longitudeDelta: number;
+  latitude: number
+  longitude: number
+  latitudeDelta: number
+  longitudeDelta: number
 }
 
 const MOCK_STORES: Store[] = [
   {
-    id: "1",
-    name: "Sneaker District",
+    id: '1',
+    name: 'Sneaker District',
     stock: 42,
     latitude: 40.7545,
     longitude: -73.984,
-    distance: "0.8 mi away",
-    hours: "Open until 8 PM",
-    tag: "Authorized Retailer",
+    distance: '0.8 mi away',
+    hours: 'Open until 8 PM',
+    tag: 'Authorized Retailer',
     rating: 4.7,
     isFollowing: false,
     products: [
-      { id: "p1", name: "Air Jordan 4\nBlack Cat", price: "$210", image: "", isHot: true, sizes: ["10", "10.5", "11"] },
-      { id: "p2", name: "Nike Dunk Low\nPanda", price: "$120", image: "", sizes: ["10", "10.5", "11"] },
-      { id: "p3", name: "New Balance 550", price: "$110", image: "", sizes: ["10", "10.5", "11"] },
+      {
+        id: 'p1',
+        name: 'Air Jordan 4\nBlack Cat',
+        brand: 'Jordan',
+        price: '$210',
+        image: '',
+        isHot: true,
+        sizes: ['10', '10.5', '11'],
+        productType: 'Sneakers',
+        audience: "Men's",
+      },
+      {
+        id: 'p2',
+        name: 'Nike Tech\nFleece',
+        brand: 'Nike',
+        price: '$120',
+        image: '',
+        sizes: ['M', 'L', 'XL'],
+        productType: 'Clothing',
+        audience: "Men's",
+      },
+      {
+        id: 'p3',
+        name: 'New Balance 550',
+        brand: 'New Balance',
+        price: '$110',
+        image: '',
+        sizes: ['10', '10.5', '11'],
+        productType: 'Sneakers',
+        audience: "Women's",
+      },
     ],
   },
   {
-    id: "2",
-    name: "KITH Flagship",
+    id: '2',
+    name: 'Kith Apparel',
     stock: 28,
     latitude: 40.7575,
     longitude: -73.9765,
-    distance: "1.3 mi away",
-    hours: "Open until 7 PM",
-    tag: "Exclusive Drops",
+    distance: '1.3 mi away',
+    hours: 'Open until 7 PM',
+    tag: 'Streetwear Drops',
     rating: 4.8,
     isFollowing: true,
     products: [
-      { id: "p4", name: "Yeezy Boost\n350 V2", price: "$280", image: "", isHot: true, sizes: ["9.5", "10", "11"] },
-      { id: "p5", name: "Air Max 1\n'86 OG", price: "$160", image: "", sizes: ["10", "10.5"] },
-      { id: "p6", name: "New Balance\n2002R", price: "$150", image: "", sizes: ["9", "10", "11"] },
+      {
+        id: 'p4',
+        name: 'Essentials\nHoodie',
+        brand: 'Fear of God',
+        price: '$280',
+        image: '',
+        isHot: true,
+        sizes: ['S', 'M', 'L'],
+        productType: 'Clothing',
+        audience: "Men's",
+      },
+      {
+        id: 'p5',
+        name: 'Air Max 1\n86 OG',
+        brand: 'Nike',
+        price: '$160',
+        image: '',
+        sizes: ['10', '10.5'],
+        productType: 'Sneakers',
+        audience: "Men's",
+      },
+      {
+        id: 'p6',
+        name: 'Stussy\nWork Jacket',
+        brand: 'Stussy',
+        price: '$150',
+        image: '',
+        sizes: ['M', 'L'],
+        productType: 'Clothing',
+        audience: 'Unisex',
+      },
     ],
   },
   {
-    id: "3",
-    name: "Stadium Goods",
+    id: '3',
+    name: 'Stadium Goods',
     stock: 65,
     latitude: 40.7495,
     longitude: -73.9945,
-    distance: "2.2 mi away",
-    hours: "Open until 7 PM",
-    tag: "Premium Resale",
+    distance: '2.2 mi away',
+    hours: 'Open until 7 PM',
+    tag: 'Premium Resale',
     rating: 4.9,
     isFollowing: true,
     products: [
-      { id: "p7", name: "Air Jordan 1\nRetro High", price: "$180", image: "", isHot: true, sizes: ["10", "10.5", "11"] },
-      { id: "p8", name: "Nike Dunk Low\nPanda", price: "$120", image: "", sizes: ["10", "10.5", "11"] },
-      { id: "p9", name: "New Balance 550", price: "$110", image: "", sizes: ["10", "10.5", "11"] },
+      {
+        id: 'p7',
+        name: 'Air Jordan 1\nRetro High',
+        brand: 'Jordan',
+        price: '$180',
+        image: '',
+        isHot: true,
+        sizes: ['10', '10.5', '11'],
+        productType: 'Sneakers',
+        audience: "Men's",
+      },
+      {
+        id: 'p8',
+        name: 'Nike Dunk Low\nPanda',
+        brand: 'Nike',
+        price: '$120',
+        image: '',
+        sizes: ['10', '10.5', '11'],
+        productType: 'Sneakers',
+        audience: "Women's",
+      },
+      {
+        id: 'p9',
+        name: 'Adidas Firebird\nTrack Pants',
+        brand: 'Adidas',
+        price: '$110',
+        image: '',
+        sizes: ['Kids M', 'Kids L'],
+        productType: 'Clothing',
+        audience: "Kids'",
+      },
     ],
   },
   {
-    id: "4",
-    name: "Atmos NYC",
+    id: '4',
+    name: 'Union Archive',
     stock: 33,
     latitude: 40.7515,
     longitude: -73.977,
-    distance: "1.9 mi away",
-    hours: "Open until 6 PM",
-    tag: "Collab Specialist",
+    distance: '1.9 mi away',
+    hours: 'Open until 6 PM',
+    tag: 'Curated Apparel',
     rating: 4.6,
     isFollowing: false,
     products: [
-      { id: "p10", name: "Air Max 95\nAtmos", price: "$195", image: "", isHot: true, sizes: ["9", "10", "11"] },
-      { id: "p11", name: "Travis Scott\nJordan 1", price: "$650", image: "", sizes: ["10", "10.5"] },
-      { id: "p12", name: "Dunk Low\nVersatile", price: "$130", image: "", sizes: ["9.5", "10", "11"] },
+      {
+        id: 'p10',
+        name: 'Air Max 95\nAtmos',
+        brand: 'Nike',
+        price: '$195',
+        image: '',
+        isHot: true,
+        sizes: ['9', '10', '11'],
+        productType: 'Sneakers',
+        audience: "Men's",
+      },
+      {
+        id: 'p11',
+        name: 'Stussy Varsity\nJacket',
+        brand: 'Stussy',
+        price: '$650',
+        image: '',
+        sizes: ['M', 'L'],
+        productType: 'Clothing',
+        audience: "Men's",
+      },
+      {
+        id: 'p12',
+        name: 'Dunk Low\nVersatile',
+        brand: 'Nike',
+        price: '$130',
+        image: '',
+        sizes: ['9.5', '10', '11'],
+        productType: 'Sneakers',
+        audience: "Women's",
+      },
     ],
   },
-];
+]
 
 const DEFAULT_REGION: MapRegion = {
   latitude: 40.7525,
   longitude: -73.9857,
   latitudeDelta: 0.018,
   longitudeDelta: 0.018,
-};
+}
 
 export function useMap() {
-  const [query, setQuery] = useState("");
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [query, setQuery] = useState('')
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const [region, setRegion] = useState<MapRegion>(DEFAULT_REGION);
-  const [stores] = useState<Store[]>(MOCK_STORES);
-  const [selectedStore, setSelectedStore] = useState<Store | null>(null);
+  const [region, setRegion] = useState<MapRegion>(DEFAULT_REGION)
+  const [stores] = useState<Store[]>(MOCK_STORES)
+  const [selectedStore, setSelectedStore] = useState<Store | null>(null)
 
-  const [isFetchingLocation, setIsFetchingLocation] = useState(false);
-  const [locationError, setLocationError] = useState<string | null>(null);
+  const [isFetchingLocation, setIsFetchingLocation] = useState(false)
+  const [locationError, setLocationError] = useState<string | null>(null)
 
-  // ── Filter state ──────────────────────────────────────────────────────────
-  const [filters, setFilters] = useState<SearchFilters>(DEFAULT_FILTERS);
-  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [filters, setFilters] = useState<SearchFilters>(DEFAULT_FILTERS)
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false)
 
   const activeFilterCount =
-    (filters.size !== "Default" ? 1 : 0) +
+    filters.productTypes.length +
+    (filters.size !== 'Default' ? 1 : 0) +
     filters.brands.length +
-    filters.stores.length;
+    filters.stores.length
 
-  const [filteredStores, setFilteredStores] = useState<Store[]>(MOCK_STORES);
+  const [filteredStores, setFilteredStores] = useState<Store[]>(MOCK_STORES)
 
-  // ── Filter + search stores ────────────────────────────────────────────────
   useEffect(() => {
-    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+
     debounceRef.current = setTimeout(() => {
-      const q = query.trim().toLowerCase();
+      const normalizedQuery = query.trim().toLowerCase()
 
-      let result = stores.filter((s) => {
-        // ── Brand filter ──
-        if (
-          filters.brands.length > 0 &&
-          !s.products.some((p) =>
-            filters.brands.some((b) =>
-              p.name.toLowerCase().includes(b.toLowerCase()),
-            ),
-          )
-        ) {
-          return false;
-        }
+      const result = stores.filter((store) => {
+        const hasMatchingProduct = store.products.some((product) => {
+          const matchesType =
+            filters.productTypes.length === 0 ||
+            filters.productTypes.includes(product.productType)
 
-        // ── Store filter ──
+          const matchesAudience =
+            filters.size === 'Default' ||
+            filters.size === 'Custom' ||
+            product.audience === filters.size
+
+          const matchesBrand =
+            filters.brands.length === 0 ||
+            filters.brands.some((brand) =>
+              product.brand.toLowerCase().includes(brand.toLowerCase()),
+            )
+
+          return matchesType && matchesAudience && matchesBrand
+        })
+
+        if (!hasMatchingProduct) return false
+
         if (
           filters.stores.length > 0 &&
-          !filters.stores.some((fs) =>
-            s.name.toLowerCase().includes(fs.toLowerCase()),
+          !filters.stores.some((selectedStoreName) =>
+            store.name.toLowerCase().includes(selectedStoreName.toLowerCase()),
           )
         ) {
-          return false;
+          return false
         }
 
-        // ── Search query ──
-        if (!q) return true;
-        const name = s.name.toLowerCase();
-        const tag = s.tag.toLowerCase();
-        return (
-          name.startsWith(q) ||
-          tag.startsWith(q) ||
-          name.split(" ").some((w) => w.startsWith(q)) ||
-          tag.split(" ").some((w) => w.startsWith(q))
-        );
-      });
+        if (!normalizedQuery) return true
 
-      setFilteredStores(result);
-    }, 150);
+        const haystacks = [
+          store.name.toLowerCase(),
+          store.tag.toLowerCase(),
+          ...store.products.flatMap((product) => [
+            product.name.toLowerCase(),
+            product.brand.toLowerCase(),
+            product.productType.toLowerCase(),
+          ]),
+        ]
+
+        return haystacks.some((value) => value.includes(normalizedQuery))
+      })
+
+      setFilteredStores(result)
+    }, 150)
+
     return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-    };
-  }, [query, stores, filters]);
+      if (debounceRef.current) clearTimeout(debounceRef.current)
+    }
+  }, [query, stores, filters])
 
-  const handleQueryChange = useCallback((text: string) => setQuery(text), []);
-  const handleClearQuery = useCallback(() => setQuery(""), []);
+  const handleQueryChange = useCallback((text: string) => setQuery(text), [])
+  const handleClearQuery = useCallback(() => setQuery(''), [])
 
-  const handleSelectStore = useCallback((store: Store) => setSelectedStore(store), []);
-  const handleCloseStore = useCallback(() => setSelectedStore(null), []);
+  const handleSelectStore = useCallback((store: Store) => setSelectedStore(store), [])
+  const handleCloseStore = useCallback(() => setSelectedStore(null), [])
 
   const handleToggleFollow = useCallback((storeId: string) => {
     setSelectedStore((prev) =>
       prev?.id === storeId ? { ...prev, isFollowing: !prev.isFollowing } : prev,
-    );
-  }, []);
+    )
+  }, [])
 
   const handleGoToCurrentLocation = useCallback(async () => {
-    setIsFetchingLocation(true);
-    setLocationError(null);
+    setIsFetchingLocation(true)
+    setLocationError(null)
+
     try {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") { setLocationError("Location permission denied."); return; }
-      const loc = await Location.getCurrentPositionAsync({
+      const { status } = await Location.requestForegroundPermissionsAsync()
+      if (status !== 'granted') {
+        setLocationError('Location permission denied.')
+        return
+      }
+
+      const location = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.Balanced,
-      });
+      })
+
       setRegion((prev) => ({
         ...prev,
-        latitude: loc.coords.latitude,
-        longitude: loc.coords.longitude,
-      }));
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      }))
     } catch {
-      setLocationError("Could not get your location.");
+      setLocationError('Could not get your location.')
     } finally {
-      setIsFetchingLocation(false);
+      setIsFetchingLocation(false)
     }
-  }, []);
+  }, [])
 
-  const handleOpenFilterModal = useCallback(() => setIsFilterModalOpen(true), []);
-  const handleCloseFilterModal = useCallback(() => setIsFilterModalOpen(false), []);
+  const handleOpenFilterModal = useCallback(() => setIsFilterModalOpen(true), [])
+  const handleCloseFilterModal = useCallback(() => setIsFilterModalOpen(false), [])
 
-  // ── Apply filters ─────────────────────────────────────────────────────────
   const handleApplyFilters = useCallback((applied: SearchFilters) => {
-    setFilters(applied);
-    setIsFilterModalOpen(false);
-  }, []);
+    setFilters(applied)
+    setIsFilterModalOpen(false)
+  }, [])
 
-  const handleResetFilters = useCallback(() => setFilters(DEFAULT_FILTERS), []);
+  const handleResetFilters = useCallback(() => setFilters(DEFAULT_FILTERS), [])
 
   return {
-    query, handleQueryChange, handleClearQuery,
-    filters, activeFilterCount,
-    isFilterModalOpen, handleOpenFilterModal, handleCloseFilterModal,
-    handleApplyFilters, handleResetFilters,                           // 👈 new
-    region, setRegion, filteredStores, nearbyCount: filteredStores.length,
-    selectedStore, handleSelectStore, handleCloseStore, handleToggleFollow,
-    isFetchingLocation, locationError, handleGoToCurrentLocation,
-  };
+    query,
+    handleQueryChange,
+    handleClearQuery,
+    filters,
+    activeFilterCount,
+    isFilterModalOpen,
+    handleOpenFilterModal,
+    handleCloseFilterModal,
+    handleApplyFilters,
+    handleResetFilters,
+    region,
+    setRegion,
+    filteredStores,
+    nearbyCount: filteredStores.length,
+    selectedStore,
+    handleSelectStore,
+    handleCloseStore,
+    handleToggleFollow,
+    isFetchingLocation,
+    locationError,
+    handleGoToCurrentLocation,
+  }
 }

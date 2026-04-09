@@ -1,26 +1,26 @@
-import React from 'react';
+import React from 'react'
 import {
   View,
   Text,
   TouchableOpacity,
   ScrollView,
   Image,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { NearbyProduct, StockStatus } from '@/services/hooks/discover/useDiscover';
+} from 'react-native'
+import { Ionicons } from '@expo/vector-icons'
+import { NearbyProduct, StockStatus } from '@/services/hooks/discover/useDiscover'
 
 interface DiscoverNearByProps {
-  products: NearbyProduct[];
-  onSeeAll?: () => void;
-  onProductPress?: (p: NearbyProduct) => void;
-  onWishlistToggle?: (id: string) => void;
+  products: NearbyProduct[]
+  onSeeAll?: () => void
+  onProductPress?: (product: NearbyProduct) => void
+  onWishlistToggle?: (id: string) => void
 }
 
 const STOCK_BG: Record<StockStatus, string> = {
   'In Stock': '#00C853',
   'Low Stock': '#FF6D00',
   'Dropping Soon': '#1565C0',
-};
+}
 
 const StockBadge: React.FC<{ status: StockStatus }> = ({ status }) => (
   <View
@@ -31,14 +31,15 @@ const StockBadge: React.FC<{ status: StockStatus }> = ({ status }) => (
       {status}
     </Text>
   </View>
-);
+)
 
 const NearbyCard: React.FC<{
-  product: NearbyProduct;
-  onPress?: () => void;
-  onWishlist?: () => void;
+  product: NearbyProduct
+  onPress?: () => void
+  onWishlist?: () => void
 }> = ({ product, onPress, onWishlist }) => {
-  const sizeYear = [product.size].filter(Boolean).join(' · ');
+  const sizeYear = [product.size].filter(Boolean).join(' · ')
+  const sizePrefix = product.productType === 'Clothing' ? 'Size' : 'Sz'
 
   return (
     <TouchableOpacity
@@ -54,7 +55,6 @@ const NearbyCard: React.FC<{
       onPress={onPress}
       activeOpacity={0.9}
     >
-      {/* Image */}
       <View className="relative bg-neutral-200" style={{ width: 230, height: 240 }}>
         <Image
           source={{ uri: product.image }}
@@ -62,12 +62,10 @@ const NearbyCard: React.FC<{
           resizeMode="cover"
         />
 
-        {/* Stock badge */}
         <View className="absolute top-3 left-3">
           <StockBadge status={product.stockStatus} />
         </View>
 
-        {/* Heart icon (UPDATED SIZE) */}
         <TouchableOpacity
           className="absolute top-3 right-3 w-12 h-12 items-center justify-center"
           onPress={onWishlist}
@@ -75,14 +73,16 @@ const NearbyCard: React.FC<{
         >
           <Ionicons
             name={product.isWishlisted ? 'heart' : 'heart-outline'}
-            size={32} // 👈 increased from 22
+            size={32}
             color={product.isWishlisted ? '#FF3B6B' : '#fff'}
           />
         </TouchableOpacity>
       </View>
 
-      {/* Info */}
       <View className="p-4 gap-1.5">
+        <Text className="text-xs text-green-600 font-bold uppercase tracking-wide">
+          {product.productType} · {product.audience}
+        </Text>
         <Text className="text-sm text-neutral-400 font-medium">
           {product.store} · {product.distance}
         </Text>
@@ -108,15 +108,15 @@ const NearbyCard: React.FC<{
                 className="text-sm font-bold"
                 style={{ color: '#00C853' }}
               >
-                Sz {sizeYear}
+                {sizePrefix} {sizeYear}
               </Text>
             </View>
           ) : null}
         </View>
       </View>
     </TouchableOpacity>
-  );
-};
+  )
+}
 
 export const DiscoverNearBy: React.FC<DiscoverNearByProps> = ({
   products,
@@ -125,10 +125,9 @@ export const DiscoverNearBy: React.FC<DiscoverNearByProps> = ({
   onWishlistToggle,
 }) => (
   <View className="mt-6">
-    {/* Header */}
     <View className="flex-row items-center justify-between px-5 mb-4">
       <Text className="text-2xl font-extrabold text-neutral-900">
-        Nearby
+        Nearby Finds
       </Text>
 
       <TouchableOpacity onPress={onSeeAll}>
@@ -138,22 +137,21 @@ export const DiscoverNearBy: React.FC<DiscoverNearByProps> = ({
       </TouchableOpacity>
     </View>
 
-    {/* List */}
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={{ paddingLeft: 20, paddingRight: 10, gap: 16 }}
     >
-      {products.map(p => (
+      {products.map((product) => (
         <NearbyCard
-          key={p.id}
-          product={p}
-          onPress={() => onProductPress?.(p)}
-          onWishlist={() => onWishlistToggle?.(p.id)}
+          key={product.id}
+          product={product}
+          onPress={() => onProductPress?.(product)}
+          onWishlist={() => onWishlistToggle?.(product.id)}
         />
       ))}
     </ScrollView>
   </View>
-);
+)
 
-export default DiscoverNearBy;
+export default DiscoverNearBy

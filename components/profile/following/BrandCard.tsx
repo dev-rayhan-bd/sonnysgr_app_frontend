@@ -45,7 +45,7 @@ const BrandCard: React.FC<Props> = ({ brand, onPress }) => {
       </Text>
 
       <Text className="text-xs text-green-500 font-medium mt-0.5 text-center">
-        {brand.pairsInSize} pairs in your{'\n'}size nearby
+        {brand.itemsNearYou} items in your{'\n'}size nearby
       </Text>
 
       {/* Follow Button */}

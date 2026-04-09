@@ -26,7 +26,7 @@ const StatCell: React.FC<{ value: string; label: string; accent?: boolean }> = (
 
 const LockerStats: React.FC<LockerStatsProps> = ({ stats }) => (
   <View className="bg-white border-b border-gray-100 flex-row">
-    <StatCell value={String(stats.totalPairs)} label="Pairs" />
+    <StatCell value={String(stats.totalPairs)} label="Items" />
 
     {/* Divider */}
     <View className="w-px bg-gray-100 my-3" />

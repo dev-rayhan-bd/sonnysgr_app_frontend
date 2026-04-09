@@ -1,12 +1,14 @@
-// services/hooks/discover/useStoreProfile.ts
-import { useState, useCallback } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import Toast from 'react-native-toast-message'
+import type { Audience, ProductType } from '@/types/catalog'
 
 export interface StoreProduct {
   id: string
   name: string
   size: string
   price: number
+  productType: ProductType
+  audience: Audience
   badge?: string
   badgeColor?: string
   imageUri?: string
@@ -27,10 +29,8 @@ export interface StoreProfile {
   followers: number
   posts: number
   distance: string
-
-  latitude: number       // ✅ add this
-  longitude: number      // ✅ add this
-
+  latitude: number
+  longitude: number
   isFollowing: boolean
   isVerified: boolean
   isFastPickup: boolean
@@ -42,7 +42,7 @@ export interface StoreProfile {
   website: string
   instagram: string
   tags: string[]
-  pairsInSize: number
+  availableNowCount: number
   products: StoreProduct[]
   reviewScore: number
   reviewBreakdown: ReviewBreakdown[]
@@ -63,10 +63,8 @@ const MOCK: StoreProfile = {
   followers: 247,
   posts: 83,
   distance: '1.1 mi',
-
-  latitude: 100.7617,     // Miami example
-  longitude: -80.1918,   // Miami example
-
+  latitude: 100.7617,
+  longitude: -80.1918,
   isFollowing: false,
   isVerified: true,
   isFastPickup: true,
@@ -77,12 +75,64 @@ const MOCK: StoreProfile = {
   phone: '(305) 555-0198',
   website: 'sonnykicks.com',
   instagram: '@sonnykicks',
-  tags: ['Your Size 10.5', 'Jordans', 'Nike', 'New Arrivals'],
-  pairsInSize: 83,
+  tags: ['All', 'Sneakers', 'Clothing', "Men's", "Women's", "Kids'"],
+  availableNowCount: 6,
   notificationsOn: false,
   products: [
-    { id: 'p1', name: "Air Jordan 4 'Black Cat'", size: 'Size 10.5', price: 220 },
-    { id: 'p2', name: "Air Jordan 4 'B'", size: 'Size 10.5', price: 220, badge: 'In Stock', badgeColor: '#22C55E' },
+    {
+      id: 'p1',
+      name: "Air Jordan 4 'Black Cat'",
+      size: '10.5',
+      price: 220,
+      productType: 'Sneakers',
+      audience: "Men's",
+      badge: 'In Stock',
+      badgeColor: '#22C55E',
+    },
+    {
+      id: 'p2',
+      name: 'Essentials Pullover Hoodie',
+      size: 'L',
+      price: 120,
+      productType: 'Clothing',
+      audience: "Men's",
+      badge: 'New',
+      badgeColor: '#2563EB',
+    },
+    {
+      id: 'p3',
+      name: 'Nike Sportswear Club Tee',
+      size: 'M',
+      price: 45,
+      productType: 'Clothing',
+      audience: "Women's",
+    },
+    {
+      id: 'p4',
+      name: 'New Balance 550',
+      size: '8.5',
+      price: 130,
+      productType: 'Sneakers',
+      audience: "Women's",
+    },
+    {
+      id: 'p5',
+      name: 'Adidas Firebird Track Pants',
+      size: 'Kids L',
+      price: 95,
+      productType: 'Clothing',
+      audience: "Kids'",
+    },
+    {
+      id: 'p6',
+      name: 'Nike Dunk Low Panda',
+      size: '4Y',
+      price: 110,
+      productType: 'Sneakers',
+      audience: "Kids'",
+      badge: 'Low Stock',
+      badgeColor: '#F97316',
+    },
   ],
   reviewScore: 4.8,
   reviewBreakdown: [
@@ -93,24 +143,37 @@ const MOCK: StoreProfile = {
     { star: 1, percent: 1 },
   ],
   customerService: 4.9,
-  authenticity: 5.0,
+  authenticity: 5,
   pickupSpeed: 4.7,
   pricing: 4.6,
 }
+
 export function useStoreProfile(storeId?: string) {
   const [store, setStore] = useState<StoreProfile>(MOCK)
-  const [activeTag, setActiveTag] = useState<string>('Your Size 10.5')
+  const [activeTag, setActiveTag] = useState<string>('All')
+
+  const visibleProducts = useMemo(() => {
+    if (activeTag === 'All') return store.products
+
+    if (activeTag === 'Sneakers' || activeTag === 'Clothing') {
+      return store.products.filter((product) => product.productType === activeTag)
+    }
+
+    return store.products.filter((product) => product.audience === activeTag)
+  }, [activeTag, store.products])
 
   const toggleFollow = useCallback(() => {
-    setStore(prev => {
+    setStore((prev) => {
       const nowFollowing = !prev.isFollowing
+
       Toast.show({
         type: nowFollowing ? 'success' : 'info',
         text1: nowFollowing ? 'Following!' : 'Unfollowed',
         text2: nowFollowing
-          ? `You're now following ${prev.name} 🎉`
+          ? `You're now following ${prev.name}`
           : `You unfollowed ${prev.name}`,
       })
+
       return {
         ...prev,
         isFollowing: nowFollowing,
@@ -120,15 +183,17 @@ export function useStoreProfile(storeId?: string) {
   }, [])
 
   const toggleNotifications = useCallback(() => {
-    setStore(prev => {
+    setStore((prev) => {
       const nowOn = !prev.notificationsOn
+
       Toast.show({
         type: nowOn ? 'success' : 'info',
         text1: nowOn ? 'Notifications On' : 'Notifications Off',
         text2: nowOn
-          ? `You'll be notified about ${prev.name} 🔔`
+          ? `You'll be notified about ${prev.name}`
           : `Notifications disabled for ${prev.name}`,
       })
+
       return { ...prev, notificationsOn: nowOn }
     })
   }, [])
@@ -139,7 +204,7 @@ export function useStoreProfile(storeId?: string) {
       Toast.show({
         type: 'success',
         text1: 'Shared!',
-        text2: 'Link ready to share 📤',
+        text2: 'Link ready to share',
       })
     } catch {
       Toast.show({
@@ -161,8 +226,8 @@ export function useStoreProfile(storeId?: string) {
   const handleSeeAll = useCallback(() => {
     Toast.show({
       type: 'info',
-      text1: 'Showing All',
-      text2: 'All products in your size',
+      text1: 'Showing Products',
+      text2: 'Viewing all available sneakers and clothing',
     })
   }, [])
 
@@ -177,6 +242,8 @@ export function useStoreProfile(storeId?: string) {
   return {
     store,
     activeTag,
+    visibleProducts,
+    visibleProductCount: visibleProducts.length,
     setActiveTag,
     toggleFollow,
     toggleNotifications,

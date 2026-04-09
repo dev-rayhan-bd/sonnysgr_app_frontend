@@ -7,7 +7,7 @@ export interface FollowedStore {
   name: string
   initials: string
   brandColor: string
-  pairsInSize: number
+  itemsNearYou: number
   distance: string
   notificationsOn: boolean
   alerts: AlertType[]
@@ -19,42 +19,74 @@ export interface FollowedBrand {
   name: string
   initials: string
   brandColor: string
-  pairsInSize: number
+  itemsNearYou: number
   emoji: string
 }
 
 const MOCK_STORES: FollowedStore[] = [
-  { id: 's1', name: "Sonny's Kicks", initials: 'SK', brandColor: '#22C55E', pairsInSize: 12, distance: '1.1 mi', notificationsOn: true,  alerts: ['New Arrivals', 'Drops', 'Flash Sales', 'Restocks'] },
-  { id: 's2', name: 'Urban Sole',    initials: 'US', brandColor: '#22C55E', pairsInSize: 8,  distance: '2.3 mi', notificationsOn: true,  alerts: ['New Arrivals', 'Drops'] },
-  { id: 's3', name: 'Kicks City',    initials: 'KC', brandColor: '#22C55E', pairsInSize: 15, distance: '3.5 mi', notificationsOn: false, alerts: [] },
+  {
+    id: 's1',
+    name: "Sonny's Kicks",
+    initials: 'SK',
+    brandColor: '#22C55E',
+    itemsNearYou: 12,
+    distance: '1.1 mi',
+    notificationsOn: true,
+    alerts: ['New Arrivals', 'Drops', 'Flash Sales', 'Restocks'],
+  },
+  {
+    id: 's2',
+    name: 'Urban Sole',
+    initials: 'US',
+    brandColor: '#22C55E',
+    itemsNearYou: 8,
+    distance: '2.3 mi',
+    notificationsOn: true,
+    alerts: ['New Arrivals', 'Drops'],
+  },
+  {
+    id: 's3',
+    name: 'Kicks City',
+    initials: 'KC',
+    brandColor: '#22C55E',
+    itemsNearYou: 15,
+    distance: '3.5 mi',
+    notificationsOn: false,
+    alerts: [],
+  },
 ]
 
 const MOCK_BRANDS: FollowedBrand[] = [
-  { id: 'b1', name: 'Nike',        initials: 'N',  brandColor: '#111827', pairsInSize: 45, emoji: '👟' },
-  { id: 'b2', name: 'Jordan',      initials: 'J',  brandColor: '#111827', pairsInSize: 32, emoji: '🏀' },
-  { id: 'b3', name: 'Adidas',      initials: 'A',  brandColor: '#111827', pairsInSize: 18, emoji: '🦅' },
-  { id: 'b4', name: 'New Balance', initials: 'NB', brandColor: '#111827', pairsInSize: 12, emoji: '⚖️' },
+  { id: 'b1', name: 'Nike', initials: 'N', brandColor: '#111827', itemsNearYou: 45, emoji: 'N' },
+  { id: 'b2', name: 'Jordan', initials: 'J', brandColor: '#111827', itemsNearYou: 32, emoji: 'J' },
+  { id: 'b3', name: 'Adidas', initials: 'A', brandColor: '#111827', itemsNearYou: 18, emoji: 'A' },
+  { id: 'b4', name: 'Essentials', initials: 'E', brandColor: '#111827', itemsNearYou: 12, emoji: 'E' },
 ]
 
 export function useFollowing() {
   const [stores, setStores] = useState<FollowedStore[]>(MOCK_STORES)
-  const [brands]            = useState<FollowedBrand[]>(MOCK_BRANDS)
+  const [brands] = useState<FollowedBrand[]>(MOCK_BRANDS)
   const [activeTab, setActiveTab] = useState<'Stores' | 'Brands'>('Stores')
   const [activeAlertFilters, setActiveAlertFilters] = useState<AlertType[]>([])
 
   const toggleStoreNotification = useCallback((id: string) => {
-    setStores(prev => prev.map(s => s.id === id ? { ...s, notificationsOn: !s.notificationsOn } : s))
-  }, [])
-
-  const toggleAlertFilter = useCallback((alert: AlertType) => {
-    setActiveAlertFilters(prev =>
-      prev.includes(alert) ? prev.filter(a => a !== alert) : [...prev, alert]
+    setStores((prev) =>
+      prev.map((store) =>
+        store.id === id ? { ...store, notificationsOn: !store.notificationsOn } : store,
+      ),
     )
   }, [])
 
-  const filteredStores = activeAlertFilters.length === 0
-    ? stores
-    : stores.filter(s => activeAlertFilters.every(f => s.alerts.includes(f)))
+  const toggleAlertFilter = useCallback((alert: AlertType) => {
+    setActiveAlertFilters((prev) =>
+      prev.includes(alert) ? prev.filter((item) => item !== alert) : [...prev, alert],
+    )
+  }, [])
+
+  const filteredStores =
+    activeAlertFilters.length === 0
+      ? stores
+      : stores.filter((store) => activeAlertFilters.every((filter) => store.alerts.includes(filter)))
 
   return {
     stores: filteredStores,

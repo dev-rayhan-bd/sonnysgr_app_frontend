@@ -41,7 +41,7 @@ const MOCK: OrderStatusData = {
     { id: 'placed',    label: 'Order Placed',      time: 'Today, 10:24 AM', done: true,  active: false },
     { id: 'confirmed', label: 'Hold Confirmed',     time: 'Today, 10:35 AM', done: true,  active: false },
     { id: 'payment',   label: 'Payment Received',   time: 'Today, 12:15 PM', done: true,  active: false },
-    { id: 'pickup',    label: 'Ready for Pickup',   time: 'Today, 12:45 PM', done: false, active: true, detail: 'Your pair is at the counter waiting! Staff notified' },
+    { id: 'pickup',    label: 'Ready for Pickup',   time: 'Today, 12:45 PM', done: false, active: true, detail: 'Your item is at the counter waiting. Staff notified.' },
     { id: 'completed', label: 'Completed',          time: '',                done: false, active: false },
   ],
   storeName: "Sonny's Kicks",
