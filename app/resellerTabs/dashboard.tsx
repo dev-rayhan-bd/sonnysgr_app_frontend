@@ -8,6 +8,7 @@ import {
 } from '@expo/vector-icons';
 import BaseContainer from '@/components/shared/BaseContainer';
 import { useDashboard } from '@/services/hooks/reseller/dashboard/useDashboard';
+import { router } from 'expo-router';
 
 const Dashboard = () => {
     const { stats, requests, activities } = useDashboard();
@@ -19,7 +20,7 @@ const Dashboard = () => {
                     {/* Header */}
                     <View style={styles.header}>
                         <Text style={styles.logo}>GO<Text style={{ color: '#4ADE80' }}>SNKR</Text></Text>
-                        <TouchableOpacity>
+                        <TouchableOpacity onPress={() => router.push("/screens/reseller/notifications")}>
                             <Ionicons name="notifications-outline" size={24} color="#333" />
                             <View style={styles.notifBadge} />
                         </TouchableOpacity>
