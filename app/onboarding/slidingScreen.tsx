@@ -50,7 +50,7 @@ const SLIDES: Slide[] = [
   {
     id: 'find',
     SVG: FindSVG,
-    title: 'Find Sneakers\nNear You',
+    title: 'Find Sneakers & Cloths\nNear You',
     subtitle: 'Locate verified sellers and retailers close to you with real-time availability.',
     buttonText: 'Next',
   },

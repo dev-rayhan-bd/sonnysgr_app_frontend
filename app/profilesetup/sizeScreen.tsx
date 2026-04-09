@@ -42,7 +42,7 @@ export default function SizeScreen() {
             handleContinue(() => router.back())
         } else {
             // Came from onboarding → go to next screen
-            handleContinue(() => router.push('/profilesetup/locationScreen'))
+            handleContinue(() => router.push('/profilesetup/clothingSizeScreen' as any))
         }
     }
 

@@ -15,7 +15,6 @@ const ACCOUNT_TYPE_OPTIONS = [
   { label: 'Sneaker Buyer',    value: 'buyer',    subtitle: 'Shop & discover sneakers near me',   icon: <Feather name="shopping-bag" size={18} color="#111827" /> },
   { label: 'Store / Retailer', value: 'seller',   subtitle: 'List my inventory & manage orders',  icon: <Feather name="grid"         size={18} color="#111827" /> },
   { label: 'Trusted Reseller', value: 'reseller', subtitle: 'Sell my inventory to stores',        icon: <Feather name="tag"          size={18} color="#111827" /> },
-  { label: 'Collector',        value: 'collector',subtitle: 'Track & showcase my collection',     icon: <Feather name="star"         size={18} color="#111827" /> },
 ]
 
 interface FormState {

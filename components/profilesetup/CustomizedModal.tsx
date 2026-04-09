@@ -18,16 +18,31 @@ interface Props {
   activeTab: GenderTab
   onConfirm: (size: string) => void
   onClose: () => void
+  title?: string
+  subtitle?: (tab: GenderTab) => string
+  placeholder?: string
+  confirmText?: string
+  errorText?: string
 }
 
-export default function CustomSizeModal({ visible, activeTab, onConfirm, onClose }: Props) {
+export default function CustomSizeModal({
+  visible,
+  activeTab,
+  onConfirm,
+  onClose,
+  title = 'Add Custom Size',
+  subtitle = (tab) => `Enter your ${tab} shoe size below`,
+  placeholder = 'e.g. 10.5 or 11W',
+  confirmText = 'Add Size',
+  errorText = 'Please enter a size',
+}: Props) {
   const [value, setValue] = useState('')
   const [error, setError] = useState('')
 
   const handleConfirm = () => {
     const trimmed = value.trim()
     if (!trimmed) {
-      setError('Please enter a size')
+      setError(errorText)
       return
     }
     onConfirm(trimmed)
@@ -57,15 +72,15 @@ export default function CustomSizeModal({ visible, activeTab, onConfirm, onClose
             >
               <View style={styles.card}>
                 {/* Header */}
-                <Text style={styles.title}>Add Custom Size</Text>
+                <Text style={styles.title}>{title}</Text>
                 <Text style={styles.subtitle}>
-                  Enter your {activeTab} shoe size below
+                  {subtitle(activeTab)}
                 </Text>
 
                 {/* Input */}
                 <TextInput
                   style={[styles.input, !!error && styles.inputError]}
-                  placeholder="e.g. 10.5 or 11W"
+                  placeholder={placeholder}
                   placeholderTextColor="#9CA3AF"
                   value={value}
                   onChangeText={text => {
@@ -93,7 +108,7 @@ export default function CustomSizeModal({ visible, activeTab, onConfirm, onClose
                     onPress={handleConfirm}
                     activeOpacity={0.85}
                   >
-                    <Text style={styles.confirmText}>Add Size</Text>
+                    <Text style={styles.confirmText}>{confirmText}</Text>
                   </TouchableOpacity>
                 </View>
               </View>

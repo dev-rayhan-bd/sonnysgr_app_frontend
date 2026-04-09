@@ -11,18 +11,25 @@ interface SelectedEntry {
 interface Props {
   selectedSizes: SelectedEntry[]
   onRemove: (tab: GenderTab) => void
+  label?: string
+  valuePrefix?: string
 }
 
-export default function SelectedSizeChips({ selectedSizes, onRemove }: Props) {
+export default function SelectedSizeChips({
+  selectedSizes,
+  onRemove,
+  label = 'Your sizes:',
+  valuePrefix = 'US ',
+}: Props) {
   if (selectedSizes.length === 0) return null
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>Your sizes:</Text>
+      <Text style={styles.label}>{label}</Text>
       <View style={styles.chips}>
         {selectedSizes.map(({ tab, size }) => (
           <View key={tab} style={styles.chip}>
-            <Text style={styles.chipText}>US {size}</Text>
+            <Text style={styles.chipText}>{`${valuePrefix}${size}`}</Text>
             <TouchableOpacity
               onPress={() => onRemove(tab)}
               hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
