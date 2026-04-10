@@ -35,13 +35,13 @@ export const DiscoverScreen: React.FC = () => {
     handleRefresh,
   } = useDiscover();
 
-  const onProductPress = useCallback((p: NearbyProduct) => console.log('product pressed', p.id), []);
-  const onBrandPress = useCallback((b: BrandProduct) => console.log('brand pressed', b.id), []);
-  const onBuyBrand = useCallback((b: BrandProduct) => console.log('buy brand', b.id), []);
-  const onAdPress = useCallback((ad: AdBanner) => console.log('ad pressed', ad.id), []);
+  const onProductPress = useCallback((p: NearbyProduct) => router.push("/screens/product/productScreen"), []);
+  const onBrandPress = useCallback((b: BrandProduct) => router.push("/screens/product/productScreen"), []);
+  const onBuyBrand = useCallback((b: BrandProduct) => router.push("/screens/product/productScreen"), []);
+  const onAdPress = useCallback((ad: AdBanner) => router.push("/screens/product/productScreen"), []);
   const onStorePress = useCallback((s: FollowedStore) => console.log('store pressed', s.id), []);
-  const onBuyStore = useCallback((s: FollowedStore) => console.log('buy store', s.id), []);
-
+  const onBuyStore = useCallback((s: FollowedStore) => router.push("/screens/product/productScreen"), []);
+  
   return (
     <BaseContainer scrollable backgroundColor="#fff">
       <View className="flex-1 justify-center">

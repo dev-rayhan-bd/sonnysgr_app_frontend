@@ -60,7 +60,7 @@ const AnimatedTabItem = ({ isFocused, navigation, route, label, icon, activeIcon
 
 const CustomTabBar = ({ state, navigation }: any) => {
   const { width } = useWindowDimensions();
-  const TAB_BAR_WIDTH = width * 0.95;
+ const TAB_BAR_WIDTH = width;
   const TAB_WIDTH = TAB_BAR_WIDTH / tabConfig.length;
   
   // Shared value for the dot's X position
@@ -118,7 +118,7 @@ const CustomTabBar = ({ state, navigation }: any) => {
 const styles = StyleSheet.create({
   tabBarContainer: {
     position: 'absolute',
-    bottom: Platform.OS === 'ios' ? 30 : 50,
+    bottom: 0,                          // flush to bottom
     left: 0,
     right: 0,
     alignItems: 'center',
@@ -127,14 +127,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: BAR_BG,
     height: 75,
-    borderRadius: 35,
-    borderWidth: 1,
-    borderColor: '#F1F5F9',
+    borderRadius: 0,                    // no rounding — flat/square
+    borderWidth: 0,
+    borderTopWidth: 1,                  // only top border
+    borderTopColor: '#F1F5F9',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
+    shadowOffset: { width: 0, height: -4 },   // shadow upward
     shadowOpacity: 0.05,
-    shadowRadius: 20,
-    elevation: 40,
+    shadowRadius: 10,
+    elevation: 10,
+    width: '100%',                      // full width, not 95%
+    paddingBottom: Platform.OS === 'ios' ? 20 : 0, // safe area on iOS
   },
   tabItem: {
     flex: 1,
