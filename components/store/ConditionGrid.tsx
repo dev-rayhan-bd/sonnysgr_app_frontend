@@ -2,12 +2,12 @@ import React from 'react'
 import { View, Text, TouchableOpacity } from 'react-native'
 import {
   CONDITIONS,
-  SneakerCondition,
+  ProductCondition,
 } from '@/services/hooks/store/useSellToStore'
 
 interface Props {
-  selected: SneakerCondition | null
-  onSelect: (c: SneakerCondition) => void
+  selected: ProductCondition | null
+  onSelect: (c: ProductCondition) => void
 }
 
 const ConditionGrid: React.FC<Props> = ({ selected, onSelect }) => (

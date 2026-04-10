@@ -286,7 +286,7 @@ const OfferFromStoreScreen: React.FC = () => {
             </View>
             <View className="flex-1">
               <Text className="text-sm text-amber-900 leading-snug">
-                <Text className="font-bold">{offer.store.name}</Text> wants to buy your pair!
+                <Text className="font-bold">{offer.store.name}</Text> wants to buy your item!
               </Text>
               <Text className="text-xs text-amber-700 mt-1 leading-relaxed">
                 They found your {offer.productName} in your public locker and made an offer.
