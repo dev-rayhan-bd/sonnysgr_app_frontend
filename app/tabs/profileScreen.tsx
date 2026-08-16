@@ -80,12 +80,14 @@ const ProfileScreen = () => {
             wishlistCount={profile.wishlistCount}
             wantedPairs={profile.wantedPairs}
             reviewsCount={profile.reviewsCount}
-            onOrders={() => router.push('/screens/profile/orderScreen')}
+            onOrders={() => router.push('/screens/order/ordersListScreen')}
             onWishlist={() => router.push('/screens/profile/wishlistScreen')}
             onWantedPairs={() => router.push('/screens/profile/wantedPairScreen')}
             onReviews={() => console.log('My Reviews')}
             onFollowings={() => router.push('/screens/profile/followingScreen')}
             onCollections={() => router.push('/screens/profile/lockerBrowserScreen')}
+            onTransactions={() => router.push('/screens/profile/transactionHistoryScreen')}
+            onBag={() => router.push('/screens/profile/bagScreen')}
           />
 
           {/* My Sales — taps navigate to full screen */}

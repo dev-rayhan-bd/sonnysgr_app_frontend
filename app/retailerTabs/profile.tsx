@@ -1,5 +1,7 @@
+// app/retailerTabs/profile.tsx
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { Feather } from '@expo/vector-icons'; // ← add Feather
 
 import BaseContainer from '@/components/shared/BaseContainer';
 import StoreProfileHeader from '@/components/retailer/profile/StoreProfileHeader';
@@ -9,8 +11,10 @@ import StoreProfileBrand from '@/components/retailer/profile/StoreProfileBrand';
 import StoreProfileHours from '@/components/retailer/profile/StoreProfileHours';
 import StoreProfileSocial from '@/components/retailer/profile/StoreProfileSocial';
 import { useStoreProfile } from '@/services/hooks/retailer/profile/useStoreProfile';
+import { useRouter } from 'expo-router'; // ← add router
 
 export const StoreProfileScreen: React.FC = () => {
+  const router = useRouter(); // ← add router
   const {
     profile,
     isSaving,
@@ -24,20 +28,15 @@ export const StoreProfileScreen: React.FC = () => {
 
   return (
     <BaseContainer backgroundColor="#fff">
-
       <View style={styles.container}>
+        <StoreProfileHeader />
 
-        {/* ── Fixed header ── */}
-        <StoreProfileHeader/>
-
-        {/* ── Scrollable body ── */}
         <ScrollView
           style={styles.scroll}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
         >
-          {/* Cover + avatar */}
           <StoreProfileCover
             coverImageUri={profile.coverImageUri}
             avatarLabel={profile.avatarLabel}
@@ -45,16 +44,12 @@ export const StoreProfileScreen: React.FC = () => {
             location={profile.location}
             onPickCover={handlePickCoverImage}
           />
-
-          {/* Store name + bio */}
           <StoreProfileDetails
             name={profile.name}
             bio={profile.bio}
             onNameChange={v => updateField('name', v)}
             onBioChange={v => updateField('bio', v)}
           />
-
-          {/* Address, phone, website */}
           <StoreProfileBrand
             address={profile.address}
             phone={profile.phone}
@@ -63,16 +58,12 @@ export const StoreProfileScreen: React.FC = () => {
             onPhoneChange={v => updateField('phone', v)}
             onWebsiteChange={v => updateField('website', v)}
           />
-
-          {/* Operating hours */}
           <StoreProfileHours
             hours={profile.operatingHours}
             onToggleDay={toggleDay}
             onUpdateHour={updateHour}
             onCopyToAll={copyHoursToAllDays}
           />
-
-          {/* Social */}
           <StoreProfileSocial
             instagram={profile.instagram}
             onInstagramChange={v => updateField('instagram', v)}
@@ -89,6 +80,18 @@ export const StoreProfileScreen: React.FC = () => {
               <Text style={styles.saveBtnText}>
                 {isSaving ? 'Saving…' : 'Save Store Profile'}
               </Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* ── Sign Out ── */}
+          <View style={styles.signOutWrapper}>
+            <TouchableOpacity
+              onPress={() => router.replace('/auth/signInScreen')}
+              activeOpacity={0.7}
+              style={styles.signOutBtn}
+            >
+              <Feather name="log-out" size={18} color="#EF4444" />
+              <Text style={styles.signOutText}>Sign Out</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -114,6 +117,28 @@ const styles = StyleSheet.create({
   },
   saveBtnText: {
     color: '#fff',
+    fontSize: 15,
+    fontWeight: '700',
+  },
+  // ── new ──
+  signOutWrapper: {
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 16,
+  },
+  signOutBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    borderWidth: 1,
+    borderColor: '#FEE2E2',
+    backgroundColor: '#FFF5F5',
+    borderRadius: 16,
+    paddingVertical: 14,
+  },
+  signOutText: {
+    color: '#EF4444',
     fontSize: 15,
     fontWeight: '700',
   },

@@ -1,3 +1,4 @@
+// app/resellerTabs/profile.tsx
 import React from 'react'
 import {
   Image,
@@ -8,11 +9,13 @@ import {
   View,
 } from 'react-native'
 import { Feather, FontAwesome5, Ionicons } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
 import BaseContainer from '@/components/shared/BaseContainer'
 import { useProfile } from '@/services/hooks/reseller/profile/useProfile'
 
 const Profile = () => {
   const { user, items } = useProfile()
+  const router = useRouter()
 
   return (
     <BaseContainer backgroundColor="#fff">
@@ -21,7 +24,7 @@ const Profile = () => {
           <View style={styles.navBar}>
             <View style={{ flex: 1 }} />
             <View style={styles.navIcons}>
-              <TouchableOpacity style={styles.iconBtn}>
+              <TouchableOpacity style={styles.iconBtn} onPress={() => router.push('/screens/reseller/visibilityControlsScreen')}>
                 <Ionicons name="settings-outline" size={22} color="#333" />
               </TouchableOpacity>
               <TouchableOpacity style={styles.iconBtn}>
@@ -85,13 +88,30 @@ const Profile = () => {
             </ScrollView>
           </SectionCard>
 
-          <SectionCard title="My Deal History" actionText="View All">
+          <SectionCard
+            title="My Deal History"
+            actionText="View All"
+            onAction={() => router.push('/screens/reseller/submittedRequestsScreen')}
+          >
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.imageScroll}>
               {items.map((item) => (
                 <Image key={`history-${item.id}`} source={{ uri: item.image }} style={styles.itemImage} />
               ))}
             </ScrollView>
           </SectionCard>
+
+          {/* ── Sign Out ── */}
+          <View style={styles.signOutWrapper}>
+            <TouchableOpacity
+              onPress={() => router.replace('/auth/signInScreen')}
+              activeOpacity={0.7}
+              style={styles.signOutBtn}
+            >
+              <Feather name="log-out" size={18} color="#EF4444" />
+              <Text style={styles.signOutText}>Sign Out</Text>
+            </TouchableOpacity>
+          </View>
+
         </View>
       </ScrollView>
     </BaseContainer>
@@ -124,11 +144,13 @@ const SectionCard = ({
   title,
   subTitle,
   actionText,
+  onAction,
   children,
 }: {
   title: string
   subTitle?: string
   actionText: string
+  onAction?: () => void
   children: React.ReactNode
 }) => (
   <View style={styles.card}>
@@ -137,7 +159,7 @@ const SectionCard = ({
         <Text style={styles.cardTitle}>{title}</Text>
         {subTitle ? <Text style={styles.subTitle}>{subTitle}</Text> : null}
       </View>
-      <TouchableOpacity style={styles.actionRow}>
+      <TouchableOpacity style={styles.actionRow} onPress={onAction}>
         <Text style={styles.actionText}>{actionText}</Text>
         <Ionicons name="arrow-forward" size={14} color="#22C55E" />
       </TouchableOpacity>
@@ -208,6 +230,28 @@ const styles = StyleSheet.create({
   cardContent: { fontSize: 14, color: '#4B5563', lineHeight: 22 },
   imageScroll: { flexDirection: 'row' },
   itemImage: { width: 90, height: 90, borderRadius: 15, marginRight: 12, backgroundColor: '#F3F4F6' },
+  // ── Sign Out ──
+  signOutWrapper: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 8,
+  },
+  signOutBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    borderWidth: 1,
+    borderColor: '#FEE2E2',
+    backgroundColor: '#FFF5F5',
+    borderRadius: 16,
+    paddingVertical: 14,
+  },
+  signOutText: {
+    color: '#EF4444',
+    fontSize: 15,
+    fontWeight: '700',
+  },
 })
 
 export default Profile

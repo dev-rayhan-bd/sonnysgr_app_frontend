@@ -221,12 +221,16 @@ const OfferFromStoreScreen: React.FC = () => {
   const [counterModalVisible, setCounterModalVisible] = useState(false)
 
   const handleAccept = useCallback(() => {
-    Toast.show({
-      type: 'success',
-      text1: 'Offer Accepted! 🎉',
-      text2: `You'll receive $${offer?.netPayout.toFixed(2)} within 24 hrs`,
+    if (!offer) return
+
+    router.push({
+      pathname: '/screens/store/dealConfirmedScreen',
+      params: {
+        shoeName: offer.productName,
+        agreedPrice: String(offer.netPayout),
+        buyerName: offer.store.name,
+      },
     })
-    router.back()
   }, [offer, router])
 
   const handleCounter = useCallback(() => {

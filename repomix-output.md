@@ -62,28 +62,41 @@ app/resellerTabs/listing.tsx
 app/resellerTabs/messages.tsx
 app/resellerTabs/profile.tsx
 app/resellerTabs/requests.tsx
+app/retailer/branch/pickup-rules.tsx
 app/retailerTabs/_layout.tsx
 app/retailerTabs/home.tsx
 app/retailerTabs/inventory.tsx
 app/retailerTabs/orders.tsx
 app/retailerTabs/profile.tsx
 app/retailerTabs/promote.tsx
+app/screens/community/communityScreen.tsx
+app/screens/community/communityTrendingScreen.tsx
+app/screens/community/discoverUsersScreen.tsx
+app/screens/community/userProfileScreen.tsx
 app/screens/discover/buyNowScreen.tsx
 app/screens/discover/exploreScreen.tsx
 app/screens/discover/holdWithDepositScreen.tsx
+app/screens/discover/liveShoppingFeedScreen.tsx
 app/screens/discover/notificationsScreen.tsx
 app/screens/discover/notificationsSettingsScreen.tsx
 app/screens/discover/offer/[id].tsx
 app/screens/discover/offerFromStoreScreen.tsx
+app/screens/discover/recentlyViewedScreen.tsx
+app/screens/discover/releaseCalendarScreen.tsx
 app/screens/discover/reserveForPickupScreen.tsx
 app/screens/discover/restock/[id].tsx
 app/screens/discover/reStockAlertScreen.tsx
 app/screens/discover/setDropReminderScreen.tsx
 app/screens/discover/storeListScreen.tsx
+app/screens/discover/trendingNewArrivalsScreen.tsx
+app/screens/messages/chatScreen.tsx
+app/screens/messages/messagesScreen.tsx
 app/screens/order/addCardScreen.tsx
 app/screens/order/directionsScreen.tsx
+app/screens/order/disputeStatusScreen.tsx
 app/screens/order/orderConfirmedScreen.tsx
 app/screens/order/orderDetailsScreen.tsx
+app/screens/order/ordersListScreen.tsx
 app/screens/order/orderStatusScreen.tsx
 app/screens/order/paymentScreen.tsx
 app/screens/order/pickupCompletedScreen.tsx
@@ -93,9 +106,12 @@ app/screens/order/refundRequestScreen.tsx
 app/screens/order/refundStatusScreen.tsx
 app/screens/order/refundSubmittedScreen.tsx
 app/screens/order/reservationConfirmedScreen.tsx
+app/screens/order/submitDisputeScreen.tsx
 app/screens/product/productScreen.tsx
 app/screens/profile/alertPreferencesScreen.tsx
+app/screens/profile/bagScreen.tsx
 app/screens/profile/followingScreen.tsx
+app/screens/profile/itemDetailScreen.tsx
 app/screens/profile/joinWaitlistScreen.tsx
 app/screens/profile/lockerBrowserScreen.tsx
 app/screens/profile/lockerScreen.tsx
@@ -103,6 +119,7 @@ app/screens/profile/mySalesScreen.tsx
 app/screens/profile/orderScreen.tsx
 app/screens/profile/publicLockerScreen.tsx
 app/screens/profile/referralScreen.tsx
+app/screens/profile/transactionHistoryScreen.tsx
 app/screens/profile/vipStatusScreen.tsx
 app/screens/profile/wantedPairScreen.tsx
 app/screens/profile/wishlistScreen.tsx
@@ -110,6 +127,11 @@ app/screens/profilesetup/changePasswordScreen.tsx
 app/screens/profilesetup/editProfileScreen.tsx
 app/screens/profilesetup/settingsScreen.tsx
 app/screens/reseller/notifications.tsx
+app/screens/reseller/requestDetailsScreen.tsx
+app/screens/reseller/resellerProfileScreen.tsx
+app/screens/reseller/sendOfferScreen.tsx
+app/screens/reseller/submittedRequestsScreen.tsx
+app/screens/reseller/visibilityControlsScreen.tsx
 app/screens/retailer/home/analytics/analyticsScreen.tsx
 app/screens/retailer/home/more/addBranchScreen.tsx
 app/screens/retailer/home/more/addNewDropScreen.tsx
@@ -119,16 +141,28 @@ app/screens/retailer/home/more/businessOverViewScreen.tsx
 app/screens/retailer/home/more/demandGapsScreen.tsx
 app/screens/retailer/home/more/dropManagerScreen.tsx
 app/screens/retailer/home/more/editBranchScreen.tsx
+app/screens/retailer/home/more/editDropScreen.tsx
 app/screens/retailer/home/more/localDemandScreen.tsx
 app/screens/retailer/home/more/makeOfferScreen.tsx
 app/screens/retailer/home/more/moreScreen.tsx
 app/screens/retailer/home/more/offerSuccessScreen.tsx
+app/screens/retailer/home/more/pickupSettingsScreen.tsx
 app/screens/retailer/home/more/radiusPromotionScreen.tsx
 app/screens/retailer/home/more/reviewScreen.tsx
+app/screens/retailer/home/more/sellToCustomerScreen.tsx
 app/screens/retailer/home/more/sizeDemandScreen.tsx
 app/screens/retailer/home/more/sourceInventoryScreen.tsx
+app/screens/retailer/home/more/storeSubscriptionScreen.tsx
+app/screens/retailer/home/more/syncLogsScreen.tsx
+app/screens/retailer/home/more/syncSettingsScreen.tsx
 app/screens/retailer/home/notifications/notificationsScreen.tsx
 app/screens/retailer/home/product/AddProductScreen.tsx
+app/screens/retailer/pro/freeTrialOnboardingScreen.tsx
+app/screens/retailer/pro/goProCheckoutScreen.tsx
+app/screens/retailer/pro/proDashboardScreen.tsx
+app/screens/retailer/pro/successConfirmationScreen.tsx
+app/screens/retailer/promote/promotionDetailsScreen.tsx
+app/screens/retailer/promote/promotionHistoryScreen.tsx
 app/screens/retailer/promote/promotionPreviewScreen.tsx
 app/screens/retailer/promote/radiusPromotionScreen.tsx
 app/screens/retailer/refund/refundClaimsScreen.tsx
@@ -136,6 +170,7 @@ app/screens/retailer/refund/reviewClaimScreen.tsx
 app/screens/settings/getHelpDetailScreen.tsx
 app/screens/settings/getHelpScreen.tsx
 app/screens/settings/leaveReviewScreen.tsx
+app/screens/store/dealConfirmedScreen.tsx
 app/screens/store/reportStoreDetailScreen.tsx
 app/screens/store/reportStoreScreen.tsx
 app/screens/store/sellToStoreScreen.tsx
@@ -145,6 +180,7 @@ app/tabs/cartScreen.tsx
 app/tabs/discoverScreen.tsx
 app/tabs/mapScreen.tsx
 app/tabs/profileScreen.tsx
+app/tabs/searchResultsScreen.tsx
 app/tabs/searchScreen.tsx
 assets/images/android-icon-foreground.png
 assets/images/auth/apple.svg
@@ -359,6 +395,7 @@ components/store/StoreReviewBar.tsx
 components/store/StoreScoreGrid.tsx
 components/store/StoreStatsRow.tsx
 components/store/StoreTrustBadge.tsx
+fix_quickactions.js
 global.css
 metro.config.js
 nativewind-env.d.ts
@@ -469,6 +506,4905 @@ types/vip.ts
 ```
 
 # Files
+
+## File: app/retailer/branch/pickup-rules.tsx
+```typescript
+import React from 'react'
+import {
+  Switch,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native'
+import { Feather } from '@expo/vector-icons'
+import { router } from 'expo-router'
+import BaseContainer from '@/components/shared/BaseContainer'
+import { usePickupRules } from '@/services/hooks/retailer/home/usePickUpRules'
+
+const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] as const
+
+type RuleToggleProps = {
+  icon: keyof typeof Feather.glyphMap
+  title: string
+  subtitle: string
+  value: boolean
+  onChange: (value: boolean) => void
+}
+
+const RuleToggle: React.FC<RuleToggleProps> = ({
+  icon,
+  title,
+  subtitle,
+  value,
+  onChange,
+}) => (
+  <View className="flex-row items-center gap-3 px-4 py-4">
+    <View className="w-10 h-10 rounded-full bg-gray-100 items-center justify-center">
+      <Feather name={icon} size={17} color="#111827" />
+    </View>
+
+    <View className="flex-1 pr-2">
+      <Text className="text-sm font-bold text-gray-900">{title}</Text>
+      <Text className="text-xs text-gray-400 mt-0.5 leading-4">{subtitle}</Text>
+    </View>
+
+    <Switch
+      value={value}
+      onValueChange={onChange}
+      trackColor={{ false: '#E5E7EB', true: '#22C55E' }}
+      thumbColor="#FFFFFF"
+    />
+  </View>
+)
+
+const Divider = () => <View className="h-px bg-gray-100 mx-4" />
+
+const SectionLabel: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <Text className="text-[10px] font-bold text-gray-400 tracking-[1.4px] uppercase mt-6 mb-2 px-4">
+    {children}
+  </Text>
+)
+
+export default function PickupRulesScreen() {
+  const { rules, setField, windowOptions, handleSave } = usePickupRules()
+
+  const toggleBlackoutDay = (day: string) => {
+    const exists = rules.blackoutDays.includes(day)
+    setField(
+      'blackoutDays',
+      exists
+        ? rules.blackoutDays.filter((current) => current !== day)
+        : [...rules.blackoutDays, day],
+    )
+  }
+
+  return (
+    <BaseContainer backgroundColor="#FFFFFF" scrollable>
+      <View className="pt-10 pb-12">
+        <View className="flex-row items-center px-4 py-4 border-b border-gray-100">
+          <TouchableOpacity
+            onPress={() => router.back()}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Feather name="arrow-left" size={22} color="#111827" />
+          </TouchableOpacity>
+
+          <Text className="flex-1 text-center text-lg font-black text-gray-900">
+            Pickup Rules
+          </Text>
+
+          <TouchableOpacity onPress={handleSave}>
+            <Text className="text-sm font-extrabold text-green-500">Save</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View className="mx-4 mt-4 rounded-2xl bg-green-50 border border-green-100 px-4 py-4 flex-row gap-3">
+          <View className="w-9 h-9 rounded-full bg-green-500 items-center justify-center">
+            <Feather name="clock" size={16} color="#FFFFFF" />
+          </View>
+          <View className="flex-1">
+            <Text className="text-sm font-bold text-green-900">Custom pickup rules</Text>
+            <Text className="text-xs text-green-700 mt-1 leading-5">
+              Set how long customers have to collect reserved items and what happens when a pickup is missed.
+            </Text>
+          </View>
+        </View>
+
+        <SectionLabel>Pickup window</SectionLabel>
+        <View className="mx-4 rounded-2xl bg-gray-50 p-3">
+          <Text className="text-sm font-bold text-gray-900 mb-3">
+            Customer has this long to pick up
+          </Text>
+          <View className="flex-row flex-wrap gap-2">
+            {windowOptions.map((option) => {
+              const active = rules.pickupWindowHours === option.value
+              return (
+                <TouchableOpacity
+                  key={option.value}
+                  onPress={() => setField('pickupWindowHours', option.value)}
+                  activeOpacity={0.85}
+                  className={`px-4 py-3 rounded-xl border ${
+                    active
+                      ? 'bg-gray-900 border-gray-900'
+                      : 'bg-white border-gray-200'
+                  }`}
+                >
+                  <Text
+                    className={`text-xs font-bold ${
+                      active ? 'text-white' : 'text-gray-600'
+                    }`}
+                  >
+                    {option.label}
+                  </Text>
+                </TouchableOpacity>
+              )
+            })}
+          </View>
+        </View>
+
+        <SectionLabel>Automation</SectionLabel>
+        <View className="mx-4 rounded-2xl bg-white border border-gray-100 overflow-hidden">
+          <RuleToggle
+            icon="rotate-ccw"
+            title="Auto-refund deposit"
+            subtitle="Refund the hold deposit automatically when the pickup window expires."
+            value={rules.autoRefundDeposit}
+            onChange={(value) => setField('autoRefundDeposit', value)}
+          />
+          <Divider />
+          <RuleToggle
+            icon="bell"
+            title="Send pickup reminder"
+            subtitle="Remind the customer before their collection window ends."
+            value={rules.sendReminder}
+            onChange={(value) => setField('sendReminder', value)}
+          />
+          <Divider />
+          <RuleToggle
+            icon="refresh-cw"
+            title="Auto-restock missed pickups"
+            subtitle="Return the item to available inventory after an expired pickup."
+            value={rules.autoRestock}
+            onChange={(value) => setField('autoRestock', value)}
+          />
+        </View>
+
+        <SectionLabel>Blackout days</SectionLabel>
+        <View className="mx-4 rounded-2xl bg-gray-50 p-4">
+          <Text className="text-xs text-gray-500 mb-3 leading-5">
+            Select days when customers cannot schedule or complete an in-store pickup.
+          </Text>
+          <View className="flex-row flex-wrap gap-2">
+            {DAYS.map((day) => {
+              const active = rules.blackoutDays.includes(day)
+              return (
+                <TouchableOpacity
+                  key={day}
+                  onPress={() => toggleBlackoutDay(day)}
+                  activeOpacity={0.85}
+                  className={`w-[44px] h-[44px] rounded-full items-center justify-center border ${
+                    active
+                      ? 'bg-gray-900 border-gray-900'
+                      : 'bg-white border-gray-200'
+                  }`}
+                >
+                  <Text
+                    className={`text-[11px] font-bold ${
+                      active ? 'text-white' : 'text-gray-600'
+                    }`}
+                  >
+                    {day}
+                  </Text>
+                </TouchableOpacity>
+              )
+            })}
+          </View>
+        </View>
+
+        <SectionLabel>Pickup instructions</SectionLabel>
+        <View className="mx-4 rounded-2xl bg-gray-50 p-4">
+          <TextInput
+            value={rules.instructions}
+            onChangeText={(value) => setField('instructions', value)}
+            placeholder="e.g. Bring your QR code and a valid photo ID. Pickups are available at the front counter."
+            placeholderTextColor="#9CA3AF"
+            multiline
+            textAlignVertical="top"
+            maxLength={300}
+            className="text-sm text-gray-800 leading-5"
+            style={{ minHeight: 112 }}
+          />
+          <Text className="text-[10px] text-gray-400 text-right mt-2">
+            {rules.instructions.length}/300
+          </Text>
+        </View>
+
+        <TouchableOpacity
+          onPress={handleSave}
+          activeOpacity={0.85}
+          className="mx-4 mt-8 h-14 rounded-2xl bg-gray-900 items-center justify-center"
+        >
+          <Text className="text-white text-sm font-black">Save Pickup Rules</Text>
+        </TouchableOpacity>
+      </View>
+    </BaseContainer>
+  )
+}
+```
+
+## File: app/screens/community/communityScreen.tsx
+```typescript
+// app/screens/community/communityScreen.tsx
+import React, { useState } from 'react'
+import { View, Text, ScrollView, TouchableOpacity, FlatList, StyleSheet } from 'react-native'
+import { Feather } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
+import BaseContainer from '@/components/shared/BaseContainer'
+
+const TABS = ['For You', 'Following', 'Trending']
+
+const POSTS = [
+  { id: '1', user: 'Marcus L.', handle: '@marcusl', avatar: 'ML', content: 'Just copped the Air Jordan 4 "Red Thunder" at Kicks City 🔥 Condition is immaculate.', likes: 42, comments: 8, timeAgo: '2h', product: 'Air Jordan 4 "Red Thunder"' },
+  { id: '2', user: 'Sarah K.', handle: '@sarahk', avatar: 'SK', content: 'Huge W at Urban Vault today. Got the Yeezy 350 V2 in my size after months of waiting. The in-store pickup was flawless!', likes: 67, comments: 14, timeAgo: '4h', product: 'Yeezy 350 V2' },
+  { id: '3', user: 'James P.', handle: '@jamesp', avatar: 'JP', content: 'Dunk Low "Panda" restock at Street Elite rn. Sizes 8-12 still available as of 3pm.', likes: 103, comments: 31, timeAgo: '6h', product: null },
+]
+
+export default function CommunityScreen() {
+  const router = useRouter()
+  const [activeTab, setActiveTab] = useState('For You')
+
+  return (
+    <BaseContainer backgroundColor="#fff">
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Community</Text>
+        <View style={styles.headerRight}>
+          <TouchableOpacity onPress={() => router.push('/screens/community/discoverUsersScreen' as any)}>
+            <Feather name="users" size={22} color="#374151" />
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Feather name="edit-3" size={22} color="#374151" />
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* Tabs */}
+      <View style={styles.tabs}>
+        {TABS.map(tab => (
+          <TouchableOpacity
+            key={tab}
+            style={[styles.tab, activeTab === tab && styles.tabActive]}
+            onPress={() => setActiveTab(tab)}
+          >
+            <Text style={[styles.tabText, activeTab === tab && styles.tabTextActive]}>{tab}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      <FlatList
+        data={POSTS}
+        keyExtractor={p => p.id}
+        contentContainerStyle={styles.list}
+        showsVerticalScrollIndicator={false}
+        renderItem={({ item }) => (
+          <View style={styles.post}>
+            <View style={styles.postHeader}>
+              <View style={styles.avatar}>
+                <Text style={styles.avatarText}>{item.avatar}</Text>
+              </View>
+              <View style={styles.userInfo}>
+                <Text style={styles.userName}>{item.user}</Text>
+                <Text style={styles.handle}>{item.handle} · {item.timeAgo}</Text>
+              </View>
+              <TouchableOpacity>
+                <Feather name="more-horizontal" size={18} color="#9ca3af" />
+              </TouchableOpacity>
+            </View>
+
+            <Text style={styles.content}>{item.content}</Text>
+
+            {item.product && (
+              <TouchableOpacity
+                style={styles.productChip}
+                onPress={() => router.push('/screens/product/productScreen')}
+              >
+                <Feather name="tag" size={12} color="#22c55e" />
+                <Text style={styles.productChipText}>{item.product}</Text>
+                <Feather name="chevron-right" size={12} color="#22c55e" />
+              </TouchableOpacity>
+            )}
+
+            <View style={styles.actions}>
+              <TouchableOpacity style={styles.action}>
+                <Feather name="heart" size={16} color="#6b7280" />
+                <Text style={styles.actionCount}>{item.likes}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.action}>
+                <Feather name="message-circle" size={16} color="#6b7280" />
+                <Text style={styles.actionCount}>{item.comments}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.action}>
+                <Feather name="share-2" size={16} color="#6b7280" />
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+        ItemSeparatorComponent={() => <View style={styles.separator} />}
+      />
+    </BaseContainer>
+  )
+}
+
+const styles = StyleSheet.create({
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 52, paddingBottom: 8 },
+  headerTitle: { fontSize: 22, fontWeight: '800', color: '#0a0a0a' },
+  headerRight: { flexDirection: 'row', gap: 16 },
+  tabs: { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: '#f3f4f6' },
+  tab: { flex: 1, paddingVertical: 12, alignItems: 'center', borderBottomWidth: 2, borderBottomColor: 'transparent' },
+  tabActive: { borderBottomColor: '#0a0a0a' },
+  tabText: { fontSize: 14, fontWeight: '600', color: '#9ca3af' },
+  tabTextActive: { color: '#0a0a0a' },
+  list: { paddingBottom: 40 },
+  separator: { height: 8, backgroundColor: '#f9fafb' },
+  post: { backgroundColor: '#fff', padding: 16 },
+  postHeader: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 12 },
+  avatar: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#0a0a0a', alignItems: 'center', justifyContent: 'center' },
+  avatarText: { fontSize: 13, fontWeight: '700', color: '#fff' },
+  userInfo: { flex: 1 },
+  userName: { fontSize: 14, fontWeight: '700', color: '#0a0a0a' },
+  handle: { fontSize: 12, color: '#9ca3af' },
+  content: { fontSize: 14, color: '#374151', lineHeight: 22, marginBottom: 12 },
+  productChip: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: '#f0fdf4', borderRadius: 10, paddingHorizontal: 12, paddingVertical: 8, alignSelf: 'flex-start', marginBottom: 12 },
+  productChipText: { fontSize: 13, fontWeight: '600', color: '#22c55e' },
+  actions: { flexDirection: 'row', gap: 20 },
+  action: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  actionCount: { fontSize: 13, color: '#6b7280' },
+})
+```
+
+## File: app/screens/community/communityTrendingScreen.tsx
+```typescript
+// app/screens/community/communityTrendingScreen.tsx
+import React from 'react'
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, ScrollView } from 'react-native'
+import { Feather } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
+import BaseContainer from '@/components/shared/BaseContainer'
+
+const TRENDING_PRODUCTS = [
+  { rank: 1, name: 'Nike Dunk Low "Panda"', searches: '12.4K', trend: '+28%' },
+  { rank: 2, name: 'Yeezy 350 "Carbon"', searches: '9.1K', trend: '+15%' },
+  { rank: 3, name: 'Air Jordan 1 High', searches: '7.8K', trend: '+8%' },
+  { rank: 4, name: 'Air Max 1', searches: '6.2K', trend: '+5%' },
+  { rank: 5, name: 'Dunk Low', searches: '5.9K', trend: '+3%' },
+]
+
+const TRENDING_STORES = [
+  { id: '1', name: 'Kicks City', location: 'Miami, FL', followers: '2.3K', verified: true },
+  { id: '2', name: 'Urban Vault', location: 'New York, NY', followers: '1.8K', verified: true },
+  { id: '3', name: 'Street Elite', location: 'Los Angeles, CA', followers: '1.2K', verified: false },
+]
+
+export default function CommunityTrendingScreen() {
+  const router = useRouter()
+
+  return (
+    <BaseContainer backgroundColor="#fff">
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Feather name="arrow-left" size={22} color="#0a0a0a" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Trending</Text>
+        <View style={{ width: 22 }} />
+      </View>
+
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
+        {/* Trending products */}
+        <Text style={styles.sectionTitle}>🔥 Top Searches This Week</Text>
+        {TRENDING_PRODUCTS.map(item => (
+          <TouchableOpacity key={item.rank} style={styles.rankRow}>
+            <Text style={styles.rank}>#{item.rank}</Text>
+            <View style={styles.imageBox} />
+            <View style={styles.rankInfo}>
+              <Text style={styles.rankName}>{item.name}</Text>
+              <Text style={styles.searches}>{item.searches} searches</Text>
+            </View>
+            <Text style={styles.trend}>{item.trend}</Text>
+          </TouchableOpacity>
+        ))}
+
+        {/* Trending stores */}
+        <Text style={[styles.sectionTitle, { marginTop: 24 }]}>📍 Rising Stores Near You</Text>
+        {TRENDING_STORES.map(store => (
+          <TouchableOpacity
+            key={store.id}
+            style={styles.storeRow}
+            onPress={() => router.push('/screens/store/storeProfileScreen')}
+          >
+            <View style={styles.storeAvatar}>
+              <Text style={styles.storeAvatarText}>{store.name[0]}</Text>
+            </View>
+            <View style={styles.storeInfo}>
+              <View style={styles.storeNameRow}>
+                <Text style={styles.storeName}>{store.name}</Text>
+                {store.verified && <Feather name="check-circle" size={14} color="#22c55e" />}
+              </View>
+              <Text style={styles.storeLocation}>{store.location}</Text>
+            </View>
+            <View style={styles.followBtn}>
+              <Text style={styles.followText}>{store.followers} followers</Text>
+            </View>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+    </BaseContainer>
+  )
+}
+
+const styles = StyleSheet.create({
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 52, paddingBottom: 8 },
+  headerTitle: { fontSize: 18, fontWeight: '700', color: '#0a0a0a' },
+  scroll: { paddingHorizontal: 16, paddingBottom: 40 },
+  sectionTitle: { fontSize: 16, fontWeight: '700', color: '#0a0a0a', marginBottom: 12 },
+  rankRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#f3f4f6' },
+  rank: { fontSize: 16, fontWeight: '800', color: '#d1d5db', width: 24, textAlign: 'center' },
+  imageBox: { width: 48, height: 48, backgroundColor: '#f9fafb', borderRadius: 10 },
+  rankInfo: { flex: 1 },
+  rankName: { fontSize: 14, fontWeight: '600', color: '#0a0a0a' },
+  searches: { fontSize: 12, color: '#6b7280' },
+  trend: { fontSize: 13, fontWeight: '700', color: '#22c55e' },
+  storeRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#f3f4f6' },
+  storeAvatar: { width: 48, height: 48, borderRadius: 24, backgroundColor: '#0a0a0a', alignItems: 'center', justifyContent: 'center' },
+  storeAvatarText: { fontSize: 18, fontWeight: '700', color: '#fff' },
+  storeInfo: { flex: 1 },
+  storeNameRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  storeName: { fontSize: 14, fontWeight: '700', color: '#0a0a0a' },
+  storeLocation: { fontSize: 12, color: '#6b7280' },
+  followBtn: { backgroundColor: '#f3f4f6', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 10 },
+  followText: { fontSize: 12, fontWeight: '600', color: '#374151' },
+})
+```
+
+## File: app/screens/community/discoverUsersScreen.tsx
+```typescript
+// app/screens/community/discoverUsersScreen.tsx
+import React, { useState } from 'react'
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, TextInput } from 'react-native'
+import { Feather } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
+import BaseContainer from '@/components/shared/BaseContainer'
+
+const USERS = [
+  { id: '1', name: 'Marcus L.', handle: '@marcusl', avatar: 'ML', pairs: 124, followers: '3.2K', isFollowing: false },
+  { id: '2', name: 'Sarah K.', handle: '@sarahk', avatar: 'SK', pairs: 87, followers: '1.8K', isFollowing: true },
+  { id: '3', name: 'James P.', handle: '@jamesp', avatar: 'JP', pairs: 203, followers: '5.1K', isFollowing: false },
+  { id: '4', name: 'Aisha M.', handle: '@aisham', avatar: 'AM', pairs: 56, followers: '892', isFollowing: false },
+  { id: '5', name: 'Chris R.', handle: '@chrisr', avatar: 'CR', pairs: 145, followers: '2.4K', isFollowing: true },
+]
+
+export default function DiscoverUsersScreen() {
+  const router = useRouter()
+  const [search, setSearch] = useState('')
+  const [users, setUsers] = useState(USERS)
+
+  const toggleFollow = (id: string) => {
+    setUsers(prev => prev.map(u => u.id === id ? { ...u, isFollowing: !u.isFollowing } : u))
+  }
+
+  const filtered = users.filter(u =>
+    u.name.toLowerCase().includes(search.toLowerCase()) ||
+    u.handle.toLowerCase().includes(search.toLowerCase())
+  )
+
+  return (
+    <BaseContainer backgroundColor="#fff">
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Feather name="arrow-left" size={22} color="#0a0a0a" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Discover People</Text>
+        <View style={{ width: 22 }} />
+      </View>
+
+      <View style={styles.searchBar}>
+        <Feather name="search" size={16} color="#9ca3af" />
+        <TextInput
+          value={search}
+          onChangeText={setSearch}
+          placeholder="Search users..."
+          placeholderTextColor="#9ca3af"
+          style={styles.searchInput}
+        />
+      </View>
+
+      <FlatList
+        data={filtered}
+        keyExtractor={u => u.id}
+        contentContainerStyle={styles.list}
+        showsVerticalScrollIndicator={false}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={styles.userRow}
+            onPress={() => router.push('/screens/community/userProfileScreen' as any)}
+          >
+            <View style={styles.avatar}>
+              <Text style={styles.avatarText}>{item.avatar}</Text>
+            </View>
+            <View style={styles.userInfo}>
+              <Text style={styles.name}>{item.name}</Text>
+              <Text style={styles.handle}>{item.handle} · {item.pairs} pairs · {item.followers} followers</Text>
+            </View>
+            <TouchableOpacity
+              style={[styles.followBtn, item.isFollowing && styles.followingBtn]}
+              onPress={() => toggleFollow(item.id)}
+            >
+              <Text style={[styles.followText, item.isFollowing && styles.followingText]}>
+                {item.isFollowing ? 'Following' : 'Follow'}
+              </Text>
+            </TouchableOpacity>
+          </TouchableOpacity>
+        )}
+        ItemSeparatorComponent={() => <View style={styles.separator} />}
+      />
+    </BaseContainer>
+  )
+}
+
+const styles = StyleSheet.create({
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 52, paddingBottom: 8 },
+  headerTitle: { fontSize: 18, fontWeight: '700', color: '#0a0a0a' },
+  searchBar: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: '#f3f4f6', marginHorizontal: 16, marginBottom: 12, borderRadius: 12, paddingHorizontal: 12, height: 44 },
+  searchInput: { flex: 1, fontSize: 14, color: '#0a0a0a' },
+  list: { paddingHorizontal: 16, paddingBottom: 40 },
+  userRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12, gap: 12 },
+  avatar: { width: 48, height: 48, borderRadius: 24, backgroundColor: '#0a0a0a', alignItems: 'center', justifyContent: 'center' },
+  avatarText: { fontSize: 16, fontWeight: '700', color: '#fff' },
+  userInfo: { flex: 1 },
+  name: { fontSize: 15, fontWeight: '700', color: '#0a0a0a' },
+  handle: { fontSize: 12, color: '#6b7280' },
+  followBtn: { backgroundColor: '#0a0a0a', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 10 },
+  followingBtn: { backgroundColor: '#f3f4f6' },
+  followText: { fontSize: 13, fontWeight: '700', color: '#fff' },
+  followingText: { color: '#374151' },
+  separator: { height: 1, backgroundColor: '#f3f4f6' },
+})
+```
+
+## File: app/screens/community/userProfileScreen.tsx
+```typescript
+// app/screens/community/userProfileScreen.tsx
+import React, { useState } from 'react'
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, FlatList } from 'react-native'
+import { Feather } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
+import BaseContainer from '@/components/shared/BaseContainer'
+
+const LOCKER = [
+  { id: '1', name: 'Air Jordan 1', price: 220 },
+  { id: '2', name: 'Yeezy 350 V2', price: 280 },
+  { id: '3', name: 'Nike Dunk Low', price: 150 },
+  { id: '4', name: 'Travis Scott x Nike', price: 580 },
+]
+
+export default function UserProfileScreen() {
+  const router = useRouter()
+  const [isFollowing, setIsFollowing] = useState(false)
+  const [activeTab, setActiveTab] = useState('Locker')
+
+  return (
+    <BaseContainer backgroundColor="#fff">
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Feather name="arrow-left" size={22} color="#0a0a0a" />
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <Feather name="more-horizontal" size={22} color="#374151" />
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {/* Profile info */}
+        <View style={styles.profileSection}>
+          <View style={styles.avatar}>
+            <Text style={styles.avatarText}>ML</Text>
+          </View>
+          <Text style={styles.name}>Marcus L.</Text>
+          <Text style={styles.handle}>@marcusl · Miami, FL</Text>
+          <View style={styles.stats}>
+            <View style={styles.statItem}>
+              <Text style={styles.statValue}>124</Text>
+              <Text style={styles.statLabel}>Pairs</Text>
+            </View>
+            <View style={styles.statDivider} />
+            <View style={styles.statItem}>
+              <Text style={styles.statValue}>3.2K</Text>
+              <Text style={styles.statLabel}>Followers</Text>
+            </View>
+            <View style={styles.statDivider} />
+            <View style={styles.statItem}>
+              <Text style={styles.statValue}>84</Text>
+              <Text style={styles.statLabel}>Following</Text>
+            </View>
+          </View>
+          <TouchableOpacity
+            style={[styles.followBtn, isFollowing && styles.followingBtn]}
+            onPress={() => setIsFollowing(!isFollowing)}
+          >
+            <Text style={[styles.followBtnText, isFollowing && styles.followingBtnText]}>
+              {isFollowing ? 'Following' : 'Follow'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Tabs */}
+        <View style={styles.tabs}>
+          {['Locker', 'Activity', 'Wishlist'].map(tab => (
+            <TouchableOpacity
+              key={tab}
+              style={[styles.tab, activeTab === tab && styles.tabActive]}
+              onPress={() => setActiveTab(tab)}
+            >
+              <Text style={[styles.tabText, activeTab === tab && styles.tabTextActive]}>{tab}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* Locker grid */}
+        <View style={styles.grid}>
+          {LOCKER.map(item => (
+            <TouchableOpacity key={item.id} style={styles.gridItem}>
+              <View style={styles.gridImageBox} />
+              <Text style={styles.gridName} numberOfLines={1}>{item.name}</Text>
+              <Text style={styles.gridPrice}>${item.price}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </ScrollView>
+    </BaseContainer>
+  )
+}
+
+const styles = StyleSheet.create({
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 52, paddingBottom: 8 },
+  profileSection: { alignItems: 'center', paddingVertical: 24, paddingHorizontal: 16 },
+  avatar: { width: 80, height: 80, borderRadius: 40, backgroundColor: '#0a0a0a', alignItems: 'center', justifyContent: 'center', marginBottom: 12 },
+  avatarText: { fontSize: 28, fontWeight: '700', color: '#fff' },
+  name: { fontSize: 20, fontWeight: '800', color: '#0a0a0a', marginBottom: 4 },
+  handle: { fontSize: 14, color: '#6b7280', marginBottom: 20 },
+  stats: { flexDirection: 'row', alignItems: 'center', marginBottom: 20 },
+  statItem: { alignItems: 'center', paddingHorizontal: 24 },
+  statValue: { fontSize: 18, fontWeight: '800', color: '#0a0a0a' },
+  statLabel: { fontSize: 12, color: '#6b7280' },
+  statDivider: { width: 1, height: 32, backgroundColor: '#f3f4f6' },
+  followBtn: { backgroundColor: '#0a0a0a', paddingHorizontal: 48, paddingVertical: 12, borderRadius: 12 },
+  followingBtn: { backgroundColor: '#f3f4f6' },
+  followBtnText: { fontSize: 15, fontWeight: '700', color: '#fff' },
+  followingBtnText: { color: '#374151' },
+  tabs: { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: '#f3f4f6' },
+  tab: { flex: 1, paddingVertical: 12, alignItems: 'center', borderBottomWidth: 2, borderBottomColor: 'transparent' },
+  tabActive: { borderBottomColor: '#0a0a0a' },
+  tabText: { fontSize: 14, fontWeight: '600', color: '#9ca3af' },
+  tabTextActive: { color: '#0a0a0a' },
+  grid: { flexDirection: 'row', flexWrap: 'wrap', padding: 12, gap: 12 },
+  gridItem: { width: '47%', backgroundColor: '#fff', borderRadius: 12, borderWidth: 1, borderColor: '#f3f4f6', overflow: 'hidden' },
+  gridImageBox: { height: 120, backgroundColor: '#f9fafb' },
+  gridName: { fontSize: 12, fontWeight: '600', color: '#0a0a0a', padding: 8, paddingBottom: 2 },
+  gridPrice: { fontSize: 13, fontWeight: '800', color: '#22c55e', paddingHorizontal: 8, paddingBottom: 8 },
+})
+```
+
+## File: app/screens/discover/liveShoppingFeedScreen.tsx
+```typescript
+// app/screens/discover/liveShoppingFeedScreen.tsx
+import React, { useState } from 'react'
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, TextInput } from 'react-native'
+import { Feather } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
+import BaseContainer from '@/components/shared/BaseContainer'
+
+interface LiveFeed {
+  id: string
+  user: string
+  store: string
+  action: 'bought' | 'saved' | 'reviewed'
+  item: string
+  price?: number
+  timeAgo: string
+  avatar: string
+}
+
+const FEED: LiveFeed[] = [
+  { id: '1', user: 'Marcus L.', store: 'Kicks City', action: 'bought', item: 'Air Jordan 1 Retro High', price: 220, timeAgo: '2m ago', avatar: 'ML' },
+  { id: '2', user: 'Sarah K.', store: 'Urban Vault', action: 'saved', item: 'Yeezy Boost 350 V2', timeAgo: '5m ago', avatar: 'SK' },
+  { id: '3', user: 'James P.', store: 'Street Elite', action: 'reviewed', item: 'Nike Dunk Low', timeAgo: '12m ago', avatar: 'JP' },
+  { id: '4', user: 'Aisha M.', store: 'Sole House', action: 'bought', item: 'New Balance 550', price: 140, timeAgo: '18m ago', avatar: 'AM' },
+  { id: '5', user: 'Chris R.', store: 'Kicks City', action: 'saved', item: 'Travis Scott x Nike', timeAgo: '25m ago', avatar: 'CR' },
+  { id: '6', user: 'Dana B.', store: 'Premium Threads', action: 'bought', item: 'Supreme Hoodie FW23', price: 320, timeAgo: '33m ago', avatar: 'DB' },
+]
+
+const ACTION_COLOR = { bought: '#22c55e', saved: '#3b82f6', reviewed: '#f59e0b' }
+const ACTION_ICON: Record<string, any> = { bought: 'shopping-bag', saved: 'heart', reviewed: 'star' }
+
+export default function LiveShoppingFeedScreen() {
+  const router = useRouter()
+  const [tab, setTab] = useState<'live' | 'trending'>('live')
+
+  return (
+    <BaseContainer backgroundColor="#fff">
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Feather name="arrow-left" size={22} color="#0a0a0a" />
+        </TouchableOpacity>
+        <View style={styles.headerCenter}>
+          <View style={styles.liveDot} />
+          <Text style={styles.headerTitle}>Live Feed</Text>
+        </View>
+        <TouchableOpacity>
+          <Feather name="filter" size={20} color="#374151" />
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.tabs}>
+        {(['live', 'trending'] as const).map(t => (
+          <TouchableOpacity key={t} style={[styles.tab, tab === t && styles.tabActive]} onPress={() => setTab(t)}>
+            <Text style={[styles.tabText, tab === t && styles.tabTextActive]}>
+              {t === 'live' ? '🔴 Live' : '🔥 Trending'}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      <FlatList
+        data={FEED}
+        keyExtractor={i => i.id}
+        contentContainerStyle={styles.list}
+        showsVerticalScrollIndicator={false}
+        renderItem={({ item }) => (
+          <View style={styles.feedItem}>
+            <View style={styles.avatar}>
+              <Text style={styles.avatarText}>{item.avatar}</Text>
+            </View>
+            <View style={styles.feedContent}>
+              <View style={styles.feedRow}>
+                <Text style={styles.userName}>{item.user}</Text>
+                <View style={[styles.actionPill, { backgroundColor: ACTION_COLOR[item.action] + '20' }]}>
+                  <Feather name={ACTION_ICON[item.action]} size={10} color={ACTION_COLOR[item.action]} />
+                  <Text style={[styles.actionText, { color: ACTION_COLOR[item.action] }]}>{item.action}</Text>
+                </View>
+              </View>
+              <Text style={styles.itemName}>{item.item}</Text>
+              <View style={styles.feedMeta}>
+                <Text style={styles.storeName}>@ {item.store}</Text>
+                {item.price && <Text style={styles.price}>${item.price}</Text>}
+              </View>
+            </View>
+            <Text style={styles.timeAgo}>{item.timeAgo}</Text>
+          </View>
+        )}
+        ItemSeparatorComponent={() => <View style={styles.separator} />}
+      />
+    </BaseContainer>
+  )
+}
+
+const styles = StyleSheet.create({
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 52, paddingBottom: 8 },
+  headerCenter: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  liveDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#ef4444' },
+  headerTitle: { fontSize: 18, fontWeight: '700', color: '#0a0a0a' },
+  tabs: { flexDirection: 'row', paddingHorizontal: 16, gap: 8, paddingBottom: 12 },
+  tab: { flex: 1, paddingVertical: 10, alignItems: 'center', borderRadius: 12, backgroundColor: '#f3f4f6' },
+  tabActive: { backgroundColor: '#0a0a0a' },
+  tabText: { fontSize: 14, fontWeight: '600', color: '#374151' },
+  tabTextActive: { color: '#fff' },
+  list: { paddingHorizontal: 16, paddingBottom: 40 },
+  feedItem: { flexDirection: 'row', alignItems: 'flex-start', paddingVertical: 14, gap: 12 },
+  avatar: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#0a0a0a', alignItems: 'center', justifyContent: 'center' },
+  avatarText: { fontSize: 13, fontWeight: '700', color: '#fff' },
+  feedContent: { flex: 1 },
+  feedRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 2 },
+  userName: { fontSize: 14, fontWeight: '700', color: '#0a0a0a' },
+  actionPill: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 10 },
+  actionText: { fontSize: 11, fontWeight: '600' },
+  itemName: { fontSize: 13, color: '#374151', marginBottom: 2 },
+  feedMeta: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  storeName: { fontSize: 12, color: '#6b7280' },
+  price: { fontSize: 13, fontWeight: '700', color: '#0a0a0a' },
+  timeAgo: { fontSize: 11, color: '#9ca3af' },
+  separator: { height: 1, backgroundColor: '#f3f4f6' },
+})
+```
+
+## File: app/screens/discover/recentlyViewedScreen.tsx
+```typescript
+// app/screens/discover/recentlyViewedScreen.tsx
+import React from 'react'
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, Image } from 'react-native'
+import { Feather } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
+import BaseContainer from '@/components/shared/BaseContainer'
+
+interface RecentItem {
+  id: string
+  name: string
+  store: string
+  price: number
+  size: string
+  viewedAgo: string
+  condition: 'NEW' | 'PRE-OWNED'
+}
+
+const RECENT_ITEMS: RecentItem[] = [
+  { id: '1', name: 'Travis Scott x Nike', store: 'Kicks City', price: 580, size: '10', viewedAgo: '2 min ago', condition: 'NEW' },
+  { id: '2', name: 'Off-White Blazer Mid', store: 'Urban Vault', price: 420, size: '9.5', viewedAgo: '15 min ago', condition: 'NEW' },
+  { id: '3', name: 'Air Jordan 4 "Black Cat"', store: 'Street Elite', price: 310, size: '11', viewedAgo: '1 hr ago', condition: 'PRE-OWNED' },
+  { id: '4', name: 'Yeezy Boost 350 V2', store: 'Sole House', price: 280, size: '10', viewedAgo: '3 hrs ago', condition: 'NEW' },
+  { id: '5', name: 'New Balance 550', store: 'Kicks City', price: 140, size: '9', viewedAgo: 'Yesterday', condition: 'NEW' },
+]
+
+export default function RecentlyViewedScreen() {
+  const router = useRouter()
+
+  const renderItem = ({ item }: { item: RecentItem }) => (
+    <TouchableOpacity
+      style={styles.card}
+      onPress={() => router.push('/screens/product/productScreen')}
+      activeOpacity={0.85}
+    >
+      <View style={styles.imageBox} />
+      <View style={styles.info}>
+        <Text style={styles.viewedAgo}>{item.viewedAgo}</Text>
+        <Text style={styles.name} numberOfLines={2}>{item.name}</Text>
+        <Text style={styles.store}>{item.store}</Text>
+        <View style={styles.bottom}>
+          <Text style={styles.size}>Size {item.size}</Text>
+          <Text style={styles.price}>${item.price}</Text>
+        </View>
+      </View>
+      <TouchableOpacity style={styles.removeBtn} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+        <Feather name="x" size={16} color="#9ca3af" />
+      </TouchableOpacity>
+    </TouchableOpacity>
+  )
+
+  return (
+    <BaseContainer backgroundColor="#fff">
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Feather name="arrow-left" size={22} color="#0a0a0a" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Recently Viewed</Text>
+        <TouchableOpacity>
+          <Text style={styles.clearAll}>Clear All</Text>
+        </TouchableOpacity>
+      </View>
+
+      <FlatList
+        data={RECENT_ITEMS}
+        keyExtractor={i => i.id}
+        renderItem={renderItem}
+        contentContainerStyle={styles.list}
+        showsVerticalScrollIndicator={false}
+        ItemSeparatorComponent={() => <View style={styles.separator} />}
+      />
+    </BaseContainer>
+  )
+}
+
+const styles = StyleSheet.create({
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 52, paddingBottom: 16 },
+  headerTitle: { fontSize: 18, fontWeight: '700', color: '#0a0a0a' },
+  clearAll: { fontSize: 14, color: '#22c55e', fontWeight: '600' },
+  list: { paddingHorizontal: 16, paddingBottom: 40 },
+  separator: { height: 12 },
+  card: { flexDirection: 'row', backgroundColor: '#fff', borderRadius: 16, borderWidth: 1, borderColor: '#f3f4f6', padding: 12, gap: 12, alignItems: 'center' },
+  imageBox: { width: 80, height: 80, backgroundColor: '#f9fafb', borderRadius: 12 },
+  info: { flex: 1 },
+  viewedAgo: { fontSize: 11, color: '#9ca3af', marginBottom: 2 },
+  name: { fontSize: 14, fontWeight: '600', color: '#0a0a0a', lineHeight: 20, marginBottom: 2 },
+  store: { fontSize: 12, color: '#6b7280', marginBottom: 6 },
+  bottom: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  size: { fontSize: 12, fontWeight: '600', color: '#22c55e' },
+  price: { fontSize: 15, fontWeight: '800', color: '#0a0a0a' },
+  removeBtn: { padding: 4 },
+})
+```
+
+## File: app/screens/discover/releaseCalendarScreen.tsx
+```typescript
+// app/screens/discover/releaseCalendarScreen.tsx
+import React, { useState } from 'react'
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native'
+import { Feather } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
+import BaseContainer from '@/components/shared/BaseContainer'
+
+interface Drop {
+  id: string
+  name: string
+  brand: string
+  date: string
+  time: string
+  price: number
+  isNotified: boolean
+}
+
+const DROPS: Drop[] = [
+  { id: '1', name: 'Air Jordan 1 "Chicago"', brand: 'Jordan', date: 'Today', time: '10:00 AM', price: 180, isNotified: true },
+  { id: '2', name: 'Nike Dunk Low Panda', brand: 'Nike', date: 'Tomorrow', time: '9:00 AM', price: 110, isNotified: false },
+  { id: '3', name: 'Yeezy 350 V2 Cream', brand: 'Adidas', date: 'Aug 20', time: '12:00 PM', price: 220, isNotified: true },
+  { id: '4', name: 'New Balance 2002R', brand: 'New Balance', date: 'Aug 22', time: '10:00 AM', price: 150, isNotified: false },
+  { id: '5', name: 'Air Max 1 "Patta"', brand: 'Nike', date: 'Aug 25', time: '8:00 AM', price: 160, isNotified: false },
+]
+
+const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+const TODAY = 16
+
+export default function ReleaseCalendarScreen() {
+  const router = useRouter()
+  const [selectedDay, setSelectedDay] = useState(TODAY)
+  const [drops, setDrops] = useState(DROPS)
+
+  const toggleNotify = (id: string) => {
+    setDrops(prev => prev.map(d => d.id === id ? { ...d, isNotified: !d.isNotified } : d))
+  }
+
+  return (
+    <BaseContainer backgroundColor="#fff">
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Feather name="arrow-left" size={22} color="#0a0a0a" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Release Calendar</Text>
+        <TouchableOpacity>
+          <Feather name="filter" size={20} color="#374151" />
+        </TouchableOpacity>
+      </View>
+
+      {/* Month + week strip */}
+      <Text style={styles.monthLabel}>August 2026</Text>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.calRow}>
+        {Array.from({ length: 14 }, (_, i) => {
+          const day = i + 10
+          const dayName = DAYS[(i + 5) % 7]
+          return (
+            <TouchableOpacity
+              key={day}
+              style={[styles.dayCell, selectedDay === day && styles.dayCellActive]}
+              onPress={() => setSelectedDay(day)}
+            >
+              <Text style={[styles.dayName, selectedDay === day && styles.dayTextActive]}>{dayName}</Text>
+              <Text style={[styles.dayNum, selectedDay === day && styles.dayTextActive]}>{day}</Text>
+              {[16, 17, 20, 22, 25].includes(day) && (
+                <View style={[styles.dropDot, selectedDay === day && styles.dropDotActive]} />
+              )}
+            </TouchableOpacity>
+          )
+        })}
+      </ScrollView>
+
+      {/* Drop list */}
+      <ScrollView contentContainerStyle={styles.list} showsVerticalScrollIndicator={false}>
+        {drops.map(drop => (
+          <View key={drop.id} style={styles.dropCard}>
+            <View style={styles.dropImageBox} />
+            <View style={styles.dropInfo}>
+              <Text style={styles.dropBrand}>{drop.brand}</Text>
+              <Text style={styles.dropName}>{drop.name}</Text>
+              <View style={styles.dropMeta}>
+                <Feather name="clock" size={12} color="#6b7280" />
+                <Text style={styles.dropTime}>{drop.date} · {drop.time}</Text>
+              </View>
+              <Text style={styles.dropPrice}>${drop.price} retail</Text>
+            </View>
+            <TouchableOpacity
+              style={[styles.notifyBtn, drop.isNotified && styles.notifyBtnActive]}
+              onPress={() => toggleNotify(drop.id)}
+            >
+              <Feather
+                name={drop.isNotified ? 'bell' : 'bell-off'}
+                size={14}
+                color={drop.isNotified ? '#22c55e' : '#9ca3af'}
+              />
+            </TouchableOpacity>
+          </View>
+        ))}
+      </ScrollView>
+    </BaseContainer>
+  )
+}
+
+const styles = StyleSheet.create({
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 52, paddingBottom: 8 },
+  headerTitle: { fontSize: 18, fontWeight: '700', color: '#0a0a0a' },
+  monthLabel: { fontSize: 14, fontWeight: '600', color: '#374151', paddingHorizontal: 16, paddingTop: 8 },
+  calRow: { paddingHorizontal: 12, paddingVertical: 12, gap: 6 },
+  dayCell: { width: 48, paddingVertical: 10, alignItems: 'center', borderRadius: 14, gap: 4 },
+  dayCellActive: { backgroundColor: '#0a0a0a' },
+  dayName: { fontSize: 11, color: '#9ca3af', fontWeight: '500' },
+  dayNum: { fontSize: 16, fontWeight: '700', color: '#0a0a0a' },
+  dayTextActive: { color: '#fff' },
+  dropDot: { width: 5, height: 5, borderRadius: 3, backgroundColor: '#22c55e' },
+  dropDotActive: { backgroundColor: '#fff' },
+  list: { paddingHorizontal: 16, gap: 12, paddingBottom: 40 },
+  dropCard: { flexDirection: 'row', backgroundColor: '#fff', borderRadius: 16, borderWidth: 1, borderColor: '#f3f4f6', padding: 12, gap: 12, alignItems: 'center' },
+  dropImageBox: { width: 72, height: 72, backgroundColor: '#f9fafb', borderRadius: 12 },
+  dropInfo: { flex: 1 },
+  dropBrand: { fontSize: 11, color: '#6b7280', marginBottom: 2 },
+  dropName: { fontSize: 14, fontWeight: '600', color: '#0a0a0a', marginBottom: 4 },
+  dropMeta: { flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: 4 },
+  dropTime: { fontSize: 12, color: '#6b7280' },
+  dropPrice: { fontSize: 13, fontWeight: '600', color: '#22c55e' },
+  notifyBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: '#f3f4f6', alignItems: 'center', justifyContent: 'center' },
+  notifyBtnActive: { backgroundColor: '#f0fdf4' },
+})
+```
+
+## File: app/screens/discover/trendingNewArrivalsScreen.tsx
+```typescript
+// app/screens/discover/trendingNewArrivalsScreen.tsx
+import React, { useState } from 'react'
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, ScrollView } from 'react-native'
+import { Feather } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
+import BaseContainer from '@/components/shared/BaseContainer'
+
+const TABS = ['All', 'Nike', 'Jordan', 'Adidas', 'New Balance', 'Yeezy']
+
+const ITEMS = [
+  { id: '1', name: 'Air Jordan 4 Retro "Red Thunder"', brand: 'Jordan', store: 'Kicks City', price: 210, size: '10', isNew: true, tag: 'Trending' },
+  { id: '2', name: 'Nike Dunk Low "Panda"', brand: 'Nike', store: 'Urban Vault', price: 110, size: '9.5', isNew: true, tag: 'Hot' },
+  { id: '3', name: 'Adidas Samba OG', brand: 'Adidas', store: 'Street Elite', price: 100, size: '10', isNew: true, tag: null },
+  { id: '4', name: 'New Balance 1906R', brand: 'New Balance', store: 'Sole House', price: 160, size: '11', isNew: true, tag: 'New' },
+  { id: '5', name: 'Yeezy 700 V3', brand: 'Yeezy', store: 'Kicks City', price: 200, size: '10.5', isNew: true, tag: 'Limited' },
+  { id: '6', name: 'Air Max 1 "Anniversary"', brand: 'Nike', store: 'Premium Threads', price: 130, size: '9', isNew: true, tag: null },
+]
+
+export default function TrendingNewArrivalsScreen() {
+  const router = useRouter()
+  const [activeTab, setActiveTab] = useState('All')
+
+  const filtered = activeTab === 'All' ? ITEMS : ITEMS.filter(i => i.brand === activeTab)
+
+  return (
+    <BaseContainer backgroundColor="#fff">
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Feather name="arrow-left" size={22} color="#0a0a0a" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Trending & New Arrivals</Text>
+        <TouchableOpacity>
+          <Feather name="sliders" size={20} color="#374151" />
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabs}>
+        {TABS.map(tab => (
+          <TouchableOpacity
+            key={tab}
+            style={[styles.tab, activeTab === tab && styles.tabActive]}
+            onPress={() => setActiveTab(tab)}
+          >
+            <Text style={[styles.tabText, activeTab === tab && styles.tabTextActive]}>{tab}</Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+
+      <FlatList
+        data={filtered}
+        keyExtractor={i => i.id}
+        numColumns={2}
+        columnWrapperStyle={styles.row}
+        contentContainerStyle={styles.list}
+        showsVerticalScrollIndicator={false}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={styles.card}
+            onPress={() => router.push('/screens/product/productScreen')}
+            activeOpacity={0.85}
+          >
+            <View style={styles.imageBox}>
+              {item.tag && (
+                <View style={[styles.tagBadge, item.tag === 'Hot' && { backgroundColor: '#ef4444' }, item.tag === 'Limited' && { backgroundColor: '#8b5cf6' }]}>
+                  <Text style={styles.tagText}>{item.tag}</Text>
+                </View>
+              )}
+              <TouchableOpacity style={styles.heartBtn} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+                <Feather name="heart" size={14} color="#6b7280" />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.cardInfo}>
+              <Text style={styles.brandLabel}>{item.brand}</Text>
+              <Text style={styles.itemName} numberOfLines={2}>{item.name}</Text>
+              <Text style={styles.storeName}>{item.store}</Text>
+              <View style={styles.cardBottom}>
+                <Text style={styles.sizeText}>Sz {item.size}</Text>
+                <Text style={styles.priceText}>${item.price}</Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+        )}
+      />
+    </BaseContainer>
+  )
+}
+
+const styles = StyleSheet.create({
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 52, paddingBottom: 8 },
+  headerTitle: { fontSize: 17, fontWeight: '700', color: '#0a0a0a' },
+  tabs: { paddingHorizontal: 16, paddingVertical: 12, gap: 8 },
+  tab: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, backgroundColor: '#f3f4f6' },
+  tabActive: { backgroundColor: '#0a0a0a' },
+  tabText: { fontSize: 13, fontWeight: '600', color: '#374151' },
+  tabTextActive: { color: '#fff' },
+  list: { paddingHorizontal: 16, paddingBottom: 40 },
+  row: { gap: 12, marginBottom: 12 },
+  card: { flex: 1, backgroundColor: '#fff', borderRadius: 16, borderWidth: 1, borderColor: '#f3f4f6', overflow: 'hidden' },
+  imageBox: { height: 160, backgroundColor: '#f9fafb', position: 'relative' },
+  tagBadge: { position: 'absolute', top: 8, left: 8, backgroundColor: '#22c55e', borderRadius: 6, paddingHorizontal: 8, paddingVertical: 4 },
+  tagText: { fontSize: 10, fontWeight: '700', color: '#fff' },
+  heartBtn: { position: 'absolute', top: 8, right: 8, width: 28, height: 28, borderRadius: 14, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center' },
+  cardInfo: { padding: 10 },
+  brandLabel: { fontSize: 11, color: '#9ca3af', marginBottom: 2 },
+  itemName: { fontSize: 13, fontWeight: '600', color: '#0a0a0a', lineHeight: 18, marginBottom: 2 },
+  storeName: { fontSize: 11, color: '#6b7280', marginBottom: 6 },
+  cardBottom: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  sizeText: { fontSize: 12, fontWeight: '600', color: '#22c55e' },
+  priceText: { fontSize: 15, fontWeight: '800', color: '#0a0a0a' },
+})
+```
+
+## File: app/screens/messages/chatScreen.tsx
+```typescript
+// app/screens/messages/chatScreen.tsx
+import React, { useState, useRef } from 'react'
+import {
+  View, Text, FlatList, TouchableOpacity, StyleSheet,
+  TextInput, KeyboardAvoidingView, Platform,
+} from 'react-native'
+import { Feather } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
+import BaseContainer from '@/components/shared/BaseContainer'
+
+interface Message {
+  id: string
+  text: string
+  fromMe: boolean
+  time: string
+  type?: 'text' | 'offer' | 'system'
+  offerAmount?: number
+  offerStatus?: 'pending' | 'accepted' | 'declined'
+}
+
+const INITIAL_MESSAGES: Message[] = [
+  { id: '1', text: 'Hi! Is the Air Jordan 1 still available?', fromMe: true, time: '9:10 AM', type: 'text' },
+  { id: '2', text: 'Yes it is! Size 10.5, brand new with box.', fromMe: false, time: '9:12 AM', type: 'text' },
+  { id: '3', text: '', fromMe: true, time: '9:14 AM', type: 'offer', offerAmount: 190, offerStatus: 'pending' },
+  { id: '4', text: 'I can\'t go lower than $205. It\'s a fair price.', fromMe: false, time: '9:20 AM', type: 'text' },
+]
+
+export default function ChatScreen() {
+  const router = useRouter()
+  const [messages, setMessages] = useState<Message[]>(INITIAL_MESSAGES)
+  const [inputText, setInputText] = useState('')
+  const flatListRef = useRef<FlatList>(null)
+
+  const sendMessage = () => {
+    if (!inputText.trim()) return
+    const newMsg: Message = {
+      id: String(Date.now()),
+      text: inputText.trim(),
+      fromMe: true,
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      type: 'text',
+    }
+    setMessages(prev => [...prev, newMsg])
+    setInputText('')
+    setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100)
+  }
+
+  const renderMessage = ({ item }: { item: Message }) => {
+    if (item.type === 'offer') {
+      return (
+        <View style={[styles.offerBubble, item.fromMe ? styles.offerBubbleMe : styles.offerBubbleThem]}>
+          <Text style={styles.offerLabel}>Offer Sent</Text>
+          <Text style={styles.offerAmount}>${item.offerAmount}</Text>
+          <View style={[styles.offerStatusBadge,
+            item.offerStatus === 'accepted' ? styles.offerAccepted
+            : item.offerStatus === 'declined' ? styles.offerDeclined
+            : styles.offerPending
+          ]}>
+            <Text style={styles.offerStatusText}>
+              {item.offerStatus === 'pending' ? '⏳ Pending' : item.offerStatus === 'accepted' ? '✓ Accepted' : '✗ Declined'}
+            </Text>
+          </View>
+        </View>
+      )
+    }
+
+    return (
+      <View style={[styles.messageRow, item.fromMe ? styles.messageRowMe : styles.messageRowThem]}>
+        {!item.fromMe && <View style={styles.senderAvatar}><Text style={styles.senderAvatarText}>MK</Text></View>}
+        <View>
+          <View style={[styles.bubble, item.fromMe ? styles.bubbleMe : styles.bubbleThem]}>
+            <Text style={[styles.bubbleText, item.fromMe && styles.bubbleTextMe]}>{item.text}</Text>
+          </View>
+          <Text style={[styles.msgTime, item.fromMe && styles.msgTimeMe]}>{item.time}</Text>
+        </View>
+      </View>
+    )
+  }
+
+  return (
+    <BaseContainer backgroundColor="#fff">
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Feather name="arrow-left" size={22} color="#0a0a0a" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.headerCenter} onPress={() => router.push('/screens/reseller/resellerProfileScreen' as any)}>
+          <View style={styles.headerAvatar}><Text style={styles.headerAvatarText}>MK</Text></View>
+          <View>
+            <Text style={styles.headerName}>marcus_kicks</Text>
+            <Text style={styles.headerStatus}>Active now</Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <Feather name="more-horizontal" size={22} color="#374151" />
+        </TouchableOpacity>
+      </View>
+
+      {/* Product context */}
+      <View style={styles.productContext}>
+        <View style={styles.contextImage} />
+        <View style={styles.contextInfo}>
+          <Text style={styles.contextName}>Air Jordan 1 Retro High OG</Text>
+          <Text style={styles.contextMeta}>Size 10.5 · $220</Text>
+        </View>
+        <TouchableOpacity onPress={() => router.push('/screens/product/productScreen')}>
+          <Text style={styles.viewProduct}>View</Text>
+        </TouchableOpacity>
+      </View>
+
+      <KeyboardAvoidingView
+        style={styles.flex}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={0}
+      >
+        <FlatList
+          ref={flatListRef}
+          data={messages}
+          keyExtractor={m => m.id}
+          contentContainerStyle={styles.messageList}
+          showsVerticalScrollIndicator={false}
+          renderItem={renderMessage}
+        />
+
+        {/* Offer quick action */}
+        <TouchableOpacity
+          style={styles.makeOfferBar}
+          onPress={() => router.push('/screens/reseller/sendOfferScreen' as any)}
+        >
+          <Feather name="tag" size={14} color="#374151" />
+          <Text style={styles.makeOfferText}>Make an Offer</Text>
+        </TouchableOpacity>
+
+        {/* Input */}
+        <View style={styles.inputBar}>
+          <TouchableOpacity style={styles.attachBtn}>
+            <Feather name="paperclip" size={20} color="#9ca3af" />
+          </TouchableOpacity>
+          <TextInput
+            value={inputText}
+            onChangeText={setInputText}
+            placeholder="Message..."
+            placeholderTextColor="#9ca3af"
+            style={styles.textInput}
+            multiline
+          />
+          <TouchableOpacity
+            style={[styles.sendBtn, !inputText.trim() && styles.sendBtnDisabled]}
+            onPress={sendMessage}
+            disabled={!inputText.trim()}
+          >
+            <Feather name="send" size={18} color={inputText.trim() ? '#fff' : '#9ca3af'} />
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
+    </BaseContainer>
+  )
+}
+
+const styles = StyleSheet.create({
+  flex: { flex: 1 },
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 52, paddingBottom: 12, borderBottomWidth: 1, borderBottomColor: '#f3f4f6' },
+  headerCenter: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  headerAvatar: { width: 36, height: 36, borderRadius: 18, backgroundColor: '#0a0a0a', alignItems: 'center', justifyContent: 'center' },
+  headerAvatarText: { fontSize: 12, fontWeight: '700', color: '#fff' },
+  headerName: { fontSize: 15, fontWeight: '700', color: '#0a0a0a' },
+  headerStatus: { fontSize: 12, color: '#22c55e' },
+  productContext: { flexDirection: 'row', alignItems: 'center', gap: 10, padding: 12, backgroundColor: '#f9fafb', marginHorizontal: 16, marginTop: 8, borderRadius: 14 },
+  contextImage: { width: 44, height: 44, backgroundColor: '#e5e7eb', borderRadius: 10 },
+  contextInfo: { flex: 1 },
+  contextName: { fontSize: 13, fontWeight: '600', color: '#0a0a0a' },
+  contextMeta: { fontSize: 12, color: '#6b7280' },
+  viewProduct: { fontSize: 13, fontWeight: '600', color: '#22c55e' },
+  messageList: { paddingHorizontal: 16, paddingVertical: 12, gap: 10 },
+  messageRow: { flexDirection: 'row', gap: 8, alignItems: 'flex-end' },
+  messageRowMe: { justifyContent: 'flex-end' },
+  messageRowThem: { justifyContent: 'flex-start' },
+  senderAvatar: { width: 28, height: 28, borderRadius: 14, backgroundColor: '#374151', alignItems: 'center', justifyContent: 'center' },
+  senderAvatarText: { fontSize: 10, fontWeight: '700', color: '#fff' },
+  bubble: { maxWidth: 260, paddingHorizontal: 14, paddingVertical: 10, borderRadius: 18 },
+  bubbleMe: { backgroundColor: '#0a0a0a', borderBottomRightRadius: 4 },
+  bubbleThem: { backgroundColor: '#f3f4f6', borderBottomLeftRadius: 4 },
+  bubbleText: { fontSize: 14, color: '#0a0a0a', lineHeight: 20 },
+  bubbleTextMe: { color: '#fff' },
+  msgTime: { fontSize: 10, color: '#9ca3af', marginTop: 4 },
+  msgTimeMe: { textAlign: 'right' },
+  offerBubble: { alignSelf: 'center', backgroundColor: '#f9fafb', borderRadius: 16, padding: 16, borderWidth: 1, borderColor: '#e5e7eb', alignItems: 'center', gap: 6, minWidth: 180 },
+  offerBubbleMe: {},
+  offerBubbleThem: {},
+  offerLabel: { fontSize: 12, color: '#6b7280' },
+  offerAmount: { fontSize: 28, fontWeight: '800', color: '#0a0a0a' },
+  offerStatusBadge: { paddingHorizontal: 12, paddingVertical: 5, borderRadius: 10 },
+  offerPending: { backgroundColor: '#fffbeb' },
+  offerAccepted: { backgroundColor: '#f0fdf4' },
+  offerDeclined: { backgroundColor: '#fef2f2' },
+  offerStatusText: { fontSize: 12, fontWeight: '700', color: '#374151' },
+  makeOfferBar: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: '#f3f4f6', marginHorizontal: 16, marginBottom: 6, borderRadius: 10, paddingHorizontal: 14, paddingVertical: 10 },
+  makeOfferText: { fontSize: 13, fontWeight: '600', color: '#374151' },
+  inputBar: { flexDirection: 'row', alignItems: 'flex-end', gap: 10, paddingHorizontal: 16, paddingVertical: 12, borderTopWidth: 1, borderTopColor: '#f3f4f6', backgroundColor: '#fff' },
+  attachBtn: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center' },
+  textInput: { flex: 1, backgroundColor: '#f3f4f6', borderRadius: 20, paddingHorizontal: 14, paddingVertical: 10, fontSize: 14, color: '#0a0a0a', maxHeight: 100 },
+  sendBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: '#0a0a0a', alignItems: 'center', justifyContent: 'center' },
+  sendBtnDisabled: { backgroundColor: '#f3f4f6' },
+})
+```
+
+## File: app/screens/messages/messagesScreen.tsx
+```typescript
+// app/screens/messages/messagesScreen.tsx
+import React, { useState } from 'react'
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, TextInput } from 'react-native'
+import { Feather } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
+import BaseContainer from '@/components/shared/BaseContainer'
+
+const CONVERSATIONS = [
+  { id: '1', name: 'Kicks City', avatar: 'KC', lastMsg: 'Your pickup is ready! Come in anytime before 8pm.', time: '2m', unread: 1, isStore: true },
+  { id: '2', name: 'marcus_kicks', avatar: 'MK', lastMsg: 'I can do $185, final offer', time: '15m', unread: 2, isStore: false },
+  { id: '3', name: 'Urban Vault', avatar: 'UV', lastMsg: 'Order #ORD-002 confirmed ✓', time: '1h', unread: 0, isStore: true },
+  { id: '4', name: 'sarahsneaks', avatar: 'SS', lastMsg: 'Thanks! The pair is in great condition', time: '3h', unread: 0, isStore: false },
+  { id: '5', name: 'Street Elite', avatar: 'SE', lastMsg: 'We have your size in stock now', time: 'Yesterday', unread: 0, isStore: true },
+]
+
+export default function MessagesScreen() {
+  const router = useRouter()
+  const [search, setSearch] = useState('')
+
+  const filtered = CONVERSATIONS.filter(c =>
+    c.name.toLowerCase().includes(search.toLowerCase())
+  )
+
+  return (
+    <BaseContainer backgroundColor="#fff">
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Messages</Text>
+        <TouchableOpacity>
+          <Feather name="edit" size={20} color="#374151" />
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.searchBar}>
+        <Feather name="search" size={16} color="#9ca3af" />
+        <TextInput
+          value={search}
+          onChangeText={setSearch}
+          placeholder="Search messages..."
+          placeholderTextColor="#9ca3af"
+          style={styles.searchInput}
+        />
+      </View>
+
+      <FlatList
+        data={filtered}
+        keyExtractor={c => c.id}
+        showsVerticalScrollIndicator={false}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={styles.row}
+            onPress={() => router.push('/screens/messages/chatScreen' as any)}
+            activeOpacity={0.8}
+          >
+            <View style={styles.avatarWrap}>
+              <View style={[styles.avatar, item.isStore && styles.avatarStore]}>
+                <Text style={styles.avatarText}>{item.avatar}</Text>
+              </View>
+              {item.isStore && (
+                <View style={styles.storeBadge}>
+                  <Feather name="shopping-bag" size={8} color="#fff" />
+                </View>
+              )}
+            </View>
+            <View style={styles.convInfo}>
+              <View style={styles.convHeader}>
+                <Text style={styles.convName}>{item.name}</Text>
+                <Text style={styles.convTime}>{item.time}</Text>
+              </View>
+              <Text style={[styles.lastMsg, item.unread > 0 && styles.lastMsgUnread]} numberOfLines={1}>
+                {item.lastMsg}
+              </Text>
+            </View>
+            {item.unread > 0 && (
+              <View style={styles.unreadBadge}>
+                <Text style={styles.unreadText}>{item.unread}</Text>
+              </View>
+            )}
+          </TouchableOpacity>
+        )}
+        ItemSeparatorComponent={() => <View style={styles.separator} />}
+      />
+    </BaseContainer>
+  )
+}
+
+const styles = StyleSheet.create({
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 52, paddingBottom: 12 },
+  headerTitle: { fontSize: 22, fontWeight: '800', color: '#0a0a0a' },
+  searchBar: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: '#f3f4f6', marginHorizontal: 16, marginBottom: 8, borderRadius: 12, paddingHorizontal: 12, height: 44 },
+  searchInput: { flex: 1, fontSize: 14, color: '#0a0a0a' },
+  row: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 14, gap: 12 },
+  avatarWrap: { position: 'relative' },
+  avatar: { width: 52, height: 52, borderRadius: 26, backgroundColor: '#0a0a0a', alignItems: 'center', justifyContent: 'center' },
+  avatarStore: { backgroundColor: '#374151' },
+  avatarText: { fontSize: 16, fontWeight: '700', color: '#fff' },
+  storeBadge: { position: 'absolute', bottom: 0, right: 0, width: 18, height: 18, borderRadius: 9, backgroundColor: '#22c55e', alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: '#fff' },
+  convInfo: { flex: 1 },
+  convHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 },
+  convName: { fontSize: 15, fontWeight: '700', color: '#0a0a0a' },
+  convTime: { fontSize: 12, color: '#9ca3af' },
+  lastMsg: { fontSize: 13, color: '#6b7280' },
+  lastMsgUnread: { color: '#0a0a0a', fontWeight: '600' },
+  unreadBadge: { width: 22, height: 22, borderRadius: 11, backgroundColor: '#0a0a0a', alignItems: 'center', justifyContent: 'center' },
+  unreadText: { fontSize: 11, fontWeight: '700', color: '#fff' },
+  separator: { height: 1, backgroundColor: '#f9fafb', marginLeft: 80 },
+})
+```
+
+## File: app/screens/order/disputeStatusScreen.tsx
+```typescript
+// app/screens/order/disputeStatusScreen.tsx
+import React from 'react'
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native'
+import { Feather } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
+import BaseContainer from '@/components/shared/BaseContainer'
+
+const STEPS = [
+  { id: 1, label: 'Dispute Submitted', date: 'Aug 16, 10:23 AM', done: true },
+  { id: 2, label: 'Under Review', date: 'Aug 16, 11:00 AM', done: true },
+  { id: 3, label: 'Store Notified', date: 'Est. 24hrs', done: false },
+  { id: 4, label: 'Resolution', date: 'Est. 3-5 days', done: false },
+]
+
+export default function DisputeStatusScreen() {
+  const router = useRouter()
+
+  return (
+    <BaseContainer backgroundColor="#fff">
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Feather name="arrow-left" size={22} color="#0a0a0a" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Dispute Status</Text>
+        <View style={{ width: 22 }} />
+      </View>
+
+      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+        {/* Status hero */}
+        <View style={styles.statusHero}>
+          <View style={styles.statusIcon}>
+            <Feather name="shield" size={32} color="#3b82f6" />
+          </View>
+          <Text style={styles.statusTitle}>Dispute Under Review</Text>
+          <Text style={styles.statusSubtitle}>Case #DSP-2026-001</Text>
+          <Text style={styles.statusDesc}>
+            We've received your dispute and our team is reviewing the case. You'll be notified of any updates.
+          </Text>
+        </View>
+
+        {/* Order card */}
+        <View style={styles.orderCard}>
+          <View style={styles.orderImageBox} />
+          <View style={styles.orderInfo}>
+            <Text style={styles.orderProduct}>Air Jordan 1 Retro High</Text>
+            <Text style={styles.orderStore}>Kicks City · Size 10.5</Text>
+            <Text style={styles.orderReason}>Reason: Item not as described</Text>
+          </View>
+          <Text style={styles.orderPrice}>$220</Text>
+        </View>
+
+        {/* Timeline */}
+        <Text style={styles.sectionTitle}>Timeline</Text>
+        {STEPS.map((step, idx) => (
+          <View key={step.id} style={styles.timelineRow}>
+            <View style={styles.timelineLeft}>
+              <View style={[styles.timelineDot, step.done && styles.timelineDotDone]}>
+                {step.done && <Feather name="check" size={12} color="#fff" />}
+              </View>
+              {idx < STEPS.length - 1 && (
+                <View style={[styles.timelineLine, step.done && styles.timelineLineDone]} />
+              )}
+            </View>
+            <View style={styles.timelineContent}>
+              <Text style={[styles.timelineLabel, step.done && styles.timelineLabelDone]}>{step.label}</Text>
+              <Text style={styles.timelineDate}>{step.date}</Text>
+            </View>
+          </View>
+        ))}
+
+        {/* Actions */}
+        <TouchableOpacity style={styles.contactBtn}>
+          <Feather name="message-circle" size={16} color="#374151" />
+          <Text style={styles.contactBtnText}>Contact Support</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </BaseContainer>
+  )
+}
+
+const styles = StyleSheet.create({
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 52, paddingBottom: 16 },
+  headerTitle: { fontSize: 18, fontWeight: '700', color: '#0a0a0a' },
+  scroll: { paddingHorizontal: 16, paddingBottom: 40 },
+  statusHero: { alignItems: 'center', paddingVertical: 24, gap: 8 },
+  statusIcon: { width: 72, height: 72, borderRadius: 36, backgroundColor: '#eff6ff', alignItems: 'center', justifyContent: 'center', marginBottom: 8 },
+  statusTitle: { fontSize: 20, fontWeight: '800', color: '#0a0a0a' },
+  statusSubtitle: { fontSize: 13, color: '#6b7280' },
+  statusDesc: { fontSize: 14, color: '#374151', textAlign: 'center', lineHeight: 22, marginTop: 4 },
+  orderCard: { flexDirection: 'row', backgroundColor: '#f9fafb', borderRadius: 16, padding: 14, gap: 12, alignItems: 'center', marginBottom: 24 },
+  orderImageBox: { width: 60, height: 60, backgroundColor: '#e5e7eb', borderRadius: 10 },
+  orderInfo: { flex: 1 },
+  orderProduct: { fontSize: 14, fontWeight: '600', color: '#0a0a0a' },
+  orderStore: { fontSize: 12, color: '#6b7280' },
+  orderReason: { fontSize: 12, color: '#f59e0b', fontWeight: '600', marginTop: 2 },
+  orderPrice: { fontSize: 16, fontWeight: '800', color: '#0a0a0a' },
+  sectionTitle: { fontSize: 15, fontWeight: '700', color: '#0a0a0a', marginBottom: 16 },
+  timelineRow: { flexDirection: 'row', gap: 16, marginBottom: 0 },
+  timelineLeft: { alignItems: 'center', width: 28 },
+  timelineDot: { width: 28, height: 28, borderRadius: 14, backgroundColor: '#f3f4f6', borderWidth: 2, borderColor: '#e5e7eb', alignItems: 'center', justifyContent: 'center' },
+  timelineDotDone: { backgroundColor: '#22c55e', borderColor: '#22c55e' },
+  timelineLine: { width: 2, flex: 1, backgroundColor: '#f3f4f6', marginVertical: 4, minHeight: 32 },
+  timelineLineDone: { backgroundColor: '#22c55e' },
+  timelineContent: { flex: 1, paddingBottom: 24 },
+  timelineLabel: { fontSize: 14, fontWeight: '600', color: '#9ca3af' },
+  timelineLabelDone: { color: '#0a0a0a' },
+  timelineDate: { fontSize: 12, color: '#9ca3af', marginTop: 2 },
+  contactBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: '#f3f4f6', borderRadius: 14, paddingVertical: 14, marginTop: 8 },
+  contactBtnText: { fontSize: 15, fontWeight: '600', color: '#374151' },
+})
+```
+
+## File: app/screens/order/ordersListScreen.tsx
+```typescript
+// app/screens/order/ordersListScreen.tsx
+import React, { useState } from 'react'
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, ScrollView } from 'react-native'
+import { Feather } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
+import BaseContainer from '@/components/shared/BaseContainer'
+
+const TABS = ['All', 'Active', 'Completed', 'Cancelled']
+
+const STATUS_COLOR: Record<string, string> = {
+  'Pickup Ready': '#22c55e',
+  'Processing': '#3b82f6',
+  'On Hold': '#f59e0b',
+  'Completed': '#6b7280',
+  'Cancelled': '#ef4444',
+}
+
+interface Order {
+  id: string
+  product: string
+  store: string
+  size: string
+  price: number
+  status: string
+  date: string
+}
+
+const ORDERS: Order[] = [
+  { id: 'ORD-001', product: 'Air Jordan 1 Retro High', store: 'Kicks City', size: '10.5', price: 220, status: 'Pickup Ready', date: 'Aug 16' },
+  { id: 'ORD-002', product: 'Yeezy Boost 350 V2', store: 'Urban Vault', size: '9', price: 280, status: 'Processing', date: 'Aug 15' },
+  { id: 'ORD-003', product: 'Nike Dunk Low', store: 'Street Elite', size: '11', price: 150, status: 'On Hold', date: 'Aug 14' },
+  { id: 'ORD-004', product: 'New Balance 550', store: 'Sole House', size: '10', price: 140, status: 'Completed', date: 'Aug 10' },
+  { id: 'ORD-005', product: 'Travis Scott x Nike', store: 'Kicks City', size: '10', price: 580, status: 'Completed', date: 'Aug 5' },
+  { id: 'ORD-006', product: 'Off-White Blazer', store: 'Urban Vault', size: '9.5', price: 420, status: 'Cancelled', date: 'Aug 1' },
+]
+
+export default function OrdersListScreen() {
+  const router = useRouter()
+  const [activeTab, setActiveTab] = useState('All')
+
+  const filtered = activeTab === 'All' ? ORDERS
+    : activeTab === 'Active' ? ORDERS.filter(o => ['Pickup Ready', 'Processing', 'On Hold'].includes(o.status))
+    : activeTab === 'Completed' ? ORDERS.filter(o => o.status === 'Completed')
+    : ORDERS.filter(o => o.status === 'Cancelled')
+
+  return (
+    <BaseContainer backgroundColor="#f9fafb">
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Feather name="arrow-left" size={22} color="#0a0a0a" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>My Orders</Text>
+        <View style={{ width: 22 }} />
+      </View>
+
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabs}>
+        {TABS.map(tab => (
+          <TouchableOpacity
+            key={tab}
+            style={[styles.tab, activeTab === tab && styles.tabActive]}
+            onPress={() => setActiveTab(tab)}
+          >
+            <Text style={[styles.tabText, activeTab === tab && styles.tabTextActive]}>{tab}</Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+
+      <FlatList
+        data={filtered}
+        keyExtractor={o => o.id}
+        contentContainerStyle={styles.list}
+        showsVerticalScrollIndicator={false}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={styles.card}
+            onPress={() => router.push('/screens/order/orderDetailsScreen')}
+            activeOpacity={0.85}
+          >
+            <View style={styles.imageBox} />
+            <View style={styles.info}>
+              <Text style={styles.orderId}>{item.id}</Text>
+              <Text style={styles.productName} numberOfLines={1}>{item.product}</Text>
+              <Text style={styles.store}>{item.store} · Size {item.size}</Text>
+              <View style={styles.bottom}>
+                <Text style={styles.price}>${item.price}</Text>
+                <View style={[styles.statusBadge, { backgroundColor: STATUS_COLOR[item.status] + '20' }]}>
+                  <Text style={[styles.statusText, { color: STATUS_COLOR[item.status] }]}>{item.status}</Text>
+                </View>
+              </View>
+            </View>
+            <View style={styles.right}>
+              <Text style={styles.date}>{item.date}</Text>
+              <Feather name="chevron-right" size={16} color="#9ca3af" />
+            </View>
+          </TouchableOpacity>
+        )}
+      />
+    </BaseContainer>
+  )
+}
+
+const styles = StyleSheet.create({
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 52, paddingBottom: 8, backgroundColor: '#fff' },
+  headerTitle: { fontSize: 18, fontWeight: '700', color: '#0a0a0a' },
+  tabs: { paddingHorizontal: 16, paddingVertical: 12, gap: 8, backgroundColor: '#fff' },
+  tab: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, backgroundColor: '#f3f4f6' },
+  tabActive: { backgroundColor: '#0a0a0a' },
+  tabText: { fontSize: 13, fontWeight: '600', color: '#374151' },
+  tabTextActive: { color: '#fff' },
+  list: { padding: 16, gap: 12, paddingBottom: 40 },
+  card: { flexDirection: 'row', backgroundColor: '#fff', borderRadius: 16, padding: 12, gap: 12, alignItems: 'center' },
+  imageBox: { width: 72, height: 72, backgroundColor: '#f9fafb', borderRadius: 12 },
+  info: { flex: 1 },
+  orderId: { fontSize: 11, color: '#9ca3af', marginBottom: 2 },
+  productName: { fontSize: 14, fontWeight: '600', color: '#0a0a0a', marginBottom: 2 },
+  store: { fontSize: 12, color: '#6b7280', marginBottom: 6 },
+  bottom: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  price: { fontSize: 15, fontWeight: '800', color: '#0a0a0a' },
+  statusBadge: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8 },
+  statusText: { fontSize: 11, fontWeight: '600' },
+  right: { alignItems: 'flex-end', gap: 20 },
+  date: { fontSize: 11, color: '#9ca3af' },
+})
+```
+
+## File: app/screens/order/submitDisputeScreen.tsx
+```typescript
+// app/screens/order/submitDisputeScreen.tsx
+import React, { useState } from 'react'
+import { View, Text, TouchableOpacity, StyleSheet, TextInput, ScrollView } from 'react-native'
+import { Feather } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
+import BaseContainer from '@/components/shared/BaseContainer'
+
+const REASONS = [
+  'Item not as described',
+  'Wrong item received',
+  'Item not received',
+  'Item damaged on arrival',
+  'Counterfeit item',
+  'Other',
+]
+
+export default function SubmitDisputeScreen() {
+  const router = useRouter()
+  const [selectedReason, setSelectedReason] = useState<string | null>(null)
+  const [description, setDescription] = useState('')
+
+  const canSubmit = selectedReason && description.length > 10
+
+  return (
+    <BaseContainer backgroundColor="#fff">
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Feather name="arrow-left" size={22} color="#0a0a0a" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Submit Dispute</Text>
+        <View style={{ width: 22 }} />
+      </View>
+
+      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+        {/* Order summary */}
+        <View style={styles.orderCard}>
+          <View style={styles.orderImageBox} />
+          <View style={styles.orderInfo}>
+            <Text style={styles.orderId}>ORD-001</Text>
+            <Text style={styles.orderProduct}>Air Jordan 1 Retro High</Text>
+            <Text style={styles.orderStore}>Kicks City · Size 10.5</Text>
+          </View>
+          <Text style={styles.orderPrice}>$220</Text>
+        </View>
+
+        <Text style={styles.sectionTitle}>What's the issue?</Text>
+
+        {REASONS.map(reason => (
+          <TouchableOpacity
+            key={reason}
+            style={[styles.reasonRow, selectedReason === reason && styles.reasonRowActive]}
+            onPress={() => setSelectedReason(reason)}
+          >
+            <View style={[styles.radio, selectedReason === reason && styles.radioActive]}>
+              {selectedReason === reason && <View style={styles.radioDot} />}
+            </View>
+            <Text style={[styles.reasonText, selectedReason === reason && styles.reasonTextActive]}>{reason}</Text>
+          </TouchableOpacity>
+        ))}
+
+        <Text style={[styles.sectionTitle, { marginTop: 24 }]}>Describe the issue</Text>
+        <TextInput
+          value={description}
+          onChangeText={setDescription}
+          placeholder="Please provide as much detail as possible..."
+          placeholderTextColor="#9ca3af"
+          multiline
+          numberOfLines={5}
+          style={styles.textarea}
+          textAlignVertical="top"
+        />
+
+        <View style={styles.evidenceSection}>
+          <Text style={styles.sectionTitle}>Add Photos (Optional)</Text>
+          <TouchableOpacity style={styles.uploadBox}>
+            <Feather name="camera" size={24} color="#9ca3af" />
+            <Text style={styles.uploadText}>Tap to add photos</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+
+      <View style={styles.footer}>
+        <TouchableOpacity
+          style={[styles.submitBtn, !canSubmit && styles.submitBtnDisabled]}
+          onPress={() => canSubmit && router.push('/screens/order/disputeStatusScreen' as any)}
+          disabled={!canSubmit}
+        >
+          <Text style={styles.submitBtnText}>Submit Dispute</Text>
+        </TouchableOpacity>
+      </View>
+    </BaseContainer>
+  )
+}
+
+const styles = StyleSheet.create({
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 52, paddingBottom: 16 },
+  headerTitle: { fontSize: 18, fontWeight: '700', color: '#0a0a0a' },
+  scroll: { paddingHorizontal: 16, paddingBottom: 120 },
+  orderCard: { flexDirection: 'row', backgroundColor: '#f9fafb', borderRadius: 16, padding: 14, gap: 12, alignItems: 'center', marginBottom: 24 },
+  orderImageBox: { width: 60, height: 60, backgroundColor: '#e5e7eb', borderRadius: 10 },
+  orderInfo: { flex: 1 },
+  orderId: { fontSize: 11, color: '#9ca3af' },
+  orderProduct: { fontSize: 14, fontWeight: '600', color: '#0a0a0a' },
+  orderStore: { fontSize: 12, color: '#6b7280' },
+  orderPrice: { fontSize: 16, fontWeight: '800', color: '#0a0a0a' },
+  sectionTitle: { fontSize: 15, fontWeight: '700', color: '#0a0a0a', marginBottom: 12 },
+  reasonRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#f3f4f6' },
+  reasonRowActive: { backgroundColor: '#f9fafb', borderRadius: 12, paddingHorizontal: 12, borderBottomColor: 'transparent', marginHorizontal: -12 },
+  radio: { width: 20, height: 20, borderRadius: 10, borderWidth: 2, borderColor: '#d1d5db', alignItems: 'center', justifyContent: 'center' },
+  radioActive: { borderColor: '#0a0a0a' },
+  radioDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: '#0a0a0a' },
+  reasonText: { fontSize: 14, color: '#374151' },
+  reasonTextActive: { fontWeight: '600', color: '#0a0a0a' },
+  textarea: { backgroundColor: '#f9fafb', borderRadius: 12, padding: 14, fontSize: 14, color: '#0a0a0a', minHeight: 120, borderWidth: 1, borderColor: '#e5e7eb' },
+  evidenceSection: { marginTop: 24 },
+  uploadBox: { height: 100, backgroundColor: '#f9fafb', borderRadius: 12, borderWidth: 1, borderColor: '#e5e7eb', borderStyle: 'dashed', alignItems: 'center', justifyContent: 'center', gap: 8 },
+  uploadText: { fontSize: 13, color: '#9ca3af' },
+  footer: { position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: '#fff', padding: 20, borderTopWidth: 1, borderTopColor: '#f3f4f6' },
+  submitBtn: { backgroundColor: '#0a0a0a', paddingVertical: 16, borderRadius: 14, alignItems: 'center' },
+  submitBtnDisabled: { backgroundColor: '#e5e7eb' },
+  submitBtnText: { fontSize: 16, fontWeight: '700', color: '#fff' },
+})
+```
+
+## File: app/screens/profile/bagScreen.tsx
+```typescript
+// app/screens/profile/bagScreen.tsx
+// "Bag" is the consumer's active holds/reserves - different from cart
+import React from 'react'
+import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native'
+import { Feather } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
+import BaseContainer from '@/components/shared/BaseContainer'
+
+const BAG_ITEMS = [
+  { id: '1', product: 'Air Jordan 4 Retro', store: 'Kicks City', size: '10.5', price: 210, holdExpiresIn: '2h 34m', type: 'hold' },
+  { id: '2', product: 'Nike Dunk Low Panda', store: 'Urban Vault', size: '9', price: 110, holdExpiresIn: '5h 10m', type: 'reserve' },
+]
+
+export default function BagScreen() {
+  const router = useRouter()
+
+  return (
+    <BaseContainer backgroundColor="#f9fafb">
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Feather name="arrow-left" size={22} color="#0a0a0a" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>My Bag</Text>
+        <View style={{ width: 22 }} />
+      </View>
+
+      {BAG_ITEMS.length === 0 ? (
+        <View style={styles.empty}>
+          <Feather name="shopping-bag" size={48} color="#d1d5db" />
+          <Text style={styles.emptyTitle}>Your bag is empty</Text>
+          <Text style={styles.emptySubtitle}>Holds and reserves will appear here</Text>
+          <TouchableOpacity style={styles.browseBtn} onPress={() => router.back()}>
+            <Text style={styles.browseBtnText}>Browse Products</Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <>
+          <FlatList
+            data={BAG_ITEMS}
+            keyExtractor={i => i.id}
+            contentContainerStyle={styles.list}
+            showsVerticalScrollIndicator={false}
+            renderItem={({ item }) => (
+              <View style={styles.card}>
+                <View style={styles.imageBox} />
+                <View style={styles.info}>
+                  <View style={styles.typeBadge}>
+                    <Feather name={item.type === 'hold' ? 'clock' : 'map-pin'} size={10} color="#f59e0b" />
+                    <Text style={styles.typeText}>{item.type === 'hold' ? 'On Hold' : 'Reserved'}</Text>
+                  </View>
+                  <Text style={styles.productName}>{item.product}</Text>
+                  <Text style={styles.store}>{item.store} · Size {item.size}</Text>
+                  <Text style={styles.expires}>Expires in {item.holdExpiresIn}</Text>
+                </View>
+                <View style={styles.right}>
+                  <Text style={styles.price}>${item.price}</Text>
+                  <TouchableOpacity
+                    style={styles.payBtn}
+                    onPress={() => router.push('/screens/order/paymentScreen')}
+                  >
+                    <Text style={styles.payBtnText}>Pay</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
+            ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+          />
+          <View style={styles.footer}>
+            <View style={styles.footerRow}>
+              <Text style={styles.footerLabel}>Total</Text>
+              <Text style={styles.footerTotal}>${BAG_ITEMS.reduce((s, i) => s + i.price, 0)}</Text>
+            </View>
+            <TouchableOpacity
+              style={styles.checkoutBtn}
+              onPress={() => router.push('/screens/order/paymentScreen')}
+            >
+              <Text style={styles.checkoutBtnText}>Checkout All</Text>
+            </TouchableOpacity>
+          </View>
+        </>
+      )}
+    </BaseContainer>
+  )
+}
+
+const styles = StyleSheet.create({
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 52, paddingBottom: 8, backgroundColor: '#fff' },
+  headerTitle: { fontSize: 18, fontWeight: '700', color: '#0a0a0a' },
+  empty: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12 },
+  emptyTitle: { fontSize: 18, fontWeight: '700', color: '#0a0a0a' },
+  emptySubtitle: { fontSize: 14, color: '#6b7280' },
+  browseBtn: { marginTop: 8, backgroundColor: '#0a0a0a', paddingHorizontal: 32, paddingVertical: 12, borderRadius: 12 },
+  browseBtnText: { fontSize: 15, fontWeight: '700', color: '#fff' },
+  list: { padding: 16, paddingBottom: 120 },
+  card: { flexDirection: 'row', backgroundColor: '#fff', borderRadius: 16, padding: 14, gap: 12, alignItems: 'center' },
+  imageBox: { width: 80, height: 80, backgroundColor: '#f9fafb', borderRadius: 12 },
+  info: { flex: 1 },
+  typeBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: '#fffbeb', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8, alignSelf: 'flex-start', marginBottom: 4 },
+  typeText: { fontSize: 11, fontWeight: '600', color: '#f59e0b' },
+  productName: { fontSize: 14, fontWeight: '600', color: '#0a0a0a', marginBottom: 2 },
+  store: { fontSize: 12, color: '#6b7280', marginBottom: 4 },
+  expires: { fontSize: 12, color: '#ef4444', fontWeight: '600' },
+  right: { alignItems: 'flex-end', gap: 10 },
+  price: { fontSize: 16, fontWeight: '800', color: '#0a0a0a' },
+  payBtn: { backgroundColor: '#22c55e', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 10 },
+  payBtnText: { fontSize: 13, fontWeight: '700', color: '#fff' },
+  footer: { position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: '#fff', padding: 20, borderTopWidth: 1, borderTopColor: '#f3f4f6' },
+  footerRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12 },
+  footerLabel: { fontSize: 16, fontWeight: '600', color: '#374151' },
+  footerTotal: { fontSize: 20, fontWeight: '800', color: '#0a0a0a' },
+  checkoutBtn: { backgroundColor: '#0a0a0a', paddingVertical: 16, borderRadius: 14, alignItems: 'center' },
+  checkoutBtnText: { fontSize: 16, fontWeight: '700', color: '#fff' },
+})
+```
+
+## File: app/screens/profile/itemDetailScreen.tsx
+```typescript
+import React, { useMemo } from 'react'
+import {
+  Image,
+  Share,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native'
+import { Feather } from '@expo/vector-icons'
+import { useLocalSearchParams, useRouter } from 'expo-router'
+import BaseContainer from '@/components/shared/BaseContainer'
+import { usePublicLocker } from '@/services/hooks/profile/usePublicLocker'
+
+export default function ItemDetailScreen() {
+  const router = useRouter()
+  const { itemId, lockerId, username } = useLocalSearchParams<{
+    itemId?: string
+    lockerId?: string
+    username?: string
+  }>()
+
+  const { profile } = usePublicLocker(lockerId)
+
+  const item = useMemo(
+    () => profile.items.find((current) => current.id === itemId),
+    [itemId, profile.items],
+  )
+
+  const handleShare = async () => {
+    if (!item) return
+    try {
+      await Share.share({
+        message: `Check out ${item.name} in @${username || profile.username}'s GoSNKR locker.`,
+      })
+    } catch (_) {}
+  }
+
+  if (!item) {
+    return (
+      <BaseContainer backgroundColor="#FFFFFF">
+        <View className="flex-1 px-4 pt-12 items-center justify-center">
+          <View className="w-16 h-16 rounded-full bg-gray-100 items-center justify-center">
+            <Feather name="search" size={24} color="#9CA3AF" />
+          </View>
+          <Text className="text-lg font-black text-gray-900 mt-4">Pair not found</Text>
+          <Text className="text-sm text-gray-400 text-center mt-1">
+            This locker item may have been removed.
+          </Text>
+          <TouchableOpacity
+            onPress={() => router.back()}
+            className="mt-6 px-5 py-3 rounded-xl bg-gray-900"
+          >
+            <Text className="text-white font-bold">Go Back</Text>
+          </TouchableOpacity>
+        </View>
+      </BaseContainer>
+    )
+  }
+
+  return (
+    <BaseContainer backgroundColor="#FFFFFF" scrollable>
+      <View className="pb-12">
+        <View className="absolute top-12 left-4 right-4 z-10 flex-row justify-between">
+          <TouchableOpacity
+            onPress={() => router.back()}
+            className="w-10 h-10 rounded-full bg-white/95 items-center justify-center shadow-sm"
+          >
+            <Feather name="arrow-left" size={20} color="#111827" />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={handleShare}
+            className="w-10 h-10 rounded-full bg-white/95 items-center justify-center shadow-sm"
+          >
+            <Feather name="share-2" size={18} color="#111827" />
+          </TouchableOpacity>
+        </View>
+
+        <View className="bg-gray-100" style={{ height: 430 }}>
+          <Image
+            source={{ uri: item.image }}
+            className="w-full h-full"
+            resizeMode="cover"
+          />
+        </View>
+
+        <View className="px-4 pt-5">
+          <View className="flex-row items-start justify-between gap-4">
+            <View className="flex-1">
+              <Text className="text-2xl font-black text-gray-900 leading-8">{item.name}</Text>
+              <Text className="text-sm text-gray-400 mt-1">Size {item.size || '—'}</Text>
+            </View>
+
+            {item.isForSale ? (
+              <View className="bg-green-50 border border-green-100 rounded-xl px-3 py-2 items-end">
+                <Text className="text-[10px] font-bold text-green-600 uppercase tracking-wider">
+                  For sale
+                </Text>
+                <Text className="text-lg font-black text-green-700">
+                  ${item.price?.toLocaleString() ?? '—'}
+                </Text>
+              </View>
+            ) : null}
+          </View>
+
+          <View className="flex-row gap-3 mt-5">
+            <View className="flex-1 rounded-2xl bg-gray-50 px-4 py-4">
+              <Text className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
+                Condition
+              </Text>
+              <Text className="text-base font-black text-gray-900 mt-1">{item.condition}</Text>
+            </View>
+            <View className="flex-1 rounded-2xl bg-gray-50 px-4 py-4">
+              <Text className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
+                Locker
+              </Text>
+              <Text className="text-base font-black text-gray-900 mt-1" numberOfLines={1}>
+                @{username || profile.username}
+              </Text>
+            </View>
+          </View>
+
+          <Text className="text-[10px] font-bold text-gray-400 tracking-[1.6px] uppercase mt-7 mb-3">
+            Owner
+          </Text>
+          <View className="rounded-2xl border border-gray-100 bg-white px-4 py-4 flex-row items-center gap-3">
+            <View className="w-11 h-11 rounded-full bg-gray-900 items-center justify-center">
+              <Text className="text-white text-sm font-black">{profile.initials}</Text>
+            </View>
+            <View className="flex-1">
+              <Text className="text-sm font-black text-gray-900">{profile.displayName}</Text>
+              <Text className="text-xs text-gray-400 mt-0.5">
+                {profile.role} · {profile.location}
+              </Text>
+            </View>
+            <View className="flex-row items-center gap-1">
+              <Feather name="star" size={13} color="#22C55E" />
+              <Text className="text-xs font-bold text-gray-700">{profile.stats.avgCondition}</Text>
+            </View>
+          </View>
+
+          <View className="mt-5 rounded-2xl bg-gray-50 px-4 py-4 flex-row gap-3">
+            <Feather name="shield" size={18} color="#22C55E" />
+            <Text className="flex-1 text-xs text-gray-500 leading-5">
+              Locker details are provided by the owner. Always verify condition and handoff details before completing a transaction.
+            </Text>
+          </View>
+        </View>
+      </View>
+    </BaseContainer>
+  )
+}
+```
+
+## File: app/screens/profile/transactionHistoryScreen.tsx
+```typescript
+// app/screens/profile/transactionHistoryScreen.tsx
+import React, { useState } from 'react'
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, ScrollView } from 'react-native'
+import { Feather } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
+import BaseContainer from '@/components/shared/BaseContainer'
+
+const TABS = ['All', 'Purchases', 'Sales', 'Refunds']
+
+const TRANSACTIONS = [
+  { id: 'TXN-001', type: 'purchase', product: 'Air Jordan 1 Retro High', store: 'Kicks City', amount: -220, date: 'Aug 16, 2026', status: 'Completed' },
+  { id: 'TXN-002', type: 'sale', product: 'Yeezy Boost 350 V2', store: 'Urban Vault', amount: +280, date: 'Aug 12, 2026', status: 'Completed' },
+  { id: 'TXN-003', type: 'refund', product: 'Nike Dunk Low', store: 'Street Elite', amount: +150, date: 'Aug 8, 2026', status: 'Refunded' },
+  { id: 'TXN-004', type: 'purchase', product: 'New Balance 550', store: 'Sole House', amount: -140, date: 'Aug 5, 2026', status: 'Completed' },
+  { id: 'TXN-005', type: 'purchase', product: 'Travis Scott x Nike', store: 'Kicks City', amount: -580, date: 'Jul 28, 2026', status: 'Completed' },
+]
+
+const TYPE_ICON: Record<string, any> = { purchase: 'shopping-bag', sale: 'trending-up', refund: 'rotate-ccw' }
+const TYPE_COLOR: Record<string, string> = { purchase: '#374151', sale: '#22c55e', refund: '#f59e0b' }
+
+export default function TransactionHistoryScreen() {
+  const router = useRouter()
+  const [activeTab, setActiveTab] = useState('All')
+
+  const filtered = activeTab === 'All' ? TRANSACTIONS
+    : activeTab === 'Purchases' ? TRANSACTIONS.filter(t => t.type === 'purchase')
+    : activeTab === 'Sales' ? TRANSACTIONS.filter(t => t.type === 'sale')
+    : TRANSACTIONS.filter(t => t.type === 'refund')
+
+  return (
+    <BaseContainer backgroundColor="#f9fafb">
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Feather name="arrow-left" size={22} color="#0a0a0a" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Transactions</Text>
+        <TouchableOpacity>
+          <Feather name="download" size={20} color="#374151" />
+        </TouchableOpacity>
+      </View>
+
+      {/* Balance card */}
+      <View style={styles.balanceCard}>
+        <Text style={styles.balanceLabel}>Total Spent</Text>
+        <Text style={styles.balanceValue}>$940</Text>
+        <View style={styles.balanceRow}>
+          <View style={styles.balanceSub}>
+            <Text style={styles.balanceSubLabel}>Sales Earned</Text>
+            <Text style={[styles.balanceSubValue, { color: '#22c55e' }]}>+$280</Text>
+          </View>
+          <View style={styles.balanceSub}>
+            <Text style={styles.balanceSubLabel}>Refunds</Text>
+            <Text style={[styles.balanceSubValue, { color: '#f59e0b' }]}>+$150</Text>
+          </View>
+        </View>
+      </View>
+
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabs}>
+        {TABS.map(tab => (
+          <TouchableOpacity key={tab} style={[styles.tab, activeTab === tab && styles.tabActive]} onPress={() => setActiveTab(tab)}>
+            <Text style={[styles.tabText, activeTab === tab && styles.tabTextActive]}>{tab}</Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+
+      <FlatList
+        data={filtered}
+        keyExtractor={t => t.id}
+        contentContainerStyle={styles.list}
+        showsVerticalScrollIndicator={false}
+        renderItem={({ item }) => (
+          <View style={styles.card}>
+            <View style={[styles.iconBox, { backgroundColor: TYPE_COLOR[item.type] + '15' }]}>
+              <Feather name={TYPE_ICON[item.type]} size={18} color={TYPE_COLOR[item.type]} />
+            </View>
+            <View style={styles.info}>
+              <Text style={styles.productName} numberOfLines={1}>{item.product}</Text>
+              <Text style={styles.storeName}>{item.store}</Text>
+              <Text style={styles.date}>{item.date}</Text>
+            </View>
+            <View style={styles.amountCol}>
+              <Text style={[styles.amount, { color: item.amount > 0 ? '#22c55e' : '#0a0a0a' }]}>
+                {item.amount > 0 ? '+' : ''}${Math.abs(item.amount)}
+              </Text>
+              <Text style={styles.status}>{item.status}</Text>
+            </View>
+          </View>
+        )}
+        ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
+      />
+    </BaseContainer>
+  )
+}
+
+const styles = StyleSheet.create({
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 52, paddingBottom: 8, backgroundColor: '#fff' },
+  headerTitle: { fontSize: 18, fontWeight: '700', color: '#0a0a0a' },
+  balanceCard: { backgroundColor: '#0a0a0a', margin: 16, borderRadius: 20, padding: 20 },
+  balanceLabel: { fontSize: 13, color: '#9ca3af', marginBottom: 4 },
+  balanceValue: { fontSize: 36, fontWeight: '800', color: '#fff', marginBottom: 16 },
+  balanceRow: { flexDirection: 'row', gap: 24 },
+  balanceSub: { gap: 2 },
+  balanceSubLabel: { fontSize: 12, color: '#6b7280' },
+  balanceSubValue: { fontSize: 16, fontWeight: '700' },
+  tabs: { paddingHorizontal: 16, paddingVertical: 8, gap: 8 },
+  tab: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, backgroundColor: '#f3f4f6' },
+  tabActive: { backgroundColor: '#0a0a0a' },
+  tabText: { fontSize: 13, fontWeight: '600', color: '#374151' },
+  tabTextActive: { color: '#fff' },
+  list: { padding: 16, paddingBottom: 40 },
+  card: { flexDirection: 'row', backgroundColor: '#fff', borderRadius: 16, padding: 14, alignItems: 'center', gap: 12 },
+  iconBox: { width: 44, height: 44, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
+  info: { flex: 1 },
+  productName: { fontSize: 14, fontWeight: '600', color: '#0a0a0a' },
+  storeName: { fontSize: 12, color: '#6b7280', marginTop: 2 },
+  date: { fontSize: 11, color: '#9ca3af', marginTop: 2 },
+  amountCol: { alignItems: 'flex-end' },
+  amount: { fontSize: 16, fontWeight: '800' },
+  status: { fontSize: 11, color: '#9ca3af', marginTop: 2 },
+})
+```
+
+## File: app/screens/reseller/requestDetailsScreen.tsx
+```typescript
+// app/screens/reseller/requestDetailsScreen.tsx
+import React from 'react'
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native'
+import { Feather } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
+import BaseContainer from '@/components/shared/BaseContainer'
+
+const TIMELINE = [
+  { label: 'Offer Sent', date: 'Aug 16, 9:12 AM', done: true },
+  { label: 'Seller Viewed', date: 'Aug 16, 10:45 AM', done: true },
+  { label: 'Response Pending', date: 'Waiting...', done: false },
+]
+
+export default function RequestDetailsScreen() {
+  const router = useRouter()
+
+  return (
+    <BaseContainer backgroundColor="#fff">
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Feather name="arrow-left" size={22} color="#0a0a0a" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Offer Details</Text>
+        <View style={{ width: 22 }} />
+      </View>
+
+      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+        {/* Status */}
+        <View style={styles.statusBanner}>
+          <Feather name="clock" size={18} color="#f59e0b" />
+          <Text style={styles.statusText}>Awaiting Response</Text>
+          <Text style={styles.expiresText}>Expires in 14h 30m</Text>
+        </View>
+
+        {/* Product */}
+        <View style={styles.productCard}>
+          <View style={styles.productImage} />
+          <View style={styles.productInfo}>
+            <Text style={styles.productName}>Air Jordan 1 Retro High OG</Text>
+            <Text style={styles.productMeta}>Size 10.5 · New</Text>
+          </View>
+        </View>
+
+        {/* Offer breakdown */}
+        <Text style={styles.sectionTitle}>Offer Summary</Text>
+        <View style={styles.breakdown}>
+          {[
+            ['My Offer', '$190'],
+            ['Asking Price', '$220'],
+            ['Market Value', '$230'],
+            ['Potential Saving', '$30'],
+          ].map(([label, value]) => (
+            <View key={label} style={styles.bRow}>
+              <Text style={styles.bLabel}>{label}</Text>
+              <Text style={styles.bValue}>{value}</Text>
+            </View>
+          ))}
+        </View>
+
+        {/* Seller */}
+        <Text style={styles.sectionTitle}>Seller</Text>
+        <TouchableOpacity style={styles.sellerCard} onPress={() => router.push('/screens/reseller/resellerProfileScreen' as any)}>
+          <View style={styles.sellerAvatar}><Text style={styles.sellerAvatarText}>MK</Text></View>
+          <View style={styles.sellerInfo}>
+            <Text style={styles.sellerName}>marcus_kicks</Text>
+            <Text style={styles.sellerMeta}>4.9★ · 1.2K sales</Text>
+          </View>
+          <Feather name="chevron-right" size={16} color="#9ca3af" />
+        </TouchableOpacity>
+
+        {/* Timeline */}
+        <Text style={styles.sectionTitle}>Timeline</Text>
+        {TIMELINE.map((step, i) => (
+          <View key={step.label} style={styles.timelineRow}>
+            <View style={styles.timelineLeft}>
+              <View style={[styles.dot, step.done && styles.dotDone]}>
+                {step.done && <Feather name="check" size={10} color="#fff" />}
+              </View>
+              {i < TIMELINE.length - 1 && <View style={[styles.line, step.done && styles.lineDone]} />}
+            </View>
+            <View style={styles.timelineContent}>
+              <Text style={[styles.stepLabel, step.done && styles.stepLabelDone]}>{step.label}</Text>
+              <Text style={styles.stepDate}>{step.date}</Text>
+            </View>
+          </View>
+        ))}
+      </ScrollView>
+
+      <View style={styles.footer}>
+        <TouchableOpacity style={styles.withdrawBtn} onPress={() => router.back()}>
+          <Text style={styles.withdrawText}>Withdraw Offer</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.messageBtn} onPress={() => router.push('/screens/messages/chatScreen' as any)}>
+          <Feather name="message-circle" size={16} color="#fff" />
+          <Text style={styles.messageBtnText}>Message Seller</Text>
+        </TouchableOpacity>
+      </View>
+    </BaseContainer>
+  )
+}
+
+const styles = StyleSheet.create({
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 52, paddingBottom: 16 },
+  headerTitle: { fontSize: 18, fontWeight: '700', color: '#0a0a0a' },
+  scroll: { paddingHorizontal: 16, paddingBottom: 120 },
+  statusBanner: { backgroundColor: '#fffbeb', borderRadius: 14, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 16 },
+  statusText: { fontSize: 15, fontWeight: '700', color: '#f59e0b', flex: 1 },
+  expiresText: { fontSize: 12, color: '#f59e0b' },
+  productCard: { flexDirection: 'row', borderRadius: 16, borderWidth: 1, borderColor: '#f3f4f6', padding: 14, gap: 12, marginBottom: 24 },
+  productImage: { width: 72, height: 72, backgroundColor: '#f9fafb', borderRadius: 12 },
+  productInfo: { flex: 1, justifyContent: 'center' },
+  productName: { fontSize: 14, fontWeight: '600', color: '#0a0a0a', marginBottom: 4 },
+  productMeta: { fontSize: 12, color: '#6b7280' },
+  sectionTitle: { fontSize: 15, fontWeight: '700', color: '#0a0a0a', marginBottom: 12 },
+  breakdown: { backgroundColor: '#f9fafb', borderRadius: 16, padding: 16, marginBottom: 24 },
+  bRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: '#f3f4f6' },
+  bLabel: { fontSize: 14, color: '#6b7280' },
+  bValue: { fontSize: 14, fontWeight: '600', color: '#0a0a0a' },
+  sellerCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#f9fafb', borderRadius: 16, padding: 14, gap: 12, marginBottom: 24 },
+  sellerAvatar: { width: 44, height: 44, borderRadius: 22, backgroundColor: '#0a0a0a', alignItems: 'center', justifyContent: 'center' },
+  sellerAvatarText: { fontSize: 14, fontWeight: '700', color: '#fff' },
+  sellerInfo: { flex: 1 },
+  sellerName: { fontSize: 14, fontWeight: '700', color: '#0a0a0a' },
+  sellerMeta: { fontSize: 12, color: '#6b7280' },
+  timelineRow: { flexDirection: 'row', gap: 14 },
+  timelineLeft: { alignItems: 'center', width: 24 },
+  dot: { width: 24, height: 24, borderRadius: 12, backgroundColor: '#f3f4f6', borderWidth: 2, borderColor: '#e5e7eb', alignItems: 'center', justifyContent: 'center' },
+  dotDone: { backgroundColor: '#22c55e', borderColor: '#22c55e' },
+  line: { width: 2, flex: 1, backgroundColor: '#f3f4f6', marginVertical: 4, minHeight: 28 },
+  lineDone: { backgroundColor: '#22c55e' },
+  timelineContent: { flex: 1, paddingBottom: 20 },
+  stepLabel: { fontSize: 14, fontWeight: '600', color: '#9ca3af' },
+  stepLabelDone: { color: '#0a0a0a' },
+  stepDate: { fontSize: 12, color: '#9ca3af', marginTop: 2 },
+  footer: { position: 'absolute', bottom: 0, left: 0, right: 0, flexDirection: 'row', gap: 12, padding: 20, backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: '#f3f4f6' },
+  withdrawBtn: { flex: 1, paddingVertical: 16, borderRadius: 14, borderWidth: 1, borderColor: '#e5e7eb', alignItems: 'center' },
+  withdrawText: { fontSize: 15, fontWeight: '700', color: '#374151' },
+  messageBtn: { flex: 1, flexDirection: 'row', gap: 6, paddingVertical: 16, borderRadius: 14, backgroundColor: '#0a0a0a', alignItems: 'center', justifyContent: 'center' },
+  messageBtnText: { fontSize: 15, fontWeight: '700', color: '#fff' },
+})
+```
+
+## File: app/screens/reseller/resellerProfileScreen.tsx
+```typescript
+// app/screens/reseller/resellerProfileScreen.tsx
+import React, { useState } from 'react'
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, FlatList } from 'react-native'
+import { Feather } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
+import BaseContainer from '@/components/shared/BaseContainer'
+
+const LISTINGS = [
+  { id: '1', name: 'Yeezy Boost 350 V2 "Zebra"', size: '10', price: 290, condition: 'NEW' },
+  { id: '2', name: 'Jordan 4 "Black Cat"', size: '9.5', price: 320, condition: 'NEW' },
+  { id: '3', name: 'New Balance 550', size: '10', price: 145, condition: 'PRE-OWNED' },
+]
+
+export default function ResellerProfileScreen() {
+  const router = useRouter()
+  const [activeTab, setActiveTab] = useState('Listings')
+
+  return (
+    <BaseContainer backgroundColor="#fff">
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Feather name="arrow-left" size={22} color="#0a0a0a" />
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <Feather name="share-2" size={20} color="#374151" />
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={styles.profileSection}>
+          <View style={styles.avatar}><Text style={styles.avatarText}>MK</Text></View>
+          <Text style={styles.name}>marcus_kicks</Text>
+          <Text style={styles.handle}>@marcus_kicks · Miami, FL</Text>
+          <View style={styles.stats}>
+            {[['47', 'Listings'], ['1.2K', 'Sales'], ['4.9★', 'Rating']].map(([val, lbl]) => (
+              <View key={lbl} style={styles.statItem}>
+                <Text style={styles.statValue}>{val}</Text>
+                <Text style={styles.statLabel}>{lbl}</Text>
+              </View>
+            ))}
+          </View>
+          <View style={styles.actionRow}>
+            <TouchableOpacity style={styles.messageBtn} onPress={() => router.push('/screens/messages/chatScreen' as any)}>
+              <Feather name="message-circle" size={16} color="#374151" />
+              <Text style={styles.messageBtnText}>Message</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.followBtn}>
+              <Text style={styles.followBtnText}>Follow</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={styles.tabs}>
+          {['Listings', 'Reviews', 'Activity'].map(tab => (
+            <TouchableOpacity key={tab} style={[styles.tab, activeTab === tab && styles.tabActive]} onPress={() => setActiveTab(tab)}>
+              <Text style={[styles.tabText, activeTab === tab && styles.tabTextActive]}>{tab}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        <View style={styles.grid}>
+          {LISTINGS.map(item => (
+            <TouchableOpacity key={item.id} style={styles.gridCard} onPress={() => router.push('/screens/product/productScreen')}>
+              <View style={styles.gridImage} />
+              <View style={styles.gridInfo}>
+                <Text style={styles.gridName} numberOfLines={2}>{item.name}</Text>
+                <Text style={styles.gridSize}>Sz {item.size}</Text>
+                <Text style={styles.gridPrice}>${item.price}</Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </ScrollView>
+    </BaseContainer>
+  )
+}
+
+const styles = StyleSheet.create({
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 52, paddingBottom: 8 },
+  profileSection: { alignItems: 'center', paddingVertical: 20, paddingHorizontal: 16 },
+  avatar: { width: 80, height: 80, borderRadius: 40, backgroundColor: '#0a0a0a', alignItems: 'center', justifyContent: 'center', marginBottom: 12 },
+  avatarText: { fontSize: 28, fontWeight: '700', color: '#fff' },
+  name: { fontSize: 20, fontWeight: '800', color: '#0a0a0a', marginBottom: 4 },
+  handle: { fontSize: 13, color: '#6b7280', marginBottom: 20 },
+  stats: { flexDirection: 'row', gap: 32, marginBottom: 20 },
+  statItem: { alignItems: 'center' },
+  statValue: { fontSize: 18, fontWeight: '800', color: '#0a0a0a' },
+  statLabel: { fontSize: 12, color: '#6b7280' },
+  actionRow: { flexDirection: 'row', gap: 12 },
+  messageBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: '#f3f4f6', paddingHorizontal: 20, paddingVertical: 12, borderRadius: 12 },
+  messageBtnText: { fontSize: 14, fontWeight: '600', color: '#374151' },
+  followBtn: { backgroundColor: '#0a0a0a', paddingHorizontal: 32, paddingVertical: 12, borderRadius: 12 },
+  followBtnText: { fontSize: 14, fontWeight: '700', color: '#fff' },
+  tabs: { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: '#f3f4f6' },
+  tab: { flex: 1, paddingVertical: 12, alignItems: 'center', borderBottomWidth: 2, borderBottomColor: 'transparent' },
+  tabActive: { borderBottomColor: '#0a0a0a' },
+  tabText: { fontSize: 14, fontWeight: '600', color: '#9ca3af' },
+  tabTextActive: { color: '#0a0a0a' },
+  grid: { flexDirection: 'row', flexWrap: 'wrap', padding: 12, gap: 12 },
+  gridCard: { width: '47%', backgroundColor: '#fff', borderRadius: 14, borderWidth: 1, borderColor: '#f3f4f6', overflow: 'hidden' },
+  gridImage: { height: 130, backgroundColor: '#f9fafb' },
+  gridInfo: { padding: 10 },
+  gridName: { fontSize: 12, fontWeight: '600', color: '#0a0a0a', lineHeight: 17, marginBottom: 4 },
+  gridSize: { fontSize: 11, color: '#6b7280', marginBottom: 2 },
+  gridPrice: { fontSize: 14, fontWeight: '800', color: '#0a0a0a' },
+})
+```
+
+## File: app/screens/reseller/sendOfferScreen.tsx
+```typescript
+// app/screens/reseller/sendOfferScreen.tsx
+import React, { useState } from 'react'
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput } from 'react-native'
+import { Feather } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
+import BaseContainer from '@/components/shared/BaseContainer'
+
+const QUICK_AMOUNTS = [150, 175, 190, 200]
+
+export default function SendOfferScreen() {
+  const router = useRouter()
+  const [offerAmount, setOfferAmount] = useState('190')
+  const [note, setNote] = useState('')
+  const [expiryHours, setExpiryHours] = useState(24)
+
+  const marketPrice = 220
+
+  return (
+    <BaseContainer backgroundColor="#fff">
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Feather name="arrow-left" size={22} color="#0a0a0a" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Send Offer</Text>
+        <View style={{ width: 22 }} />
+      </View>
+
+      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+        {/* Listing card */}
+        <View style={styles.listingCard}>
+          <View style={styles.listingImage} />
+          <View style={styles.listingInfo}>
+            <Text style={styles.listingName}>Air Jordan 1 Retro High OG</Text>
+            <Text style={styles.listingMeta}>Size 10.5 · New</Text>
+            <Text style={styles.listingAsking}>Asking: $220</Text>
+          </View>
+        </View>
+
+        {/* Offer input */}
+        <Text style={styles.sectionTitle}>Your Offer</Text>
+        <View style={styles.offerInputRow}>
+          <Text style={styles.dollarSign}>$</Text>
+          <TextInput
+            value={offerAmount}
+            onChangeText={setOfferAmount}
+            keyboardType="numeric"
+            style={styles.offerInput}
+          />
+        </View>
+
+        {/* Market context */}
+        <View style={styles.marketRow}>
+          <Text style={styles.marketLabel}>Market Price</Text>
+          <Text style={styles.marketValue}>${marketPrice}</Text>
+          <View style={styles.savingBadge}>
+            <Text style={styles.savingText}>
+              {((1 - Number(offerAmount) / marketPrice) * 100).toFixed(0)}% below
+            </Text>
+          </View>
+        </View>
+
+        {/* Quick amounts */}
+        <View style={styles.quickRow}>
+          {QUICK_AMOUNTS.map(amt => (
+            <TouchableOpacity
+              key={amt}
+              style={[styles.quickBtn, offerAmount === String(amt) && styles.quickBtnActive]}
+              onPress={() => setOfferAmount(String(amt))}
+            >
+              <Text style={[styles.quickBtnText, offerAmount === String(amt) && styles.quickBtnTextActive]}>${amt}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* Expiry */}
+        <Text style={[styles.sectionTitle, { marginTop: 24 }]}>Offer Expires In</Text>
+        <View style={styles.expiryRow}>
+          {[12, 24, 48, 72].map(h => (
+            <TouchableOpacity
+              key={h}
+              style={[styles.expiryBtn, expiryHours === h && styles.expiryBtnActive]}
+              onPress={() => setExpiryHours(h)}
+            >
+              <Text style={[styles.expiryBtnText, expiryHours === h && styles.expiryBtnTextActive]}>{h}h</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* Note */}
+        <Text style={[styles.sectionTitle, { marginTop: 24 }]}>Add a Note (Optional)</Text>
+        <TextInput
+          value={note}
+          onChangeText={setNote}
+          placeholder="E.g. Willing to bundle if you have other sizes..."
+          placeholderTextColor="#9ca3af"
+          multiline
+          numberOfLines={3}
+          style={styles.noteInput}
+          textAlignVertical="top"
+        />
+      </ScrollView>
+
+      <View style={styles.footer}>
+        <TouchableOpacity
+          style={styles.sendBtn}
+          onPress={() => router.push('/screens/reseller/submittedRequestsScreen' as any)}
+        >
+          <Text style={styles.sendBtnText}>Send Offer · ${offerAmount}</Text>
+        </TouchableOpacity>
+      </View>
+    </BaseContainer>
+  )
+}
+
+const styles = StyleSheet.create({
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 52, paddingBottom: 16 },
+  headerTitle: { fontSize: 18, fontWeight: '700', color: '#0a0a0a' },
+  scroll: { paddingHorizontal: 16, paddingBottom: 120 },
+  listingCard: { flexDirection: 'row', backgroundColor: '#f9fafb', borderRadius: 16, padding: 14, gap: 12, marginBottom: 24 },
+  listingImage: { width: 72, height: 72, backgroundColor: '#e5e7eb', borderRadius: 12 },
+  listingInfo: { flex: 1, justifyContent: 'center' },
+  listingName: { fontSize: 14, fontWeight: '600', color: '#0a0a0a', marginBottom: 4 },
+  listingMeta: { fontSize: 12, color: '#6b7280', marginBottom: 4 },
+  listingAsking: { fontSize: 13, fontWeight: '700', color: '#0a0a0a' },
+  sectionTitle: { fontSize: 15, fontWeight: '700', color: '#0a0a0a', marginBottom: 12 },
+  offerInputRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#f9fafb', borderRadius: 16, borderWidth: 1, borderColor: '#e5e7eb', padding: 16, marginBottom: 12 },
+  dollarSign: { fontSize: 32, fontWeight: '700', color: '#0a0a0a', marginRight: 4 },
+  offerInput: { fontSize: 40, fontWeight: '800', color: '#0a0a0a', flex: 1 },
+  marketRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 16 },
+  marketLabel: { fontSize: 13, color: '#6b7280' },
+  marketValue: { fontSize: 13, fontWeight: '600', color: '#0a0a0a' },
+  savingBadge: { backgroundColor: '#fef2f2', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8 },
+  savingText: { fontSize: 12, fontWeight: '600', color: '#ef4444' },
+  quickRow: { flexDirection: 'row', gap: 10 },
+  quickBtn: { flex: 1, paddingVertical: 10, borderRadius: 12, backgroundColor: '#f3f4f6', alignItems: 'center' },
+  quickBtnActive: { backgroundColor: '#0a0a0a' },
+  quickBtnText: { fontSize: 14, fontWeight: '600', color: '#374151' },
+  quickBtnTextActive: { color: '#fff' },
+  expiryRow: { flexDirection: 'row', gap: 10 },
+  expiryBtn: { flex: 1, paddingVertical: 10, borderRadius: 12, backgroundColor: '#f3f4f6', alignItems: 'center' },
+  expiryBtnActive: { backgroundColor: '#0a0a0a' },
+  expiryBtnText: { fontSize: 14, fontWeight: '600', color: '#374151' },
+  expiryBtnTextActive: { color: '#fff' },
+  noteInput: { backgroundColor: '#f9fafb', borderRadius: 12, padding: 14, fontSize: 14, color: '#0a0a0a', minHeight: 90, borderWidth: 1, borderColor: '#e5e7eb' },
+  footer: { position: 'absolute', bottom: 0, left: 0, right: 0, padding: 20, backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: '#f3f4f6' },
+  sendBtn: { backgroundColor: '#0a0a0a', paddingVertical: 16, borderRadius: 14, alignItems: 'center' },
+  sendBtnText: { fontSize: 16, fontWeight: '700', color: '#fff' },
+})
+```
+
+## File: app/screens/reseller/submittedRequestsScreen.tsx
+```typescript
+// app/screens/reseller/submittedRequestsScreen.tsx
+import React, { useState } from 'react'
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, ScrollView } from 'react-native'
+import { Feather } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
+import BaseContainer from '@/components/shared/BaseContainer'
+
+const TABS = ['All', 'Pending', 'Accepted', 'Declined']
+
+const STATUS_CONFIG: Record<string, { color: string; bg: string }> = {
+  Pending:  { color: '#f59e0b', bg: '#fffbeb' },
+  Accepted: { color: '#22c55e', bg: '#f0fdf4' },
+  Declined: { color: '#ef4444', bg: '#fef2f2' },
+  Countered:{ color: '#3b82f6', bg: '#eff6ff' },
+}
+
+const REQUESTS = [
+  { id: '1', product: 'Air Jordan 1 Retro High', seller: 'marcus_kicks', myOffer: 190, askingPrice: 220, status: 'Pending', date: 'Aug 16' },
+  { id: '2', product: 'Yeezy 350 V2 "Zebra"', seller: 'sarahsneaks', myOffer: 250, askingPrice: 290, status: 'Accepted', date: 'Aug 14' },
+  { id: '3', product: 'Travis Scott x Nike', seller: 'jpcollects', myOffer: 520, askingPrice: 580, status: 'Declined', date: 'Aug 10' },
+  { id: '4', product: 'Nike Dunk Low Panda', seller: 'kickvault', myOffer: 100, askingPrice: 110, status: 'Countered', date: 'Aug 8' },
+]
+
+export default function SubmittedRequestsScreen() {
+  const router = useRouter()
+  const [tab, setTab] = useState('All')
+
+  const filtered = tab === 'All' ? REQUESTS : REQUESTS.filter(r => r.status === tab)
+
+  return (
+    <BaseContainer backgroundColor="#f9fafb">
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Feather name="arrow-left" size={22} color="#0a0a0a" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>My Offers</Text>
+        <View style={{ width: 22 }} />
+      </View>
+
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabs}>
+        {TABS.map(t => (
+          <TouchableOpacity key={t} style={[styles.tab, tab === t && styles.tabActive]} onPress={() => setTab(t)}>
+            <Text style={[styles.tabText, tab === t && styles.tabTextActive]}>{t}</Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+
+      <FlatList
+        data={filtered}
+        keyExtractor={r => r.id}
+        contentContainerStyle={styles.list}
+        showsVerticalScrollIndicator={false}
+        renderItem={({ item }) => {
+          const cfg = STATUS_CONFIG[item.status] ?? { color: '#6b7280', bg: '#f3f4f6' }
+          return (
+            <TouchableOpacity
+              style={styles.card}
+              onPress={() => router.push('/screens/reseller/requestDetailsScreen' as any)}
+              activeOpacity={0.85}
+            >
+              <View style={styles.imageBox} />
+              <View style={styles.info}>
+                <Text style={styles.productName} numberOfLines={1}>{item.product}</Text>
+                <Text style={styles.seller}>@{item.seller}</Text>
+                <View style={styles.priceRow}>
+                  <Text style={styles.myOffer}>My offer: <Text style={styles.offerAmt}>${item.myOffer}</Text></Text>
+                  <Text style={styles.asking}>Ask: ${item.askingPrice}</Text>
+                </View>
+              </View>
+              <View style={styles.right}>
+                <View style={[styles.statusBadge, { backgroundColor: cfg.bg }]}>
+                  <Text style={[styles.statusText, { color: cfg.color }]}>{item.status}</Text>
+                </View>
+                <Text style={styles.date}>{item.date}</Text>
+              </View>
+            </TouchableOpacity>
+          )
+        }}
+        ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
+      />
+    </BaseContainer>
+  )
+}
+
+const styles = StyleSheet.create({
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 52, paddingBottom: 8, backgroundColor: '#fff' },
+  headerTitle: { fontSize: 18, fontWeight: '700', color: '#0a0a0a' },
+  tabs: { paddingHorizontal: 16, paddingVertical: 12, gap: 8, backgroundColor: '#fff' },
+  tab: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, backgroundColor: '#f3f4f6' },
+  tabActive: { backgroundColor: '#0a0a0a' },
+  tabText: { fontSize: 13, fontWeight: '600', color: '#374151' },
+  tabTextActive: { color: '#fff' },
+  list: { padding: 16, paddingBottom: 40 },
+  card: { flexDirection: 'row', backgroundColor: '#fff', borderRadius: 16, padding: 14, gap: 12, alignItems: 'center' },
+  imageBox: { width: 64, height: 64, backgroundColor: '#f9fafb', borderRadius: 12 },
+  info: { flex: 1 },
+  productName: { fontSize: 14, fontWeight: '600', color: '#0a0a0a', marginBottom: 2 },
+  seller: { fontSize: 12, color: '#6b7280', marginBottom: 6 },
+  priceRow: { flexDirection: 'row', gap: 10, alignItems: 'center' },
+  myOffer: { fontSize: 12, color: '#374151' },
+  offerAmt: { fontWeight: '700', color: '#0a0a0a' },
+  asking: { fontSize: 12, color: '#9ca3af' },
+  right: { alignItems: 'flex-end', gap: 8 },
+  statusBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10 },
+  statusText: { fontSize: 12, fontWeight: '700' },
+  date: { fontSize: 11, color: '#9ca3af' },
+})
+```
+
+## File: app/screens/reseller/visibilityControlsScreen.tsx
+```typescript
+// app/screens/reseller/visibilityControlsScreen.tsx
+import React, { useState } from 'react'
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Switch } from 'react-native'
+import { Feather } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
+import BaseContainer from '@/components/shared/BaseContainer'
+
+interface ControlItem {
+  id: string
+  label: string
+  desc: string
+  value: boolean
+}
+
+export default function VisibilityControlsScreen() {
+  const router = useRouter()
+  const [controls, setControls] = useState<ControlItem[]>([
+    { id: 'profile', label: 'Public Profile', desc: 'Allow anyone to view your reseller profile', value: true },
+    { id: 'listings', label: 'Show Listings Publicly', desc: 'Display your active listings to all users', value: true },
+    { id: 'price', label: 'Show Prices', desc: 'Show prices on public listing cards', value: true },
+    { id: 'location', label: 'Show Approximate Location', desc: 'Show your city/region on profile', value: false },
+    { id: 'activity', label: 'Show Activity Feed', desc: 'Let followers see your recent activity', value: true },
+    { id: 'online', label: 'Show Online Status', desc: "Let buyers know when you're active", value: false },
+    { id: 'analytics', label: 'Share Stats', desc: 'Show total sales count on profile', value: true },
+    { id: 'search', label: 'Appear in Search', desc: 'Include profile in user discovery', value: true },
+  ])
+
+  const toggle = (id: string) => {
+    setControls(prev => prev.map(c => c.id === id ? { ...c, value: !c.value } : c))
+  }
+
+  return (
+    <BaseContainer backgroundColor="#fff">
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Feather name="arrow-left" size={22} color="#0a0a0a" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Visibility Controls</Text>
+        <View style={{ width: 22 }} />
+      </View>
+
+      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+        <Text style={styles.sectionDesc}>Control what others can see on your reseller profile and listings.</Text>
+
+        <Text style={styles.sectionTitle}>Profile Visibility</Text>
+        {controls.slice(0, 4).map(item => (
+          <View key={item.id} style={styles.row}>
+            <View style={styles.rowInfo}>
+              <Text style={styles.rowLabel}>{item.label}</Text>
+              <Text style={styles.rowDesc}>{item.desc}</Text>
+            </View>
+            <Switch
+              value={item.value}
+              onValueChange={() => toggle(item.id)}
+              trackColor={{ true: '#0a0a0a', false: '#e5e7eb' }}
+              thumbColor="#fff"
+            />
+          </View>
+        ))}
+
+        <Text style={[styles.sectionTitle, { marginTop: 24 }]}>Activity & Discovery</Text>
+        {controls.slice(4).map(item => (
+          <View key={item.id} style={styles.row}>
+            <View style={styles.rowInfo}>
+              <Text style={styles.rowLabel}>{item.label}</Text>
+              <Text style={styles.rowDesc}>{item.desc}</Text>
+            </View>
+            <Switch
+              value={item.value}
+              onValueChange={() => toggle(item.id)}
+              trackColor={{ true: '#0a0a0a', false: '#e5e7eb' }}
+              thumbColor="#fff"
+            />
+          </View>
+        ))}
+      </ScrollView>
+    </BaseContainer>
+  )
+}
+
+const styles = StyleSheet.create({
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 52, paddingBottom: 16 },
+  headerTitle: { fontSize: 18, fontWeight: '700', color: '#0a0a0a' },
+  scroll: { paddingHorizontal: 16, paddingBottom: 40 },
+  sectionDesc: { fontSize: 14, color: '#6b7280', lineHeight: 21, marginBottom: 24 },
+  sectionTitle: { fontSize: 13, fontWeight: '700', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 },
+  row: { flexDirection: 'row', alignItems: 'center', paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#f3f4f6', gap: 16 },
+  rowInfo: { flex: 1 },
+  rowLabel: { fontSize: 15, fontWeight: '600', color: '#0a0a0a', marginBottom: 2 },
+  rowDesc: { fontSize: 12, color: '#6b7280', lineHeight: 17 },
+})
+```
+
+## File: app/screens/retailer/home/more/editDropScreen.tsx
+```typescript
+// app/screens/retailer/home/more/editDropScreen.tsx
+import React, { useState } from 'react'
+import {
+  View, Text, TouchableOpacity, StyleSheet,
+  ScrollView, TextInput, Switch,
+} from 'react-native'
+import { Feather } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
+import BaseContainer from '@/components/shared/BaseContainer'
+
+const SIZES = ['7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '13']
+
+export default function EditDropScreen() {
+  const router = useRouter()
+  const [name, setName] = useState('Air Jordan 4 "Red Thunder"')
+  const [retailPrice, setRetailPrice] = useState('210')
+  const [dropDate, setDropDate] = useState('Aug 25, 2026')
+  const [dropTime, setDropTime] = useState('10:00 AM')
+  const [limitPerCustomer, setLimitPerCustomer] = useState('1')
+  const [isOnline, setIsOnline] = useState(true)
+  const [isInStore, setIsInStore] = useState(true)
+  const [notifyFollowers, setNotifyFollowers] = useState(true)
+  const [selectedSizes, setSelectedSizes] = useState<string[]>(['9', '9.5', '10', '10.5', '11'])
+
+  const toggleSize = (size: string) =>
+    setSelectedSizes(prev =>
+      prev.includes(size) ? prev.filter(s => s !== size) : [...prev, size]
+    )
+
+  return (
+    <BaseContainer backgroundColor="#fff">
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Feather name="arrow-left" size={22} color="#0a0a0a" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Edit Drop</Text>
+        <TouchableOpacity>
+          <Text style={styles.deleteText}>Delete</Text>
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+        {/* Product */}
+        <Text style={styles.sectionTitle}>Product</Text>
+        <View style={styles.productPreview}>
+          <View style={styles.productImage} />
+          <View style={styles.productMeta}>
+            <Text style={styles.productName}>{name}</Text>
+            <Text style={styles.productSku}>SKU: 308497-006</Text>
+          </View>
+          <TouchableOpacity style={styles.changeProductBtn}>
+            <Text style={styles.changeProductText}>Change</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Drop name override */}
+        <Text style={styles.sectionTitle}>Drop Name</Text>
+        <TextInput value={name} onChangeText={setName} style={styles.input} />
+
+        {/* Date & time */}
+        <Text style={styles.sectionTitle}>Drop Date & Time</Text>
+        <View style={styles.row}>
+          <View style={[styles.inputWrap, { flex: 1.4 }]}>
+            <Feather name="calendar" size={14} color="#9ca3af" />
+            <TextInput value={dropDate} onChangeText={setDropDate} style={styles.inlineInput} />
+          </View>
+          <View style={[styles.inputWrap, { flex: 1 }]}>
+            <Feather name="clock" size={14} color="#9ca3af" />
+            <TextInput value={dropTime} onChangeText={setDropTime} style={styles.inlineInput} />
+          </View>
+        </View>
+
+        {/* Price */}
+        <Text style={styles.sectionTitle}>Retail Price</Text>
+        <View style={styles.inputWrap}>
+          <Text style={styles.dollarSign}>$</Text>
+          <TextInput value={retailPrice} onChangeText={setRetailPrice} keyboardType="numeric" style={styles.inlineInput} />
+        </View>
+
+        {/* Sizes */}
+        <Text style={styles.sectionTitle}>Available Sizes</Text>
+        <View style={styles.sizeGrid}>
+          {SIZES.map(size => (
+            <TouchableOpacity
+              key={size}
+              style={[styles.sizeBtn, selectedSizes.includes(size) && styles.sizeBtnActive]}
+              onPress={() => toggleSize(size)}
+            >
+              <Text style={[styles.sizeBtnText, selectedSizes.includes(size) && styles.sizeBtnTextActive]}>
+                {size}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* Limit */}
+        <Text style={styles.sectionTitle}>Limit Per Customer</Text>
+        <View style={styles.limitRow}>
+          {['1', '2', '3', 'No Limit'].map(l => (
+            <TouchableOpacity
+              key={l}
+              style={[styles.limitBtn, limitPerCustomer === l && styles.limitBtnActive]}
+              onPress={() => setLimitPerCustomer(l)}
+            >
+              <Text style={[styles.limitBtnText, limitPerCustomer === l && styles.limitBtnTextActive]}>{l}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* Channel */}
+        <Text style={styles.sectionTitle}>Drop Channel</Text>
+        <View style={styles.switchRow}>
+          <Text style={styles.switchLabel}>Online (App)</Text>
+          <Switch value={isOnline} onValueChange={setIsOnline} trackColor={{ true: '#0a0a0a', false: '#e5e7eb' }} thumbColor="#fff" />
+        </View>
+        <View style={styles.switchRow}>
+          <Text style={styles.switchLabel}>In-Store</Text>
+          <Switch value={isInStore} onValueChange={setIsInStore} trackColor={{ true: '#0a0a0a', false: '#e5e7eb' }} thumbColor="#fff" />
+        </View>
+        <View style={styles.switchRow}>
+          <Text style={styles.switchLabel}>Notify Followers</Text>
+          <Switch value={notifyFollowers} onValueChange={setNotifyFollowers} trackColor={{ true: '#0a0a0a', false: '#e5e7eb' }} thumbColor="#fff" />
+        </View>
+      </ScrollView>
+
+      <View style={styles.footer}>
+        <TouchableOpacity style={styles.cancelBtn} onPress={() => router.back()}>
+          <Text style={styles.cancelBtnText}>Cancel</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.saveBtn} onPress={() => router.back()}>
+          <Text style={styles.saveBtnText}>Save Changes</Text>
+        </TouchableOpacity>
+      </View>
+    </BaseContainer>
+  )
+}
+
+const styles = StyleSheet.create({
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 52, paddingBottom: 16 },
+  headerTitle: { fontSize: 18, fontWeight: '700', color: '#0a0a0a' },
+  deleteText: { fontSize: 14, fontWeight: '600', color: '#ef4444' },
+  scroll: { paddingHorizontal: 16, paddingBottom: 120 },
+  sectionTitle: { fontSize: 13, fontWeight: '700', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10, marginTop: 20 },
+  productPreview: { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: '#f9fafb', borderRadius: 14, padding: 12 },
+  productImage: { width: 56, height: 56, backgroundColor: '#e5e7eb', borderRadius: 10 },
+  productMeta: { flex: 1 },
+  productName: { fontSize: 14, fontWeight: '600', color: '#0a0a0a' },
+  productSku: { fontSize: 12, color: '#6b7280', marginTop: 2 },
+  changeProductBtn: {},
+  changeProductText: { fontSize: 13, fontWeight: '600', color: '#22c55e' },
+  input: { backgroundColor: '#f9fafb', borderRadius: 12, paddingHorizontal: 14, paddingVertical: 12, fontSize: 15, color: '#0a0a0a', borderWidth: 1, borderColor: '#e5e7eb' },
+  row: { flexDirection: 'row', gap: 10 },
+  inputWrap: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: '#f9fafb', borderRadius: 12, paddingHorizontal: 14, paddingVertical: 12, borderWidth: 1, borderColor: '#e5e7eb' },
+  inlineInput: { flex: 1, fontSize: 15, color: '#0a0a0a' },
+  dollarSign: { fontSize: 16, fontWeight: '700', color: '#0a0a0a' },
+  sizeGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  sizeBtn: { width: 52, height: 40, borderRadius: 10, backgroundColor: '#f3f4f6', alignItems: 'center', justifyContent: 'center' },
+  sizeBtnActive: { backgroundColor: '#0a0a0a' },
+  sizeBtnText: { fontSize: 13, fontWeight: '600', color: '#374151' },
+  sizeBtnTextActive: { color: '#fff' },
+  limitRow: { flexDirection: 'row', gap: 8 },
+  limitBtn: { flex: 1, paddingVertical: 10, borderRadius: 10, backgroundColor: '#f3f4f6', alignItems: 'center' },
+  limitBtnActive: { backgroundColor: '#0a0a0a' },
+  limitBtnText: { fontSize: 12, fontWeight: '600', color: '#374151' },
+  limitBtnTextActive: { color: '#fff' },
+  switchRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#f3f4f6' },
+  switchLabel: { fontSize: 15, fontWeight: '600', color: '#0a0a0a' },
+  footer: { position: 'absolute', bottom: 0, left: 0, right: 0, flexDirection: 'row', gap: 12, padding: 20, backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: '#f3f4f6' },
+  cancelBtn: { flex: 1, paddingVertical: 16, borderRadius: 14, borderWidth: 1, borderColor: '#e5e7eb', alignItems: 'center' },
+  cancelBtnText: { fontSize: 15, fontWeight: '700', color: '#374151' },
+  saveBtn: { flex: 2, paddingVertical: 16, borderRadius: 14, backgroundColor: '#0a0a0a', alignItems: 'center' },
+  saveBtnText: { fontSize: 15, fontWeight: '700', color: '#fff' },
+})
+```
+
+## File: app/screens/retailer/home/more/pickupSettingsScreen.tsx
+```typescript
+// app/screens/retailer/home/more/pickupSettingsScreen.tsx
+import React, { useState } from 'react'
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Switch, TextInput } from 'react-native'
+import { Feather } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
+import BaseContainer from '@/components/shared/BaseContainer'
+
+const BRANCHES = [
+  { id: '1', name: 'Main Store', address: '123 Main St, Miami, FL' },
+  { id: '2', name: 'Brickell Branch', address: '456 Brickell Ave, Miami, FL' },
+]
+
+const TIME_WINDOWS = ['9:00 AM – 1:00 PM', '1:00 PM – 5:00 PM', '5:00 PM – 8:00 PM']
+
+export default function PickupSettingsScreen() {
+  const router = useRouter()
+  const [selectedBranch, setSelectedBranch] = useState('1')
+  const [selectedWindow, setSelectedWindow] = useState(0)
+  const [notifyReady, setNotifyReady] = useState(true)
+  const [notifyReminder, setNotifyReminder] = useState(true)
+  const [prepTime, setPrepTime] = useState('30')
+  const [holdDuration, setHoldDuration] = useState('48')
+
+  return (
+    <BaseContainer backgroundColor="#fff">
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Feather name="arrow-left" size={22} color="#0a0a0a" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Pickup Settings</Text>
+        <View style={{ width: 22 }} />
+      </View>
+
+      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+        {/* Branch selection */}
+        <Text style={styles.sectionTitle}>Branch Selection</Text>
+        {BRANCHES.map(branch => (
+          <TouchableOpacity
+            key={branch.id}
+            style={[styles.branchRow, selectedBranch === branch.id && styles.branchRowActive]}
+            onPress={() => setSelectedBranch(branch.id)}
+          >
+            <View style={[styles.radio, selectedBranch === branch.id && styles.radioActive]}>
+              {selectedBranch === branch.id && <View style={styles.radioDot} />}
+            </View>
+            <View style={styles.branchInfo}>
+              <Text style={styles.branchName}>{branch.name}</Text>
+              <Text style={styles.branchAddr}>{branch.address}</Text>
+            </View>
+          </TouchableOpacity>
+        ))}
+
+        {/* Pickup window */}
+        <Text style={[styles.sectionTitle, { marginTop: 24 }]}>Pickup Time Window</Text>
+        {TIME_WINDOWS.map((w, i) => (
+          <TouchableOpacity key={w} style={[styles.windowRow, selectedWindow === i && styles.windowRowActive]} onPress={() => setSelectedWindow(i)}>
+            <View style={[styles.radio, selectedWindow === i && styles.radioActive]}>
+              {selectedWindow === i && <View style={styles.radioDot} />}
+            </View>
+            <Text style={styles.windowText}>{w}</Text>
+          </TouchableOpacity>
+        ))}
+
+        {/* Prep time */}
+        <Text style={[styles.sectionTitle, { marginTop: 24 }]}>Preparation Time (minutes)</Text>
+        <View style={styles.inputRow}>
+          <TextInput
+            value={prepTime}
+            onChangeText={setPrepTime}
+            keyboardType="numeric"
+            style={styles.numInput}
+          />
+          <Text style={styles.inputUnit}>min</Text>
+        </View>
+
+        {/* Hold duration */}
+        <Text style={[styles.sectionTitle, { marginTop: 24 }]}>Hold Duration (hours)</Text>
+        <View style={styles.holdRow}>
+          {['24', '48', '72'].map(h => (
+            <TouchableOpacity
+              key={h}
+              style={[styles.holdBtn, holdDuration === h && styles.holdBtnActive]}
+              onPress={() => setHoldDuration(h)}
+            >
+              <Text style={[styles.holdBtnText, holdDuration === h && styles.holdBtnTextActive]}>{h}h</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* Notifications */}
+        <Text style={[styles.sectionTitle, { marginTop: 24 }]}>Order Ready Notifications</Text>
+        <View style={styles.switchRow}>
+          <View style={styles.switchInfo}>
+            <Text style={styles.switchLabel}>Notify when order is ready</Text>
+            <Text style={styles.switchDesc}>Send customer notification when pickup is prepared</Text>
+          </View>
+          <Switch value={notifyReady} onValueChange={setNotifyReady} trackColor={{ true: '#0a0a0a', false: '#e5e7eb' }} thumbColor="#fff" />
+        </View>
+        <View style={styles.switchRow}>
+          <View style={styles.switchInfo}>
+            <Text style={styles.switchLabel}>Send pickup reminder</Text>
+            <Text style={styles.switchDesc}>Remind customer 2hrs before hold expires</Text>
+          </View>
+          <Switch value={notifyReminder} onValueChange={setNotifyReminder} trackColor={{ true: '#0a0a0a', false: '#e5e7eb' }} thumbColor="#fff" />
+        </View>
+
+        {/* Policies */}
+        <Text style={[styles.sectionTitle, { marginTop: 24 }]}>Pickup Instructions</Text>
+        <View style={styles.policyCard}>
+          {[
+            { icon: 'clock', text: `Hold duration: ${holdDuration} hours after notification` },
+            { icon: 'alert-circle', text: 'Late pickup: Item returned to inventory' },
+            { icon: 'x-circle', text: 'No-show: Deposit forfeited after 2nd missed pickup' },
+          ].map(p => (
+            <View key={p.text} style={styles.policyRow}>
+              <Feather name={p.icon as any} size={14} color="#6b7280" />
+              <Text style={styles.policyText}>{p.text}</Text>
+            </View>
+          ))}
+        </View>
+      </ScrollView>
+
+      <View style={styles.footer}>
+        <TouchableOpacity style={styles.saveBtn} onPress={() => router.back()}>
+          <Text style={styles.saveBtnText}>Save Settings</Text>
+        </TouchableOpacity>
+      </View>
+    </BaseContainer>
+  )
+}
+
+const styles = StyleSheet.create({
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 52, paddingBottom: 16 },
+  headerTitle: { fontSize: 18, fontWeight: '700', color: '#0a0a0a' },
+  scroll: { paddingHorizontal: 16, paddingBottom: 120 },
+  sectionTitle: { fontSize: 13, fontWeight: '700', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 12 },
+  branchRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 14, borderRadius: 14, paddingHorizontal: 8, marginHorizontal: -8, marginBottom: 4 },
+  branchRowActive: { backgroundColor: '#f9fafb' },
+  radio: { width: 20, height: 20, borderRadius: 10, borderWidth: 2, borderColor: '#d1d5db', alignItems: 'center', justifyContent: 'center' },
+  radioActive: { borderColor: '#0a0a0a' },
+  radioDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: '#0a0a0a' },
+  branchInfo: { flex: 1 },
+  branchName: { fontSize: 15, fontWeight: '600', color: '#0a0a0a' },
+  branchAddr: { fontSize: 12, color: '#6b7280', marginTop: 2 },
+  windowRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 14, borderRadius: 14, paddingHorizontal: 8, marginHorizontal: -8 },
+  windowRowActive: { backgroundColor: '#f9fafb' },
+  windowText: { fontSize: 14, color: '#374151' },
+  inputRow: { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: '#f9fafb', borderRadius: 12, paddingHorizontal: 16, paddingVertical: 12 },
+  numInput: { fontSize: 20, fontWeight: '700', color: '#0a0a0a', flex: 1 },
+  inputUnit: { fontSize: 14, color: '#6b7280' },
+  holdRow: { flexDirection: 'row', gap: 10 },
+  holdBtn: { flex: 1, paddingVertical: 12, borderRadius: 12, backgroundColor: '#f3f4f6', alignItems: 'center' },
+  holdBtnActive: { backgroundColor: '#0a0a0a' },
+  holdBtnText: { fontSize: 14, fontWeight: '600', color: '#374151' },
+  holdBtnTextActive: { color: '#fff' },
+  switchRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#f3f4f6', gap: 16 },
+  switchInfo: { flex: 1 },
+  switchLabel: { fontSize: 15, fontWeight: '600', color: '#0a0a0a', marginBottom: 2 },
+  switchDesc: { fontSize: 12, color: '#6b7280' },
+  policyCard: { backgroundColor: '#f9fafb', borderRadius: 14, padding: 14, gap: 10 },
+  policyRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
+  policyText: { fontSize: 13, color: '#374151', flex: 1, lineHeight: 19 },
+  footer: { position: 'absolute', bottom: 0, left: 0, right: 0, padding: 20, backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: '#f3f4f6' },
+  saveBtn: { backgroundColor: '#0a0a0a', paddingVertical: 16, borderRadius: 14, alignItems: 'center' },
+  saveBtnText: { fontSize: 16, fontWeight: '700', color: '#fff' },
+})
+```
+
+## File: app/screens/retailer/home/more/sellToCustomerScreen.tsx
+```typescript
+// app/screens/retailer/home/more/sellToCustomerScreen.tsx
+import React, { useState } from 'react'
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput, FlatList } from 'react-native'
+import { Feather } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
+import BaseContainer from '@/components/shared/BaseContainer'
+
+const CUSTOMER_REQUESTS = [
+  { id: '1', customer: 'Alex M.', product: 'Air Jordan 4 "Black Cat"', size: '10', budget: '$300', distance: '1.2 mi', time: '5 min ago' },
+  { id: '2', customer: 'Jamie L.', product: 'Nike Dunk Low Panda', size: '9.5', budget: '$120', distance: '0.8 mi', time: '12 min ago' },
+  { id: '3', customer: 'Sam R.', product: 'Yeezy 350 V2 Cream', size: '11', budget: '$250', distance: '2.1 mi', time: '1 hr ago' },
+]
+
+export default function SellToCustomerScreen() {
+  const router = useRouter()
+  const [search, setSearch] = useState('')
+
+  return (
+    <BaseContainer backgroundColor="#f9fafb">
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Feather name="arrow-left" size={22} color="#0a0a0a" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Customer Requests</Text>
+        <View style={{ width: 22 }} />
+      </View>
+
+      {/* Info banner */}
+      <View style={styles.infoBanner}>
+        <Feather name="info" size={16} color="#3b82f6" />
+        <Text style={styles.infoText}>Customers near you are looking for sneakers you might have in inventory.</Text>
+      </View>
+
+      <View style={styles.searchBar}>
+        <Feather name="search" size={16} color="#9ca3af" />
+        <TextInput
+          value={search}
+          onChangeText={setSearch}
+          placeholder="Search by product or size..."
+          placeholderTextColor="#9ca3af"
+          style={styles.searchInput}
+        />
+      </View>
+
+      <FlatList
+        data={CUSTOMER_REQUESTS}
+        keyExtractor={r => r.id}
+        contentContainerStyle={styles.list}
+        showsVerticalScrollIndicator={false}
+        renderItem={({ item }) => (
+          <View style={styles.card}>
+            <View style={styles.cardTop}>
+              <View style={styles.customerAvatar}>
+                <Text style={styles.customerAvatarText}>{item.customer[0]}</Text>
+              </View>
+              <View style={styles.customerInfo}>
+                <Text style={styles.customerName}>{item.customer}</Text>
+                <View style={styles.distanceRow}>
+                  <Feather name="map-pin" size={11} color="#6b7280" />
+                  <Text style={styles.distanceText}>{item.distance} away · {item.time}</Text>
+                </View>
+              </View>
+              <View style={styles.budgetBadge}>
+                <Text style={styles.budgetText}>Up to {item.budget}</Text>
+              </View>
+            </View>
+
+            <View style={styles.requestedProduct}>
+              <Text style={styles.requestedLabel}>Looking for:</Text>
+              <Text style={styles.requestedName}>{item.product}</Text>
+              <Text style={styles.requestedSize}>Size {item.size}</Text>
+            </View>
+
+            <View style={styles.cardActions}>
+              <TouchableOpacity style={styles.matchBtn}>
+                <Feather name="check" size={14} color="#22c55e" />
+                <Text style={styles.matchBtnText}>I Have This</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.msgBtn} onPress={() => router.push('/screens/messages/chatScreen' as any)}>
+                <Feather name="message-circle" size={14} color="#374151" />
+                <Text style={styles.msgBtnText}>Message</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+        ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+      />
+    </BaseContainer>
+  )
+}
+
+const styles = StyleSheet.create({
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 52, paddingBottom: 8, backgroundColor: '#fff' },
+  headerTitle: { fontSize: 18, fontWeight: '700', color: '#0a0a0a' },
+  infoBanner: { flexDirection: 'row', gap: 10, backgroundColor: '#eff6ff', marginHorizontal: 16, marginVertical: 12, borderRadius: 12, padding: 14, alignItems: 'flex-start' },
+  infoText: { fontSize: 13, color: '#3b82f6', flex: 1, lineHeight: 19 },
+  searchBar: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: '#fff', marginHorizontal: 16, marginBottom: 12, borderRadius: 12, paddingHorizontal: 12, height: 44 },
+  searchInput: { flex: 1, fontSize: 14, color: '#0a0a0a' },
+  list: { paddingHorizontal: 16, paddingBottom: 40 },
+  card: { backgroundColor: '#fff', borderRadius: 16, padding: 16, gap: 14 },
+  cardTop: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  customerAvatar: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#0a0a0a', alignItems: 'center', justifyContent: 'center' },
+  customerAvatarText: { fontSize: 16, fontWeight: '700', color: '#fff' },
+  customerInfo: { flex: 1 },
+  customerName: { fontSize: 14, fontWeight: '700', color: '#0a0a0a' },
+  distanceRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 2 },
+  distanceText: { fontSize: 12, color: '#6b7280' },
+  budgetBadge: { backgroundColor: '#f0fdf4', paddingHorizontal: 10, paddingVertical: 5, borderRadius: 10 },
+  budgetText: { fontSize: 12, fontWeight: '700', color: '#22c55e' },
+  requestedProduct: { backgroundColor: '#f9fafb', borderRadius: 12, padding: 12 },
+  requestedLabel: { fontSize: 11, color: '#9ca3af', marginBottom: 4 },
+  requestedName: { fontSize: 14, fontWeight: '600', color: '#0a0a0a', marginBottom: 2 },
+  requestedSize: { fontSize: 13, color: '#6b7280' },
+  cardActions: { flexDirection: 'row', gap: 10 },
+  matchBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, backgroundColor: '#f0fdf4', paddingVertical: 12, borderRadius: 12, borderWidth: 1, borderColor: '#22c55e' },
+  matchBtnText: { fontSize: 14, fontWeight: '700', color: '#22c55e' },
+  msgBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, backgroundColor: '#f3f4f6', paddingVertical: 12, borderRadius: 12 },
+  msgBtnText: { fontSize: 14, fontWeight: '700', color: '#374151' },
+})
+```
+
+## File: app/screens/retailer/home/more/storeSubscriptionScreen.tsx
+```typescript
+// app/screens/retailer/home/more/storeSubscriptionScreen.tsx
+import React, { useState } from 'react'
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native'
+import { Feather } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
+import BaseContainer from '@/components/shared/BaseContainer'
+
+const PLANS = [
+  {
+    id: 'starter',
+    name: 'Starter',
+    price: 0,
+    period: 'Forever free',
+    features: ['Up to 20 listings', 'Basic analytics', 'Standard visibility', 'Email support'],
+    highlight: false,
+  },
+  {
+    id: 'pro',
+    name: 'Pro',
+    price: 49,
+    period: '/month',
+    features: ['Unlimited listings', 'Advanced analytics', 'Priority visibility', 'Drop campaigns', 'Sync integrations', 'Priority support'],
+    highlight: true,
+  },
+  {
+    id: 'enterprise',
+    name: 'Enterprise',
+    price: 149,
+    period: '/month',
+    features: ['Everything in Pro', 'Multi-branch management', 'Reseller sourcing', 'Custom promotions', 'Dedicated manager'],
+    highlight: false,
+  },
+]
+
+export default function StoreSubscriptionScreen() {
+  const router = useRouter()
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly')
+  const currentPlan = 'starter'
+
+  return (
+    <BaseContainer backgroundColor="#fff">
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Feather name="arrow-left" size={22} color="#0a0a0a" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Subscription</Text>
+        <View style={{ width: 22 }} />
+      </View>
+
+      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+        {/* Billing toggle */}
+        <View style={styles.billingToggle}>
+          {(['monthly', 'annual'] as const).map(cycle => (
+            <TouchableOpacity
+              key={cycle}
+              style={[styles.billingBtn, billingCycle === cycle && styles.billingBtnActive]}
+              onPress={() => setBillingCycle(cycle)}
+            >
+              <Text style={[styles.billingBtnText, billingCycle === cycle && styles.billingBtnTextActive]}>
+                {cycle === 'monthly' ? 'Monthly' : 'Annual (Save 20%)'}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* Plans */}
+        {PLANS.map(plan => {
+          const isCurrent = plan.id === currentPlan
+          const price = billingCycle === 'annual' && plan.price > 0
+            ? Math.round(plan.price * 0.8) : plan.price
+
+          return (
+            <View key={plan.id} style={[styles.planCard, plan.highlight && styles.planCardHighlight]}>
+              {plan.highlight && (
+                <View style={styles.popularBadge}>
+                  <Text style={styles.popularText}>Most Popular</Text>
+                </View>
+              )}
+              <View style={styles.planHeader}>
+                <Text style={[styles.planName, plan.highlight && styles.planNameLight]}>{plan.name}</Text>
+                <View>
+                  <Text style={[styles.planPrice, plan.highlight && styles.planPriceLight]}>
+                    {price === 0 ? 'Free' : `$${price}`}
+                  </Text>
+                  {price > 0 && (
+                    <Text style={[styles.planPeriod, plan.highlight && styles.planPeriodLight]}>{plan.period}</Text>
+                  )}
+                </View>
+              </View>
+
+              {plan.features.map(f => (
+                <View key={f} style={styles.featureRow}>
+                  <Feather name="check" size={14} color={plan.highlight ? '#22c55e' : '#374151'} />
+                  <Text style={[styles.featureText, plan.highlight && styles.featureTextLight]}>{f}</Text>
+                </View>
+              ))}
+
+              <TouchableOpacity
+                style={[
+                  styles.planBtn,
+                  isCurrent ? styles.planBtnCurrent : plan.highlight ? styles.planBtnHighlight : styles.planBtnDefault,
+                ]}
+                onPress={() => !isCurrent && router.push('/screens/retailer/pro/goProCheckoutScreen' as any)}
+                disabled={isCurrent}
+              >
+                <Text style={[styles.planBtnText, isCurrent && styles.planBtnTextCurrent, plan.highlight && !isCurrent && styles.planBtnTextHighlight]}>
+                  {isCurrent ? 'Current Plan' : `Upgrade to ${plan.name}`}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )
+        })}
+      </ScrollView>
+    </BaseContainer>
+  )
+}
+
+const styles = StyleSheet.create({
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 52, paddingBottom: 16 },
+  headerTitle: { fontSize: 18, fontWeight: '700', color: '#0a0a0a' },
+  scroll: { paddingHorizontal: 16, paddingBottom: 40, gap: 16 },
+  billingToggle: { flexDirection: 'row', backgroundColor: '#f3f4f6', borderRadius: 12, padding: 3, marginBottom: 8 },
+  billingBtn: { flex: 1, paddingVertical: 10, borderRadius: 10, alignItems: 'center' },
+  billingBtnActive: { backgroundColor: '#fff', shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 4, elevation: 2 },
+  billingBtnText: { fontSize: 13, fontWeight: '600', color: '#9ca3af' },
+  billingBtnTextActive: { color: '#0a0a0a' },
+  planCard: { borderRadius: 20, borderWidth: 1, borderColor: '#f3f4f6', padding: 20, gap: 10 },
+  planCardHighlight: { backgroundColor: '#0a0a0a', borderColor: '#0a0a0a' },
+  popularBadge: { alignSelf: 'flex-start', backgroundColor: '#22c55e', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8, marginBottom: 4 },
+  popularText: { fontSize: 11, fontWeight: '700', color: '#fff' },
+  planHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 },
+  planName: { fontSize: 20, fontWeight: '800', color: '#0a0a0a' },
+  planNameLight: { color: '#fff' },
+  planPrice: { fontSize: 24, fontWeight: '800', color: '#0a0a0a', textAlign: 'right' },
+  planPriceLight: { color: '#fff' },
+  planPeriod: { fontSize: 12, color: '#6b7280', textAlign: 'right' },
+  planPeriodLight: { color: '#9ca3af' },
+  featureRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  featureText: { fontSize: 14, color: '#374151' },
+  featureTextLight: { color: '#d1d5db' },
+  planBtn: { marginTop: 8, paddingVertical: 14, borderRadius: 12, alignItems: 'center', borderWidth: 1 },
+  planBtnDefault: { borderColor: '#e5e7eb', backgroundColor: '#fff' },
+  planBtnHighlight: { backgroundColor: '#22c55e', borderColor: '#22c55e' },
+  planBtnCurrent: { borderColor: '#e5e7eb', backgroundColor: '#f9fafb' },
+  planBtnText: { fontSize: 15, fontWeight: '700', color: '#0a0a0a' },
+  planBtnTextHighlight: { color: '#fff' },
+  planBtnTextCurrent: { color: '#9ca3af' },
+})
+```
+
+## File: app/screens/retailer/home/more/syncLogsScreen.tsx
+```typescript
+// app/screens/retailer/home/more/syncLogsScreen.tsx
+import React from 'react'
+import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native'
+import { Feather } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
+import BaseContainer from '@/components/shared/BaseContainer'
+
+const LOGS = [
+  { id: '1', channel: 'Shopify', status: 'success', items: 12, time: '2 min ago', detail: '12 items updated' },
+  { id: '2', channel: 'Square POS', status: 'success', items: 5, time: '15 min ago', detail: '5 items updated' },
+  { id: '3', channel: 'Shopify', status: 'error', items: 0, time: '1 hr ago', detail: 'Connection timeout' },
+  { id: '4', channel: 'Shopify', status: 'success', items: 8, time: '2 hrs ago', detail: '8 items updated' },
+  { id: '5', channel: 'Square POS', status: 'warning', items: 3, time: '3 hrs ago', detail: '3 items skipped (duplicates)' },
+  { id: '6', channel: 'Shopify', status: 'success', items: 20, time: 'Yesterday', detail: '20 items updated' },
+]
+
+const STATUS_CONFIG: Record<string, { color: string; bg: string; icon: string }> = {
+  success: { color: '#22c55e', bg: '#f0fdf4', icon: 'check-circle' },
+  error: { color: '#ef4444', bg: '#fef2f2', icon: 'x-circle' },
+  warning: { color: '#f59e0b', bg: '#fffbeb', icon: 'alert-circle' },
+}
+
+export default function SyncLogsScreen() {
+  const router = useRouter()
+
+  return (
+    <BaseContainer backgroundColor="#f9fafb">
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Feather name="arrow-left" size={22} color="#0a0a0a" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Sync Logs</Text>
+        <TouchableOpacity>
+          <Feather name="trash-2" size={18} color="#9ca3af" />
+        </TouchableOpacity>
+      </View>
+
+      {/* Stats */}
+      <View style={styles.statsRow}>
+        {[
+          { label: 'Total Syncs', value: '128', icon: 'refresh-cw', color: '#374151' },
+          { label: 'Success', value: '121', icon: 'check-circle', color: '#22c55e' },
+          { label: 'Errors', value: '7', icon: 'x-circle', color: '#ef4444' },
+        ].map(s => (
+          <View key={s.label} style={styles.statCard}>
+            <Feather name={s.icon as any} size={16} color={s.color} />
+            <Text style={[styles.statValue, { color: s.color }]}>{s.value}</Text>
+            <Text style={styles.statLabel}>{s.label}</Text>
+          </View>
+        ))}
+      </View>
+
+      <FlatList
+        data={LOGS}
+        keyExtractor={l => l.id}
+        contentContainerStyle={styles.list}
+        showsVerticalScrollIndicator={false}
+        renderItem={({ item }) => {
+          const cfg = STATUS_CONFIG[item.status]
+          return (
+            <View style={styles.logCard}>
+              <View style={[styles.logIcon, { backgroundColor: cfg.bg }]}>
+                <Feather name={cfg.icon as any} size={18} color={cfg.color} />
+              </View>
+              <View style={styles.logInfo}>
+                <Text style={styles.logChannel}>{item.channel}</Text>
+                <Text style={[styles.logDetail, { color: item.status === 'error' ? '#ef4444' : '#6b7280' }]}>
+                  {item.detail}
+                </Text>
+              </View>
+              <Text style={styles.logTime}>{item.time}</Text>
+            </View>
+          )
+        }}
+        ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
+      />
+    </BaseContainer>
+  )
+}
+
+const styles = StyleSheet.create({
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 52, paddingBottom: 8, backgroundColor: '#fff' },
+  headerTitle: { fontSize: 18, fontWeight: '700', color: '#0a0a0a' },
+  statsRow: { flexDirection: 'row', gap: 10, padding: 16, backgroundColor: '#fff' },
+  statCard: { flex: 1, backgroundColor: '#f9fafb', borderRadius: 14, padding: 12, alignItems: 'center', gap: 4 },
+  statValue: { fontSize: 20, fontWeight: '800' },
+  statLabel: { fontSize: 11, color: '#9ca3af' },
+  list: { padding: 16, paddingBottom: 40 },
+  logCard: { flexDirection: 'row', backgroundColor: '#fff', borderRadius: 14, padding: 14, gap: 12, alignItems: 'center' },
+  logIcon: { width: 40, height: 40, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
+  logInfo: { flex: 1 },
+  logChannel: { fontSize: 14, fontWeight: '600', color: '#0a0a0a', marginBottom: 2 },
+  logDetail: { fontSize: 12 },
+  logTime: { fontSize: 11, color: '#9ca3af' },
+})
+```
+
+## File: app/screens/retailer/home/more/syncSettingsScreen.tsx
+```typescript
+// app/screens/retailer/home/more/syncSettingsScreen.tsx
+import React, { useState } from 'react'
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Switch } from 'react-native'
+import { Feather } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
+import BaseContainer from '@/components/shared/BaseContainer'
+
+const CHANNELS = [
+  { id: 'shopify', name: 'Shopify', icon: 'shopping-bag', connected: true, lastSync: '2 min ago' },
+  { id: 'square', name: 'Square POS', icon: 'credit-card', connected: true, lastSync: '15 min ago' },
+  { id: 'clover', name: 'Clover', icon: 'layers', connected: false, lastSync: 'Never' },
+  { id: 'woocommerce', name: 'WooCommerce', icon: 'globe', connected: false, lastSync: 'Never' },
+]
+
+export default function SyncSettingsScreen() {
+  const router = useRouter()
+  const [autoSync, setAutoSync] = useState(true)
+  const [syncInterval, setSyncInterval] = useState('15min')
+  const [stockAlerts, setStockAlerts] = useState(true)
+
+  return (
+    <BaseContainer backgroundColor="#fff">
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Feather name="arrow-left" size={22} color="#0a0a0a" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Sync Settings</Text>
+        <TouchableOpacity onPress={() => router.push('/screens/retailer/home/more/syncLogsScreen' as any)}>
+          <Text style={styles.logsBtn}>Logs</Text>
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+        {/* Connected channels */}
+        <Text style={styles.sectionTitle}>Connected Channels</Text>
+        {CHANNELS.map(ch => (
+          <View key={ch.id} style={styles.channelRow}>
+            <View style={[styles.channelIcon, { backgroundColor: ch.connected ? '#f0fdf4' : '#f3f4f6' }]}>
+              <Feather name={ch.icon as any} size={20} color={ch.connected ? '#22c55e' : '#9ca3af'} />
+            </View>
+            <View style={styles.channelInfo}>
+              <Text style={styles.channelName}>{ch.name}</Text>
+              <Text style={[styles.channelStatus, { color: ch.connected ? '#22c55e' : '#9ca3af' }]}>
+                {ch.connected ? `Synced ${ch.lastSync}` : 'Not connected'}
+              </Text>
+            </View>
+            <TouchableOpacity style={[styles.connectBtn, ch.connected && styles.connectedBtn]}>
+              <Text style={[styles.connectBtnText, ch.connected && styles.connectedBtnText]}>
+                {ch.connected ? 'Connected' : 'Connect'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        ))}
+
+        {/* Sync preferences */}
+        <Text style={[styles.sectionTitle, { marginTop: 24 }]}>Sync Preferences</Text>
+
+        <View style={styles.prefRow}>
+          <View style={styles.prefInfo}>
+            <Text style={styles.prefLabel}>Auto Sync</Text>
+            <Text style={styles.prefDesc}>Automatically sync inventory changes</Text>
+          </View>
+          <Switch value={autoSync} onValueChange={setAutoSync} trackColor={{ true: '#0a0a0a', false: '#e5e7eb' }} thumbColor="#fff" />
+        </View>
+
+        <View style={styles.prefRow}>
+          <View style={styles.prefInfo}>
+            <Text style={styles.prefLabel}>Low Stock Alerts</Text>
+            <Text style={styles.prefDesc}>Alert when items fall below threshold</Text>
+          </View>
+          <Switch value={stockAlerts} onValueChange={setStockAlerts} trackColor={{ true: '#0a0a0a', false: '#e5e7eb' }} thumbColor="#fff" />
+        </View>
+
+        <Text style={[styles.sectionTitle, { marginTop: 24 }]}>Sync Interval</Text>
+        <View style={styles.intervalRow}>
+          {['5min', '15min', '30min', '1hr'].map(interval => (
+            <TouchableOpacity
+              key={interval}
+              style={[styles.intervalBtn, syncInterval === interval && styles.intervalBtnActive]}
+              onPress={() => setSyncInterval(interval)}
+            >
+              <Text style={[styles.intervalBtnText, syncInterval === interval && styles.intervalBtnTextActive]}>
+                {interval}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        <TouchableOpacity style={styles.syncNowBtn}>
+          <Feather name="refresh-cw" size={16} color="#fff" />
+          <Text style={styles.syncNowText}>Sync Now</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </BaseContainer>
+  )
+}
+
+const styles = StyleSheet.create({
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 52, paddingBottom: 16 },
+  headerTitle: { fontSize: 18, fontWeight: '700', color: '#0a0a0a' },
+  logsBtn: { fontSize: 14, fontWeight: '600', color: '#22c55e' },
+  scroll: { paddingHorizontal: 16, paddingBottom: 40 },
+  sectionTitle: { fontSize: 13, fontWeight: '700', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 12 },
+  channelRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#f3f4f6' },
+  channelIcon: { width: 44, height: 44, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
+  channelInfo: { flex: 1 },
+  channelName: { fontSize: 15, fontWeight: '600', color: '#0a0a0a' },
+  channelStatus: { fontSize: 12, marginTop: 2 },
+  connectBtn: { backgroundColor: '#0a0a0a', paddingHorizontal: 14, paddingVertical: 8, borderRadius: 10 },
+  connectedBtn: { backgroundColor: '#f0fdf4', borderWidth: 1, borderColor: '#22c55e' },
+  connectBtnText: { fontSize: 13, fontWeight: '600', color: '#fff' },
+  connectedBtnText: { color: '#22c55e' },
+  prefRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#f3f4f6', gap: 16 },
+  prefInfo: { flex: 1 },
+  prefLabel: { fontSize: 15, fontWeight: '600', color: '#0a0a0a', marginBottom: 2 },
+  prefDesc: { fontSize: 12, color: '#6b7280' },
+  intervalRow: { flexDirection: 'row', gap: 10, marginBottom: 24 },
+  intervalBtn: { flex: 1, paddingVertical: 10, borderRadius: 12, backgroundColor: '#f3f4f6', alignItems: 'center' },
+  intervalBtnActive: { backgroundColor: '#0a0a0a' },
+  intervalBtnText: { fontSize: 13, fontWeight: '600', color: '#374151' },
+  intervalBtnTextActive: { color: '#fff' },
+  syncNowBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: '#0a0a0a', borderRadius: 14, paddingVertical: 16 },
+  syncNowText: { fontSize: 16, fontWeight: '700', color: '#fff' },
+})
+```
+
+## File: app/screens/retailer/pro/freeTrialOnboardingScreen.tsx
+```typescript
+// app/screens/retailer/pro/freeTrialOnboardingScreen.tsx
+import React, { useState } from 'react'
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Dimensions } from 'react-native'
+import { Feather } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
+import BaseContainer from '@/components/shared/BaseContainer'
+
+const { width } = Dimensions.get('window')
+
+const SLIDES = [
+  {
+    icon: 'trending-up',
+    title: 'Advanced Analytics',
+    desc: 'See what your customers want before they ask. Local demand heatmaps, size gaps, and competitor insights.',
+    color: '#3b82f6',
+  },
+  {
+    icon: 'zap',
+    title: 'Unlimited Listings',
+    desc: 'List your full inventory with no cap. Every pair visible to thousands of nearby sneaker buyers.',
+    color: '#8b5cf6',
+  },
+  {
+    icon: 'star',
+    title: 'Priority Placement',
+    desc: 'Your store appears first in local search results and on the discover map for relevant searches.',
+    color: '#f59e0b',
+  },
+  {
+    icon: 'package',
+    title: 'Drop Campaigns',
+    desc: 'Build hype before releases. Create countdowns, notify followers, and manage raffle entries.',
+    color: '#22c55e',
+  },
+]
+
+export default function FreeTrialOnboardingScreen() {
+  const router = useRouter()
+  const [step, setStep] = useState(0)
+
+  const isLast = step === SLIDES.length - 1
+  const slide = SLIDES[step]
+
+  return (
+    <BaseContainer backgroundColor="#fff">
+      {/* Skip */}
+      <View style={styles.topBar}>
+        <View style={{ width: 44 }} />
+        <View style={styles.dots}>
+          {SLIDES.map((_, i) => (
+            <View key={i} style={[styles.dot, i === step && styles.dotActive]} />
+          ))}
+        </View>
+        <TouchableOpacity onPress={() => router.push('/screens/retailer/pro/goProCheckoutScreen' as any)}>
+          <Text style={styles.skipText}>Skip</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Slide content */}
+      <View style={styles.slideContent}>
+        <View style={[styles.iconCircle, { backgroundColor: slide.color + '15' }]}>
+          <Feather name={slide.icon as any} size={48} color={slide.color} />
+        </View>
+        <Text style={styles.slideTitle}>{slide.title}</Text>
+        <Text style={styles.slideDesc}>{slide.desc}</Text>
+      </View>
+
+      {/* Pro badge */}
+      <View style={styles.proBadge}>
+        <Feather name="award" size={14} color="#f59e0b" />
+        <Text style={styles.proBadgeText}>Included in Pro & Enterprise plans</Text>
+      </View>
+
+      {/* Footer */}
+      <View style={styles.footer}>
+        {step > 0 && (
+          <TouchableOpacity style={styles.backBtn} onPress={() => setStep(s => s - 1)}>
+            <Text style={styles.backBtnText}>Back</Text>
+          </TouchableOpacity>
+        )}
+        <TouchableOpacity
+          style={[styles.nextBtn, step === 0 && { flex: 1 }]}
+          onPress={() =>
+            isLast
+              ? router.push('/screens/retailer/pro/goProCheckoutScreen' as any)
+              : setStep(s => s + 1)
+          }
+        >
+          <Text style={styles.nextBtnText}>{isLast ? 'Start Free Trial' : 'Next'}</Text>
+          <Feather name="arrow-right" size={18} color="#fff" />
+        </TouchableOpacity>
+      </View>
+    </BaseContainer>
+  )
+}
+
+const styles = StyleSheet.create({
+  topBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingTop: 56, paddingBottom: 8 },
+  dots: { flexDirection: 'row', gap: 6 },
+  dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#e5e7eb' },
+  dotActive: { width: 20, backgroundColor: '#0a0a0a' },
+  skipText: { fontSize: 14, fontWeight: '600', color: '#9ca3af' },
+  slideContent: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32, gap: 20 },
+  iconCircle: { width: 120, height: 120, borderRadius: 60, alignItems: 'center', justifyContent: 'center', marginBottom: 12 },
+  slideTitle: { fontSize: 28, fontWeight: '800', color: '#0a0a0a', textAlign: 'center', lineHeight: 36 },
+  slideDesc: { fontSize: 16, color: '#6b7280', textAlign: 'center', lineHeight: 26 },
+  proBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'center', backgroundColor: '#fffbeb', paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, marginBottom: 16 },
+  proBadgeText: { fontSize: 13, fontWeight: '600', color: '#f59e0b' },
+  footer: { flexDirection: 'row', gap: 12, paddingHorizontal: 20, paddingBottom: 44 },
+  backBtn: { paddingVertical: 16, paddingHorizontal: 24, borderRadius: 14, borderWidth: 1, borderColor: '#e5e7eb', alignItems: 'center' },
+  backBtnText: { fontSize: 15, fontWeight: '700', color: '#374151' },
+  nextBtn: { flex: 2, flexDirection: 'row', gap: 8, paddingVertical: 16, borderRadius: 14, backgroundColor: '#0a0a0a', alignItems: 'center', justifyContent: 'center' },
+  nextBtnText: { fontSize: 16, fontWeight: '700', color: '#fff' },
+})
+```
+
+## File: app/screens/retailer/pro/goProCheckoutScreen.tsx
+```typescript
+// app/screens/retailer/pro/goProCheckoutScreen.tsx
+import React, { useState } from 'react'
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native'
+import { Feather } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
+import BaseContainer from '@/components/shared/BaseContainer'
+
+const PRO_FEATURES = [
+  'Unlimited listings',
+  'Advanced analytics & demand insights',
+  'Priority placement in search',
+  'Drop campaign manager',
+  'Sync integrations (Shopify, Square)',
+  'Reseller sourcing access',
+  'Priority customer support',
+]
+
+export default function GoProCheckoutScreen() {
+  const router = useRouter()
+  const [billing, setBilling] = useState<'monthly' | 'annual'>('annual')
+  const [selectedCard, setSelectedCard] = useState('visa')
+
+  const monthlyPrice = 49
+  const annualPrice = Math.round(monthlyPrice * 0.8)
+  const displayPrice = billing === 'annual' ? annualPrice : monthlyPrice
+
+  return (
+    <BaseContainer backgroundColor="#fff">
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Feather name="arrow-left" size={22} color="#0a0a0a" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Go Pro</Text>
+        <View style={{ width: 22 }} />
+      </View>
+
+      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+        {/* Plan hero */}
+        <View style={styles.planHero}>
+          <View style={styles.proCrown}>
+            <Feather name="award" size={24} color="#f59e0b" />
+          </View>
+          <Text style={styles.planTitle}>GOSNKR Pro</Text>
+          <Text style={styles.planSubtitle}>Everything you need to grow your store</Text>
+        </View>
+
+        {/* Billing toggle */}
+        <View style={styles.billingToggle}>
+          <TouchableOpacity
+            style={[styles.billingBtn, billing === 'monthly' && styles.billingBtnActive]}
+            onPress={() => setBilling('monthly')}
+          >
+            <Text style={[styles.billingBtnText, billing === 'monthly' && styles.billingBtnTextActive]}>Monthly</Text>
+            <Text style={[styles.billingPrice, billing === 'monthly' && styles.billingPriceActive]}>${monthlyPrice}/mo</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.billingBtn, billing === 'annual' && styles.billingBtnActive]}
+            onPress={() => setBilling('annual')}
+          >
+            <View style={styles.saveBadge}><Text style={styles.saveBadgeText}>Save 20%</Text></View>
+            <Text style={[styles.billingBtnText, billing === 'annual' && styles.billingBtnTextActive]}>Annual</Text>
+            <Text style={[styles.billingPrice, billing === 'annual' && styles.billingPriceActive]}>${annualPrice}/mo</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Features */}
+        <Text style={styles.sectionTitle}>What's included</Text>
+        <View style={styles.featureList}>
+          {PRO_FEATURES.map(f => (
+            <View key={f} style={styles.featureRow}>
+              <View style={styles.checkIcon}>
+                <Feather name="check" size={12} color="#fff" />
+              </View>
+              <Text style={styles.featureText}>{f}</Text>
+            </View>
+          ))}
+        </View>
+
+        {/* Payment method */}
+        <Text style={styles.sectionTitle}>Payment Method</Text>
+        {[
+          { id: 'visa', label: 'Visa ending in 4242', icon: 'credit-card' },
+          { id: 'new', label: 'Add new card', icon: 'plus-circle' },
+        ].map(card => (
+          <TouchableOpacity
+            key={card.id}
+            style={[styles.cardRow, selectedCard === card.id && styles.cardRowActive]}
+            onPress={() => setSelectedCard(card.id)}
+          >
+            <View style={[styles.cardRadio, selectedCard === card.id && styles.cardRadioActive]}>
+              {selectedCard === card.id && <View style={styles.cardRadioDot} />}
+            </View>
+            <Feather name={card.icon as any} size={18} color="#374151" />
+            <Text style={styles.cardLabel}>{card.label}</Text>
+          </TouchableOpacity>
+        ))}
+
+        {/* Order summary */}
+        <Text style={styles.sectionTitle}>Order Summary</Text>
+        <View style={styles.summary}>
+          <View style={styles.summaryRow}>
+            <Text style={styles.summaryLabel}>GOSNKR Pro ({billing})</Text>
+            <Text style={styles.summaryValue}>${displayPrice}/mo</Text>
+          </View>
+          {billing === 'annual' && (
+            <View style={styles.summaryRow}>
+              <Text style={styles.summaryLabel}>Billed annually</Text>
+              <Text style={styles.summaryValue}>${displayPrice * 12}/yr</Text>
+            </View>
+          )}
+          <View style={[styles.summaryRow, { paddingTop: 12, borderTopWidth: 1, borderTopColor: '#f3f4f6' }]}>
+            <Text style={styles.totalLabel}>14-day free trial</Text>
+            <Text style={styles.totalValue}>$0 today</Text>
+          </View>
+        </View>
+
+        <Text style={styles.disclaimer}>
+          You won't be charged until your 14-day trial ends. Cancel anytime before then.
+        </Text>
+      </ScrollView>
+
+      <View style={styles.footer}>
+        <TouchableOpacity
+          style={styles.startBtn}
+          onPress={() => router.push('/screens/retailer/pro/successConfirmationScreen' as any)}
+        >
+          <Text style={styles.startBtnText}>Start Free Trial</Text>
+        </TouchableOpacity>
+      </View>
+    </BaseContainer>
+  )
+}
+
+const styles = StyleSheet.create({
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 52, paddingBottom: 16 },
+  headerTitle: { fontSize: 18, fontWeight: '700', color: '#0a0a0a' },
+  scroll: { paddingHorizontal: 16, paddingBottom: 120 },
+  planHero: { alignItems: 'center', paddingVertical: 20, gap: 8 },
+  proCrown: { width: 64, height: 64, borderRadius: 32, backgroundColor: '#fffbeb', alignItems: 'center', justifyContent: 'center', marginBottom: 4 },
+  planTitle: { fontSize: 28, fontWeight: '900', color: '#0a0a0a', letterSpacing: 1 },
+  planSubtitle: { fontSize: 15, color: '#6b7280' },
+  billingToggle: { flexDirection: 'row', gap: 10, marginBottom: 24 },
+  billingBtn: { flex: 1, borderRadius: 16, borderWidth: 1.5, borderColor: '#e5e7eb', padding: 14, alignItems: 'center', gap: 4 },
+  billingBtnActive: { borderColor: '#0a0a0a', backgroundColor: '#f9fafb' },
+  billingBtnText: { fontSize: 14, fontWeight: '700', color: '#9ca3af' },
+  billingBtnTextActive: { color: '#0a0a0a' },
+  billingPrice: { fontSize: 13, color: '#9ca3af' },
+  billingPriceActive: { color: '#0a0a0a', fontWeight: '600' },
+  saveBadge: { backgroundColor: '#22c55e', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6, marginBottom: 4 },
+  saveBadgeText: { fontSize: 10, fontWeight: '700', color: '#fff' },
+  sectionTitle: { fontSize: 13, fontWeight: '700', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 12, marginTop: 4 },
+  featureList: { backgroundColor: '#f9fafb', borderRadius: 16, padding: 16, gap: 10, marginBottom: 24 },
+  featureRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  checkIcon: { width: 22, height: 22, borderRadius: 11, backgroundColor: '#0a0a0a', alignItems: 'center', justifyContent: 'center' },
+  featureText: { fontSize: 14, color: '#374151', flex: 1 },
+  cardRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#f3f4f6' },
+  cardRowActive: { backgroundColor: '#f9fafb', borderRadius: 12, paddingHorizontal: 10, marginHorizontal: -10 },
+  cardRadio: { width: 20, height: 20, borderRadius: 10, borderWidth: 2, borderColor: '#d1d5db', alignItems: 'center', justifyContent: 'center' },
+  cardRadioActive: { borderColor: '#0a0a0a' },
+  cardRadioDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: '#0a0a0a' },
+  cardLabel: { fontSize: 14, fontWeight: '500', color: '#374151' },
+  summary: { backgroundColor: '#f9fafb', borderRadius: 16, padding: 16, gap: 10, marginBottom: 12 },
+  summaryRow: { flexDirection: 'row', justifyContent: 'space-between' },
+  summaryLabel: { fontSize: 14, color: '#6b7280' },
+  summaryValue: { fontSize: 14, fontWeight: '600', color: '#0a0a0a' },
+  totalLabel: { fontSize: 16, fontWeight: '700', color: '#0a0a0a' },
+  totalValue: { fontSize: 18, fontWeight: '800', color: '#22c55e' },
+  disclaimer: { fontSize: 12, color: '#9ca3af', textAlign: 'center', lineHeight: 18 },
+  footer: { position: 'absolute', bottom: 0, left: 0, right: 0, padding: 20, backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: '#f3f4f6' },
+  startBtn: { backgroundColor: '#0a0a0a', paddingVertical: 16, borderRadius: 14, alignItems: 'center' },
+  startBtnText: { fontSize: 16, fontWeight: '700', color: '#fff' },
+})
+```
+
+## File: app/screens/retailer/pro/proDashboardScreen.tsx
+```typescript
+// app/screens/retailer/pro/proDashboardScreen.tsx
+import React from 'react'
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native'
+import { Feather } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
+import BaseContainer from '@/components/shared/BaseContainer'
+
+const METRICS = [
+  { label: 'Profile Views', value: '1,284', change: '+18%', up: true },
+  { label: 'Search Impressions', value: '4,712', change: '+32%', up: true },
+  { label: 'Conversion Rate', value: '6.2%', change: '+1.4%', up: true },
+  { label: 'Revenue (30d)', value: '$8,340', change: '-2%', up: false },
+]
+
+const PRO_TOOLS = [
+  { icon: 'bar-chart-2', label: 'Analytics', route: '/screens/retailer/home/analytics/analyticsScreen' },
+  { icon: 'map', label: 'Local Demand', route: '/screens/retailer/home/more/localDemandScreen' },
+  { icon: 'activity', label: 'Size Demand', route: '/screens/retailer/home/more/sizeDemandScreen' },
+  { icon: 'zap', label: 'Drop Manager', route: '/screens/retailer/home/more/dropManagerScreen' },
+  { icon: 'radio', label: 'Radius Promo', route: '/screens/retailer/home/more/radiusPromotionScreen' },
+  { icon: 'users', label: 'Sourcing', route: '/screens/retailer/home/more/sourceInventoryScreen' },
+]
+
+export default function ProDashboardScreen() {
+  const router = useRouter()
+
+  return (
+    <BaseContainer backgroundColor="#f9fafb">
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Feather name="arrow-left" size={22} color="#fff" />
+        </TouchableOpacity>
+        <View style={styles.proBadge}>
+          <Feather name="award" size={14} color="#f59e0b" />
+          <Text style={styles.proBadgeText}>PRO</Text>
+        </View>
+        <TouchableOpacity>
+          <Feather name="settings" size={20} color="#fff" />
+        </TouchableOpacity>
+      </View>
+
+      {/* Pro hero */}
+      <View style={styles.hero}>
+        <Text style={styles.heroTitle}>Kicks City Pro</Text>
+        <Text style={styles.heroSub}>Trial active · 12 days remaining</Text>
+        <View style={styles.trialBar}>
+          <View style={[styles.trialFill, { width: '14%' }]} />
+        </View>
+      </View>
+
+      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+        {/* Metrics */}
+        <Text style={styles.sectionTitle}>Performance (Last 30 days)</Text>
+        <View style={styles.metricsGrid}>
+          {METRICS.map(m => (
+            <View key={m.label} style={styles.metricCard}>
+              <Text style={styles.metricValue}>{m.value}</Text>
+              <Text style={styles.metricLabel}>{m.label}</Text>
+              <View style={[styles.changeBadge, { backgroundColor: m.up ? '#f0fdf4' : '#fef2f2' }]}>
+                <Feather name={m.up ? 'trending-up' : 'trending-down'} size={10} color={m.up ? '#22c55e' : '#ef4444'} />
+                <Text style={[styles.changeText, { color: m.up ? '#22c55e' : '#ef4444' }]}>{m.change}</Text>
+              </View>
+            </View>
+          ))}
+        </View>
+
+        {/* Pro Tools */}
+        <Text style={styles.sectionTitle}>Pro Tools</Text>
+        <View style={styles.toolsGrid}>
+          {PRO_TOOLS.map(tool => (
+            <TouchableOpacity
+              key={tool.label}
+              style={styles.toolCard}
+              onPress={() => router.push(tool.route as any)}
+            >
+              <View style={styles.toolIcon}>
+                <Feather name={tool.icon as any} size={22} color="#0a0a0a" />
+              </View>
+              <Text style={styles.toolLabel}>{tool.label}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* Upsell upgrade */}
+        <View style={styles.upgradeCard}>
+          <Feather name="award" size={20} color="#f59e0b" />
+          <View style={styles.upgradeInfo}>
+            <Text style={styles.upgradeTitle}>Upgrade to keep Pro</Text>
+            <Text style={styles.upgradeSub}>12 days left in your trial</Text>
+          </View>
+          <TouchableOpacity
+            style={styles.upgradeBtn}
+            onPress={() => router.push('/screens/retailer/pro/goProCheckoutScreen' as any)}
+          >
+            <Text style={styles.upgradeBtnText}>Upgrade</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </BaseContainer>
+  )
+}
+
+const styles = StyleSheet.create({
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 52, paddingBottom: 8, backgroundColor: '#0a0a0a' },
+  proBadge: { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: '#1f2937', paddingHorizontal: 12, paddingVertical: 5, borderRadius: 20 },
+  proBadgeText: { fontSize: 12, fontWeight: '800', color: '#f59e0b' },
+  hero: { backgroundColor: '#0a0a0a', paddingHorizontal: 20, paddingBottom: 28 },
+  heroTitle: { fontSize: 26, fontWeight: '800', color: '#fff', marginBottom: 4 },
+  heroSub: { fontSize: 13, color: '#9ca3af', marginBottom: 12 },
+  trialBar: { height: 4, backgroundColor: '#374151', borderRadius: 2, overflow: 'hidden' },
+  trialFill: { height: '100%', backgroundColor: '#22c55e', borderRadius: 2 },
+  scroll: { padding: 16, gap: 16, paddingBottom: 40 },
+  sectionTitle: { fontSize: 13, fontWeight: '700', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: 0.5 },
+  metricsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
+  metricCard: { width: '47.5%', backgroundColor: '#fff', borderRadius: 16, padding: 14, gap: 4 },
+  metricValue: { fontSize: 22, fontWeight: '800', color: '#0a0a0a' },
+  metricLabel: { fontSize: 12, color: '#6b7280' },
+  changeBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, alignSelf: 'flex-start', paddingHorizontal: 6, paddingVertical: 3, borderRadius: 6, marginTop: 2 },
+  changeText: { fontSize: 11, fontWeight: '700' },
+  toolsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
+  toolCard: { width: '30%', backgroundColor: '#fff', borderRadius: 16, padding: 14, alignItems: 'center', gap: 8 },
+  toolIcon: { width: 44, height: 44, borderRadius: 12, backgroundColor: '#f3f4f6', alignItems: 'center', justifyContent: 'center' },
+  toolLabel: { fontSize: 12, fontWeight: '600', color: '#0a0a0a', textAlign: 'center' },
+  upgradeCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fffbeb', borderRadius: 16, padding: 16, gap: 12, borderWidth: 1, borderColor: '#fde68a' },
+  upgradeInfo: { flex: 1 },
+  upgradeTitle: { fontSize: 14, fontWeight: '700', color: '#0a0a0a' },
+  upgradeSub: { fontSize: 12, color: '#f59e0b' },
+  upgradeBtn: { backgroundColor: '#0a0a0a', paddingHorizontal: 16, paddingVertical: 10, borderRadius: 10 },
+  upgradeBtnText: { fontSize: 13, fontWeight: '700', color: '#fff' },
+})
+```
+
+## File: app/screens/retailer/pro/successConfirmationScreen.tsx
+```typescript
+// app/screens/retailer/pro/successConfirmationScreen.tsx
+import React, { useEffect, useRef } from 'react'
+import { View, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native'
+import { Feather } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
+import BaseContainer from '@/components/shared/BaseContainer'
+
+const UNLOCKED = [
+  'Unlimited listings',
+  'Advanced analytics',
+  'Priority placement',
+  'Drop campaigns',
+  'Sync integrations',
+]
+
+export default function SuccessConfirmationScreen() {
+  const router = useRouter()
+  const scaleAnim = useRef(new Animated.Value(0)).current
+  const fadeAnim = useRef(new Animated.Value(0)).current
+
+  useEffect(() => {
+    Animated.sequence([
+      Animated.spring(scaleAnim, { toValue: 1, useNativeDriver: true, tension: 80, friction: 6 }),
+      Animated.timing(fadeAnim, { toValue: 1, duration: 400, useNativeDriver: true }),
+    ]).start()
+  }, [])
+
+  return (
+    <BaseContainer backgroundColor="#fff">
+      <View style={styles.container}>
+        {/* Animated checkmark */}
+        <Animated.View style={[styles.successCircle, { transform: [{ scale: scaleAnim }] }]}>
+          <Feather name="check" size={52} color="#fff" />
+        </Animated.View>
+
+        <Animated.View style={[styles.textBlock, { opacity: fadeAnim }]}>
+          <Text style={styles.title}>You're Now Pro! 🎉</Text>
+          <Text style={styles.subtitle}>Your 14-day free trial has started. Enjoy all Pro features.</Text>
+
+          {/* Confetti dots — static decorative */}
+          <View style={styles.divider} />
+
+          <Text style={styles.unlockedTitle}>What you've unlocked:</Text>
+          {UNLOCKED.map((item) => (
+            <View key={item} style={styles.unlockedRow}>
+              <View style={styles.unlockedCheck}>
+                <Feather name="check" size={12} color="#fff" />
+              </View>
+              <Text style={styles.unlockedText}>{item}</Text>
+            </View>
+          ))}
+
+          <View style={styles.trialNote}>
+            <Feather name="info" size={14} color="#3b82f6" />
+            <Text style={styles.trialNoteText}>
+              You won't be charged until Aug 30, 2026. Cancel anytime before then.
+            </Text>
+          </View>
+        </Animated.View>
+
+        <TouchableOpacity
+          style={styles.exploreBtn}
+          onPress={() => router.push('/screens/retailer/pro/proDashboardScreen' as any)}
+        >
+          <Text style={styles.exploreBtnText}>Explore Pro Dashboard</Text>
+          <Feather name="arrow-right" size={18} color="#fff" />
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => router.push('/retailerTabs/home' as any)}>
+          <Text style={styles.laterText}>Maybe later</Text>
+        </TouchableOpacity>
+      </View>
+    </BaseContainer>
+  )
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24, gap: 20 },
+  successCircle: { width: 100, height: 100, borderRadius: 50, backgroundColor: '#22c55e', alignItems: 'center', justifyContent: 'center', shadowColor: '#22c55e', shadowOpacity: 0.3, shadowRadius: 20, elevation: 10 },
+  textBlock: { alignItems: 'center', width: '100%' },
+  title: { fontSize: 28, fontWeight: '800', color: '#0a0a0a', textAlign: 'center', marginBottom: 8 },
+  subtitle: { fontSize: 15, color: '#6b7280', textAlign: 'center', lineHeight: 22, marginBottom: 16 },
+  divider: { height: 1, backgroundColor: '#f3f4f6', width: '100%', marginBottom: 16 },
+  unlockedTitle: { fontSize: 15, fontWeight: '700', color: '#0a0a0a', alignSelf: 'flex-start', marginBottom: 10 },
+  unlockedRow: { flexDirection: 'row', alignItems: 'center', gap: 10, alignSelf: 'flex-start', marginBottom: 8 },
+  unlockedCheck: { width: 22, height: 22, borderRadius: 11, backgroundColor: '#0a0a0a', alignItems: 'center', justifyContent: 'center' },
+  unlockedText: { fontSize: 14, color: '#374151' },
+  trialNote: { flexDirection: 'row', alignItems: 'flex-start', gap: 8, backgroundColor: '#eff6ff', borderRadius: 12, padding: 12, marginTop: 12, width: '100%' },
+  trialNoteText: { fontSize: 13, color: '#3b82f6', flex: 1, lineHeight: 18 },
+  exploreBtn: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: '#0a0a0a', paddingVertical: 16, paddingHorizontal: 32, borderRadius: 14, width: '100%', justifyContent: 'center' },
+  exploreBtnText: { fontSize: 16, fontWeight: '700', color: '#fff' },
+  laterText: { fontSize: 14, color: '#9ca3af', fontWeight: '500' },
+})
+```
+
+## File: app/screens/retailer/promote/promotionDetailsScreen.tsx
+```typescript
+// app/screens/retailer/promote/promotionDetailsScreen.tsx
+import React from 'react'
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native'
+import { Feather } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
+import BaseContainer from '@/components/shared/BaseContainer'
+
+const DAILY_STATS = [
+  { day: 'Mon', reach: 180, clicks: 12 },
+  { day: 'Tue', reach: 220, clicks: 18 },
+  { day: 'Wed', reach: 195, clicks: 14 },
+  { day: 'Thu', reach: 310, clicks: 26 },
+  { day: 'Fri', reach: 280, clicks: 22 },
+  { day: 'Sat', reach: 255, clicks: 20 },
+]
+
+const maxReach = Math.max(...DAILY_STATS.map(d => d.reach))
+
+export default function PromotionDetailsScreen() {
+  const router = useRouter()
+
+  return (
+    <BaseContainer backgroundColor="#fff">
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Feather name="arrow-left" size={22} color="#0a0a0a" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Promotion Details</Text>
+        <TouchableOpacity>
+          <Feather name="edit-2" size={18} color="#374151" />
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+        {/* Hero card */}
+        <View style={styles.heroCard}>
+          <View style={styles.heroTop}>
+            <View>
+              <Text style={styles.promoName}>Summer Clearance</Text>
+              <Text style={styles.promoType}>Radius Promotion · 0.5 mi radius</Text>
+            </View>
+            <View style={styles.activeBadge}>
+              <View style={styles.activeDot} />
+              <Text style={styles.activeText}>Active</Text>
+            </View>
+          </View>
+          <Text style={styles.promoDates}>Aug 10 – Aug 20, 2026</Text>
+          <View style={styles.progressRow}>
+            <Text style={styles.progressLabel}>5 days remaining</Text>
+            <Text style={styles.progressPct}>50%</Text>
+          </View>
+          <View style={styles.progressBar}>
+            <View style={[styles.progressFill, { width: '50%' }]} />
+          </View>
+        </View>
+
+        {/* KPIs */}
+        <View style={styles.kpiGrid}>
+          {[
+            { icon: 'eye', label: 'Reach', value: '1,240', color: '#3b82f6' },
+            { icon: 'mouse-pointer', label: 'Clicks', value: '112', color: '#8b5cf6' },
+            { icon: 'percent', label: 'CTR', value: '9.0%', color: '#f59e0b' },
+            { icon: 'shopping-bag', label: 'Conversions', value: '28', color: '#22c55e' },
+          ].map(kpi => (
+            <View key={kpi.label} style={styles.kpiCard}>
+              <View style={[styles.kpiIcon, { backgroundColor: kpi.color + '15' }]}>
+                <Feather name={kpi.icon as any} size={18} color={kpi.color} />
+              </View>
+              <Text style={styles.kpiValue}>{kpi.value}</Text>
+              <Text style={styles.kpiLabel}>{kpi.label}</Text>
+            </View>
+          ))}
+        </View>
+
+        {/* Daily reach bar chart */}
+        <Text style={styles.sectionTitle}>Daily Reach</Text>
+        <View style={styles.chart}>
+          {DAILY_STATS.map(d => (
+            <View key={d.day} style={styles.chartCol}>
+              <Text style={styles.chartValue}>{d.reach}</Text>
+              <View style={styles.barWrap}>
+                <View style={[styles.bar, { height: Math.round((d.reach / maxReach) * 80) }]} />
+              </View>
+              <Text style={styles.chartDay}>{d.day}</Text>
+            </View>
+          ))}
+        </View>
+
+        {/* Settings summary */}
+        <Text style={styles.sectionTitle}>Campaign Settings</Text>
+        <View style={styles.settingsCard}>
+          {[
+            ['Discount', '20% off all items'],
+            ['Radius', '0.5 miles from store'],
+            ['Budget', '$60 total · $6/day'],
+            ['Spent', '$45 of $60'],
+            ['Audience', 'All nearby users'],
+          ].map(([label, value]) => (
+            <View key={label} style={styles.settingsRow}>
+              <Text style={styles.settingsLabel}>{label}</Text>
+              <Text style={styles.settingsValue}>{value}</Text>
+            </View>
+          ))}
+        </View>
+
+        {/* Actions */}
+        <View style={styles.actions}>
+          <TouchableOpacity style={styles.pauseBtn}>
+            <Feather name="pause" size={16} color="#f59e0b" />
+            <Text style={styles.pauseBtnText}>Pause</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.endBtn} onPress={() => router.back()}>
+            <Feather name="x-circle" size={16} color="#ef4444" />
+            <Text style={styles.endBtnText}>End Campaign</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </BaseContainer>
+  )
+}
+
+const styles = StyleSheet.create({
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 52, paddingBottom: 16 },
+  headerTitle: { fontSize: 18, fontWeight: '700', color: '#0a0a0a' },
+  scroll: { paddingHorizontal: 16, paddingBottom: 40, gap: 20 },
+  heroCard: { backgroundColor: '#0a0a0a', borderRadius: 20, padding: 20, gap: 8 },
+  heroTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
+  promoName: { fontSize: 20, fontWeight: '800', color: '#fff' },
+  promoType: { fontSize: 13, color: '#9ca3af', marginTop: 2 },
+  activeBadge: { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: '#14532d', paddingHorizontal: 10, paddingVertical: 5, borderRadius: 20 },
+  activeDot: { width: 7, height: 7, borderRadius: 4, backgroundColor: '#22c55e' },
+  activeText: { fontSize: 12, fontWeight: '700', color: '#22c55e' },
+  promoDates: { fontSize: 13, color: '#6b7280' },
+  progressRow: { flexDirection: 'row', justifyContent: 'space-between' },
+  progressLabel: { fontSize: 12, color: '#9ca3af' },
+  progressPct: { fontSize: 12, color: '#22c55e', fontWeight: '700' },
+  progressBar: { height: 4, backgroundColor: '#374151', borderRadius: 2, overflow: 'hidden' },
+  progressFill: { height: '100%', backgroundColor: '#22c55e', borderRadius: 2 },
+  kpiGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
+  kpiCard: { width: '47.5%', backgroundColor: '#f9fafb', borderRadius: 16, padding: 14, gap: 4, alignItems: 'center' },
+  kpiIcon: { width: 40, height: 40, borderRadius: 12, alignItems: 'center', justifyContent: 'center', marginBottom: 4 },
+  kpiValue: { fontSize: 22, fontWeight: '800', color: '#0a0a0a' },
+  kpiLabel: { fontSize: 12, color: '#6b7280' },
+  sectionTitle: { fontSize: 13, fontWeight: '700', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: 0.5 },
+  chart: { flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', backgroundColor: '#f9fafb', borderRadius: 16, padding: 16, height: 140 },
+  chartCol: { alignItems: 'center', gap: 4, flex: 1 },
+  chartValue: { fontSize: 9, color: '#9ca3af' },
+  barWrap: { height: 80, justifyContent: 'flex-end' },
+  bar: { width: 20, backgroundColor: '#0a0a0a', borderRadius: 4 },
+  chartDay: { fontSize: 11, color: '#9ca3af' },
+  settingsCard: { backgroundColor: '#f9fafb', borderRadius: 16, padding: 16, gap: 0 },
+  settingsRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: '#f3f4f6' },
+  settingsLabel: { fontSize: 14, color: '#6b7280' },
+  settingsValue: { fontSize: 14, fontWeight: '600', color: '#0a0a0a' },
+  actions: { flexDirection: 'row', gap: 10 },
+  pauseBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, backgroundColor: '#fffbeb', borderRadius: 12, paddingVertical: 14, borderWidth: 1, borderColor: '#fde68a' },
+  pauseBtnText: { fontSize: 14, fontWeight: '700', color: '#f59e0b' },
+  endBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, backgroundColor: '#fef2f2', borderRadius: 12, paddingVertical: 14, borderWidth: 1, borderColor: '#fecaca' },
+  endBtnText: { fontSize: 14, fontWeight: '700', color: '#ef4444' },
+})
+```
+
+## File: app/screens/retailer/promote/promotionHistoryScreen.tsx
+```typescript
+// app/screens/retailer/promote/promotionHistoryScreen.tsx
+import React, { useState } from 'react'
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, ScrollView } from 'react-native'
+import { Feather } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
+import BaseContainer from '@/components/shared/BaseContainer'
+
+const TABS = ['All', 'Active', 'Ended']
+
+const STATUS_CFG: Record<string, { color: string; bg: string }> = {
+  Active: { color: '#22c55e', bg: '#f0fdf4' },
+  Scheduled: { color: '#3b82f6', bg: '#eff6ff' },
+  Ended: { color: '#9ca3af', bg: '#f3f4f6' },
+}
+
+const PROMOTIONS = [
+  { id: '1', name: 'Summer Clearance', type: 'Radius Promo', discount: '20% off', reach: '1,240', spent: '$45', status: 'Active', dates: 'Aug 10 – Aug 20' },
+  { id: '2', name: 'Back to School Drop', type: 'Drop Campaign', discount: 'Early access', reach: '860', spent: '$30', status: 'Active', dates: 'Aug 18 – Aug 22' },
+  { id: '3', name: 'Jordan Week', type: 'Boost', discount: 'Priority listing', reach: '2,100', spent: '$60', status: 'Ended', dates: 'Aug 1 – Aug 7' },
+  { id: '4', name: 'Nike Flash Sale', type: 'Radius Promo', discount: '15% off', reach: '980', spent: '$35', status: 'Ended', dates: 'Jul 25 – Jul 28' },
+]
+
+export default function PromotionHistoryScreen() {
+  const router = useRouter()
+  const [tab, setTab] = useState('All')
+
+  const filtered = tab === 'All' ? PROMOTIONS : PROMOTIONS.filter(p => p.status === tab)
+
+  return (
+    <BaseContainer backgroundColor="#f9fafb">
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Feather name="arrow-left" size={22} color="#0a0a0a" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Promotions</Text>
+        <TouchableOpacity
+          style={styles.createBtn}
+          onPress={() => router.push('/screens/retailer/promote/radiusPromotionScreen')}
+        >
+          <Feather name="plus" size={18} color="#fff" />
+        </TouchableOpacity>
+      </View>
+
+      {/* Summary */}
+      <View style={styles.summaryRow}>
+        {[['$170', 'Total Spent'], ['5,180', 'Total Reach'], ['3.8%', 'Avg. CTR']].map(([val, lbl]) => (
+          <View key={lbl} style={styles.summaryCard}>
+            <Text style={styles.summaryValue}>{val}</Text>
+            <Text style={styles.summaryLabel}>{lbl}</Text>
+          </View>
+        ))}
+      </View>
+
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabs}>
+        {TABS.map(t => (
+          <TouchableOpacity key={t} style={[styles.tab, tab === t && styles.tabActive]} onPress={() => setTab(t)}>
+            <Text style={[styles.tabText, tab === t && styles.tabTextActive]}>{t}</Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+
+      <FlatList
+        data={filtered}
+        keyExtractor={p => p.id}
+        contentContainerStyle={styles.list}
+        showsVerticalScrollIndicator={false}
+        renderItem={({ item }) => {
+          const cfg = STATUS_CFG[item.status] ?? { color: '#9ca3af', bg: '#f3f4f6' }
+          return (
+            <TouchableOpacity
+              style={styles.card}
+              onPress={() => router.push('/screens/retailer/promote/promotionDetailsScreen' as any)}
+              activeOpacity={0.85}
+            >
+              <View style={styles.cardTop}>
+                <View style={styles.cardInfo}>
+                  <Text style={styles.promoName}>{item.name}</Text>
+                  <Text style={styles.promoType}>{item.type} · {item.dates}</Text>
+                </View>
+                <View style={[styles.statusBadge, { backgroundColor: cfg.bg }]}>
+                  <Text style={[styles.statusText, { color: cfg.color }]}>{item.status}</Text>
+                </View>
+              </View>
+              <View style={styles.cardStats}>
+                <View style={styles.stat}>
+                  <Text style={styles.statValue}>{item.reach}</Text>
+                  <Text style={styles.statLabel}>Reach</Text>
+                </View>
+                <View style={styles.stat}>
+                  <Text style={styles.statValue}>{item.discount}</Text>
+                  <Text style={styles.statLabel}>Offer</Text>
+                </View>
+                <View style={styles.stat}>
+                  <Text style={styles.statValue}>{item.spent}</Text>
+                  <Text style={styles.statLabel}>Spent</Text>
+                </View>
+                <Feather name="chevron-right" size={16} color="#9ca3af" style={{ marginTop: 4 }} />
+              </View>
+            </TouchableOpacity>
+          )
+        }}
+        ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
+      />
+    </BaseContainer>
+  )
+}
+
+const styles = StyleSheet.create({
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 52, paddingBottom: 8, backgroundColor: '#fff' },
+  headerTitle: { fontSize: 18, fontWeight: '700', color: '#0a0a0a' },
+  createBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: '#0a0a0a', alignItems: 'center', justifyContent: 'center' },
+  summaryRow: { flexDirection: 'row', gap: 10, padding: 16, backgroundColor: '#fff' },
+  summaryCard: { flex: 1, backgroundColor: '#f9fafb', borderRadius: 14, padding: 12, alignItems: 'center', gap: 2 },
+  summaryValue: { fontSize: 18, fontWeight: '800', color: '#0a0a0a' },
+  summaryLabel: { fontSize: 11, color: '#9ca3af' },
+  tabs: { paddingHorizontal: 16, paddingVertical: 10, gap: 8, backgroundColor: '#fff' },
+  tab: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, backgroundColor: '#f3f4f6' },
+  tabActive: { backgroundColor: '#0a0a0a' },
+  tabText: { fontSize: 13, fontWeight: '600', color: '#374151' },
+  tabTextActive: { color: '#fff' },
+  list: { padding: 16, paddingBottom: 40 },
+  card: { backgroundColor: '#fff', borderRadius: 16, padding: 16, gap: 14 },
+  cardTop: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' },
+  cardInfo: { flex: 1 },
+  promoName: { fontSize: 15, fontWeight: '700', color: '#0a0a0a', marginBottom: 2 },
+  promoType: { fontSize: 12, color: '#6b7280' },
+  statusBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10 },
+  statusText: { fontSize: 12, fontWeight: '700' },
+  cardStats: { flexDirection: 'row', alignItems: 'center', gap: 16 },
+  stat: { alignItems: 'center', flex: 1 },
+  statValue: { fontSize: 15, fontWeight: '700', color: '#0a0a0a' },
+  statLabel: { fontSize: 11, color: '#9ca3af', marginTop: 2 },
+})
+```
+
+## File: app/screens/store/dealConfirmedScreen.tsx
+```typescript
+import React from 'react'
+import { Text, TouchableOpacity, View } from 'react-native'
+import { Feather } from '@expo/vector-icons'
+import { useLocalSearchParams, useRouter } from 'expo-router'
+import BaseContainer from '@/components/shared/BaseContainer'
+import {
+  NEXT_STEPS,
+  useDealConfirmed,
+} from '@/services/hooks/store/useDealConfirmed'
+
+export default function DealConfirmedScreen() {
+  const router = useRouter()
+  const params = useLocalSearchParams<{
+    shoeName?: string
+    agreedPrice?: string
+    buyerName?: string
+  }>()
+
+  const shoeName = params.shoeName || 'Your item'
+  const buyerName = params.buyerName || 'The store'
+  const parsedPrice = Number(params.agreedPrice)
+  const agreedPrice = Number.isFinite(parsedPrice) ? parsedPrice : 0
+
+  const { handleViewTransaction } = useDealConfirmed({
+    shoeName,
+    agreedPrice,
+    buyerName,
+  })
+
+  const formattedPrice = agreedPrice.toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })
+
+  return (
+    <BaseContainer backgroundColor="#FFFFFF" scrollable>
+      <View className="pt-12 px-4 pb-10 min-h-full">
+        <TouchableOpacity
+          onPress={() => router.back()}
+          className="w-10 h-10 rounded-full bg-gray-100 items-center justify-center"
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
+          <Feather name="x" size={20} color="#111827" />
+        </TouchableOpacity>
+
+        <View className="items-center mt-8">
+          <View className="w-24 h-24 rounded-full bg-green-50 items-center justify-center">
+            <View className="w-16 h-16 rounded-full bg-green-500 items-center justify-center">
+              <Feather name="check" size={32} color="#FFFFFF" />
+            </View>
+          </View>
+
+          <Text className="text-3xl font-black text-gray-900 mt-6 text-center">
+            Deal confirmed!
+          </Text>
+          <Text className="text-sm text-gray-500 text-center mt-2 leading-5 px-8">
+            {buyerName} accepted the deal. Your sale is now locked in.
+          </Text>
+        </View>
+
+        <View className="mt-8 rounded-[28px] bg-gray-950 px-5 py-6">
+          <Text className="text-[10px] font-bold text-gray-500 tracking-[2px] uppercase">
+            Your payout
+          </Text>
+          <Text className="text-5xl font-black text-white mt-2">${formattedPrice}</Text>
+
+          <View className="h-px bg-gray-800 my-5" />
+
+          <Text className="text-xs text-gray-500 mb-1">ITEM</Text>
+          <Text className="text-base font-extrabold text-white">{shoeName}</Text>
+
+          <View className="flex-row items-center gap-2 mt-4">
+            <View className="w-8 h-8 rounded-full bg-green-500 items-center justify-center">
+              <Feather name="shopping-bag" size={14} color="#FFFFFF" />
+            </View>
+            <View>
+              <Text className="text-[10px] text-gray-500 uppercase tracking-wider">Buyer</Text>
+              <Text className="text-sm font-bold text-gray-200">{buyerName}</Text>
+            </View>
+          </View>
+        </View>
+
+        <Text className="text-[10px] font-bold text-gray-400 tracking-[1.6px] uppercase mt-8 mb-3">
+          What happens next
+        </Text>
+
+        <View className="rounded-2xl bg-gray-50 px-4 overflow-hidden">
+          {NEXT_STEPS.map((step, index) => (
+            <View
+              key={step}
+              className={`flex-row gap-3 py-4 ${
+                index !== NEXT_STEPS.length - 1 ? 'border-b border-gray-200' : ''
+              }`}
+            >
+              <View className="w-7 h-7 rounded-full bg-white border border-gray-200 items-center justify-center">
+                <Text className="text-[11px] font-black text-gray-800">{index + 1}</Text>
+              </View>
+              <Text className="flex-1 text-sm text-gray-700 leading-5">{step}</Text>
+            </View>
+          ))}
+        </View>
+
+        <TouchableOpacity
+          onPress={handleViewTransaction}
+          activeOpacity={0.85}
+          className="h-14 rounded-2xl bg-green-500 items-center justify-center mt-8"
+        >
+          <Text className="text-white text-sm font-black">View Transaction</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => router.replace('/tabs/discoverScreen')}
+          activeOpacity={0.8}
+          className="h-12 items-center justify-center mt-2"
+        >
+          <Text className="text-sm font-bold text-gray-400">Back to Discover</Text>
+        </TouchableOpacity>
+      </View>
+    </BaseContainer>
+  )
+}
+```
+
+## File: app/tabs/searchResultsScreen.tsx
+```typescript
+// app/tabs/searchResultsScreen.tsx
+import React, { useState } from 'react'
+import {
+  View, Text, ScrollView, TouchableOpacity, Image,
+  StyleSheet, FlatList,
+} from 'react-native'
+import { Feather } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
+import BaseContainer from '@/components/shared/BaseContainer'
+
+type Condition = 'NEW' | 'PRE-OWNED'
+type SortOption = 'Best Condition' | 'Price: Low to High' | 'Price: High to Low' | 'Nearest'
+
+interface SearchResult {
+  id: string
+  name: string
+  store: string
+  condition: Condition
+  size: string
+  price: number
+  distance: string
+  colorSwatch: string
+  isFeatured?: boolean
+  image: string
+}
+
+const MOCK_RESULTS: SearchResult[] = [
+  { id: '1', name: 'Supreme Box Logo Hoodie FW23', store: 'Kicks City', condition: 'NEW', size: 'M', price: 320, distance: '0.8 mi', colorSwatch: '#000', image: '' },
+  { id: '2', name: 'Supreme Box Logo Tee SS24', store: 'Urban Vault', condition: 'NEW', size: 'L', price: 285, distance: '1.2 mi', colorSwatch: '#fff', image: '' },
+  { id: '3', name: 'Supreme Classic Hoodie', store: 'Street Elite', condition: 'PRE-OWNED', size: 'M', price: 295, distance: '1.5 mi', colorSwatch: '#dc2626', image: '' },
+  { id: '4', name: 'Supreme Essential Tee', store: 'Kicks City', condition: 'NEW', size: 'S', price: 180, distance: '0.8 mi', colorSwatch: '#000', image: '' },
+  { id: '5', name: 'Supreme Overdyed Hoodie', store: 'Premium Threads', condition: 'NEW', size: 'XL', price: 340, distance: '2.3 mi', colorSwatch: '#c2b280', isFeatured: true, image: '' },
+  { id: '6', name: 'Supreme Classic Crewneck', store: 'Urban Vault', condition: 'PRE-OWNED', size: 'M', price: 250, distance: '1.2 mi', colorSwatch: '#000', image: '' },
+]
+
+const CONDITION_COLOR: Record<Condition, string> = {
+  'NEW': '#0a0a0a',
+  'PRE-OWNED': '#f59e0b',
+}
+
+export default function SearchResultsScreen() {
+  const router = useRouter()
+  const [sort, setSort] = useState<SortOption>('Best Condition')
+  const [activeFilters, setActiveFilters] = useState<string[]>(['Size M', 'In Stock'])
+  const [isGrid, setIsGrid] = useState(false)
+
+  const removeFilter = (f: string) => setActiveFilters(prev => prev.filter(x => x !== f))
+
+  const renderItem = ({ item }: { item: SearchResult }) => (
+    <TouchableOpacity
+      onPress={() => router.push('/screens/product/productScreen')}
+      style={styles.card}
+      activeOpacity={0.9}
+    >
+      {/* Image */}
+      <View style={styles.imageBox}>
+        <View style={[styles.conditionBadge, { backgroundColor: CONDITION_COLOR[item.condition] }]}>
+          <Text style={styles.conditionText}>{item.condition}</Text>
+        </View>
+        {item.isFeatured && (
+          <View style={[styles.conditionBadge, { backgroundColor: '#f59e0b', left: 52 }]}>
+            <Text style={styles.conditionText}>Featured</Text>
+          </View>
+        )}
+      </View>
+
+      {/* Info */}
+      <View style={styles.infoCol}>
+        <View style={styles.metaRow}>
+          <Text style={[styles.conditionLabel, { color: CONDITION_COLOR[item.condition] }]}>
+            {item.condition}
+          </Text>
+          <Text style={styles.distanceText}>· {item.distance}</Text>
+        </View>
+        <Text style={styles.productName} numberOfLines={2}>{item.name}</Text>
+        <Text style={styles.storeName}>{item.store}</Text>
+
+        <View style={styles.sizeRow}>
+          <View style={styles.sizeLeft}>
+            <Text style={styles.sizeText}>Size {item.size}</Text>
+            <View style={[styles.colorDot, { backgroundColor: item.colorSwatch }]} />
+          </View>
+          <Text style={styles.priceText}>${item.price}</Text>
+        </View>
+
+        {/* Actions */}
+        <View style={styles.actions}>
+          <TouchableOpacity style={styles.actionBtn}>
+            <Feather name="map-pin" size={12} color="#374151" />
+            <Text style={styles.actionBtnText}>Map</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.actionBtn}>
+            <Feather name="heart" size={12} color="#374151" />
+            <Text style={styles.actionBtnText}>Save</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.buyBtn}
+            onPress={() => router.push('/screens/discover/buyNowScreen')}
+          >
+            <Text style={styles.buyBtnText}>Buy</Text>
+            <Feather name="arrow-right" size={12} color="#fff" />
+          </TouchableOpacity>
+        </View>
+      </View>
+    </TouchableOpacity>
+  )
+
+  return (
+    <BaseContainer backgroundColor="#fff">
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
+          <Feather name="arrow-left" size={22} color="#0a0a0a" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Search Results</Text>
+        <View style={{ width: 32 }} />
+      </View>
+
+      {/* Stats + sort */}
+      <View style={styles.statsRow}>
+        <View>
+          <Text style={styles.resultCount}>{MOCK_RESULTS.length} results</Text>
+          <Text style={styles.activeFilterSummary}>
+            {activeFilters.join(' · ')}
+          </Text>
+        </View>
+        <TouchableOpacity style={styles.sortBtn}>
+          <Text style={styles.sortText}>Sort: {sort}</Text>
+          <Feather name="chevron-down" size={14} color="#374151" />
+        </TouchableOpacity>
+      </View>
+
+      {/* Filter chips */}
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipsScroll} contentContainerStyle={styles.chipsContent}>
+        {activeFilters.map(f => (
+          <TouchableOpacity key={f} style={styles.activeChip} onPress={() => removeFilter(f)}>
+            <Text style={styles.activeChipText}>{f}</Text>
+            <Text style={styles.chipX}>×</Text>
+          </TouchableOpacity>
+        ))}
+        <TouchableOpacity style={styles.addFilterChip}>
+          <Text style={styles.addFilterText}>+ Add Filter</Text>
+        </TouchableOpacity>
+      </ScrollView>
+
+      {/* View toggle */}
+      <View style={styles.viewToggleRow}>
+        <TouchableOpacity
+          style={[styles.viewToggleBtn, !isGrid && styles.viewToggleActive]}
+          onPress={() => setIsGrid(false)}
+        >
+          <Feather name="list" size={16} color={isGrid ? '#6b7280' : '#fff'} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.viewToggleBtn, isGrid && styles.viewToggleActive]}
+          onPress={() => setIsGrid(true)}
+        >
+          <Feather name="grid" size={16} color={isGrid ? '#fff' : '#6b7280'} />
+        </TouchableOpacity>
+      </View>
+
+      <FlatList
+        data={MOCK_RESULTS}
+        keyExtractor={i => i.id}
+        renderItem={renderItem}
+        contentContainerStyle={styles.list}
+        showsVerticalScrollIndicator={false}
+      />
+    </BaseContainer>
+  )
+}
+
+const styles = StyleSheet.create({
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 52, paddingBottom: 12 },
+  backBtn: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center' },
+  headerTitle: { fontSize: 16, fontWeight: '700', color: '#0a0a0a' },
+  statsRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 8 },
+  resultCount: { fontSize: 14, fontWeight: '600', color: '#0a0a0a' },
+  activeFilterSummary: { fontSize: 13, color: '#22c55e', marginTop: 2 },
+  sortBtn: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  sortText: { fontSize: 13, fontWeight: '600', color: '#374151' },
+  chipsScroll: { paddingTop: 10 },
+  chipsContent: { paddingHorizontal: 16, gap: 8 },
+  activeChip: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#f0fdf4', borderWidth: 1, borderColor: '#22c55e', borderRadius: 20, paddingHorizontal: 12, paddingVertical: 6, gap: 6 },
+  activeChipText: { fontSize: 12, fontWeight: '600', color: '#15803d' },
+  chipX: { fontSize: 16, fontWeight: '500', color: '#15803d' },
+  addFilterChip: { backgroundColor: '#f3f4f6', borderRadius: 20, paddingHorizontal: 12, paddingVertical: 6 },
+  addFilterText: { fontSize: 12, fontWeight: '600', color: '#374151' },
+  viewToggleRow: { flexDirection: 'row', justifyContent: 'flex-end', paddingHorizontal: 16, paddingTop: 10, gap: 8 },
+  viewToggleBtn: { width: 32, height: 32, borderRadius: 10, backgroundColor: '#f3f4f6', alignItems: 'center', justifyContent: 'center' },
+  viewToggleActive: { backgroundColor: '#0a0a0a' },
+  list: { paddingHorizontal: 16, paddingTop: 12, gap: 12, paddingBottom: 40 },
+  card: { flexDirection: 'row', backgroundColor: '#fff', borderRadius: 16, borderWidth: 1, borderColor: '#f3f4f6', padding: 12, gap: 12 },
+  imageBox: { width: 117, height: 117, backgroundColor: '#f9fafb', borderRadius: 14, overflow: 'hidden' },
+  conditionBadge: { position: 'absolute', top: 6, left: 6, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 6 },
+  conditionText: { fontSize: 10, fontWeight: '700', color: '#fff' },
+  infoCol: { flex: 1 },
+  metaRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: 2 },
+  conditionLabel: { fontSize: 10, fontWeight: '400' },
+  distanceText: { fontSize: 10, color: '#6b7280' },
+  productName: { fontSize: 15, fontWeight: '600', color: '#0a0a0a', lineHeight: 22, marginBottom: 2 },
+  storeName: { fontSize: 13, color: '#6b7280', marginBottom: 6 },
+  sizeRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 },
+  sizeLeft: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  sizeText: { fontSize: 13, fontWeight: '600', color: '#22c55e' },
+  colorDot: { width: 12, height: 12, borderRadius: 6, borderWidth: 1, borderColor: '#fff', shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 2, elevation: 1 },
+  priceText: { fontSize: 16, fontWeight: '800', color: '#0a0a0a' },
+  actions: { flexDirection: 'row', gap: 8 },
+  actionBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: '#f3f4f6', borderRadius: 10, paddingHorizontal: 12, height: 32 },
+  actionBtnText: { fontSize: 12, fontWeight: '600', color: '#374151' },
+  buyBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 4, backgroundColor: '#0a0a0a', borderRadius: 10, height: 32 },
+  buyBtnText: { fontSize: 13, fontWeight: '700', color: '#fff' },
+})
+```
+
+## File: fix_quickactions.js
+```javascript
+const fs = require('fs')
+const path = 'components/profile/QuickActions.tsx'
+let src = fs.readFileSync(path, 'utf8')
+
+// Fix interface — add two new optional props after onCollections
+src = src.replace(
+  `  onFollowings: () => void\r\n  onCollections: () => void\r\n}`,
+  `  onFollowings: () => void\r\n  onCollections: () => void\r\n  onTransactions?: () => void\r\n  onBag?: () => void\r\n}`
+)
+
+// Also try unix line endings in case file was already normalized
+src = src.replace(
+  `  onFollowings: () => void\n  onCollections: () => void\n}`,
+  `  onFollowings: () => void\n  onCollections: () => void\n  onTransactions?: () => void\n  onBag?: () => void\n}`
+)
+
+// Fix destructuring — add after onCollections
+src = src.replace(
+  `  onFollowings,\r\n  onCollections,\r\n}) => {`,
+  `  onFollowings,\r\n  onCollections,\r\n  onTransactions,\r\n  onBag,\r\n}) => {`
+)
+
+src = src.replace(
+  `  onFollowings,\n  onCollections,\n}) => {`,
+  `  onFollowings,\n  onCollections,\n  onTransactions,\n  onBag,\n}) => {`
+)
+
+fs.writeFileSync(path, src, 'utf8')
+console.log('✅ Fixed QuickActions.tsx')
+
+// Verify
+const result = fs.readFileSync(path, 'utf8')
+if (result.includes('onTransactions')) {
+  console.log('✅ Verified — onTransactions found in file')
+} else {
+  console.log('❌ Still not patched — check the file manually')
+}
+```
 
 ## File: app/onboarding/splashScreen.tsx
 ```typescript
@@ -1430,6 +6366,10 @@ export default function promote() {
                         <Feather name="arrow-left" size={22} color="#111827" />
                     </TouchableOpacity>
                     <Text className="flex-1 text-base font-bold text-gray-900">Create Promotion</Text>
+                    <TouchableOpacity onPress={() => router.push('/screens/retailer/promote/promotionHistoryScreen')} style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                      <Feather name="clock" size={16} color="#22c55e" />
+                      <Text style={{ fontSize: 13, fontWeight: '600', color: '#22c55e' }}>History</Text>
+                    </TouchableOpacity>
                 </View>
 
                 <ScrollView
@@ -2510,7 +7450,15 @@ export default function OrderDetailScreen() {
         </Text>
       </View>
       </View>
-</BaseContainer>
+      {/* Report an Issue — dispute flow */}
+      <TouchableOpacity
+        onPress={() => router.push('/screens/order/submitDisputeScreen')}
+        style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 14, marginHorizontal: 16, marginTop: 8, borderRadius: 12, borderWidth: 1, borderColor: '#e5e7eb' }}
+      >
+        <Feather name="alert-circle" size={14} color="#6b7280" />
+        <Text style={{ fontSize: 14, fontWeight: '600', color: '#6b7280' }}>Report an Issue</Text>
+      </TouchableOpacity>
+    </BaseContainer>
   )
 }
 ```
@@ -3982,10 +8930,16 @@ const PublicLockerScreen: React.FC = () => {
         } catch (_) { }
     }, [profile.username])
 
-    const handleItemPress = useCallback((_item: PublicLockerItem) => {
-        // TODO: navigate to your item detail screen once created
-        // router.push({ pathname: '/screens/profile/itemDetailScreen', params: { itemId: _item.id } })
-    }, [])
+    const handleItemPress = useCallback((item: PublicLockerItem) => {
+        router.push({
+            pathname: '/screens/profile/itemDetailScreen',
+            params: {
+                itemId: item.id,
+                lockerId: lockerId ?? profile.id,
+                username: username ?? profile.username,
+            },
+        })
+    }, [lockerId, profile.id, profile.username, router, username])
 
     return (
         <BaseContainer scrollable backgroundColor='#fff'>
@@ -5865,7 +10819,9 @@ export default function DropManagerScreen() {
                             </View>
                             <View style={styles.rightInfo}>
                                 <Text style={styles.timeTag}>{drop.timeLeft}</Text>
-                                <Feather name="more-vertical" size={20} color="#D1D5DB" />
+                                <TouchableOpacity onPress={() => router.push('/screens/retailer/home/more/editDropScreen')}>
+  <Feather name="more-vertical" size={20} color="#D1D5DB" />
+</TouchableOpacity>
                             </View>
                         </View>
                     ))}
@@ -24976,155 +29932,6 @@ export const useEditBranch = (id: string) => {
 };
 ```
 
-## File: services/hooks/retailer/home/useHome.ts
-```typescript
-import { useState, useCallback } from 'react';
-import { StoreInfo } from '@/components/retailer/home/HomeStoreInto';
-import { StatCard } from '@/components/retailer/home/HomeStats';
-import { StockAlert } from '@/components/retailer/home/HomeAlert';
-import { ActionItem } from '@/components/retailer/home/HomeActions';
-import { RecentOrder } from '@/components/retailer/home/HomeRecentOrders';
-import { SyncStatus } from '@/components/retailer/home/HomeLiveSync';
-import { router } from 'expo-router';
-export const useHome = () => {
-  const [isRefreshing, setIsRefreshing] = useState(false);
-
-  const storeInfo: StoreInfo = {
-    name: "Sonny's Kicks",
-    location: 'Miami, FL',
-    isVerified: true,
-  };
-
-  const stats: StatCard[] = [
-    {
-      id: 'orders',
-      value: 12,
-      label: 'Orders',
-      subLine: '↓ 3 from yesterday',
-      variant: 'default',
-    },
-    {
-      id: 'ready',
-      value: 5,
-      label: 'Ready',
-      subLine: '3 overdue',
-      variant: 'warning',
-    },
-    {
-      id: 'revenue',
-      value: '$2,840',
-      label: 'Revenue',
-      subLine: '+ $420 vs avg',
-      variant: 'revenue',
-    },
-  ];
-
-  const stockAlerts: StockAlert[] = [
-    { id: 'alert-1', message: '3 pairs running low in size 10.5' },
-  ];
-
-  const actions: ActionItem[] = [
-    {
-      id: 'add-product',
-      label: 'Add Product',
-      icon: 'plus',
-      bgColor: '#F1FCF5',
-      iconColor: '#8B5CF6',
-      onPress: () => router.push("/screens/retailer/home/product/AddProductScreen"),
-    },
-    {
-      id: 'orders',
-      label: 'Orders',
-      icon: 'shopping-bag',
-      bgColor: '#FFFBEB',
-      iconColor: '#F97316',
-      badgeCount: 5,
-      onPress: () => router.push("/retailerTabs/orders"),
-    },
-    {
-      id: 'analytics',
-      label: 'Analytics',
-      icon: 'bar-chart-2',
-      bgColor: '#F0F7FF',
-      iconColor: '#3B82F6',
-      onPress: () => router.push("/screens/retailer/home/analytics/analyticsScreen"),
-    },
-    {
-      id: 'more',
-      label: 'More',
-      icon: 'grid',
-      bgColor: '#F6F5FF',
-      iconColor: '#6B7280',
-      onPress: () => router.push("/screens/retailer/home/more/moreScreen"),
-    },
-  ];
-
-  const recentOrders: RecentOrder[] = [
-    {
-      id: 'order-1',
-      productName: 'Air Jordan 1 Retro High',
-      size: 'Size 10.5',
-      customer: 'Marcus L.',
-      placedAgo: 'Placed 8 min ago',
-      price: 220,
-      status: 'Pickup Ready',
-    },
-    {
-      id: 'order-2',
-      productName: 'Yeezy Boost 350 V2',
-      size: 'Size 9',
-      customer: 'Sarah K.',
-      placedAgo: 'Placed 15 min ago',
-      price: 280,
-      status: 'Hold Confirmed',
-    },
-    {
-      id: 'order-3',
-      productName: 'Nike Dunk Low',
-      size: 'Size 11',
-      customer: 'James P.',
-      placedAgo: 'Placed 32 min ago',
-      price: 150,
-      status: 'Processing',
-    },
-  ];
-
-  const syncStatus: SyncStatus = {
-    isSynced: true,
-    lastSyncedLabel: 'Synced 2 min ago',
-    activePairs: 83,
-    syncErrors: 0,
-  };
-
-  const handleRefresh = useCallback(async () => {
-    setIsRefreshing(true);
-    await new Promise(res => setTimeout(res, 1200));
-    setIsRefreshing(false);
-  }, []);
-
-  const handleViewAllOrders = useCallback(() => {
-    console.log('view all orders');
-  }, []);
-
-const handleViewAlert = (alert: StockAlert) => {
-  router.push('/retailerTabs/inventory');
-};
-
-  return {
-    storeInfo,
-    stats,
-    stockAlerts,
-    actions,
-    recentOrders,
-    syncStatus,
-    isRefreshing,
-    handleRefresh,
-    handleViewAllOrders,
-    handleViewAlert,
-  };
-};
-```
-
 ## File: services/hooks/retailer/home/useLocalDemand.ts
 ```typescript
 import { useState } from 'react';
@@ -27858,11 +32665,13 @@ import {
   View,
 } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
 import BaseContainer from '@/components/shared/BaseContainer'
 import { useMessages } from '@/services/hooks/reseller/messages/useMessages'
 
 const Messages = () => {
   const { chats, unreadTotal } = useMessages()
+  const router = useRouter()
 
   return (
     <BaseContainer backgroundColor="#fff">
@@ -27881,7 +32690,7 @@ const Messages = () => {
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.listContainer}>
             {chats.map((chat) => (
-              <TouchableOpacity key={chat.id} style={styles.chatItem}>
+              <TouchableOpacity key={chat.id} style={styles.chatItem} onPress={() => router.push('/screens/messages/chatScreen')}>
                 <View style={styles.avatarContainer}>
                   <View style={styles.avatarPlaceholder}>
                     <Ionicons name="business" size={20} color="#fff" />
@@ -28042,11 +32851,13 @@ import {
   View,
 } from 'react-native'
 import { Feather, FontAwesome5, Ionicons } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
 import BaseContainer from '@/components/shared/BaseContainer'
 import { useProfile } from '@/services/hooks/reseller/profile/useProfile'
 
 const Profile = () => {
   const { user, items } = useProfile()
+  const router = useRouter()
 
   return (
     <BaseContainer backgroundColor="#fff">
@@ -28055,9 +32866,9 @@ const Profile = () => {
           <View style={styles.navBar}>
             <View style={{ flex: 1 }} />
             <View style={styles.navIcons}>
-              <TouchableOpacity style={styles.iconBtn}>
-                <Ionicons name="settings-outline" size={22} color="#333" />
-              </TouchableOpacity>
+<TouchableOpacity style={styles.iconBtn} onPress={() => router.push('/screens/reseller/visibilityControlsScreen')}>
+  <Ionicons name="settings-outline" size={22} color="#333" />
+</TouchableOpacity>
               <TouchableOpacity style={styles.iconBtn}>
                 <Ionicons name="share-outline" size={22} color="#333" />
               </TouchableOpacity>
@@ -28119,7 +32930,7 @@ const Profile = () => {
             </ScrollView>
           </SectionCard>
 
-          <SectionCard title="My Deal History" actionText="View All">
+          <SectionCard title="My Deal History" actionText="View All" onAction={() => router.push('/screens/reseller/submittedRequestsScreen')}>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.imageScroll}>
               {items.map((item) => (
                 <Image key={`history-${item.id}`} source={{ uri: item.image }} style={styles.itemImage} />
@@ -28158,11 +32969,13 @@ const SectionCard = ({
   title,
   subTitle,
   actionText,
+  onAction,
   children,
 }: {
   title: string
   subTitle?: string
   actionText: string
+  onAction?: () => void
   children: React.ReactNode
 }) => (
   <View style={styles.card}>
@@ -28171,7 +32984,7 @@ const SectionCard = ({
         <Text style={styles.cardTitle}>{title}</Text>
         {subTitle ? <Text style={styles.subTitle}>{subTitle}</Text> : null}
       </View>
-      <TouchableOpacity style={styles.actionRow}>
+      <TouchableOpacity style={styles.actionRow} onPress={onAction}>
         <Text style={styles.actionText}>{actionText}</Text>
         <Ionicons name="arrow-forward" size={14} color="#22C55E" />
       </TouchableOpacity>
@@ -28258,11 +33071,13 @@ import {
   View,
 } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
 import BaseContainer from '@/components/shared/BaseContainer'
 import { useRequests } from '@/services/hooks/reseller/requests/useRequests'
 
 const Requests = () => {
   const { requests, activeTab, setActiveTab, summary, tabs, tabCounts } = useRequests()
+  const router = useRouter()
 
   return (
     <BaseContainer backgroundColor="#fff">
@@ -28303,7 +33118,7 @@ const Requests = () => {
 
           <View style={styles.listContainer}>
             {requests.map((item) => (
-              <View key={item.id} style={[styles.cardContainer, item.isExpiring && styles.expiringBorder]}>
+              <TouchableOpacity key={item.id} style={[styles.cardContainer, item.isExpiring && styles.expiringBorder]} onPress={() => router.push('/screens/reseller/requestDetailsScreen' as any)}>
                 {item.isExpiring && item.expiryText ? (
                   <View style={styles.expiryHeader}>
                     <Ionicons name="warning-outline" size={14} color="#EF4444" />
@@ -28382,7 +33197,7 @@ const Requests = () => {
                     <TouchableOpacity style={[styles.btn, styles.acceptBtn]}>
                       <Text style={styles.acceptBtnText}>Accept</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={[styles.btn, styles.counterBtn]}>
+                    <TouchableOpacity style={[styles.btn, styles.counterBtn]} onPress={(e) => { e.stopPropagation?.(); router.push('/screens/reseller/sendOfferScreen'); }}>
                       <Text style={styles.counterBtnText}>Counter</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={[styles.btn, styles.declineBtn]}>
@@ -28394,7 +33209,7 @@ const Requests = () => {
                     Requested {item.time} via {item.source}
                   </Text>
                 </View>
-              </View>
+              </TouchableOpacity>
             ))}
           </View>
         </View>
@@ -28752,6 +33567,7 @@ export const HomeScreen: React.FC = () => {
                         />
                     }
                 >
+                    
                     {/* Stats, Alert, Actions all on white card */}
                     <View style={{ backgroundColor: '#fff', marginBottom: 8 }}>
                         <HomeStats stats={stats} />
@@ -39382,6 +44198,155 @@ export const useRequests = () => {
 }
 ```
 
+## File: services/hooks/retailer/home/useHome.ts
+```typescript
+import { useState, useCallback } from 'react';
+import { StoreInfo } from '@/components/retailer/home/HomeStoreInto';
+import { StatCard } from '@/components/retailer/home/HomeStats';
+import { StockAlert } from '@/components/retailer/home/HomeAlert';
+import { ActionItem } from '@/components/retailer/home/HomeActions';
+import { RecentOrder } from '@/components/retailer/home/HomeRecentOrders';
+import { SyncStatus } from '@/components/retailer/home/HomeLiveSync';
+import { router } from 'expo-router';
+export const useHome = () => {
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const storeInfo: StoreInfo = {
+    name: "Sonny's Kicks",
+    location: 'Miami, FL',
+    isVerified: true,
+  };
+
+  const stats: StatCard[] = [
+    {
+      id: 'orders',
+      value: 12,
+      label: 'Orders',
+      subLine: '↓ 3 from yesterday',
+      variant: 'default',
+    },
+    {
+      id: 'ready',
+      value: 5,
+      label: 'Ready',
+      subLine: '3 overdue',
+      variant: 'warning',
+    },
+    {
+      id: 'revenue',
+      value: '$2,840',
+      label: 'Revenue',
+      subLine: '+ $420 vs avg',
+      variant: 'revenue',
+    },
+  ];
+
+  const stockAlerts: StockAlert[] = [
+    { id: 'alert-1', message: '3 pairs running low in size 10.5' },
+  ];
+
+  const actions: ActionItem[] = [
+    {
+      id: 'add-product',
+      label: 'Add Product',
+      icon: 'plus',
+      bgColor: '#F1FCF5',
+      iconColor: '#8B5CF6',
+      onPress: () => router.push("/screens/retailer/home/product/AddProductScreen"),
+    },
+    {
+      id: 'orders',
+      label: 'Orders',
+      icon: 'shopping-bag',
+      bgColor: '#FFFBEB',
+      iconColor: '#F97316',
+      badgeCount: 5,
+      onPress: () => router.push("/retailerTabs/orders"),
+    },
+    {
+      id: 'analytics',
+      label: 'Analytics',
+      icon: 'bar-chart-2',
+      bgColor: '#F0F7FF',
+      iconColor: '#3B82F6',
+      onPress: () => router.push("/screens/retailer/home/analytics/analyticsScreen"),
+    },
+    {
+      id: 'more',
+      label: 'More',
+      icon: 'grid',
+      bgColor: '#F6F5FF',
+      iconColor: '#6B7280',
+      onPress: () => router.push("/screens/retailer/home/more/moreScreen"),
+    },
+  ];
+
+  const recentOrders: RecentOrder[] = [
+    {
+      id: 'order-1',
+      productName: 'Air Jordan 1 Retro High',
+      size: 'Size 10.5',
+      customer: 'Marcus L.',
+      placedAgo: 'Placed 8 min ago',
+      price: 220,
+      status: 'Pickup Ready',
+    },
+    {
+      id: 'order-2',
+      productName: 'Yeezy Boost 350 V2',
+      size: 'Size 9',
+      customer: 'Sarah K.',
+      placedAgo: 'Placed 15 min ago',
+      price: 280,
+      status: 'Hold Confirmed',
+    },
+    {
+      id: 'order-3',
+      productName: 'Nike Dunk Low',
+      size: 'Size 11',
+      customer: 'James P.',
+      placedAgo: 'Placed 32 min ago',
+      price: 150,
+      status: 'Processing',
+    },
+  ];
+
+  const syncStatus: SyncStatus = {
+    isSynced: true,
+    lastSyncedLabel: 'Synced 2 min ago',
+    activePairs: 83,
+    syncErrors: 0,
+  };
+
+  const handleRefresh = useCallback(async () => {
+    setIsRefreshing(true);
+    await new Promise(res => setTimeout(res, 1200));
+    setIsRefreshing(false);
+  }, []);
+
+  const handleViewAllOrders = useCallback(() => {
+    console.log('view all orders');
+  }, []);
+
+const handleViewAlert = (alert: StockAlert) => {
+  router.push('/retailerTabs/inventory');
+};
+
+  return {
+    storeInfo,
+    stats,
+    stockAlerts,
+    actions,
+    recentOrders,
+    syncStatus,
+    isRefreshing,
+    handleRefresh,
+    handleViewAllOrders,
+    handleViewAlert,
+  };
+};
+```
+
 ## File: services/hooks/retailer/home/useMore.ts
 ```typescript
 import { router } from 'expo-router';
@@ -39413,6 +44378,10 @@ export const useDashboard = () => {
         { id: '9', title: 'Source Inventory', icon: 'users', iconBg: '#10B981', route: '/screens/retailer/home/more/sourceInventoryScreen' },
         { id: '10', title: 'Make an Offer', icon: 'dollar-sign', iconBg: '#111827', route: '/screens/retailer/home/more/makeOfferScreen' },
         { id: '11', title: 'Business Overview', icon: 'briefcase', iconBg: '#6B7280', route: '/screens/retailer/home/more/businessOverViewScreen' },
+        { id: '12', title: 'Sync Settings',    icon: 'refresh-cw', iconBg: '#3B82F6', route: '/screens/retailer/home/more/syncSettingsScreen' },
+        { id: '13', title: 'Sell to Customer', icon: 'user-check', iconBg: '#22c55e', route: '/screens/retailer/home/more/sellToCustomerScreen' },
+        { id: '14', title: 'Pickup Settings',  icon: 'map-pin',    iconBg: '#8B5CF6', route: '/screens/retailer/home/more/pickupSettingsScreen' },
+        { id: '15', title: 'Subscription',     icon: 'award',      iconBg: '#F59E0B', route: '/screens/retailer/home/more/storeSubscriptionScreen' },
     ];
 
     const handlePress = (route: string) => {
@@ -40990,12 +45959,16 @@ const OfferFromStoreScreen: React.FC = () => {
   const [counterModalVisible, setCounterModalVisible] = useState(false)
 
   const handleAccept = useCallback(() => {
-    Toast.show({
-      type: 'success',
-      text1: 'Offer Accepted! 🎉',
-      text2: `You'll receive $${offer?.netPayout.toFixed(2)} within 24 hrs`,
+    if (!offer) return
+
+    router.push({
+      pathname: '/screens/store/dealConfirmedScreen',
+      params: {
+        shoeName: offer.productName,
+        agreedPrice: String(offer.netPayout),
+        buyerName: offer.store.name,
+      },
     })
-    router.back()
   }, [offer, router])
 
   const handleCounter = useCallback(() => {
@@ -41897,7 +46870,7 @@ const SearchScreen = () => {
   } = useSearch();
 
   const handleSelectResult = (_item: SearchResult) => {
-    router.push("/");
+    router.push('/tabs/searchResultsScreen')
   };
 
   return (
@@ -43212,6 +48185,8 @@ interface QuickActionsProps {
   onReviews: () => void
   onFollowings: () => void
   onCollections: () => void
+  onTransactions?: () => void
+  onBag?: () => void
 }
 
 interface ActionItem {
@@ -43235,6 +48210,8 @@ const QuickActions: React.FC<QuickActionsProps> = ({
   onReviews,
   onFollowings,
   onCollections,
+  onTransactions,
+  onBag,
 }) => {
   const actions: ActionItem[] = [
     {
@@ -44166,6 +49143,21 @@ export default function StoreProfileScreen() {
               fontSize={15}
               fontWeight="800"
             />
+          {/* Store offer buttons — injected by patch_step2.js */}
+          <View style={{ flexDirection: 'row', gap: 10, marginTop: 10 }}>
+            <TouchableOpacity
+              onPress={() => router.push('/screens/store/storeOfferReviewScreen' as any)}
+              style={{ flex: 1, paddingVertical: 14, borderRadius: 16, borderWidth: 1, borderColor: '#e5e7eb', alignItems: 'center' }}
+            >
+              <Text style={{ fontSize: 14, fontWeight: '700', color: '#374151' }}>View Offer</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => router.push('/screens/store/sellToStoreOfferScreen' as any)}
+              style={{ flex: 1, paddingVertical: 14, borderRadius: 16, backgroundColor: '#22c55e', alignItems: 'center' }}
+            >
+              <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>Sell to Store</Text>
+            </TouchableOpacity>
+          </View>
           </View>
 
           <View className="px-4 pb-10 pt-2">
@@ -46229,12 +51221,14 @@ const ProfileScreen = () => {
             wishlistCount={profile.wishlistCount}
             wantedPairs={profile.wantedPairs}
             reviewsCount={profile.reviewsCount}
-            onOrders={() => router.push('/screens/profile/orderScreen')}
+            onOrders={() => router.push('/screens/order/ordersListScreen')}
             onWishlist={() => router.push('/screens/profile/wishlistScreen')}
             onWantedPairs={() => router.push('/screens/profile/wantedPairScreen')}
             onReviews={() => console.log('My Reviews')}
             onFollowings={() => router.push('/screens/profile/followingScreen')}
             onCollections={() => router.push('/screens/profile/lockerBrowserScreen')}
+            onTransactions={() => router.push('/screens/profile/transactionHistoryScreen')}
+            onBag={() => router.push('/screens/profile/bagScreen')}
           />
 
           {/* My Sales — taps navigate to full screen */}

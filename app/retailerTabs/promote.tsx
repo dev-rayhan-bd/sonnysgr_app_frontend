@@ -30,6 +30,10 @@ export default function promote() {
                         <Feather name="arrow-left" size={22} color="#111827" />
                     </TouchableOpacity>
                     <Text className="flex-1 text-base font-bold text-gray-900">Create Promotion</Text>
+                    <TouchableOpacity onPress={() => router.push('/screens/retailer/promote/promotionHistoryScreen')} style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                      <Feather name="clock" size={16} color="#22c55e" />
+                      <Text style={{ fontSize: 13, fontWeight: '600', color: '#22c55e' }}>History</Text>
+                    </TouchableOpacity>
                 </View>
 
                 <ScrollView

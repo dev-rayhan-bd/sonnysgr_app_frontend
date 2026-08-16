@@ -35,10 +35,16 @@ const PublicLockerScreen: React.FC = () => {
         } catch (_) { }
     }, [profile.username])
 
-    const handleItemPress = useCallback((_item: PublicLockerItem) => {
-        // TODO: navigate to your item detail screen once created
-        // router.push({ pathname: '/screens/profile/itemDetailScreen', params: { itemId: _item.id } })
-    }, [])
+    const handleItemPress = useCallback((item: PublicLockerItem) => {
+        router.push({
+            pathname: '/screens/profile/itemDetailScreen',
+            params: {
+                itemId: item.id,
+                lockerId: lockerId ?? profile.id,
+                username: username ?? profile.username,
+            },
+        })
+    }, [lockerId, profile.id, profile.username, router, username])
 
     return (
         <BaseContainer scrollable backgroundColor='#fff'>

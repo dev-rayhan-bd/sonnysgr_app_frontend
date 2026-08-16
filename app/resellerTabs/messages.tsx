@@ -8,11 +8,13 @@ import {
   View,
 } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
 import BaseContainer from '@/components/shared/BaseContainer'
 import { useMessages } from '@/services/hooks/reseller/messages/useMessages'
 
 const Messages = () => {
   const { chats, unreadTotal } = useMessages()
+  const router = useRouter()
 
   return (
     <BaseContainer backgroundColor="#fff">
@@ -31,7 +33,7 @@ const Messages = () => {
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.listContainer}>
             {chats.map((chat) => (
-              <TouchableOpacity key={chat.id} style={styles.chatItem}>
+              <TouchableOpacity key={chat.id} style={styles.chatItem} onPress={() => router.push('/screens/messages/chatScreen')}>
                 <View style={styles.avatarContainer}>
                   <View style={styles.avatarPlaceholder}>
                     <Ionicons name="business" size={20} color="#fff" />

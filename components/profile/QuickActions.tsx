@@ -19,6 +19,8 @@ interface QuickActionsProps {
   onReviews: () => void
   onFollowings: () => void
   onCollections: () => void
+  onTransactions?: () => void
+  onBag?: () => void
 }
 
 interface ActionItem {
@@ -42,6 +44,8 @@ const QuickActions: React.FC<QuickActionsProps> = ({
   onReviews,
   onFollowings,
   onCollections,
+  onTransactions,
+  onBag,
 }) => {
   const actions: ActionItem[] = [
     {

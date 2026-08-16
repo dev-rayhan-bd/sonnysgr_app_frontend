@@ -7,11 +7,13 @@ import {
   View,
 } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
 import BaseContainer from '@/components/shared/BaseContainer'
 import { useRequests } from '@/services/hooks/reseller/requests/useRequests'
 
 const Requests = () => {
   const { requests, activeTab, setActiveTab, summary, tabs, tabCounts } = useRequests()
+  const router = useRouter()
 
   return (
     <BaseContainer backgroundColor="#fff">
@@ -52,7 +54,7 @@ const Requests = () => {
 
           <View style={styles.listContainer}>
             {requests.map((item) => (
-              <View key={item.id} style={[styles.cardContainer, item.isExpiring && styles.expiringBorder]}>
+              <TouchableOpacity key={item.id} style={[styles.cardContainer, item.isExpiring && styles.expiringBorder]} onPress={() => router.push('/screens/reseller/requestDetailsScreen' as any)}>
                 {item.isExpiring && item.expiryText ? (
                   <View style={styles.expiryHeader}>
                     <Ionicons name="warning-outline" size={14} color="#EF4444" />
@@ -131,7 +133,7 @@ const Requests = () => {
                     <TouchableOpacity style={[styles.btn, styles.acceptBtn]}>
                       <Text style={styles.acceptBtnText}>Accept</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={[styles.btn, styles.counterBtn]}>
+                    <TouchableOpacity style={[styles.btn, styles.counterBtn]} onPress={(e) => { e.stopPropagation?.(); router.push('/screens/reseller/sendOfferScreen'); }}>
                       <Text style={styles.counterBtnText}>Counter</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={[styles.btn, styles.declineBtn]}>
@@ -143,7 +145,7 @@ const Requests = () => {
                     Requested {item.time} via {item.source}
                   </Text>
                 </View>
-              </View>
+              </TouchableOpacity>
             ))}
           </View>
         </View>

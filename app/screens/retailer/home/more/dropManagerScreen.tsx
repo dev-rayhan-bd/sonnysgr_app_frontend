@@ -52,7 +52,9 @@ export default function DropManagerScreen() {
                             </View>
                             <View style={styles.rightInfo}>
                                 <Text style={styles.timeTag}>{drop.timeLeft}</Text>
-                                <Feather name="more-vertical" size={20} color="#D1D5DB" />
+                                <TouchableOpacity onPress={() => router.push('/screens/retailer/home/more/editDropScreen')}>
+  <Feather name="more-vertical" size={20} color="#D1D5DB" />
+</TouchableOpacity>
                             </View>
                         </View>
                     ))}

@@ -257,6 +257,21 @@ export default function StoreProfileScreen() {
               fontSize={15}
               fontWeight="800"
             />
+          {/* Store offer buttons — injected by patch_step2.js */}
+          <View style={{ flexDirection: 'row', gap: 10, marginTop: 10 }}>
+            <TouchableOpacity
+              onPress={() => router.push('/screens/store/storeOfferReviewScreen' as any)}
+              style={{ flex: 1, paddingVertical: 14, borderRadius: 16, borderWidth: 1, borderColor: '#e5e7eb', alignItems: 'center' }}
+            >
+              <Text style={{ fontSize: 14, fontWeight: '700', color: '#374151' }}>View Offer</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => router.push('/screens/store/sellToStoreOfferScreen' as any)}
+              style={{ flex: 1, paddingVertical: 14, borderRadius: 16, backgroundColor: '#22c55e', alignItems: 'center' }}
+            >
+              <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>Sell to Store</Text>
+            </TouchableOpacity>
+          </View>
           </View>
 
           <View className="px-4 pb-10 pt-2">

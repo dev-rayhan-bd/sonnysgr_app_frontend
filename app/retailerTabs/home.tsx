@@ -57,6 +57,7 @@ export const HomeScreen: React.FC = () => {
                         />
                     }
                 >
+                    
                     {/* Stats, Alert, Actions all on white card */}
                     <View style={{ backgroundColor: '#fff', marginBottom: 8 }}>
                         <HomeStats stats={stats} />

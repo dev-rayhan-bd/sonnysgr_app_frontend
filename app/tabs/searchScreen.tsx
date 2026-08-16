@@ -48,7 +48,7 @@ const SearchScreen = () => {
   } = useSearch();
 
   const handleSelectResult = (_item: SearchResult) => {
-    router.push("/");
+    router.push('/tabs/searchResultsScreen')
   };
 
   return (

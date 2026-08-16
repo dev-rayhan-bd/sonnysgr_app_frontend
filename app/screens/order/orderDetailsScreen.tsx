@@ -102,6 +102,14 @@ export default function OrderDetailScreen() {
         </Text>
       </View>
       </View>
-</BaseContainer>
+      {/* Report an Issue — dispute flow */}
+      <TouchableOpacity
+        onPress={() => router.push('/screens/order/submitDisputeScreen')}
+        style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 14, marginHorizontal: 16, marginTop: 8, borderRadius: 12, borderWidth: 1, borderColor: '#e5e7eb' }}
+      >
+        <Feather name="alert-circle" size={14} color="#6b7280" />
+        <Text style={{ fontSize: 14, fontWeight: '600', color: '#6b7280' }}>Report an Issue</Text>
+      </TouchableOpacity>
+    </BaseContainer>
   )
 }
