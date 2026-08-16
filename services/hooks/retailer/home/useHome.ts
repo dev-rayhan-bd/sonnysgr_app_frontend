@@ -126,9 +126,9 @@ export const useHome = () => {
     console.log('view all orders');
   }, []);
 
-  const handleViewAlert = useCallback((alert: StockAlert) => {
-    router.push("/retailerTabs/home");
-  }, []);
+const handleViewAlert = (alert: StockAlert) => {
+  router.push('/retailerTabs/inventory');
+};
 
   return {
     storeInfo,
