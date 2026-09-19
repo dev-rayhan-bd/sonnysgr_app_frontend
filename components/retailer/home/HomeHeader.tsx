@@ -26,8 +26,8 @@ const HomeHeader: React.FC<HomeHeaderProps> = ({
       backgroundColor: '#fff',
     }}>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        <Text style={{ fontSize: 20, fontWeight: '800', color: '#111' }}>GO </Text>
-        <Text style={{ fontSize: 20, fontWeight: '800', color: '#00C853' }}>SNKR</Text>
+        <Text style={{ fontSize: 24, fontWeight: '800', color: '#111' }}>GO </Text>
+        <Text style={{ fontSize: 24, fontWeight: '800', color: '#00C853' }}>SNKR</Text>
       </View>
 
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>

@@ -2,7 +2,6 @@ import { useCallback, useMemo, useState } from 'react'
 import type { Audience, ProductType } from '@/types/catalog'
 
 export type FilterCategory =
-  | 'All'
   | 'Sneakers'
   | 'Clothing'
   | "Men's"
@@ -73,7 +72,6 @@ export interface FollowedStore {
 }
 
 const FILTERS: FilterCategory[] = [
-  'All',
   'Sneakers',
   'Clothing',
   "Men's",
@@ -469,7 +467,8 @@ const STORES: FollowedStore[] = [
 ]
 
 export function useDiscover() {
-  const [activeFilter, setActiveFilter] = useState<FilterCategory>('All')
+  const [activeFilter, setActiveFilter] = useState<FilterCategory>('Sneakers')
+  const [searchQuery, setSearchQuery] = useState('')
   const [nearbyInventory, setNearbyInventory] = useState<NearbyProduct[]>(NEARBY)
   const [brandInventory, setBrandInventory] = useState<BrandProduct[]>(BRANDS)
   const [adBanners] = useState<AdBanner[]>(AD_BANNERS)
@@ -500,14 +499,27 @@ export function useDiscover() {
     [activeFilter],
   )
 
+  const matchesSearch = useCallback(
+    (item: { name: string; brand: string; store: string }) => {
+      const q = searchQuery.trim().toLowerCase()
+      if (!q) return true
+      return (
+        item.name.toLowerCase().includes(q) ||
+        item.brand.toLowerCase().includes(q) ||
+        item.store.toLowerCase().includes(q)
+      )
+    },
+    [searchQuery],
+  )
+
   const nearbyProducts = useMemo(
-    () => nearbyInventory.filter(matchesFilter),
-    [nearbyInventory, matchesFilter],
+    () => nearbyInventory.filter((item) => matchesFilter(item) && matchesSearch(item)),
+    [nearbyInventory, matchesFilter, matchesSearch],
   )
 
   const brandProducts = useMemo(
-    () => brandInventory.filter(matchesFilter),
-    [brandInventory, matchesFilter],
+    () => brandInventory.filter((item) => matchesFilter(item) && matchesSearch(item)),
+    [brandInventory, matchesFilter, matchesSearch],
   )
 
   const toggleWishlist = useCallback((id: string) => {
@@ -551,6 +563,8 @@ export function useDiscover() {
   return {
     filters: FILTERS,
     activeFilter,
+    searchQuery,
+    setSearchQuery,
     nearbyProducts,
     brandProducts,
     adBanners,
@@ -560,16 +574,16 @@ export function useDiscover() {
     userName,
     handleFilterChange,
     toggleWishlist,
+    toggleFollow,
     toggleBrandWishlist,
     toggleStoreWishlist,
-    toggleFollow,
     handleRefresh,
   }
 }
 
-function getGreeting() {
+function getGreeting(): string {
   const hour = new Date().getHours()
   if (hour < 12) return 'Good morning'
-  if (hour < 17) return 'Good afternoon'
+  if (hour < 18) return 'Good afternoon'
   return 'Good evening'
 }

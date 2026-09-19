@@ -20,7 +20,7 @@ export const DiscoverHeader: React.FC<DiscoverHeaderProps> = ({
 
   return (
     <View
-      className={`flex-row items-center justify-between px-6 bg-white border-b border-gray-100 ${
+      className={`flex-row items-center justify-between px-6 bg-white ${
         Platform.OS === 'ios' ? 'pt-[60px]' : 'pt-[40px]'
       }`}
       style={{ paddingBottom: 16 }}

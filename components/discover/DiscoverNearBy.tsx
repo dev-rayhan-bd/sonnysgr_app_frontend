@@ -43,75 +43,80 @@ const NearbyCard: React.FC<{
 
   return (
     <TouchableOpacity
-      className="bg-white rounded-3xl overflow-hidden mb-4"
+      className="mb-4"
       style={{
         width: 230,
+        borderRadius: 24,
+        backgroundColor: '#fff',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.1,
         shadowRadius: 12,
-        elevation: 6,
+        elevation: 12,
       }}
       onPress={onPress}
       activeOpacity={0.9}
     >
-      <View className="relative bg-neutral-200" style={{ width: 230, height: 240 }}>
-        <Image
-          source={{ uri: product.image }}
-          className="w-full h-full"
-          resizeMode="cover"
-        />
+      <View className="rounded-3xl overflow-hidden">
+     <View className="relative" style={{ width: 230, height: 240 }}>
+  <Image
+    source={{ uri: product.image }}
+    className="w-full h-full"
+    style={{ borderTopLeftRadius: 24, borderTopRightRadius: 24 }}
+    resizeMode="cover"
+  />
 
-        <View className="absolute top-3 left-3">
-          <StockBadge status={product.stockStatus} />
-        </View>
+  <View className="absolute top-3 left-3">
+    <StockBadge status={product.stockStatus} />
+  </View>
 
-        <TouchableOpacity
-          className="absolute top-3 right-3 w-12 h-12 items-center justify-center"
-          onPress={onWishlist}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-        >
-          <Ionicons
-            name={product.isWishlisted ? 'heart' : 'heart-outline'}
-            size={32}
-            color={product.isWishlisted ? '#FF3B6B' : '#fff'}
-          />
-        </TouchableOpacity>
-      </View>
+  <TouchableOpacity
+    className="absolute top-3 right-3 w-12 h-12 items-center justify-center"
+    onPress={onWishlist}
+    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+  >
+    <Ionicons
+      name={product.isWishlisted ? 'heart' : 'heart-outline'}
+      size={32}
+      color={product.isWishlisted ? '#FF3B6B' : '#fff'}
+    />
+  </TouchableOpacity>
+</View>
 
-      <View className="p-4 gap-1.5">
-        <Text className="text-xs text-green-600 font-bold uppercase tracking-wide">
-          {product.productType} · {product.audience}
-        </Text>
-        <Text className="text-sm text-neutral-400 font-medium">
-          {product.store} · {product.distance}
-        </Text>
-
-        <Text
-          className="text-lg font-bold text-neutral-900 leading-6"
-          numberOfLines={2}
-        >
-          {product.name}
-        </Text>
-
-        <View className="flex-row items-center justify-between mt-2">
-          <Text className="text-xl font-extrabold text-neutral-900">
-            ${product.price}
+        <View className="p-4 gap-1.5">
+          <Text className="text-xs text-green-600 font-bold uppercase tracking-wide">
+            {product.productType} · {product.audience}
+          </Text>
+          <Text className="text-sm text-neutral-400 font-medium">
+            {product.store} · {product.distance}
           </Text>
 
-          {sizeYear ? (
-            <View
-              className="px-3 py-1 rounded-full"
-              style={{ backgroundColor: '#E8F8EE' }}
-            >
-              <Text
-                className="text-sm font-bold"
-                style={{ color: '#00C853' }}
+          <Text
+            className="text-lg font-bold text-neutral-900 leading-6"
+            numberOfLines={2}
+          >
+            {product.name}
+          </Text>
+
+          <View className="flex-row items-center justify-between mt-2">
+            <Text className="text-xl font-extrabold text-neutral-900">
+              ${product.price}
+            </Text>
+
+            {sizeYear ? (
+              <View
+                className="px-3 py-1 rounded-full"
+                style={{ backgroundColor: '#E8F8EE' }}
               >
-                {sizePrefix} {sizeYear}
-              </Text>
-            </View>
-          ) : null}
+                <Text
+                  className="text-sm font-bold"
+                  style={{ color: '#00C853' }}
+                >
+                  {sizePrefix} {sizeYear}
+                </Text>
+              </View>
+            ) : null}
+          </View>
         </View>
       </View>
     </TouchableOpacity>
@@ -138,10 +143,10 @@ export const DiscoverNearBy: React.FC<DiscoverNearByProps> = ({
     </View>
 
     <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      contentContainerStyle={{ paddingLeft: 20, paddingRight: 10, gap: 16 }}
-    >
+  horizontal
+  showsHorizontalScrollIndicator={false}
+  contentContainerStyle={{ paddingLeft: 20, paddingRight: 10, paddingTop: 12, gap: 16 }}
+>
       {products.map((product) => (
         <NearbyCard
           key={product.id}

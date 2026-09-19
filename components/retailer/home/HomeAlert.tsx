@@ -16,7 +16,7 @@ const HomeAlert: React.FC<HomeAlertProps> = ({ alerts, onView }) => {
   if (!alerts.length) return null;
 
   return (
-    <View style={{ paddingHorizontal: 14, paddingBottom: 12, backgroundColor: '#fff' }}>
+    <View style={{ paddingHorizontal: 16, paddingTop: 14, paddingBottom: 4, backgroundColor: '#fff' }}>
       {alerts.map(alert => (
         <View
           key={alert.id}
@@ -24,12 +24,12 @@ const HomeAlert: React.FC<HomeAlertProps> = ({ alerts, onView }) => {
             flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
             backgroundColor: '#FFFBEB',
             borderWidth: 1, borderColor: '#FDE68A',
-            borderRadius: 12, paddingHorizontal: 12, paddingVertical: 10,
+            borderRadius: 12, paddingHorizontal: 12, paddingVertical: 11,
           }}
         >
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, flex: 1 }}>
             <Feather name="alert-triangle" size={15} color="#F59E0B" />
-            <Text style={{ fontSize: 12, color: '#92400E', fontWeight: '500', flex: 1 }} numberOfLines={1}>
+            <Text style={{ fontSize: 13, color: '#92400E', fontWeight: '500', flex: 1 }} numberOfLines={1}>
               {alert.message}
             </Text>
           </View>
@@ -38,8 +38,8 @@ const HomeAlert: React.FC<HomeAlertProps> = ({ alerts, onView }) => {
             onPress={() => onView?.(alert)}
             style={{ flexDirection: 'row', alignItems: 'center', gap: 2, marginLeft: 8 }}
           >
-            <Text style={{ fontSize: 12, color: '#00C853', fontWeight: '600' }}>View</Text>
-            <Feather name="chevron-right" size={12} color="#00C853" />
+            <Text style={{ fontSize: 13, color: '#16A34A', fontWeight: '600' }}>Review</Text>
+            <Feather name="chevron-right" size={13} color="#16A34A" />
           </TouchableOpacity>
         </View>
       ))}

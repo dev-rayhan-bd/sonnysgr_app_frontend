@@ -4,6 +4,7 @@ import { View, ScrollView, RefreshControl, StyleSheet } from 'react-native';
 import BaseContainer from '@/components/shared/BaseContainer';
 import HomeHeader from '@/components/retailer/home/HomeHeader';
 import HomeStoreInfo from '@/components/retailer/home/HomeStoreInto';
+import DashboardHeader from '@/components/retailer/home/DashboardHeader';
 import HomeStats from '@/components/retailer/home/HomeStats';
 import HomeAlert from '@/components/retailer/home/HomeAlert';
 import HomeActions from '@/components/retailer/home/HomeActions';
@@ -11,6 +12,7 @@ import HomeRecentOrders from '@/components/retailer/home/HomeRecentOrders';
 import HomeLiveSync from '@/components/retailer/home/HomeLiveSync';
 import { useHome } from '@/services/hooks/retailer/home/useHome';
 import { router } from 'expo-router';
+
 export const HomeScreen: React.FC = () => {
     const {
         storeInfo,
@@ -32,7 +34,7 @@ export const HomeScreen: React.FC = () => {
                 {/* ── Fixed top (white) ── */}
                 <View style={styles.topSection}>
                     <HomeHeader
-                        notificationCount={2}
+                        notificationCount={5}
                         avatarLabel="SK"
                         onBellPress={() => router.push("/screens/retailer/home/notifications/notificationsScreen")}
                         onAvatarPress={() => console.log('avatar')}
@@ -40,6 +42,7 @@ export const HomeScreen: React.FC = () => {
                     <HomeStoreInfo
                         store={storeInfo}
                         onVerifiedPress={() => console.log('verified')}
+                        onLocationPress={() => console.log('location')}
                     />
                 </View>
 
@@ -57,15 +60,16 @@ export const HomeScreen: React.FC = () => {
                         />
                     }
                 >
-                    
-                    {/* Stats, Alert, Actions all on white card */}
-                    <View style={{ backgroundColor: '#fff', marginBottom: 8 }}>
+                    <View style={{ backgroundColor: '#fff' }}>
+                        <DashboardHeader
+                            filterLabel="Today"
+                            onFilterPress={() => console.log('filter')}
+                        />
                         <HomeStats stats={stats} />
                         <HomeAlert alerts={stockAlerts} onView={handleViewAlert} />
                         <HomeActions actions={actions} />
                     </View>
 
-                    {/* Recent orders on light gray bg */}
                     <HomeRecentOrders
                         orders={recentOrders}
                         onViewAll={handleViewAllOrders}
@@ -74,7 +78,10 @@ export const HomeScreen: React.FC = () => {
                 </ScrollView>
 
                 {/* ── Pinned Live Sync bar ── */}
-                <HomeLiveSync syncStatus={syncStatus} />
+                <HomeLiveSync
+                    syncStatus={syncStatus}
+                    onViewStatus={() => console.log('view sync status')}
+                />
             </View>
         </BaseContainer>
     );

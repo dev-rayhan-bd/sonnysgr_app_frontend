@@ -20,6 +20,8 @@ export const DiscoverScreen: React.FC = () => {
   const {
     filters,
     activeFilter,
+    searchQuery,
+    setSearchQuery,
     nearbyProducts,
     brandProducts,
     adBanners,
@@ -41,7 +43,7 @@ export const DiscoverScreen: React.FC = () => {
   const onAdPress = useCallback((ad: AdBanner) => router.push("/screens/product/productScreen"), []);
   const onStorePress = useCallback((s: FollowedStore) => console.log('store pressed', s.id), []);
   const onBuyStore = useCallback((s: FollowedStore) => router.push("/screens/product/productScreen"), []);
-  
+
   return (
     <BaseContainer scrollable backgroundColor="#fff">
       <View className="flex-1 justify-center">
@@ -57,6 +59,9 @@ export const DiscoverScreen: React.FC = () => {
             onChange={handleFilterChange}
             greeting={greeting}
             userName={userName}
+            searchValue={searchQuery}
+            onSearchChange={setSearchQuery}
+            onSearchSubmit={() => console.log('search submit', searchQuery)}
           />
         </View>
 
@@ -85,7 +90,7 @@ export const DiscoverScreen: React.FC = () => {
             onSeeAll={() => console.log('see all brands')}
             onBrandPress={onBrandPress}
             onBuyPress={onBuyBrand}
-                onWishlistToggle={toggleBrandWishlist}
+            onWishlistToggle={toggleBrandWishlist}
           />
 
           <DiscoverAd
@@ -93,15 +98,14 @@ export const DiscoverScreen: React.FC = () => {
             onPress={onAdPress}
           />
 
-<DiscoverStores
-  stores={followedStores}
-  onManagePress={() => console.log('manage stores')}
-  onStorePress={onStorePress}
-  onFollowToggle={toggleFollow}
-  onBuyPress={onBuyStore}
-  // FIX: Add this line to connect the hook to the component
-  onWishlistToggle={toggleStoreWishlist} 
-/>
+          <DiscoverStores
+            stores={followedStores}
+            onManagePress={() => console.log('manage stores')}
+            onStorePress={onStorePress}
+            onFollowToggle={toggleFollow}
+            onBuyPress={onBuyStore}
+            onWishlistToggle={toggleStoreWishlist}
+          />
         </ScrollView>
       </View>
     </BaseContainer>
@@ -109,7 +113,6 @@ export const DiscoverScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-
   scroll: {
     flex: 1,
   },

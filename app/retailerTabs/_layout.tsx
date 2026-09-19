@@ -28,7 +28,7 @@ const tabMap: Record<
   { label: string; icon: any; activeIcon: any }
 > = {
   home: {
-    label: 'Home',
+    label: 'Dashboard',
     icon: 'home-outline',
     activeIcon: 'home',
   },

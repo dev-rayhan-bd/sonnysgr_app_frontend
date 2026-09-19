@@ -6,41 +6,55 @@ import { ActionItem } from '@/components/retailer/home/HomeActions';
 import { RecentOrder } from '@/components/retailer/home/HomeRecentOrders';
 import { SyncStatus } from '@/components/retailer/home/HomeLiveSync';
 import { router } from 'expo-router';
+
 export const useHome = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const storeInfo: StoreInfo = {
     name: "Sonny's Kicks",
-    location: 'Miami, FL',
+    location: 'Novi, MI',
     isVerified: true,
+    lastSyncedLabel: 'Synced 2 min ago',
   };
 
   const stats: StatCard[] = [
     {
       id: 'orders',
       value: 12,
-      label: 'Orders',
-      subLine: '↓ 3 from yesterday',
-      variant: 'default',
+      label: 'Orders today',
+      subLine: '↓ 3 fewer than yesterday',
+      icon: 'shopping-cart',
+      variant: 'green',
     },
     {
-      id: 'ready',
+      id: 'needs-action',
       value: 5,
-      label: 'Ready',
+      label: 'Needs action',
       subLine: '3 overdue',
-      variant: 'warning',
+      icon: 'alert-circle',
+      iconFilled: true,
+      variant: 'orange',
     },
     {
       id: 'revenue',
       value: '$2,840',
-      label: 'Revenue',
-      subLine: '+ $420 vs avg',
-      variant: 'revenue',
+      label: 'Revenue today',
+      subLine: '↑ +$420 vs average',
+      icon: 'bar-chart-2',
+      variant: 'green',
+    },
+    {
+      id: 'low-stock',
+      value: 3,
+      label: 'Low-stock products',
+      subLine: 'Review inventory',
+      icon: 'box',
+      variant: 'orange',
     },
   ];
 
   const stockAlerts: StockAlert[] = [
-    { id: 'alert-1', message: '3 pairs running low in size 10.5' },
+    { id: 'alert-1', message: '3 products are running low' },
   ];
 
   const actions: ActionItem[] = [
@@ -48,34 +62,34 @@ export const useHome = () => {
       id: 'add-product',
       label: 'Add Product',
       icon: 'plus',
-      bgColor: '#F1FCF5',
-      iconColor: '#8B5CF6',
-      onPress: () => router.push("/screens/retailer/home/product/AddProductScreen"),
+      bgColor: '#DCFCE7',
+      iconColor: '#16A34A',
+      onPress: () => router.push('/screens/retailer/home/product/AddProductScreen'),
     },
     {
       id: 'orders',
       label: 'Orders',
       icon: 'shopping-bag',
-      bgColor: '#FFFBEB',
+      bgColor: '#FFEDD5',
       iconColor: '#F97316',
       badgeCount: 5,
-      onPress: () => router.push("/retailerTabs/orders"),
+      onPress: () => router.push('/retailerTabs/orders'),
+    },
+    {
+      id: 'inventory',
+      label: 'Inventory',
+      icon: 'box',
+      bgColor: '#F3F4F6',
+      iconColor: '#6B7280',
+      onPress: () => router.push('/retailerTabs/inventory'),
     },
     {
       id: 'analytics',
       label: 'Analytics',
       icon: 'bar-chart-2',
-      bgColor: '#F0F7FF',
-      iconColor: '#3B82F6',
-      onPress: () => router.push("/screens/retailer/home/analytics/analyticsScreen"),
-    },
-    {
-      id: 'more',
-      label: 'More',
-      icon: 'grid',
-      bgColor: '#F6F5FF',
+      bgColor: '#F3F4F6',
       iconColor: '#6B7280',
-      onPress: () => router.push("/screens/retailer/home/more/moreScreen"),
+      onPress: () => router.push('/screens/retailer/home/analytics/analyticsScreen'),
     },
   ];
 
@@ -118,7 +132,7 @@ export const useHome = () => {
 
   const handleRefresh = useCallback(async () => {
     setIsRefreshing(true);
-    await new Promise(res => setTimeout(res, 1200));
+    await new Promise((res) => setTimeout(res, 1200));
     setIsRefreshing(false);
   }, []);
 
@@ -126,9 +140,9 @@ export const useHome = () => {
     console.log('view all orders');
   }, []);
 
-const handleViewAlert = (alert: StockAlert) => {
-  router.push('/retailerTabs/inventory');
-};
+  const handleViewAlert = (alert: StockAlert) => {
+    router.push('/retailerTabs/inventory');
+  };
 
   return {
     storeInfo,

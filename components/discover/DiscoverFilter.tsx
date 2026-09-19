@@ -7,7 +7,11 @@ import {
     TextInput,
     Animated,
     Keyboard,
+    ActivityIndicator,
 } from 'react-native';
+import { Feather } from '@expo/vector-icons';
+
+const GREEN = '#22C55E';
 
 interface DiscoverFilterProps<FilterCategory extends string> {
     filters: FilterCategory[];
@@ -16,6 +20,9 @@ interface DiscoverFilterProps<FilterCategory extends string> {
     greeting: string;
     userName: string;
     onCustomSize?: (size: string) => void;
+    searchValue?: string;
+    onSearchChange?: (text: string) => void;
+    onSearchSubmit?: () => void;
 }
 
 const DiscoverFilter = <FilterCategory extends string>({
@@ -25,6 +32,9 @@ const DiscoverFilter = <FilterCategory extends string>({
     greeting,
     userName,
     onCustomSize,
+    searchValue = '',
+    onSearchChange,
+    onSearchSubmit,
 }: DiscoverFilterProps<FilterCategory>) => {
     const [customExpanded, setCustomExpanded] = useState(false);
     const [customValue, setCustomValue] = useState('');
@@ -88,7 +98,7 @@ const DiscoverFilter = <FilterCategory extends string>({
         <View>
 
             {/* Greeting */}
-            <View className="bg-[#F2FFF7] px-5 pt-4 pb-3">
+            <View className=" px-5 pb-3">
                 <Text className="text-base text-gray-500">
                     {greeting},{' '}
                     <Text className="text-gray-900 font-bold text-base">
@@ -97,16 +107,68 @@ const DiscoverFilter = <FilterCategory extends string>({
                 </Text>
             </View>
 
+            {/* Search bar — same style as Search tab, no filter button */}
+            <View className="px-4 pb-3 bg-white">
+                <View
+                    style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        backgroundColor: '#F5F5F7',
+                        borderRadius: 14,
+                        paddingHorizontal: 14,
+                        height: 52,
+                        borderWidth: 1.5,
+                        borderColor: searchValue.length > 0 ? GREEN : 'transparent',
+                    }}
+                >
+                    <Feather
+                        name="search"
+                        size={20}
+                        color="#8A8A9A"
+                        style={{ marginRight: 10 }}
+                    />
+                    <TextInput
+                        style={{
+                            flex: 1,
+                            color: '#0F0F0F',
+                            fontSize: 16,
+                            fontWeight: '400',
+                            height: '100%',
+                        }}
+                        placeholder="Sneakers, clothing, brands, SKU..."
+                        placeholderTextColor="#AFAFBF"
+                        value={searchValue}
+                        onChangeText={onSearchChange}
+                        onSubmitEditing={onSearchSubmit}
+                        returnKeyType="search"
+                        cursorColor={GREEN}
+                        autoCapitalize="none"
+                        autoCorrect={false}
+                    />
+                    {searchValue.length > 0 && (
+                        <TouchableOpacity
+                            onPress={() => onSearchChange?.('')}
+                            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                        >
+                            <View
+                                style={{
+                                    width: 22,
+                                    height: 22,
+                                    borderRadius: 11,
+                                    backgroundColor: '#C8C8D8',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                }}
+                            >
+                                <Feather name="x" size={14} color="#fff" />
+                            </View>
+                        </TouchableOpacity>
+                    )}
+                </View>
+            </View>
+
             {/* Pills */}
             <View className="flex-row items-center bg-white">
-
-                {/* Sticky "For You" */}
-                <View className="flex-row items-center bg-white z-10">
-                    <View className="bg-gray-900 px-5 py-2.5 ml-4 my-3 rounded-full">
-                        <Text className="text-white text-base font-bold">For You</Text>
-                    </View>
-                </View>
-
                 <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
@@ -115,7 +177,7 @@ const DiscoverFilter = <FilterCategory extends string>({
                         paddingRight: 24,
                         paddingVertical: 12,
                         gap: 10,
-                        paddingLeft: 6,
+                        paddingLeft: 16,
                     }}
                 >
                     {filters.map((f) => {
