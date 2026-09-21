@@ -76,20 +76,20 @@ export const useHome = () => {
       onPress: () => router.push('/retailerTabs/orders'),
     },
     {
-      id: 'inventory',
-      label: 'Inventory',
-      icon: 'box',
-      bgColor: '#F3F4F6',
-      iconColor: '#6B7280',
-      onPress: () => router.push('/retailerTabs/inventory'),
-    },
-    {
       id: 'analytics',
       label: 'Analytics',
       icon: 'bar-chart-2',
       bgColor: '#F3F4F6',
       iconColor: '#6B7280',
-      onPress: () => router.push('/screens/retailer/home/analytics/analyticsScreen'),
+      onPress: () => router.push('/retailerTabs/inventory'),
+    },
+    {
+      id: 'more',
+      label: 'More',
+      icon: 'grid',
+      bgColor: '#F6F5FF',
+      iconColor: '#6B7280',
+      onPress: () => router.push("/screens/retailer/home/more/moreScreen"),
     },
   ];
 

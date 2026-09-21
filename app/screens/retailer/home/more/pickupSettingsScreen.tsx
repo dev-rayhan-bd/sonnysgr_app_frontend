@@ -76,7 +76,7 @@ export default function PickupSettingsScreen() {
         {/* Hold duration */}
         <Text style={[styles.sectionTitle, { marginTop: 24 }]}>Hold Duration (hours)</Text>
         <View style={styles.holdRow}>
-          {['24', '48', '72'].map(h => (
+          {['1', '3', '6'].map(h => (
             <TouchableOpacity
               key={h}
               style={[styles.holdBtn, holdDuration === h && styles.holdBtnActive]}

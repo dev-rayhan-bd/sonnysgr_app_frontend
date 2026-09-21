@@ -1,14 +1,13 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 
-export type OrderTab = 'All' | 'New' | 'Holding' | 'Ready' | 'Complete';
+export type OrderTab = 'Needs Action' | 'Holds' | 'Ready' | 'History';
 
 export interface TabCounts {
-    All: number;
-    New: number;
-    Holding: number;
+    'Needs Action': number;
+    Holds: number;
     Ready: number;
-    Complete: number;
+    History: number;
 }
 
 interface OrdersTabsProps {
@@ -17,7 +16,7 @@ interface OrdersTabsProps {
     onTabChange: (tab: OrderTab) => void;
 }
 
-const TABS: OrderTab[] = ['All', 'New', 'Holding', 'Ready', 'Complete'];
+const TABS: OrderTab[] = ['Needs Action', 'Holds', 'Ready', 'History'];
 
 const OrdersTabs: React.FC<OrdersTabsProps> = ({ activeTab, tabCounts, onTabChange }) => {
     return (
@@ -64,30 +63,30 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         paddingHorizontal: 12,
         paddingVertical: 8,
-        gap: 4,
+        gap: 6,
     },
     tab: {
         flexDirection: 'row',
         alignItems: 'center',
         paddingHorizontal: 14,
-        paddingVertical: 7,
+        paddingVertical: 8,
         borderRadius: 20,
-        gap: 5,
-        backgroundColor: 'transparent',
+        gap: 6,
+        backgroundColor: '#F3F4F6',
     },
     activeTab: {
         backgroundColor: '#111',
     },
     tabText: {
         fontSize: 13,
-        fontWeight: '500',
-        color: '#666',
+        fontWeight: '600',
+        color: '#6B7280',
     },
     activeTabText: {
         color: '#fff',
     },
     badge: {
-        backgroundColor: '#E8E8E8',
+        backgroundColor: '#E5E7EB',
         borderRadius: 10,
         minWidth: 18,
         height: 18,
@@ -96,12 +95,12 @@ const styles = StyleSheet.create({
         paddingHorizontal: 5,
     },
     activeBadge: {
-        backgroundColor: '#444',
+        backgroundColor: '#00C853',
     },
     badgeText: {
         fontSize: 11,
-        fontWeight: '600',
-        color: '#444',
+        fontWeight: '700',
+        color: '#6B7280',
     },
     activeBadgeText: {
         color: '#fff',

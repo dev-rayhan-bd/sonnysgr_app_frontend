@@ -1,11 +1,12 @@
-export type TimeFilter = 'Today' | 'This Week' | 'This Month' | 'All Time';
-export type ChartMode = 'Daily' | 'Weekly';
+export type TimeFilter = 'Today' | 'Week' | 'Month' | 'Custom';
+export type ChartMode = 'Sales' | 'Orders';
 
 export interface TopProduct {
   rank: number;
   name: string;
   sub: string;
   price: string;
+  imageUri?: string;
 }
 
 export interface OrderStatusItem {
@@ -23,15 +24,20 @@ export interface SizeItem {
 export interface AnalyticsData {
   totalRevenue: string;
   revenueChange: string;
+  revenueChangePercent: string;
   sparklineData: number[];
   orders: number;
   ordersChange: string;
-  rating: number;
-  totalRatings: number;
-  dailyBarData: number[];
-  weeklyBarData: number[];
+  grossProfit: string;
+  grossProfitMargin: string;
+  grossProfitChange: string;
+  avgOrder: string;
+  avgOrderChange: string;
+  pickupRate: string;
+  pickupRateChange: string;
+  dailySalesBarData: number[];
+  dailyOrdersBarData: number[];
   barLabelsDaily: string[];
-  barLabelsWeekly: string[];
   topProducts: TopProduct[];
   orderStatus: OrderStatusItem[];
   sizes: SizeItem[];

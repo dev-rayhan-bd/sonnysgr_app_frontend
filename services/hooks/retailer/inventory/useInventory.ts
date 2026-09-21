@@ -67,10 +67,10 @@ const INVENTORY_PRODUCTS: InventoryProduct[] = [
     cost: 68,
     status: 'Low Stock',
     productType: 'Clothing',
-    lowCount: 2,
+    lowCount: 3,
     imageBg: '#FEF3C7',
     sizes: [
-      { size: 'S', qty: 1 },
+      { size: 'S', qty: 2 },
       { size: 'M', qty: 1 },
       { size: 'L', qty: 0 },
       { size: 'XL', qty: 0 },
@@ -87,10 +87,10 @@ const INVENTORY_PRODUCTS: InventoryProduct[] = [
     productType: 'Sneakers',
     imageBg: '#E8F0FE',
     sizes: [
-      { size: '8', qty: 2 },
-      { size: '10', qty: 3 },
+      { size: '8', qty: 1 },
+      { size: '10', qty: 2 },
       { size: '11', qty: 1 },
-      { size: '12', qty: 2 },
+      { size: '12', qty: 1 },
     ],
   },
   {
@@ -116,13 +116,12 @@ const INVENTORY_PRODUCTS: InventoryProduct[] = [
     sku: 'FZ5246',
     price: 220,
     cost: 180,
-    status: 'Low Stock',
+    status: 'Out of Stock',
     productType: 'Sneakers',
-    lowCount: 2,
     imageBg: '#F3F4F6',
     sizes: [
-      { size: '8', qty: 1 },
-      { size: '9', qty: 1 },
+      { size: '8', qty: 0 },
+      { size: '9', qty: 0 },
       { size: '9.5', qty: 0 },
       { size: '10', qty: 0 },
     ],
@@ -149,13 +148,12 @@ export const useInventory = () => {
   const [activeFilter, setActiveFilter] = useState<FilterTab>('All')
   const [isRefreshing, setIsRefreshing] = useState(false)
 
+  // Matches the tabs shown in the design: All, Sneakers, Clothing, Low Stock
   const filterTabs: FilterTab[] = [
     'All',
     'Sneakers',
     'Clothing',
-    'In Stock',
     'Low Stock',
-    'Out of Stock',
   ]
 
   const summary: InventorySummary = useMemo(

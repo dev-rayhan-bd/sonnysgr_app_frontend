@@ -24,7 +24,7 @@ const productTypeBadge = {
   Clothing: { bg: '#EFF6FF', text: '#1D4ED8' },
 }
 
-const SIZES_VISIBLE = 6
+const SIZES_VISIBLE = 4
 
 const InventoryCard: React.FC<InventoryCardProps> = ({
   product,
@@ -48,8 +48,8 @@ const InventoryCard: React.FC<InventoryCardProps> = ({
       style={{
         backgroundColor: '#fff',
         borderWidth: 1,
-        borderColor: '#E5E7EB',
-        borderRadius: 16,
+        borderColor: '#F3F4F6',
+        borderRadius: 18,
         padding: 12,
         flexDirection: 'row',
         gap: 12,
@@ -61,21 +61,21 @@ const InventoryCard: React.FC<InventoryCardProps> = ({
         {product.imageUri ? (
           <Image
             source={{ uri: product.imageUri }}
-            style={{ width: 80, height: 80, borderRadius: 12 }}
+            style={{ width: 76, height: 76, borderRadius: 12 }}
             resizeMode="cover"
           />
         ) : (
           <View
             style={{
-              width: 80,
-              height: 80,
+              width: 76,
+              height: 76,
               borderRadius: 12,
               backgroundColor: product.imageBg,
               alignItems: 'center',
               justifyContent: 'center',
             }}
           >
-            <Feather name="package" size={30} color="#9CA3AF" />
+            <Feather name="package" size={28} color="#9CA3AF" />
           </View>
         )}
 
@@ -97,34 +97,40 @@ const InventoryCard: React.FC<InventoryCardProps> = ({
       </View>
 
       <View style={{ flex: 1, minWidth: 0 }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-          <Text
-            style={{
-              fontSize: 10,
-              fontWeight: '600',
-              color: '#9CA3AF',
-              letterSpacing: 0.5,
-              textTransform: 'uppercase',
-            }}
-          >
-            {product.brand}
-          </Text>
-          <View
-            style={{
-              backgroundColor: typeBadge.bg,
-              borderRadius: 999,
-              paddingHorizontal: 8,
-              paddingVertical: 3,
-            }}
-          >
-            <Text style={{ fontSize: 10, fontWeight: '700', color: typeBadge.text }}>
-              {product.productType}
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexShrink: 1 }}>
+            <Text
+              style={{
+                fontSize: 10,
+                fontWeight: '700',
+                color: '#9CA3AF',
+                letterSpacing: 0.5,
+                textTransform: 'uppercase',
+              }}
+            >
+              {product.brand}
             </Text>
+            <View
+              style={{
+                backgroundColor: typeBadge.bg,
+                borderRadius: 999,
+                paddingHorizontal: 8,
+                paddingVertical: 2,
+              }}
+            >
+              <Text style={{ fontSize: 10, fontWeight: '700', color: typeBadge.text }}>
+                {product.productType}
+              </Text>
+            </View>
           </View>
+
+          <TouchableOpacity onPress={() => onEditPress?.(product)} hitSlop={8}>
+            <Feather name="edit-2" size={15} color="#9CA3AF" />
+          </TouchableOpacity>
         </View>
 
         <Text
-          style={{ fontSize: 13, fontWeight: '700', color: '#111', marginTop: 4 }}
+          style={{ fontSize: 14, fontWeight: '800', color: '#111', marginTop: 3 }}
           numberOfLines={1}
         >
           {product.name}
@@ -149,11 +155,11 @@ const InventoryCard: React.FC<InventoryCardProps> = ({
                 <Text
                   style={{
                     fontSize: 10,
-                    fontWeight: '600',
+                    fontWeight: '700',
                     color: available ? '#15803D' : '#9CA3AF',
                   }}
                 >
-                  {size}
+                  {size} · {qty}
                 </Text>
               </View>
             )
@@ -170,7 +176,7 @@ const InventoryCard: React.FC<InventoryCardProps> = ({
                 marginBottom: 4,
               }}
             >
-              <Text style={{ fontSize: 10, fontWeight: '600', color: '#9CA3AF' }}>
+              <Text style={{ fontSize: 10, fontWeight: '700', color: '#9CA3AF' }}>
                 +{hiddenCount}
               </Text>
             </View>
@@ -178,11 +184,11 @@ const InventoryCard: React.FC<InventoryCardProps> = ({
         </View>
 
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4 }}>
-          <Text style={{ fontSize: 14, fontWeight: '800', color: '#111' }}>
+          <Text style={{ fontSize: 15, fontWeight: '800', color: '#111' }}>
             ${product.price}
           </Text>
           <Text style={{ fontSize: 11, color: '#9CA3AF' }}>
-            Cost: ${product.cost}
+            | Cost: ${product.cost}
           </Text>
         </View>
 
@@ -190,10 +196,6 @@ const InventoryCard: React.FC<InventoryCardProps> = ({
           {product.sku}
         </Text>
       </View>
-
-      <TouchableOpacity onPress={() => onEditPress?.(product)} hitSlop={8}>
-        <Feather name="edit-2" size={16} color="#9CA3AF" />
-      </TouchableOpacity>
     </TouchableOpacity>
   )
 }

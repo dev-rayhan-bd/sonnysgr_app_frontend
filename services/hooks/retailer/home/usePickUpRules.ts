@@ -12,10 +12,9 @@ export interface PickupRules {
 }
 
 export const windowOptions = [
-  { label: '24 hrs', value: 24 },
-  { label: '48 hrs', value: 48 },
-  { label: '72 hrs', value: 72 },
-  { label: '1 week', value: 168 },
+  { label: '1 hrs', value: 1 },
+  { label: '3 hrs', value: 3 },
+  { label: '6 hrs', value: 6 },
 ];
 
 export const usePickupRules = () => {

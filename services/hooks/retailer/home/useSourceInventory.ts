@@ -1,49 +1,114 @@
-import { useState, useMemo } from 'react';
+import { useMemo, useState } from 'react';
+
+export type SourceFilter = 'All' | 'Local Pickup' | 'Ships' | 'Dropship' | 'Bulk Lots';
+
+export interface SourceListing {
+  id: string;
+  isDemandMatch: boolean;
+  isBulkAvailable: boolean;
+  productName: string;
+  sizeLabel: string;
+  availableCount: number;
+  minPairs: number;
+  imageIcon: 'sneaker';
+  supplier: {
+    initials: string;
+    name: string;
+    verified: boolean;
+    rating: string;
+    completedOrders: number;
+    respondsIn?: string;
+  };
+  pricing: {
+    itemCost: number;
+    shippingFees: number;
+    landedCost: number;
+    expectedRetail: number;
+    estimatedMarginPct: number;
+  };
+  fulfillment: 'ships' | 'pickup_or_ships' | 'pickup';
+  fulfillmentNote: string;
+  filterTags: SourceFilter[];
+}
+
+const FILTERS: SourceFilter[] = ['All', 'Local Pickup', 'Ships', 'Dropship', 'Bulk Lots'];
+
+const ALL_LISTINGS: SourceListing[] = [
+  {
+    id: 'panda-dks',
+    isDemandMatch: true,
+    isBulkAvailable: false,
+    productName: "Nike Dunk Low 'Panda'",
+    sizeLabel: "Men's US 10.5",
+    availableCount: 6,
+    minPairs: 1,
+    imageIcon: 'sneaker',
+    supplier: {
+      initials: 'DKS',
+      name: 'Detroit Kicks Supply',
+      verified: true,
+      rating: '4.9',
+      completedOrders: 247,
+      respondsIn: '12 min',
+    },
+    pricing: { itemCost: 155, shippingFees: 10, landedCost: 165, expectedRetail: 220, estimatedMarginPct: 25 },
+    fulfillment: 'ships',
+    fulfillmentNote: 'Ships in 1–2 days',
+    filterTags: ['All', 'Ships'],
+  },
+  {
+    id: 'chicago-glw',
+    isDemandMatch: false,
+    isBulkAvailable: true,
+    productName: "Air Jordan 1 'Chicago'",
+    sizeLabel: "Men's US 10",
+    availableCount: 12,
+    minPairs: 3,
+    imageIcon: 'sneaker',
+    supplier: {
+      initials: 'GLW',
+      name: 'Great Lakes Wholesale',
+      verified: true,
+      rating: '4.8',
+      completedOrders: 184,
+    },
+    pricing: { itemCost: 245, shippingFees: 13, landedCost: 258, expectedRetail: 340, estimatedMarginPct: 24 },
+    fulfillment: 'pickup_or_ships',
+    fulfillmentNote: 'Pickup or ships',
+    filterTags: ['All', 'Bulk Lots', 'Local Pickup', 'Ships'],
+  },
+];
 
 export const useSourceInventory = () => {
-  const [activeFilter, setActiveFilter] = useState('All');
+  const [activeFilter, setActiveFilter] = useState<SourceFilter>('All');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [shipTo] = useState("Sonny's Kicks · Novi");
 
-  const resellers = useMemo(() => [
-    {
-      id: '1',
-      initials: 'MK',
-      name: 'marcus_kicks',
-      location: 'Miami',
-      distance: '2.3 mi',
-      rating: '4.9',
-      deals: '47',
-      priceRange: '$185–$340',
-      isNearby: true,
-      hasDS: true,
-      hasBulk: false,
-    },
-    {
-      id: '2',
-      initials: 'SV',
-      name: 'sneaker_vault',
-      location: 'Miami',
-      distance: '4.1 mi',
-      rating: '5.0',
-      deals: '89',
-      priceRange: '$210–$420',
-      isNearby: true,
-      hasDS: true,
-      hasBulk: true,
-    }
-  ], []);
+  const listings = useMemo(() => {
+    return ALL_LISTINGS.filter((listing) => {
+      const matchesFilter = activeFilter === 'All' || listing.filterTags.includes(activeFilter);
+      const q = searchQuery.trim().toLowerCase();
+      const matchesSearch =
+        q.length === 0 ||
+        listing.productName.toLowerCase().includes(q) ||
+        listing.supplier.name.toLowerCase().includes(q);
+      return matchesFilter && matchesSearch;
+    });
+  }, [activeFilter, searchQuery]);
 
-  const filteredResellers = useMemo(() => {
-    if (activeFilter === 'All') return resellers;
-    if (activeFilter === 'Nearby Only') return resellers.filter(r => r.isNearby);
-    if (activeFilter === 'DS Only') return resellers.filter(r => r.hasDS);
-    if (activeFilter === 'Bulk Lots') return resellers.filter(r => r.hasBulk);
-    return resellers;
-  }, [activeFilter, resellers]);
+  const demandMatchCount = useMemo(
+    () => ALL_LISTINGS.filter((l) => l.isDemandMatch).length,
+    []
+  );
 
   return {
+    shipTo,
+    searchQuery,
+    setSearchQuery,
+    filters: FILTERS,
     activeFilter,
     setActiveFilter,
-    resellers: filteredResellers,
-    opportunityCount: 3
+    listings,
+    demandMatchCount,
   };
 };

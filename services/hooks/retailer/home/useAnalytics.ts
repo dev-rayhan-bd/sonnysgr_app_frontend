@@ -6,21 +6,26 @@ const MOCK_DATA: Record<TimeFilter, AnalyticsData> = {
   Today: {
     totalRevenue: '$340',
     revenueChange: '+$40 vs yesterday',
+    revenueChangePercent: '+13.3%',
     sparklineData: [120, 180, 150, 200, 220, 310, 340],
     orders: 2,
     ordersChange: '+1 vs yesterday',
-    rating: 5,
-    totalRatings: 1,
-    dailyBarData: [40, 80, 60, 120, 100, 180, 160],
-    weeklyBarData: [200, 340],
-    barLabelsDaily: ['6am', '9am', '12pm', '3pm', '6pm', '9pm', '12am'],
-    barLabelsWeekly: ['Last Week', 'This Week'],
+    grossProfit: '$140',
+    grossProfitMargin: '41.2%',
+    grossProfitChange: '+$20 vs yesterday',
+    avgOrder: '$170',
+    avgOrderChange: '+$5 vs yesterday',
+    pickupRate: '100%',
+    pickupRateChange: 'No change',
+    dailySalesBarData: [40, 80, 60, 120, 100, 180, 160],
+    dailyOrdersBarData: [1, 2, 1, 3, 2, 4, 3],
+    barLabelsDaily: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
     topProducts: [
       { rank: 1, name: 'Air Jordan 1 Retro High', sub: '2 colorways · 12 viewed', price: '$1100' },
       { rank: 2, name: 'Nike Dunk Low', sub: '1 colorway · 8 viewed', price: '$450' },
     ],
     orderStatus: [
-      { label: 'Completed', color: '#111', value: 1 },
+      { label: 'Completed', color: '#00C853', value: 1 },
       { label: 'Pending', color: '#F59E0B', value: 1 },
     ],
     sizes: [
@@ -28,24 +33,29 @@ const MOCK_DATA: Record<TimeFilter, AnalyticsData> = {
       { label: 'US 10', value: 9, color: '#6B7280' },
     ],
   },
-  'This Week': {
+  Week: {
     totalRevenue: '$980',
     revenueChange: '+$120 vs last week',
+    revenueChangePercent: '+13.9%',
     sparklineData: [200, 350, 300, 500, 450, 700, 980],
     orders: 4,
     ordersChange: '+2 vs last week',
-    rating: 4.8,
-    totalRatings: 3,
-    dailyBarData: [120, 180, 140, 260, 200, 340, 300],
-    weeklyBarData: [600, 980],
+    grossProfit: '$390',
+    grossProfitMargin: '39.8%',
+    grossProfitChange: '+$60 vs last week',
+    avgOrder: '$245',
+    avgOrderChange: '+$12 vs last week',
+    pickupRate: '96%',
+    pickupRateChange: '+2% vs last week',
+    dailySalesBarData: [120, 180, 140, 260, 200, 340, 300],
+    dailyOrdersBarData: [1, 2, 1, 3, 2, 4, 3],
     barLabelsDaily: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-    barLabelsWeekly: ['Last Week', 'This Week'],
     topProducts: [
       { rank: 1, name: 'Air Jordan 1 Retro High', sub: '2 colorways · 25 viewed', price: '$1100' },
       { rank: 2, name: 'Yeezy Boost 350 V2', sub: '3 colorways · 18 viewed', price: '$1120' },
     ],
     orderStatus: [
-      { label: 'Completed', color: '#111', value: 3 },
+      { label: 'Completed', color: '#00C853', value: 3 },
       { label: 'Pending', color: '#F59E0B', value: 1 },
     ],
     sizes: [
@@ -54,76 +64,86 @@ const MOCK_DATA: Record<TimeFilter, AnalyticsData> = {
       { label: 'US 8', value: 12, color: '#9CA3AF' },
     ],
   },
-  'This Month': {
+  Month: {
     totalRevenue: '$2,840',
-    revenueChange: '+$237 vs last month',
+    revenueChange: '+$237 vs last month (+9.1%)',
+    revenueChangePercent: '+9.1%',
     sparklineData: [820, 932, 701, 1050, 980, 1120, 1400, 1280, 1600, 2840],
     orders: 8,
-    ordersChange: '+1% vs last month',
-    rating: 5,
-    totalRatings: 1,
-    dailyBarData: [180, 220, 160, 300, 250, 420, 380],
-    weeklyBarData: [900, 1200, 740, 2840],
+    ordersChange: '+1 vs last month',
+    grossProfit: '$1,120',
+    grossProfitMargin: '39.4%',
+    grossProfitChange: '+12.6% vs last month',
+    avgOrder: '$355',
+    avgOrderChange: '+$18 vs last month',
+    pickupRate: '94%',
+    pickupRateChange: 'No change',
+    dailySalesBarData: [280, 360, 240, 420, 380, 610, 550],
+    dailyOrdersBarData: [1, 2, 1, 2, 1, 3, 2],
     barLabelsDaily: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-    barLabelsWeekly: ['Wk 1', 'Wk 2', 'Wk 3', 'Wk 4'],
     topProducts: [
-      { rank: 1, name: 'Air Jordan 1 Retro High', sub: '2 colorways · 37.5 reviewed', price: '$1100' },
-      { rank: 2, name: 'Yeezy Boost 350 V2', sub: '4 colorways · 28.2 reviewed', price: '$1120' },
-      { rank: 3, name: 'Nike Dunk Low', sub: '3 colorways · 18.1 reviewed', price: '$450' },
+      { rank: 1, name: 'Yeezy Boost 350 V2', sub: '4 sold · 4 colorways', price: '$1,120' },
+      { rank: 2, name: 'Air Jordan 1 Retro High', sub: '5 sold · 2 colorways', price: '$1,100' },
+      { rank: 3, name: 'Nike Dunk Low', sub: '3 sold · 3 colorways', price: '$450' },
     ],
     orderStatus: [
-      { label: 'Completed', color: '#111', value: 7 },
-      { label: 'Pending', color: '#F59E0B', value: 2 },
-      { label: 'Not Confirmed', color: '#10B981', value: 3 },
+      { label: 'Completed', color: '#00C853', value: 5 },
+      { label: 'Pending', color: '#F59E0B', value: 1 },
+      { label: 'Not Confirmed', color: '#3B82F6', value: 1 },
       { label: 'Cancelled', color: '#EF4444', value: 1 },
     ],
     sizes: [
-      { label: 'US 9', value: 37, color: '#111' },
-      { label: 'US 10', value: 32, color: '#6B7280' },
-      { label: 'US 8', value: 28, color: '#9CA3AF' },
-      { label: 'US 11', value: 18, color: '#D1D5DB' },
+      { label: 'US 9', value: 37, color: '#065F46' },
+      { label: 'US 10', value: 32, color: '#065F46' },
+      { label: 'US 8', value: 28, color: '#065F46' },
+      { label: 'US 11', value: 18, color: '#065F46' },
     ],
   },
-  'All Time': {
+  Custom: {
     totalRevenue: '$14,200',
-    revenueChange: '+$2,840 vs last month',
+    revenueChange: '+$2,840 vs previous period',
+    revenueChangePercent: '+25%',
     sparklineData: [1000, 2000, 1800, 3200, 2900, 4100, 5800, 7200, 9400, 14200],
     orders: 52,
-    ordersChange: '+8 vs last month',
-    rating: 4.9,
-    totalRatings: 24,
-    dailyBarData: [1200, 1800, 1400, 2600, 2000, 3400, 3000],
-    weeklyBarData: [4000, 5200, 4800, 6200, 7800, 9400, 11200, 14200],
+    ordersChange: '+8 vs previous period',
+    grossProfit: '$5,680',
+    grossProfitMargin: '40%',
+    grossProfitChange: '+$820 vs previous period',
+    avgOrder: '$273',
+    avgOrderChange: '+$14 vs previous period',
+    pickupRate: '95%',
+    pickupRateChange: '+1% vs previous period',
+    dailySalesBarData: [1200, 1800, 1400, 2600, 2000, 3400, 3000],
+    dailyOrdersBarData: [4, 6, 5, 9, 7, 12, 10],
     barLabelsDaily: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-    barLabelsWeekly: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
     topProducts: [
-      { rank: 1, name: 'Air Jordan 1 Retro High', sub: '5 colorways · 210 reviewed', price: '$1100' },
-      { rank: 2, name: 'Yeezy Boost 350 V2', sub: '7 colorways · 184 reviewed', price: '$1120' },
-      { rank: 3, name: 'Nike Dunk Low', sub: '6 colorways · 152 reviewed', price: '$450' },
+      { rank: 1, name: 'Air Jordan 1 Retro High', sub: '5 colorways · 210 sold', price: '$1100' },
+      { rank: 2, name: 'Yeezy Boost 350 V2', sub: '7 colorways · 184 sold', price: '$1120' },
+      { rank: 3, name: 'Nike Dunk Low', sub: '6 colorways · 152 sold', price: '$450' },
     ],
     orderStatus: [
-      { label: 'Completed', color: '#111', value: 42 },
+      { label: 'Completed', color: '#00C853', value: 42 },
       { label: 'Pending', color: '#F59E0B', value: 4 },
-      { label: 'Not Confirmed', color: '#10B981', value: 3 },
+      { label: 'Not Confirmed', color: '#3B82F6', value: 3 },
       { label: 'Cancelled', color: '#EF4444', value: 3 },
     ],
     sizes: [
-      { label: 'US 9', value: 38, color: '#111' },
-      { label: 'US 10', value: 34, color: '#6B7280' },
-      { label: 'US 8', value: 30, color: '#9CA3AF' },
-      { label: 'US 11', value: 22, color: '#D1D5DB' },
+      { label: 'US 9', value: 38, color: '#065F46' },
+      { label: 'US 10', value: 34, color: '#065F46' },
+      { label: 'US 8', value: 30, color: '#065F46' },
+      { label: 'US 11', value: 22, color: '#065F46' },
     ],
   },
 };
 
 export const useAnalytics = () => {
-  const [activeFilter, setActiveFilter] = useState<TimeFilter>('This Month');
-  const [chartMode, setChartMode] = useState<ChartMode>('Daily');
+  const [activeFilter, setActiveFilter] = useState<TimeFilter>('Month');
+  const [chartMode, setChartMode] = useState<ChartMode>('Sales');
 
   const data = MOCK_DATA[activeFilter];
 
-  const barData = chartMode === 'Daily' ? data.dailyBarData : data.weeklyBarData;
-  const barLabels = chartMode === 'Daily' ? data.barLabelsDaily : data.barLabelsWeekly;
+  const barData = chartMode === 'Sales' ? data.dailySalesBarData : data.dailyOrdersBarData;
+  const barLabels = data.barLabelsDaily;
 
   const handleFilterChange = useCallback((filter: TimeFilter) => {
     setActiveFilter(filter);

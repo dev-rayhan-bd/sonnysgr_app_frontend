@@ -6,6 +6,7 @@ import {
     TouchableOpacity,
     StyleSheet,
 } from 'react-native';
+import { Feather } from '@expo/vector-icons';
 import { Order, OrderStatus } from '@/types/Orders';
 
 interface OrderCardProps {
@@ -24,16 +25,17 @@ const TAG_STYLE: Record<string, { bg: string; color: string }> = {
 };
 
 const STATUS_CONFIG: Record<OrderStatus, { label: string; bg: string; color: string }> = {
-    new:       { label: 'New',       bg: '#E8F5E9', color: '#2E7D32' },
-    holding:   { label: 'Holding',   bg: '#FFF3E0', color: '#E65100' },
-    ready:     { label: 'Ready',     bg: '#E3F2FD', color: '#1565C0' },
-    completed: { label: 'Completed', bg: '#F3F3F3', color: '#555555' },
-    cancelled: { label: 'Cancelled', bg: '#FFEBEE', color: '#B71C1C' },
+    new:       { label: 'Paid',          bg: '#E8F5E9', color: '#2E7D32' },
+    holding:   { label: 'Hold',          bg: '#FFF3E0', color: '#E65100' },
+    ready:     { label: 'Pickup Ready',  bg: '#E3F2FD', color: '#1565C0' },
+    completed: { label: 'Completed',     bg: '#F3F3F3', color: '#555555' },
+    cancelled: { label: 'Cancelled',     bg: '#FFEBEE', color: '#B71C1C' },
 };
 
 type ActionConfig = {
     label: string;
     bg: string;
+    icon?: keyof typeof Feather.glyphMap;
     onPress: () => void;
 };
 
@@ -45,16 +47,17 @@ const getPrimaryAction = (
     onPickup: (id: string) => void,
 ): ActionConfig | null => {
     switch (status) {
-        case 'new':     return { label: 'Confirm Order',  bg: '#1B5E20', onPress: () => onConfirm(id) };
-        case 'holding': return { label: 'Mark Ready',     bg: '#111111', onPress: () => onReady(id)   };
-        case 'ready':   return { label: 'Mark Picked Up', bg: '#1565C0', onPress: () => onPickup(id)  };
+        case 'new':     return { label: 'Accept & Prepare', bg: '#1B5E20', onPress: () => onConfirm(id) };
+        case 'holding': return { label: 'Mark Ready',        bg: '#111111', onPress: () => onReady(id)   };
+        case 'ready':   return { label: 'Verify Pickup',     bg: '#1565C0', icon: 'grid', onPress: () => onPickup(id) };
         default:        return null;
     }
 };
 
 const getSecondaryLabel = (status: OrderStatus): string => {
-    if (status === 'holding') return 'View Hold Details';
-    return 'View Details';
+    if (status === 'holding') return 'Hold Details';
+    if (status === 'ready') return 'Details';
+    return 'Order Details';
 };
 
 const OrderCard: React.FC<OrderCardProps> = ({
@@ -80,7 +83,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
     return (
         <View style={styles.card}>
 
-            {/* ── Row 1: tag + status pill + time ── */}
+            {/* ── Row 1: tag + status pill + urgency/time ── */}
             <View style={styles.topRow}>
                 <View style={styles.topLeft}>
                     <View style={[styles.tagBadge, { backgroundColor: tagCfg.bg }]}>
@@ -92,7 +95,15 @@ const OrderCard: React.FC<OrderCardProps> = ({
                         </Text>
                     </View>
                 </View>
-                <Text style={styles.timeText}>{order.timeAgo}</Text>
+
+                {order.status === 'new' && order.confirmWithinMinutes != null ? (
+                    <View style={styles.urgencyPill}>
+                        <Feather name="clock" size={10} color="#EA580C" />
+                        <Text style={styles.urgencyText}>Confirm in {order.confirmWithinMinutes} min</Text>
+                    </View>
+                ) : (
+                    <Text style={styles.timeText}>{order.timeAgo}</Text>
+                )}
             </View>
 
             {/* ── Row 2: image + product info ── */}
@@ -111,9 +122,14 @@ const OrderCard: React.FC<OrderCardProps> = ({
                 <View style={styles.productInfo}>
                     <Text style={styles.productName} numberOfLines={1}>{order.productName}</Text>
                     <Text style={styles.productMeta}>Size {order.size} · {order.gender}</Text>
-                    <Text style={styles.customerName}>{order.customerName}</Text>
+                    <Text style={styles.customerName}>{order.customerName} · Order #{order.orderNumber}</Text>
                 </View>
             </View>
+
+            {/* ── Inventory reserved (new only) ── */}
+            {order.status === 'new' && order.inventoryReserved ? (
+                <Text style={styles.reservedText}>Inventory reserved</Text>
+            ) : null}
 
             {/* ── Expiry row (holding only) ── */}
             {order.status === 'holding' && order.expiresIn ? (
@@ -135,16 +151,21 @@ const OrderCard: React.FC<OrderCardProps> = ({
                 </View>
             ) : null}
 
-            {/* ── Customer notified (ready only) ── */}
-            {order.status === 'ready' && order.customerNotified && order.readySince ? (
+            {/* ── Customer notified + waiting (ready only) ── */}
+            {order.status === 'ready' && order.customerNotified ? (
                 <Text style={styles.customerNotif}>
-                    Customer notified · Ready since{' '}
-                    <Text style={styles.customerNotifHighlight}>{order.readySince}</Text>
+                    Customer notified{order.waitingSince ? ` · Waiting ${order.waitingSince}` : ''}
                 </Text>
             ) : null}
 
-            {/* ── Price ── */}
-            <Text style={styles.price}>${order.price}</Text>
+            {/* ── Price row (deposit-aware for holds) ── */}
+            {order.status === 'holding' && order.depositPaid ? (
+                <Text style={styles.price}>
+                    ${order.price} total <Text style={styles.priceSub}>· ${order.depositAmount} deposit</Text>
+                </Text>
+            ) : (
+                <Text style={styles.price}>${order.price}</Text>
+            )}
 
             {/* ── Completed footer ── */}
             {isCompleted && order.completedDate ? (
@@ -178,6 +199,9 @@ const OrderCard: React.FC<OrderCardProps> = ({
                                 onPress={primary.onPress}
                                 activeOpacity={0.85}
                             >
+                                {primary.icon ? (
+                                    <Feather name={primary.icon} size={14} color="#fff" style={{ marginRight: 6 }} />
+                                ) : null}
                                 <Text style={styles.primaryBtnText}>{primary.label}</Text>
                             </TouchableOpacity>
                         ) : null}
@@ -238,6 +262,20 @@ const styles = StyleSheet.create({
         fontSize: 11,
         color: '#999999',
     },
+    urgencyPill: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 4,
+        backgroundColor: '#FFF7ED',
+        borderRadius: 20,
+        paddingHorizontal: 8,
+        paddingVertical: 3,
+    },
+    urgencyText: {
+        fontSize: 10,
+        fontWeight: '700',
+        color: '#EA580C',
+    },
     productRow: {
         flexDirection: 'row',
         alignItems: 'flex-start',
@@ -281,6 +319,12 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: '#666666',
     },
+    reservedText: {
+        fontSize: 11,
+        color: '#00C853',
+        fontWeight: '500',
+        marginBottom: 4,
+    },
     expiryRow: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -301,15 +345,17 @@ const styles = StyleSheet.create({
         color: '#888888',
         marginBottom: 4,
     },
-    customerNotifHighlight: {
-        color: '#1565C0',
-    },
     price: {
         fontSize: 18,
         fontWeight: '700',
         color: '#111111',
         marginTop: 4,
         marginBottom: 6,
+    },
+    priceSub: {
+        fontSize: 12,
+        fontWeight: '500',
+        color: '#888888',
     },
     footerRow: {
         flexDirection: 'row',
@@ -350,6 +396,7 @@ const styles = StyleSheet.create({
     },
     primaryBtn: {
         flex: 1,
+        flexDirection: 'row',
         paddingVertical: 9,
         borderRadius: 8,
         alignItems: 'center',

@@ -7,31 +7,44 @@ interface InventoryStatsProps {
   syncInfo: SyncInfo;
 }
 
+const STAT_ITEMS = (summary: InventorySummary) => [
+  { label: 'Active', value: summary.active, color: '#00C853', bg: '#ECFDF3' },
+  { label: 'Low Stock', value: summary.lowStock, color: '#F59E0B', bg: '#FFFBEB' },
+  { label: 'Out of Stock', value: summary.outOfStock, color: '#EF4444', bg: '#FEF2F2' },
+  { label: 'On Hold', value: summary.onHold, color: '#6B7280', bg: '#F9FAFB' },
+];
+
 const InventoryStats: React.FC<InventoryStatsProps> = ({ summary, syncInfo }) => {
+  const stats = STAT_ITEMS(summary);
+
   return (
     <View style={{ backgroundColor: '#fff' }}>
-
-      {/* Counts row */}
+      {/* Stat cards row */}
       <View style={{
-        paddingHorizontal: 16, paddingTop: 4, paddingBottom: 6,
-        borderBottomWidth: 1, borderBottomColor: '#F3F4F6',
+        flexDirection: 'row',
+        paddingHorizontal: 16,
+        paddingBottom: 10,
+        gap: 8,
       }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 6 }}>
-          <Text style={{ fontSize: 12, fontWeight: '700', color: '#00C853' }}>
-            {summary.active} Active
-          </Text>
-          <Text style={{ fontSize: 12, color: '#D1D5DB' }}>·</Text>
-          <Text style={{ fontSize: 12, fontWeight: '700', color: '#F59E0B' }}>
-            {summary.lowStock} Low Stock
-          </Text>
-          <Text style={{ fontSize: 12, color: '#D1D5DB' }}>·</Text>
-          <Text style={{ fontSize: 12, fontWeight: '700', color: '#EF4444' }}>
-            {summary.outOfStock} Out of Stock
-          </Text>
-        </View>
-        <Text style={{ fontSize: 11, color: '#9CA3AF', marginTop: 2 }}>
-          {summary.onHold} On Hold
-        </Text>
+        {stats.map((stat) => (
+          <View
+            key={stat.label}
+            style={{
+              flex: 1,
+              backgroundColor: stat.bg,
+              borderRadius: 14,
+              paddingVertical: 10,
+              alignItems: 'center',
+            }}
+          >
+            <Text style={{ fontSize: 18, fontWeight: '800', color: stat.color }}>
+              {stat.value}
+            </Text>
+            <Text style={{ fontSize: 10, fontWeight: '600', color: '#6B7280', marginTop: 2 }}>
+              {stat.label}
+            </Text>
+          </View>
+        ))}
       </View>
 
       {/* Sync row */}

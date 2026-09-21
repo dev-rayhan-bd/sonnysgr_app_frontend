@@ -5,29 +5,40 @@ import { Feather } from '@expo/vector-icons';
 interface AnalyticsStatCardsProps {
   orders: number;
   ordersChange: string;
-  rating: number;
-  totalRatings: number;
+  grossProfit: string;
+  grossProfitMargin: string;
+  grossProfitChange: string;
+  avgOrder: string;
+  avgOrderChange: string;
+  pickupRate: string;
+  pickupRateChange: string;
 }
 
 const AnalyticsStatCards: React.FC<AnalyticsStatCardsProps> = ({
   orders,
   ordersChange,
-  rating,
-  totalRatings,
+  grossProfit,
+  grossProfitMargin,
+  grossProfitChange,
+  avgOrder,
+  avgOrderChange,
+  pickupRate,
+  pickupRateChange,
 }) => {
-  
-  // Internal Helper for the Card UI
-  const StatCard = ({ label, value, change, isPositive = true, accent = '#111', isLast = false }: any) => (
-    <View style={[s.card, { borderLeftColor: accent }, !isLast && { marginRight: 8 }]}>
-      <Text style={s.label}>{label}</Text>
+
+  const StatCard = ({ icon, label, value, change, isPositive = true, subValue, isLast = false }: any) => (
+    <View style={[s.card, !isLast && { marginRight: 8 }]}>
+      <View style={s.labelRow}>
+        <Feather name={icon} size={13} color="#9CA3AF" />
+        <Text style={s.label}>{label}</Text>
+      </View>
       <Text style={s.value}>{value}</Text>
+      {subValue ? <Text style={s.subValue}>{subValue}</Text> : null}
       <View style={s.changeRow}>
-        <Feather 
-          name={isPositive ? "arrow-up-right" : "arrow-down-right"} 
-          size={10} 
-          color={isPositive ? "#00C853" : "#EF4444"} 
-        />
-        <Text style={[s.changeText, { color: isPositive ? "#00C853" : "#EF4444" }]}>
+        {isPositive ? (
+          <Feather name="arrow-up-right" size={10} color="#00C853" />
+        ) : null}
+        <Text style={[s.changeText, { color: isPositive ? '#00C853' : '#9CA3AF' }]}>
           {change}
         </Text>
       </View>
@@ -36,37 +47,37 @@ const AnalyticsStatCards: React.FC<AnalyticsStatCardsProps> = ({
 
   return (
     <View style={s.container}>
-      {/* Row 1: Real Data from Props */}
       <View style={s.row}>
-        <StatCard 
-          label="ORDERS" 
-          value={orders} 
-          change={ordersChange} 
-          accent="#111" 
+        <StatCard
+          icon="box"
+          label="ORDERS"
+          value={orders}
+          change={ordersChange}
         />
-        <StatCard 
-          label="RATING" 
-          value={`${rating} ⭐`} 
-          change={`${totalRatings} total`} 
-          accent="#F59E0B" 
-          isLast 
+        <StatCard
+          icon="dollar-sign"
+          label="GROSS PROFIT"
+          value={grossProfit}
+          subValue={`${grossProfitMargin} margin`}
+          change={grossProfitChange}
+          isLast
         />
       </View>
 
-      {/* Row 2: Placeholders (since we can't change the screen props yet) */}
       <View style={s.row}>
-        <StatCard 
-          label="AVG ORDER" 
-          value="$237" 
-          change="$18 vs last month" 
-          accent="#111" 
+        <StatCard
+          icon="tag"
+          label="AVG. ORDER"
+          value={avgOrder}
+          change={avgOrderChange}
         />
-        <StatCard 
-          label="PICKUP RATE" 
-          value="94%" 
-          change="Same as last month" 
-          accent="#00C853" 
-          isLast 
+        <StatCard
+          icon="users"
+          label="PICKUP RATE"
+          value={pickupRate}
+          change={pickupRateChange}
+          isPositive={pickupRateChange !== 'No change'}
+          isLast
         />
       </View>
     </View>
@@ -79,16 +90,17 @@ const s = StyleSheet.create({
   card: {
     flex: 1,
     backgroundColor: '#fff',
-    borderRadius: 12,
+    borderRadius: 14,
     padding: 12,
     borderWidth: 1,
     borderColor: '#F3F4F6',
-    borderLeftWidth: 4, // The thick accent line on the left
   },
+  labelRow: { flexDirection: 'row', alignItems: 'center', gap: 5 },
   label: { fontSize: 10, color: '#9CA3AF', fontWeight: '700', letterSpacing: 0.5 },
-  value: { fontSize: 18, fontWeight: '900', color: '#111', marginTop: 4 },
-  changeRow: { flexDirection: 'row', alignItems: 'center', marginTop: 4 },
-  changeText: { fontSize: 10, fontWeight: '600', marginLeft: 2 },
+  value: { fontSize: 18, fontWeight: '900', color: '#111', marginTop: 6 },
+  subValue: { fontSize: 10, color: '#00C853', fontWeight: '600', marginTop: 1 },
+  changeRow: { flexDirection: 'row', alignItems: 'center', marginTop: 4, gap: 2 },
+  changeText: { fontSize: 10, fontWeight: '600' },
 });
 
 export default AnalyticsStatCards;

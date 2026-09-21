@@ -21,7 +21,7 @@ const InventoryFilter: React.FC<InventoryFilterProps> = ({
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{
-          paddingHorizontal: 14, paddingVertical: 10, gap: 8,
+          paddingHorizontal: 16, paddingVertical: 10, gap: 8,
         }}
       >
         {tabs.map(tab => {
@@ -34,11 +34,11 @@ const InventoryFilter: React.FC<InventoryFilterProps> = ({
               style={{
                 backgroundColor: isActive ? '#00C853' : '#F3F4F6',
                 borderRadius: 20,
-                paddingHorizontal: 14, paddingVertical: 5,
+                paddingHorizontal: 16, paddingVertical: 8,
               }}
             >
               <Text style={{
-                fontSize: 12,
+                fontSize: 13,
                 fontWeight: '700',
                 color: isActive ? '#fff' : '#374151',
               }}>

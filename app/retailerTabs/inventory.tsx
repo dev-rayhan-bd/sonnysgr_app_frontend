@@ -5,10 +5,12 @@ import {
   RefreshControl,
   StyleSheet,
 } from 'react-native'
+import { router } from 'expo-router'
 import BaseContainer from '@/components/shared/BaseContainer'
 import InventoryCard from '@/components/retailer/inventory/InventoryCard'
 import InventoryFilter from '@/components/retailer/inventory/InventoryFilter'
 import InventoryHeader from '@/components/retailer/inventory/InventoryHeader'
+import InventoryActions from '@/components/retailer/inventory/InventoryActions'
 import InventoryStats from '@/components/retailer/inventory/InventoryStats'
 import {
   useInventory,
@@ -43,8 +45,14 @@ export const InventoryScreen: React.FC = () => {
       <View style={styles.container}>
         <View>
           <InventoryHeader
+            locationLabel="Novi · Twelve Oaks"
+            onLocationPress={() => console.log('switch location')}
             onSearchPress={() => console.log('search')}
             onFilterPress={() => console.log('filter')}
+          />
+          <InventoryActions
+            onAddProduct={() => router.push('/screens/retailer/home/product/AddProductScreen')}
+            onScan={() => router.push('/screens/retailer/home/product/AddProductScreen')}
           />
           <InventoryStats summary={summary} syncInfo={syncInfo} />
           <InventoryFilter

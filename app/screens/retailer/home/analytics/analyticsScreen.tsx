@@ -25,7 +25,14 @@ const AnalyticsScreen: React.FC = () => {
     return (
         <BaseContainer scrollable backgroundColor='#fff'>
             <View className='pt-10'>
-                <AnalyticsHeader />
+                <AnalyticsHeader
+                    locationLabel="All Locations"
+                    brandLabel="GoSNKR Sales"
+                    onLocationPress={() => console.log('change location')}
+                    onBrandPress={() => console.log('change brand')}
+                    onCalendarPress={() => console.log('open calendar')}
+                    onExportPress={() => console.log('export')}
+                />
 
                 <AnalyticsTimeFilter
                     active={activeFilter}
@@ -39,14 +46,20 @@ const AnalyticsScreen: React.FC = () => {
                     <AnalyticsRevenueCard
                         totalRevenue={data.totalRevenue}
                         revenueChange={data.revenueChange}
+                        revenueChangePercent={data.revenueChangePercent}
                         sparklineData={data.sparklineData}
                     />
 
                     <AnalyticsStatCards
                         orders={data.orders}
                         ordersChange={data.ordersChange}
-                        rating={data.rating}
-                        totalRatings={data.totalRatings}
+                        grossProfit={data.grossProfit}
+                        grossProfitMargin={data.grossProfitMargin}
+                        grossProfitChange={data.grossProfitChange}
+                        avgOrder={data.avgOrder}
+                        avgOrderChange={data.avgOrderChange}
+                        pickupRate={data.pickupRate}
+                        pickupRateChange={data.pickupRateChange}
                     />
 
                     <AnalyticsRevenueChart
@@ -56,11 +69,17 @@ const AnalyticsScreen: React.FC = () => {
                         onChartModeChange={handleChartModeChange}
                     />
 
-                    <AnalyticsTopProducts products={data.topProducts} />
+                    <AnalyticsTopProducts
+                        products={data.topProducts}
+                        onViewAll={() => console.log('view all products')}
+                    />
 
                     <AnalyticsOrderStatus orderStatus={data.orderStatus} />
 
-                    <AnalyticsSizes sizes={data.sizes} />
+                    <AnalyticsSizes
+                        sizes={data.sizes}
+                        onViewInventoryOpportunities={() => console.log('view inventory opportunities')}
+                    />
                 </ScrollView>
             </View>
         </BaseContainer>

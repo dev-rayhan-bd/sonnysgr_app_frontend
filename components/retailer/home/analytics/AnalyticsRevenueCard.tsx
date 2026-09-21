@@ -31,17 +31,25 @@ const Sparkline: React.FC<SparklineProps> = ({ data, color = '#00C853' }) => {
 interface AnalyticsRevenueCardProps {
   totalRevenue: string;
   revenueChange: string;
+  revenueChangePercent: string;
   sparklineData: number[];
 }
 
 const AnalyticsRevenueCard: React.FC<AnalyticsRevenueCardProps> = ({
   totalRevenue,
   revenueChange,
+  revenueChangePercent,
   sparklineData,
 }) => (
   <View style={s.card}>
-    <View>
-      <Text style={s.label}>TOTAL REVENUE</Text>
+    <View style={s.left}>
+      <View style={s.labelRow}>
+        <Text style={s.label}>NET SALES</Text>
+        <View style={s.percentBadge}>
+          <Feather name="arrow-up-right" size={10} color="#00C853" />
+          <Text style={s.percentText}>{revenueChangePercent}</Text>
+        </View>
+      </View>
       <Text style={s.amount}>{totalRevenue}</Text>
       <View style={s.changeRow}>
         <Feather name="arrow-up-right" size={12} color="#00C853" />
@@ -62,10 +70,14 @@ const s = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 12,
   },
+  left: { flex: 1 },
+  labelRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   label: {
     fontSize: 10, fontWeight: '700',
     color: 'rgba(255,255,255,0.5)', letterSpacing: 1,
   },
+  percentBadge: { flexDirection: 'row', alignItems: 'center', gap: 2 },
+  percentText: { fontSize: 11, fontWeight: '700', color: '#00C853' },
   amount: { fontSize: 32, fontWeight: '900', color: '#fff', marginTop: 2 },
   changeRow: { flexDirection: 'row', alignItems: 'center', marginTop: 4 },
   changeText: { fontSize: 11, color: '#00C853', marginLeft: 2 },
