@@ -1,27 +1,25 @@
 import { Store } from '@/services/hooks/map/useMap'
 import { Feather } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
-import React, { useCallback, useEffect, useMemo, useRef } from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 import {
   Animated,
   Dimensions,
   Easing,
   PanResponder,
   Pressable,
-  ScrollView,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import StoreProductCard from './StoreProductCard'
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window')
 const GREEN = '#22C55E'
+const DARK = '#0F0F0F'
 const TAB_BAR_HEIGHT = 60
-const DRAG_HANDLE_HEIGHT = 28
-const BUTTON_HEIGHT = 54
-const SHEET_VISIBLE = SCREEN_HEIGHT * 0.8
+const DRAG_HANDLE_HEIGHT = 24
+const SHEET_HEIGHT = SCREEN_HEIGHT * 0.34
 
 interface StoreBottomSheetProps {
   store: Store | null
@@ -29,24 +27,17 @@ interface StoreBottomSheetProps {
   onToggleFollow: (storeId: string) => void
 }
 
-const StoreBottomSheet = ({
-  store,
-  onClose,
-  onToggleFollow,
-}: StoreBottomSheetProps) => {
+const StoreBottomSheet = ({ store, onClose, onToggleFollow }: StoreBottomSheetProps) => {
   const insets = useSafeAreaInsets()
   const router = useRouter()
 
   const tabBarTotal = TAB_BAR_HEIGHT + insets.bottom
-  const sheetFullHeight = SHEET_VISIBLE
-  const footerTotal = BUTTON_HEIGHT + 24 + tabBarTotal
-  const scrollHeight = SHEET_VISIBLE - DRAG_HANDLE_HEIGHT - footerTotal
-  const translateY = useRef(new Animated.Value(sheetFullHeight)).current
+  const translateY = useRef(new Animated.Value(SHEET_HEIGHT)).current
 
   const show = useCallback(() => {
     Animated.timing(translateY, {
       toValue: 0,
-      duration: 340,
+      duration: 320,
       easing: Easing.out(Easing.cubic),
       useNativeDriver: true,
     }).start()
@@ -55,33 +46,19 @@ const StoreBottomSheet = ({
   const hide = useCallback(
     (cb?: () => void) => {
       Animated.timing(translateY, {
-        toValue: sheetFullHeight,
-        duration: 280,
+        toValue: SHEET_HEIGHT,
+        duration: 260,
         easing: Easing.in(Easing.cubic),
         useNativeDriver: true,
       }).start(cb)
     },
-    [sheetFullHeight, translateY],
+    [translateY],
   )
 
   useEffect(() => {
-    if (store) {
-      show()
-    } else {
-      hide()
-    }
+    if (store) show()
+    else hide()
   }, [hide, show, store])
-
-  const sectionLabel = useMemo(() => {
-    if (!store) return 'Available Now'
-
-    const hasSneakers = store.products.some((product) => product.productType === 'Sneakers')
-    const hasClothing = store.products.some((product) => product.productType === 'Clothing')
-
-    if (hasSneakers && hasClothing) return 'Sneakers & Clothing Nearby'
-    if (hasClothing) return 'Clothing Nearby'
-    return 'Sneakers Nearby'
-  }, [store])
 
   const panResponder = useRef(
     PanResponder.create({
@@ -91,17 +68,17 @@ const StoreBottomSheet = ({
         if (dy > 0) translateY.setValue(dy)
       },
       onPanResponderRelease: (_, { dy, vy }) => {
-        if (dy > SHEET_VISIBLE * 0.3 || vy > 0.8) {
+        if (dy > SHEET_HEIGHT * 0.3 || vy > 0.8) {
           Animated.timing(translateY, {
-            toValue: sheetFullHeight,
-            duration: 240,
+            toValue: SHEET_HEIGHT,
+            duration: 220,
             easing: Easing.in(Easing.cubic),
             useNativeDriver: true,
           }).start(onClose)
         } else {
           Animated.timing(translateY, {
             toValue: 0,
-            duration: 240,
+            duration: 220,
             easing: Easing.out(Easing.cubic),
             useNativeDriver: true,
           }).start()
@@ -112,17 +89,35 @@ const StoreBottomSheet = ({
 
   if (!store) return null
 
+  const initials = store.name.slice(0, 1).toUpperCase()
+  // Rough "open/closed" derivation from the existing hours string, e.g. "Open until 8 PM"
+  const isOpen = store.hours.toLowerCase().startsWith('open')
+  const closesLabel = store.hours.replace(/^open until\s*/i, '')
+
+  const handleDirections = useCallback(() => {
+    // Navigate to the in-app directions screen instead of opening the
+    // external Google Maps app. Store coords are passed as params so the
+    // directions screen can build its route/map region from real data.
+    router.push({
+      pathname: '/screens/order/directionsScreen',
+      params: {
+        storeId: store.id,
+        storeName: store.name,
+        latitude: String(store.latitude),
+        longitude: String(store.longitude),
+      },
+    } as any)
+  }, [router, store])
+
+  const handleViewInventory = useCallback(() => {
+    router.push(`/screens/discover/storeListScreen?storeId=${store.id}` as any)
+  }, [router, store])
+
   return (
     <>
       <Pressable
         onPress={() => hide(onClose)}
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-        }}
+        style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
       />
 
       <Animated.View
@@ -131,7 +126,6 @@ const StoreBottomSheet = ({
           bottom: 0,
           left: 0,
           right: 0,
-          height: SHEET_VISIBLE,
           backgroundColor: '#FFFFFF',
           borderTopLeftRadius: 24,
           borderTopRightRadius: 24,
@@ -141,175 +135,109 @@ const StoreBottomSheet = ({
           shadowRadius: 16,
           elevation: 20,
           transform: [{ translateY }],
+          paddingBottom: tabBarTotal + 20,
         }}
       >
         <View
           {...panResponder.panHandlers}
-          style={{
-            height: DRAG_HANDLE_HEIGHT,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
+          style={{ height: DRAG_HANDLE_HEIGHT, alignItems: 'center', justifyContent: 'center' }}
         >
-          <View
-            style={{
-              width: 36,
-              height: 4,
-              borderRadius: 2,
-              backgroundColor: '#E0E0EA',
-            }}
-          />
+          <View style={{ width: 36, height: 4, borderRadius: 2, backgroundColor: '#E0E0EA' }} />
         </View>
 
-        <ScrollView
-          style={{ height: scrollHeight }}
-          contentContainerStyle={{ paddingBottom: 8 }}
-          showsVerticalScrollIndicator={false}
-          scrollEnabled
-          bounces
-          keyboardShouldPersistTaps="handled"
-        >
+        <View style={{ flexDirection: 'row', alignItems: 'flex-start', paddingHorizontal: 20, gap: 14 }}>
+          {/* Store logo square */}
           <View
             style={{
-              flexDirection: 'row',
-              alignItems: 'flex-start',
-              justifyContent: 'space-between',
-              paddingHorizontal: 20,
-              paddingTop: 4,
-              paddingBottom: 12,
-            }}
-          >
-            <View style={{ flex: 1, marginRight: 12 }}>
-              <Text
-                style={{
-                  fontSize: 22,
-                  fontWeight: '800',
-                  color: '#0F0F0F',
-                  letterSpacing: -0.5,
-                }}
-              >
-                {store.name}
-              </Text>
-              <Text style={{ fontSize: 13, color: '#8A8A9A', marginTop: 3 }}>
-                {store.distance} • {store.hours}
-              </Text>
-            </View>
-
-            <TouchableOpacity
-              onPress={() => onToggleFollow(store.id)}
-              activeOpacity={0.8}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: 5,
-                paddingHorizontal: 14,
-                paddingVertical: 9,
-                borderRadius: 100,
-                backgroundColor: store.isFollowing ? '#0F0F0F' : '#F5F5F7',
-              }}
-            >
-              {store.isFollowing && (
-                <Feather name="check" size={13} color="#fff" />
-              )}
-              <Text
-                style={{
-                  fontSize: 13,
-                  fontWeight: '700',
-                  color: store.isFollowing ? '#FFFFFF' : '#0F0F0F',
-                }}
-              >
-                {store.isFollowing ? 'Following' : 'Follow'}
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          <View
-            style={{
-              height: 1,
-              backgroundColor: '#F0F0F5',
-              marginHorizontal: 20,
-            }}
-          />
-
-          <View
-            style={{
-              flexDirection: 'row',
+              width: 52,
+              height: 52,
+              borderRadius: 14,
+              backgroundColor: GREEN,
               alignItems: 'center',
-              gap: 8,
-              paddingHorizontal: 20,
-              paddingVertical: 12,
-              flexWrap: 'wrap',
+              justifyContent: 'center',
             }}
           >
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-              <Feather name="map-pin" size={12} color="#8A8A9A" />
-              <Text style={{ fontSize: 13, color: '#3A3A4A', fontWeight: '500' }}>
-                {store.tag}
-              </Text>
-            </View>
-            <Text style={{ color: '#D0D0DF' }}>•</Text>
-            <Text style={{ fontSize: 13, fontWeight: '700', color: GREEN }}>
-              {store.stock} items available
+            <Text style={{ color: '#fff', fontSize: 20, fontWeight: '800' }}>{initials}</Text>
+          </View>
+
+          <View style={{ flex: 1 }}>
+            <Text style={{ fontSize: 18, fontWeight: '800', color: DARK }}>{store.name}</Text>
+            <Text style={{ fontSize: 13, color: '#8A8A9A', marginTop: 2 }}>
+              {store.tag} · {store.distance}
             </Text>
-            <Text style={{ color: '#D0D0DF' }}>•</Text>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
-              <Text style={{ fontSize: 13 }}>★</Text>
-              <Text style={{ fontSize: 13, fontWeight: '700', color: '#0F0F0F' }}>
-                {store.rating}
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 4 }}>
+              <View
+                style={{
+                  width: 6,
+                  height: 6,
+                  borderRadius: 3,
+                  backgroundColor: isOpen ? GREEN : '#EF4444',
+                }}
+              />
+              <Text style={{ fontSize: 13, fontWeight: '700', color: isOpen ? GREEN : '#EF4444' }}>
+                {isOpen ? 'Open' : 'Closed'}
               </Text>
+              {isOpen && closesLabel ? (
+                <Text style={{ fontSize: 13, color: '#8A8A9A' }}>· Closes {closesLabel}</Text>
+              ) : null}
             </View>
           </View>
 
-          <View style={{ paddingHorizontal: 20, marginBottom: 10 }}>
-            <Text
-              style={{
-                fontSize: 11,
-                fontWeight: '700',
-                color: '#8A8A9A',
-                letterSpacing: 1,
-                textTransform: 'uppercase',
-              }}
-            >
-              {sectionLabel}
-            </Text>
-          </View>
-
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            nestedScrollEnabled
-            contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 4 }}
-          >
-            {store.products.map((product) => (
-              <StoreProductCard key={product.id} product={product} />
-            ))}
-          </ScrollView>
-        </ScrollView>
-
-        <View
-          style={{
-            paddingHorizontal: 40,
-            paddingTop: 12,
-            paddingBottom: tabBarTotal + 24,
-            backgroundColor: '#FFFFFF',
-          }}
-        >
           <TouchableOpacity
-            onPress={() => router.push('/')}
+            onPress={() => onToggleFollow(store.id)}
+            activeOpacity={0.8}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <Feather
+              name={store.isFollowing ? 'heart' : 'heart'}
+              size={20}
+              color={store.isFollowing ? GREEN : '#D1D5DB'}
+            />
+          </TouchableOpacity>
+        </View>
+
+        <View style={{ paddingHorizontal: 20, marginTop: 14 }}>
+          <Text style={{ fontSize: 14, fontWeight: '700', color: DARK }}>
+            {store.stock} products match your sizes
+          </Text>
+          <Text style={{ fontSize: 12, color: '#9CA3AF', marginTop: 2 }}>
+            Inventory updated 5 min ago
+          </Text>
+        </View>
+
+        <View style={{ flexDirection: 'row', gap: 10, paddingHorizontal: 20, marginTop: 18 }}>
+          <TouchableOpacity
+            onPress={handleViewInventory}
             activeOpacity={0.85}
             style={{
-              height: BUTTON_HEIGHT,
-              borderRadius: 100,
-              backgroundColor: '#0F0F0F',
+              flex: 1,
+              height: 50,
+              borderRadius: 14,
+              backgroundColor: GREEN,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Text style={{ fontSize: 15, fontWeight: '700', color: '#fff' }}>View inventory</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={handleDirections}
+            activeOpacity={0.85}
+            style={{
+              flex: 1,
+              height: 50,
+              borderRadius: 14,
+              borderWidth: 1.5,
+              borderColor: '#E5E7EB',
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'center',
               gap: 6,
             }}
           >
-            <Text style={{ fontSize: 16, fontWeight: '700', color: '#FFFFFF' }}>
-              View full store
-            </Text>
+            <Feather name="navigation" size={15} color={DARK} />
+            <Text style={{ fontSize: 15, fontWeight: '700', color: DARK }}>Directions</Text>
           </TouchableOpacity>
         </View>
       </Animated.View>

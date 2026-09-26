@@ -20,6 +20,8 @@ export const DiscoverScreen: React.FC = () => {
   const {
     filters,
     activeFilter,
+    feedTab,
+    setFeedTab,
     searchQuery,
     setSearchQuery,
     nearbyProducts,
@@ -29,6 +31,7 @@ export const DiscoverScreen: React.FC = () => {
     isRefreshing,
     greeting,
     userName,
+    mySizes,
     handleFilterChange,
     toggleWishlist,
     toggleFollow,
@@ -37,7 +40,27 @@ export const DiscoverScreen: React.FC = () => {
     handleRefresh,
   } = useDiscover();
 
-  const onProductPress = useCallback((p: NearbyProduct) => router.push("/screens/product/productScreen"), []);
+  // In app/tabs/discoverScreen.tsx, replace:
+//
+//   const onProductPress = useCallback((p: NearbyProduct) => router.push("/screens/product/productScreen"), []);
+//
+// with:
+
+const onProductPress = useCallback((p: NearbyProduct) => {
+  router.push({
+    pathname: '/screens/product/productScreen',
+    params: {
+      productId: p.id,
+      name: p.name,
+      brand: p.brand,
+      image: p.image,
+      price: String(p.price),
+      size: p.size ?? '',
+      store: p.store,
+      distance: p.distance,
+    },
+  } as any)
+}, [router]);
   const onBrandPress = useCallback((b: BrandProduct) => router.push("/screens/product/productScreen"), []);
   const onBuyBrand = useCallback((b: BrandProduct) => router.push("/screens/product/productScreen"), []);
   const onAdPress = useCallback((ad: AdBanner) => router.push("/screens/product/productScreen"), []);
@@ -59,6 +82,10 @@ export const DiscoverScreen: React.FC = () => {
             onChange={handleFilterChange}
             greeting={greeting}
             userName={userName}
+            feedTab={feedTab}
+            onFeedTabChange={setFeedTab}
+            mySizes={mySizes}
+            onFiltersPress={() => console.log('open filters')}
             searchValue={searchQuery}
             onSearchChange={setSearchQuery}
             onSearchSubmit={() => console.log('search submit', searchQuery)}
@@ -85,6 +112,15 @@ export const DiscoverScreen: React.FC = () => {
             onWishlistToggle={toggleWishlist}
           />
 
+          <DiscoverStores
+            stores={followedStores}
+            onManagePress={() => console.log('manage stores')}
+            onStorePress={onStorePress}
+            onFollowToggle={toggleFollow}
+            onBuyPress={onBuyStore}
+            onWishlistToggle={toggleStoreWishlist}
+          />
+
           <DiscoverBrands
             brands={brandProducts}
             onSeeAll={() => console.log('see all brands')}
@@ -96,15 +132,6 @@ export const DiscoverScreen: React.FC = () => {
           <DiscoverAd
             ads={adBanners}
             onPress={onAdPress}
-          />
-
-          <DiscoverStores
-            stores={followedStores}
-            onManagePress={() => console.log('manage stores')}
-            onStorePress={onStorePress}
-            onFollowToggle={toggleFollow}
-            onBuyPress={onBuyStore}
-            onWishlistToggle={toggleStoreWishlist}
           />
         </ScrollView>
       </View>

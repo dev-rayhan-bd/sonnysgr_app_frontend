@@ -14,9 +14,8 @@ import Animated, {
   withSpring,
   useSharedValue,
 } from 'react-native-reanimated';
-const ACTIVE_COLOR = '#000000';
+const ACTIVE_COLOR = '#22C55E';
 const INACTIVE_COLOR = '#94a3b8';
-const DOT_COLOR = '#22C55E';
 const BAR_BG = '#FFFFFF';
 
 /**
@@ -32,7 +31,7 @@ const tabMap: Record<
     activeIcon: 'home-variant',    // Solid house for active state
   },
   listing: {
-    label: 'Listing',
+    label: 'Listings',
     icon: 'package-variant-closed', // Box/Cube icon as seen in the image
     activeIcon: 'package-variant-closed',
   },
@@ -104,35 +103,10 @@ const AnimatedTabItem = ({
 const CustomTabBar = ({ state, navigation }: any) => {
   const { width } = useWindowDimensions();
   const TAB_BAR_WIDTH = width;
-  const TAB_WIDTH = TAB_BAR_WIDTH / state.routes.length;
-
-  const translateX = useSharedValue(0);
-
-  useEffect(() => {
-    translateX.value = withSpring(state.index * TAB_WIDTH, {
-      damping: 20,
-      stiffness: 150,
-    });
-  }, [state.index]);
-
-  const dotStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: translateX.value }],
-  }));
 
   return (
     <View style={styles.tabBarContainer}>
       <View style={[styles.tabBarInner, { width: TAB_BAR_WIDTH }]}>
-        {/* Sliding Dot */}
-        <Animated.View
-          style={[
-            styles.slidingDotContainer,
-            { width: TAB_WIDTH },
-            dotStyle,
-          ]}
-        >
-          <View style={styles.activeDot} />
-        </Animated.View>
-
         {state.routes.map((route: any, index: number) => {
           const isFocused = state.index === index;
 
@@ -184,20 +158,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     height: 28,
     justifyContent: 'center',
-  },
-  slidingDotContainer: {
-    position: 'absolute',
-    height: 75,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 1,
-  },
-  activeDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: DOT_COLOR,
-    marginTop: 10,
   },
   label: {
     fontSize: 14,

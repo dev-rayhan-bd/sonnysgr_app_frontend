@@ -7,11 +7,12 @@ import {
     TextInput,
     Animated,
     Keyboard,
-    ActivityIndicator,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
 const GREEN = '#22C55E';
+
+export type FeedTab = 'For You' | 'Following';
 
 interface DiscoverFilterProps<FilterCategory extends string> {
     filters: FilterCategory[];
@@ -19,7 +20,11 @@ interface DiscoverFilterProps<FilterCategory extends string> {
     onChange: (filter: FilterCategory) => void;
     greeting: string;
     userName: string;
+    feedTab: FeedTab;
+    onFeedTabChange: (tab: FeedTab) => void;
+    mySizes?: string;
     onCustomSize?: (size: string) => void;
+    onFiltersPress?: () => void;
     searchValue?: string;
     onSearchChange?: (text: string) => void;
     onSearchSubmit?: () => void;
@@ -31,7 +36,11 @@ const DiscoverFilter = <FilterCategory extends string>({
     onChange,
     greeting,
     userName,
+    feedTab,
+    onFeedTabChange,
+    mySizes = 'US 10, M',
     onCustomSize,
+    onFiltersPress,
     searchValue = '',
     onSearchChange,
     onSearchSubmit,
@@ -45,19 +54,12 @@ const DiscoverFilter = <FilterCategory extends string>({
     const openCustomInput = () => {
         setCustomExpanded(true);
         setCustomError('');
-        Animated.spring(expandAnim, {
-            toValue: 1,
-            useNativeDriver: false,
-        }).start(() => inputRef.current?.focus());
+        Animated.spring(expandAnim, { toValue: 1, useNativeDriver: false }).start(() => inputRef.current?.focus());
     };
 
     const closeCustomInput = () => {
         Keyboard.dismiss();
-        Animated.timing(expandAnim, {
-            toValue: 0,
-            duration: 180,
-            useNativeDriver: false,
-        }).start(() => {
+        Animated.timing(expandAnim, { toValue: 0, duration: 180, useNativeDriver: false }).start(() => {
             setCustomExpanded(false);
             setCustomValue('');
             setCustomError('');
@@ -84,31 +86,61 @@ const DiscoverFilter = <FilterCategory extends string>({
         onChange(f);
     };
 
-    const inputHeight = expandAnim.interpolate({
-        inputRange: [0, 1],
-        outputRange: [0, 80],
-    });
-
-    const inputOpacity = expandAnim.interpolate({
-        inputRange: [0, 0.5, 1],
-        outputRange: [0, 0, 1],
-    });
+    const inputHeight = expandAnim.interpolate({ inputRange: [0, 1], outputRange: [0, 80] });
+    const inputOpacity = expandAnim.interpolate({ inputRange: [0, 0.5, 1], outputRange: [0, 0, 1] });
 
     return (
-        <View>
-
+        <View style={{ backgroundColor: '#fff' }}>
             {/* Greeting */}
-            <View className=" px-5 pb-3">
-                <Text className="text-base text-gray-500">
-                    {greeting},{' '}
-                    <Text className="text-gray-900 font-bold text-base">
-                        {userName} 👋
-                    </Text>
+            <View style={{ paddingHorizontal: 20, paddingTop: 4, paddingBottom: 10 }}>
+                <Text style={{ fontSize: 17, color: '#111827' }}>
+                    Hey <Text style={{ fontWeight: '700', color: '#111827' }}>{userName}</Text>
+                    {' 👋'}
                 </Text>
             </View>
 
-            {/* Search bar — same style as Search tab, no filter button */}
-            <View className="px-4 pb-3 bg-white">
+            {/* For You / Following pill toggle */}
+            <View style={{ paddingHorizontal: 20, marginBottom: 12 }}>
+                <View
+                    style={{
+                        flexDirection: 'row',
+                        backgroundColor: '#F3F4F6',
+                        borderRadius: 24,
+                        padding: 4,
+                    }}
+                >
+                    {(['For You', 'Following'] as FeedTab[]).map((tab) => {
+                        const isActive = tab === feedTab;
+                        return (
+                            <TouchableOpacity
+                                key={tab}
+                                onPress={() => onFeedTabChange(tab)}
+                                activeOpacity={0.8}
+                                style={{
+                                    flex: 1,
+                                    paddingVertical: 10,
+                                    borderRadius: 20,
+                                    alignItems: 'center',
+                                    backgroundColor: isActive ? '#111827' : 'transparent',
+                                }}
+                            >
+                                <Text
+                                    style={{
+                                        fontSize: 14,
+                                        fontWeight: '700',
+                                        color: isActive ? '#fff' : '#6B7280',
+                                    }}
+                                >
+                                    {tab}
+                                </Text>
+                            </TouchableOpacity>
+                        );
+                    })}
+                </View>
+            </View>
+
+            {/* Search bar */}
+            <View style={{ paddingHorizontal: 20, marginBottom: 12 }}>
                 <View
                     style={{
                         flexDirection: 'row',
@@ -116,26 +148,15 @@ const DiscoverFilter = <FilterCategory extends string>({
                         backgroundColor: '#F5F5F7',
                         borderRadius: 14,
                         paddingHorizontal: 14,
-                        height: 52,
+                        height: 46,
                         borderWidth: 1.5,
                         borderColor: searchValue.length > 0 ? GREEN : 'transparent',
                     }}
                 >
-                    <Feather
-                        name="search"
-                        size={20}
-                        color="#8A8A9A"
-                        style={{ marginRight: 10 }}
-                    />
+                    <Feather name="search" size={18} color="#8A8A9A" style={{ marginRight: 10 }} />
                     <TextInput
-                        style={{
-                            flex: 1,
-                            color: '#0F0F0F',
-                            fontSize: 16,
-                            fontWeight: '400',
-                            height: '100%',
-                        }}
-                        placeholder="Sneakers, clothing, brands, SKU..."
+                        style={{ flex: 1, color: '#0F0F0F', fontSize: 15, fontWeight: '400', height: '100%' }}
+                        placeholder="Search sneakers, clothing, stores"
                         placeholderTextColor="#AFAFBF"
                         value={searchValue}
                         onChangeText={onSearchChange}
@@ -146,39 +167,31 @@ const DiscoverFilter = <FilterCategory extends string>({
                         autoCorrect={false}
                     />
                     {searchValue.length > 0 && (
-                        <TouchableOpacity
-                            onPress={() => onSearchChange?.('')}
-                            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                        >
+                        <TouchableOpacity onPress={() => onSearchChange?.('')} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
                             <View
                                 style={{
-                                    width: 22,
-                                    height: 22,
-                                    borderRadius: 11,
+                                    width: 20,
+                                    height: 20,
+                                    borderRadius: 10,
                                     backgroundColor: '#C8C8D8',
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                 }}
                             >
-                                <Feather name="x" size={14} color="#fff" />
+                                <Feather name="x" size={12} color="#fff" />
                             </View>
                         </TouchableOpacity>
                     )}
                 </View>
             </View>
 
-            {/* Pills */}
-            <View className="flex-row items-center bg-white">
+            {/* Category pills: All / Sneakers / Clothing / Men / Women */}
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
-                    className="flex-1"
-                    contentContainerStyle={{
-                        paddingRight: 24,
-                        paddingVertical: 12,
-                        gap: 10,
-                        paddingLeft: 16,
-                    }}
+                    style={{ flex: 1 }}
+                    contentContainerStyle={{ paddingRight: 24, paddingBottom: 10, gap: 8, paddingLeft: 20 }}
                 >
                     {filters.map((f) => {
                         const isActive = f === active;
@@ -189,16 +202,19 @@ const DiscoverFilter = <FilterCategory extends string>({
                                 key={f}
                                 onPress={() => handlePillPress(f)}
                                 activeOpacity={0.8}
-                                className={`px-4 py-2 rounded-full
-                  ${isCustomOpen ? 'bg-gray-900'
-                                        : isActive ? 'bg-green-600'
-                                            : 'bg-gray-100'}
-                `}
+                                style={{
+                                    paddingHorizontal: 16,
+                                    paddingVertical: 8,
+                                    borderRadius: 20,
+                                    backgroundColor: isCustomOpen ? '#111827' : isActive ? GREEN : '#F3F4F6',
+                                }}
                             >
                                 <Text
-                                    className={`text-base font-semibold
-                    ${isCustomOpen || isActive ? 'text-white' : 'text-gray-700'}
-                  `}
+                                    style={{
+                                        fontSize: 14,
+                                        fontWeight: '600',
+                                        color: isCustomOpen || isActive ? '#fff' : '#374151',
+                                    }}
                                 >
                                     {f}
                                 </Text>
@@ -208,48 +224,79 @@ const DiscoverFilter = <FilterCategory extends string>({
                 </ScrollView>
             </View>
 
-            {/* Custom Input */}
+            {/* Custom size input */}
             <Animated.View
-                style={{ height: inputHeight, opacity: inputOpacity }}
-                className="overflow-hidden px-4 bg-gray-50 border-t border-gray-200"
+                style={{
+                    height: inputHeight,
+                    opacity: inputOpacity,
+                    overflow: 'hidden',
+                    paddingHorizontal: 20,
+                    backgroundColor: '#F9FAFB',
+                    borderTopWidth: customExpanded ? 1 : 0,
+                    borderColor: '#E5E7EB',
+                }}
             >
-                <View className="flex-row items-center gap-2 py-3">
-
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 12 }}>
                     <TextInput
                         ref={inputRef}
                         value={customValue}
-                        onChangeText={(t) => {
-                            setCustomValue(t);
-                            if (customError) setCustomError('');
-                        }}
+                        onChangeText={(t) => { setCustomValue(t); if (customError) setCustomError(''); }}
                         placeholder="e.g. 10.5 or 11W"
                         placeholderTextColor="#9CA3AF"
                         returnKeyType="done"
                         onSubmitEditing={handleCustomConfirm}
-                        className={`flex-1 h-11 px-3 rounded-xl text-base font-semibold bg-white border
-              ${customError ? 'border-red-500' : 'border-gray-300'}
-            `}
+                        style={{
+                            flex: 1,
+                            height: 44,
+                            paddingHorizontal: 12,
+                            borderRadius: 12,
+                            fontSize: 15,
+                            fontWeight: '600',
+                            backgroundColor: '#fff',
+                            borderWidth: 1,
+                            borderColor: customError ? '#EF4444' : '#D1D5DB',
+                        }}
                     />
-
                     <TouchableOpacity
                         onPress={handleCustomConfirm}
-                        className="h-11 px-5 rounded-xl bg-gray-900 justify-center items-center"
+                        style={{ height: 44, paddingHorizontal: 20, borderRadius: 12, backgroundColor: '#111827', justifyContent: 'center', alignItems: 'center' }}
                     >
-                        <Text className="text-white font-bold text-base">Add</Text>
+                        <Text style={{ color: '#fff', fontWeight: '700', fontSize: 15 }}>Add</Text>
                     </TouchableOpacity>
-
                     <TouchableOpacity
                         onPress={closeCustomInput}
-                        className="h-11 w-11 rounded-xl border border-gray-300 justify-center items-center bg-white"
+                        style={{ height: 44, width: 44, borderRadius: 12, borderWidth: 1, borderColor: '#D1D5DB', justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' }}
                     >
-                        <Text className="text-gray-500 text-base">✕</Text>
+                        <Text style={{ color: '#6B7280', fontSize: 15 }}>✕</Text>
                     </TouchableOpacity>
                 </View>
-
-                {!!customError && (
-                    <Text className="text-red-500 text-xs ml-1 -mt-1">{customError}</Text>
-                )}
+                {!!customError && <Text style={{ color: '#EF4444', fontSize: 11, marginLeft: 4, marginTop: -6 }}>{customError}</Text>}
             </Animated.View>
+
+            {/* My sizes + Filters row */}
+            <View
+                style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    paddingHorizontal: 20,
+                    paddingVertical: 10,
+                    borderTopWidth: 1,
+                    borderTopColor: '#F3F4F6',
+                }}
+            >
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                    <Feather name="user" size={14} color="#6B7280" />
+                    <Text style={{ fontSize: 13, color: '#6B7280', fontWeight: '500' }}>
+                        My sizes: <Text style={{ fontWeight: '700', color: '#374151' }}>{mySizes}</Text>
+                    </Text>
+                </View>
+                <TouchableOpacity onPress={onFiltersPress} activeOpacity={0.7} style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                    <Feather name="sliders" size={14} color={GREEN} />
+                    <Text style={{ fontSize: 13, fontWeight: '700', color: GREEN }}>Filters</Text>
+                    <Feather name="chevron-down" size={14} color={GREEN} />
+                </TouchableOpacity>
+            </View>
         </View>
     );
 };

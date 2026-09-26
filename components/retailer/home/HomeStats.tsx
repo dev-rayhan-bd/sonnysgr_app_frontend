@@ -56,19 +56,11 @@ const HomeStats: React.FC<HomeStatsProps> = ({ stats }) => {
               styles.card,
               {
                 borderColor: v.border,
+                borderLeftColor: v.solidColor,
+                borderLeftWidth: 4,
               },
             ]}
           >
-            {/* Curved side accent */}
-            <View
-              style={[
-                styles.sideAccent,
-                {
-                  backgroundColor: v.solidColor,
-                },
-              ]}
-            />
-
             {/* Icon + Number */}
             <View style={styles.topRow}>
               {stat.iconFilled ? (
@@ -144,20 +136,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 13,
     paddingVertical: 14,
     backgroundColor: '#fff',
-
-    // Needed for the curved accent
-    position: 'relative',
-    overflow: 'visible',
-  },
-
-  // The curved vertical line from your reference
-  sideAccent: {
-    position: 'absolute',
-    left: -2,
-    top: 12,
-    bottom: 12,
-    width: 3,
-    borderRadius: 3,
   },
 
   topRow: {

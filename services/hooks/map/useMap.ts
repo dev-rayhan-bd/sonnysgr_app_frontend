@@ -229,6 +229,8 @@ const DEFAULT_REGION: MapRegion = {
   longitudeDelta: 0.018,
 }
 
+const RADIUS_OPTIONS = ['1 mi', '5 mi', '10 mi', '25 mi']
+
 export function useMap() {
   const [query, setQuery] = useState('')
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -239,9 +241,21 @@ export function useMap() {
 
   const [isFetchingLocation, setIsFetchingLocation] = useState(false)
   const [locationError, setLocationError] = useState<string | null>(null)
+  const [locationLabel, setLocationLabel] = useState('Novi, MI')
 
   const [filters, setFilters] = useState<SearchFilters>(DEFAULT_FILTERS)
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false)
+
+  // ── New: top-bar chip state (my sizes / open now / radius) ──
+  const [mySizes] = useState('US 10, M') // TODO: wire to real profile sizes
+  const [isOpenNow, setIsOpenNow] = useState(false)
+  const [radiusIndex, setRadiusIndex] = useState(2) // default "10 mi"
+  const radiusLabel = RADIUS_OPTIONS[radiusIndex]
+
+  const toggleOpenNow = useCallback(() => setIsOpenNow((v) => !v), [])
+  const cycleRadius = useCallback(() => {
+    setRadiusIndex((i) => (i + 1) % RADIUS_OPTIONS.length)
+  }, [])
 
   const activeFilterCount =
     filters.productTypes.length +
@@ -288,6 +302,11 @@ export function useMap() {
           return false
         }
 
+        // Open-now chip filter
+        if (isOpenNow && !store.hours.toLowerCase().startsWith('open')) {
+          return false
+        }
+
         if (!normalizedQuery) return true
 
         const haystacks = [
@@ -309,7 +328,7 @@ export function useMap() {
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current)
     }
-  }, [query, stores, filters])
+  }, [query, stores, filters, isOpenNow])
 
   const handleQueryChange = useCallback((text: string) => setQuery(text), [])
   const handleClearQuery = useCallback(() => setQuery(''), [])
@@ -343,6 +362,19 @@ export function useMap() {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
       }))
+
+      // Reverse-geocode to update the "Novi, MI" style pill label
+      try {
+        const [place] = await Location.reverseGeocodeAsync({
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+        })
+        if (place?.city) {
+          setLocationLabel(`${place.city}, ${place.region ?? ''}`.trim().replace(/,$/, ''))
+        }
+      } catch {
+        // Non-fatal — keep previous label
+      }
     } catch {
       setLocationError('Could not get your location.')
     } finally {
@@ -359,6 +391,13 @@ export function useMap() {
   }, [])
 
   const handleResetFilters = useCallback(() => setFilters(DEFAULT_FILTERS), [])
+
+  // ── "Search this area" — re-runs the filter pass against the current
+  // region. Since MOCK_STORES is static this just re-triggers the effect;
+  // wire this to a real API call keyed off `region` once you have one. ──
+  const handleSearchThisArea = useCallback(() => {
+    setQuery((q) => q) // no-op trigger; replace with real refetch-by-region
+  }, [])
 
   return {
     query,
@@ -381,6 +420,13 @@ export function useMap() {
     handleToggleFollow,
     isFetchingLocation,
     locationError,
+    locationLabel,
     handleGoToCurrentLocation,
+    mySizes,
+    isOpenNow,
+    toggleOpenNow,
+    radiusLabel,
+    cycleRadius,
+    handleSearchThisArea,
   }
 }

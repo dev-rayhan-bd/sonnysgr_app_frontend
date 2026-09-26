@@ -1,17 +1,18 @@
 import React from 'react'
-import { View, ScrollView, TouchableOpacity } from 'react-native'
+import { View, ScrollView, Text, TouchableOpacity } from 'react-native'
 import { Feather } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
 import { useProfile } from '@/services/hooks/profile/useProfile'
 import ProfileHeader from '@/components/profile/ProfileHeader'
-import ProfileStats from '@/components/profile/ProfileStats'
+import QuickActions from '@/components/profile/QuickActions'
+import MembershipCard from '@/components/profile/MemberShipCard'
 import MySizes from '@/components/profile/MySizes'
 import FavoriteBrands from '@/components/profile/FavoriteBrands'
-import MembershipCard from '@/components/profile/MemberShipCard'
-import QuickActions from '@/components/profile/QuickActions'
 import MySales from '@/components/profile/mysales/MySales'
 import MyLocker from '@/components/profile/MyLocker'
+import DiscoverCollectionsRow from '@/components/profile/DiscoverCollectionsRow'
 import ReferralRow from '@/components/profile/ReferralRow'
+import HelpSupportRow from '@/components/profile/HelpSupportRow'
 import BaseContainer from '@/components/shared/BaseContainer'
 
 const ProfileScreen = () => {
@@ -22,50 +23,51 @@ const ProfileScreen = () => {
     tierColor,
     pointsProgress,
     toggleLockerVisibility,
-    addBrand,
     editSizes,
     editBrands,
     viewBenefits,
     addToLocker,
+    viewFollowedStores,
+    openDiscoverCollections,
+    inviteFriends,
+    openHelpSupport,
   } = useProfile()
 
   return (
-    <BaseContainer backgroundColor="#ffffff">
-      <View style={{ flex: 1 }} className="pb-10">
+    <BaseContainer backgroundColor="#F9FAFB">
+      <View style={{ flex: 1 }}>
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
             paddingHorizontal: 16,
             paddingBottom: 40,
-            paddingTop: 30,
+            paddingTop: 16,
           }}
         >
-          {/* Icons row */}
-          <View className="flex-row justify-end gap-4 bg-white mb-2" style={{ zIndex: 10 }}>
-            <TouchableOpacity
-              onPress={() => console.log('Share')}
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-              style={{ padding: 6 }}
-            >
-              <Feather name="share-2" size={26} color="#374151" />
-            </TouchableOpacity>
+          {/* Top bar */}
+          <View className="flex-row items-center justify-between mb-4 mt-10">
+            <Text className="text-2xl font-extrabold text-gray-900">Profile</Text>
             <TouchableOpacity
               onPress={() => router.push('/screens/profilesetup/settingsScreen')}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-              style={{ padding: 6 }}
             >
-              <Feather name="settings" size={26} color="#374151" />
+              <Feather name="settings" size={22} color="#374151" />
             </TouchableOpacity>
           </View>
 
           <ProfileHeader profile={profile} tierColor={tierColor} />
-          <ProfileStats stats={profile.stats} />
-          <MySizes sizes={profile.sizes} onEdit={editSizes} />
-          <FavoriteBrands
-            brands={profile.favoriteBrands}
-            onEdit={editBrands}
-            onAdd={addBrand}
+
+          <QuickActions
+            orders={profile.orders}
+            wishlistCount={profile.wishlistCount}
+            stockAlerts={profile.stockAlerts}
+            reviewsCount={profile.reviewsCount}
+            onOrders={() => router.push('/screens/order/ordersListScreen')}
+            onWishlist={() => router.push('/screens/profile/wishlistScreen')}
+            onStockAlerts={() => console.log('Stock alerts')}
+            onReviews={() => console.log('My Reviews')}
           />
+
           <MembershipCard
             memberTier={profile.memberTier}
             nextTier={profile.nextTier}
@@ -75,25 +77,17 @@ const ProfileScreen = () => {
             tierColor={tierColor}
             onViewBenefits={viewBenefits}
           />
-          <QuickActions
-            orders={profile.orders}
-            wishlistCount={profile.wishlistCount}
-            wantedPairs={profile.wantedPairs}
-            reviewsCount={profile.reviewsCount}
-            onOrders={() => router.push('/screens/order/ordersListScreen')}
-            onWishlist={() => router.push('/screens/profile/wishlistScreen')}
-            onWantedPairs={() => router.push('/screens/profile/wantedPairScreen')}
-            onReviews={() => console.log('My Reviews')}
-            onFollowings={() => router.push('/screens/profile/followingScreen')}
-            onCollections={() => router.push('/screens/profile/lockerBrowserScreen')}
-            onTransactions={() => router.push('/screens/profile/transactionHistoryScreen')}
-            onBag={() => router.push('/screens/profile/bagScreen')}
+
+          <MySizes categories={profile.sizeCategories} onEdit={editSizes} />
+
+          <FavoriteBrands
+            brands={profile.favoriteBrands}
+            followedStoresCount={profile.followedStoresCount}
+            onEdit={editBrands}
+            onFollowedStores={viewFollowedStores}
           />
 
-          {/* My Sales — taps navigate to full screen */}
-          <MySales
-            onSeeAll={() => router.push('/screens/profile/mySalesScreen')}
-          />
+          <MySales onSeeAll={() => router.push('/screens/profile/mySalesScreen')} />
 
           <MyLocker
             items={profile.lockerItems}
@@ -101,12 +95,14 @@ const ProfileScreen = () => {
             lockerPublic={lockerPublic}
             onToggleVisibility={toggleLockerVisibility}
             onAddItem={addToLocker}
-            onViewAll={() => console.log('View all locker')}
+            onViewAll={() => console.log('Manage locker')}
           />
-          <ReferralRow
-            referralCode={profile.referralCode}
-            onPress={() => router.push('/screens/profile/referralScreen')}
-          />
+
+          <DiscoverCollectionsRow onPress={openDiscoverCollections} />
+
+          <ReferralRow referralCode={profile.referralCode} onPress={inviteFriends} />
+
+          <HelpSupportRow onPress={openHelpSupport} />
         </ScrollView>
       </View>
     </BaseContainer>

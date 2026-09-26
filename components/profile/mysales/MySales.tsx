@@ -1,3 +1,4 @@
+// components/profile/mysales/MySales.tsx
 import React from 'react'
 import { View, Text, TouchableOpacity, Image } from 'react-native'
 import { Feather } from '@expo/vector-icons'
@@ -12,11 +13,11 @@ const StatPill: React.FC<{ label: string; value: string | number; color?: string
   value,
   color = '#111827',
 }) => (
-  <View className="flex-1 bg-gray-50 rounded-2xl py-3 items-center">
-    <Text className="text-base font-extrabold" style={{ color }}>
+  <View className="flex-1 bg-gray-50 rounded-xl py-2.5 items-center">
+    <Text className="text-sm font-extrabold" style={{ color }}>
       {value}
     </Text>
-    <Text className="text-xs text-gray-400 mt-0.5">{label}</Text>
+    <Text className="text-[10px] text-gray-400 mt-0.5 font-semibold">{label}</Text>
   </View>
 )
 
@@ -28,11 +29,11 @@ const SaleRow: React.FC<{ item: SaleItem; isLast: boolean; onPress: () => void }
   <TouchableOpacity
     onPress={onPress}
     activeOpacity={0.8}
-    className={`flex-row items-center py-3.5 gap-3 ${
+    className={`flex-row items-center py-3 gap-3 ${
       !isLast ? 'border-b border-gray-100' : ''
     }`}
   >
-    <View className="w-14 h-14 rounded-xl bg-gray-100 overflow-hidden">
+    <View className="w-12 h-12 rounded-xl bg-gray-100 overflow-hidden">
       {item.imageUri ? (
         <Image source={{ uri: item.imageUri }} className="w-full h-full" resizeMode="cover" />
       ) : (
@@ -41,23 +42,22 @@ const SaleRow: React.FC<{ item: SaleItem; isLast: boolean; onPress: () => void }
     </View>
 
     <View className="flex-1">
-      <Text className="text-[10px] font-bold uppercase tracking-widest text-green-500">
-        {item.productType}
-      </Text>
       <Text className="text-sm font-bold text-gray-900" numberOfLines={1}>
         {item.name}
       </Text>
-      <Text className="text-xs text-gray-400 mt-0.5">Size {item.sizeLabel}</Text>
+      <Text className="text-xs text-gray-400 mt-0.5">
+        Size {item.sizeLabel} · {item.productType}
+      </Text>
     </View>
 
-    <View className="items-end gap-1.5">
+    <View className="items-end gap-1">
       <Text className="text-sm font-extrabold text-gray-900">${item.askingPrice}</Text>
       <View
-        className="px-2.5 py-0.5 rounded-full"
+        className="px-2 py-0.5 rounded-full"
         style={{ backgroundColor: `${STATUS_COLOR[item.status]}20` }}
       >
-        <Text className="text-[11px] font-bold" style={{ color: STATUS_COLOR[item.status] }}>
-          {item.status}
+        <Text className="text-[10px] font-bold" style={{ color: STATUS_COLOR[item.status] }}>
+          {item.status === 'Pending' ? 'Pending approval' : item.status}
         </Text>
       </View>
     </View>
@@ -65,29 +65,40 @@ const SaleRow: React.FC<{ item: SaleItem; isLast: boolean; onPress: () => void }
 )
 
 const MySales: React.FC<MySalesProps> = ({ onSeeAll }) => {
-  const { sales, totalEarned, activeCount, declineCount } = useMySales()
-  const preview = sales.slice(0, 3)
+  const { sales, activeCount } = useMySales()
+  const pendingCount = sales.filter((s) => s.status === 'Pending').length
+  const soldCount = sales.filter((s) => s.status === 'Sold').length
+  const preview = sales.slice(0, 2)
 
   return (
-    <View className="mt-7">
-      <View className="flex-row items-center justify-between mb-1">
-        <Text className="text-2xl font-extrabold text-gray-900">My Sales</Text>
-        <TouchableOpacity onPress={onSeeAll}>
-          <Text className="text-lg font-semibold text-green-600">See all</Text>
+    <View
+      className="bg-white rounded-2xl px-4 py-4 mb-4"
+      style={{
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.06,
+        shadowRadius: 10,
+        elevation: 3,
+      }}
+    >
+      <View className="flex-row items-center justify-between mb-3.5">
+        <Text className="text-base font-extrabold text-gray-900">My selling</Text>
+        <TouchableOpacity onPress={onSeeAll} className="flex-row items-center gap-0.5">
+          <Text className="text-xs font-bold text-green-600">View all</Text>
+          <Feather name="chevron-right" size={13} color="#16A34A" />
         </TouchableOpacity>
       </View>
-      <Text className="text-sm text-gray-400 mb-3">Your active listings and history</Text>
 
       <View className="flex-row gap-2 mb-4">
-        <StatPill label="Total Earned" value={`$${totalEarned}`} color="#22C55E" />
-        <StatPill label="Active" value={activeCount} color="#111827" />
-        <StatPill label="Expired" value={declineCount} color="#F59E0B" />
+        <StatPill label="Active" value={activeCount} color="#22C55E" />
+        <StatPill label="Pending" value={pendingCount} color="#F59E0B" />
+        <StatPill label="Sold" value={soldCount} color="#3B82F6" />
       </View>
 
-      <View className="bg-white rounded-2xl px-4 overflow-hidden shadow-sm">
+      <View>
         {preview.length === 0 ? (
-          <View className="py-10 items-center gap-2">
-            <Feather name="tag" size={28} color="#D1D5DB" />
+          <View className="py-8 items-center gap-2">
+            <Feather name="tag" size={26} color="#D1D5DB" />
             <Text className="text-sm text-gray-400 font-medium">No listings yet</Text>
           </View>
         ) : (
@@ -105,10 +116,10 @@ const MySales: React.FC<MySalesProps> = ({ onSeeAll }) => {
       <TouchableOpacity
         onPress={onSeeAll}
         activeOpacity={0.8}
-        className="mt-3 border border-dashed border-gray-300 rounded-2xl py-4 flex-row items-center justify-center gap-2"
+        className="mt-3 border border-green-500 rounded-full py-3 flex-row items-center justify-center gap-2"
       >
-        <Feather name="plus" size={16} color="#22C55E" />
-        <Text className="text-sm font-bold text-green-600">List a new item</Text>
+        <Feather name="plus" size={15} color="#22C55E" />
+        <Text className="text-sm font-bold text-green-600">List an item</Text>
       </TouchableOpacity>
     </View>
   )

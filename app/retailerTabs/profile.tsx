@@ -27,7 +27,7 @@ export const StoreProfileScreen: React.FC = () => {
 
   return (
     <BaseContainer backgroundColor="#F9FAFB" scrollable>
-      <View style={{ flex: 1, paddingBottom: 120 }}>
+      <View style={{ flex: 1, paddingBottom: 120 ,paddingTop:30}}>
         {/* Header */}
         <View style={s.header}>
           <TouchableOpacity onPress={() => router.back()} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>

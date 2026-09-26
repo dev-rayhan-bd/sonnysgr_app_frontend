@@ -9,38 +9,33 @@ interface ReferralRowProps {
 }
 
 const ReferralRow: React.FC<ReferralRowProps> = ({ referralCode, onPress }) => (
-  <View className='pb-6'>
-  <TouchableOpacity
-    onPress={onPress}
-    activeOpacity={0.8}
-    className="flex-row items-center justify-between bg-white rounded-3xl px-5 py-5 mb-8"
-    style={{ 
-      shadowColor: '#000', 
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.08, 
-      shadowRadius: 15, 
-      elevation: 4 
+  <View
+    className="flex-row items-center justify-between bg-white rounded-2xl px-4 py-4 mb-3"
+    style={{
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.06,
+      shadowRadius: 10,
+      elevation: 3,
     }}
   >
-    <View className="flex-row items-center gap-4">
-      {/* Larger Icon Container */}
-      <View className="w-12 h-12 bg-orange-100 rounded-2xl items-center justify-center">
-        <Feather name="gift" size={22} color="#F97316" />
+    <View className="flex-row items-center gap-3">
+      <View className="w-10 h-10 bg-orange-50 rounded-xl items-center justify-center">
+        <Feather name="gift" size={18} color="#F97316" />
       </View>
-      
       <View>
-        <Text className="text-lg font-black text-gray-900 tracking-tight">Invite Friends</Text>
-        <View className="flex-row items-center gap-1.5 mt-0.5">
-          <Text className="text-sm font-bold text-orange-500">Code: {referralCode}</Text>
-          <Feather name="copy" size={12} color="#F97316" />
-        </View>
+        <Text className="text-sm font-bold text-gray-900">Invite friends</Text>
+        <Text className="text-xs text-gray-400 mt-0.5">Your code: {referralCode}</Text>
       </View>
     </View>
 
-    <View className="bg-gray-50 p-2 rounded-full">
-      <Feather name="chevron-right" size={20} color="#6B7280" />
-    </View>
-  </TouchableOpacity>
+    <TouchableOpacity
+      onPress={onPress}
+      activeOpacity={0.8}
+      className="border border-green-500 rounded-full px-3.5 py-1.5"
+    >
+      <Text className="text-xs font-bold text-green-600">Share invite</Text>
+    </TouchableOpacity>
   </View>
 )
 

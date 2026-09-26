@@ -11,10 +11,10 @@ interface DiscoverBrandsProps {
   onWishlistToggle?: (id: string) => void
 }
 
-const STOCK_BG: Record<StockStatus, string> = {
-  'In Stock': '#00C853',
-  'Low Stock': '#FF6D00',
-  'Dropping Soon': '#1565C0',
+const STOCK_COLOR: Record<StockStatus, string> = {
+  'In Stock': '#22C55E',
+  'Low Stock': '#F59E0B',
+  'Dropping Soon': '#3B82F6',
 }
 
 const BrandRow = ({
@@ -33,86 +33,43 @@ const BrandRow = ({
   <TouchableOpacity
     onPress={onPress}
     activeOpacity={0.85}
-    className={`flex-row items-center px-4 py-4 gap-4 ${!isLast ? 'border-b border-neutral-100' : ''}`}
+    style={{
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 14,
+      gap: 12,
+      borderBottomWidth: isLast ? 0 : 1,
+      borderBottomColor: '#F3F4F6',
+    }}
   >
-    <View className="w-[120px] h-[120px] rounded-xl overflow-hidden bg-neutral-200 relative">
-      <Image
-        source={{ uri: brand.image }}
-        className="w-full h-full"
-        resizeMode="cover"
-      />
-
-      <View
-        className="absolute top-2 left-2 px-2.5 py-0.5 rounded-full"
-        style={{ backgroundColor: STOCK_BG[brand.stockStatus] }}
-      >
-        <Text className="text-white text-[11px] font-extrabold">
-          {brand.stockStatus}
-        </Text>
-      </View>
-
-      <TouchableOpacity
-        onPress={onWishlist}
-        className="absolute top-2 right-2 w-10 h-10 items-center justify-center"
-      >
-        <Ionicons
-          name={brand.isWishlisted ? 'heart' : 'heart-outline'}
-          size={28}
-          color={brand.isWishlisted ? '#FF3B6B' : '#fff'}
-        />
-      </TouchableOpacity>
-
-      <View
-        className="absolute bottom-2 left-2 px-2.5 py-0.5 rounded-md"
-        style={{ backgroundColor: brand.brandColor }}
-      >
-        <Text className="text-white text-[11px] font-extrabold">
-          {brand.brandInitial}
-        </Text>
-      </View>
+    <View style={{ width: 64, height: 64, borderRadius: 12, overflow: 'hidden', backgroundColor: '#F3F4F6' }}>
+      <Image source={{ uri: brand.image }} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
     </View>
 
-    <View className="flex-1">
-      <Text className="text-[11px] font-bold text-green-600 uppercase tracking-wide">
-        {brand.productType} · {brand.audience}
-      </Text>
-      <Text
-        numberOfLines={1}
-        className="text-lg font-bold text-neutral-900"
-      >
+    <View style={{ flex: 1 }}>
+      <Text numberOfLines={2} style={{ fontSize: 14, fontWeight: '700', color: '#111827', lineHeight: 18 }}>
         {brand.name}
       </Text>
-
-      <Text className="text-sm text-neutral-400 mt-1">
-        {brand.store}
+      <Text style={{ fontSize: 12, color: '#9CA3AF', marginTop: 3 }}>
+        {brand.store} · {brand.distance}
       </Text>
-
-      <Text className="text-sm text-neutral-400">
-        {brand.distance}
-      </Text>
-    </View>
-
-    <View className="items-end gap-2">
-      <Text className="text-xl font-extrabold text-neutral-900">
-        ${brand.price}
-      </Text>
-
-      <View
-        className="px-3 py-1.5 rounded-full"
-        style={{ backgroundColor: STOCK_BG[brand.stockStatus] }}
-      >
-        <Text className="text-white text-sm font-extrabold">
-          {brand.stockStatus}
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 4 }}>
+        <Ionicons name="checkmark-circle" size={12} color={STOCK_COLOR[brand.stockStatus]} />
+        <Text style={{ fontSize: 11, fontWeight: '600', color: STOCK_COLOR[brand.stockStatus] }}>
+          {brand.stockStatus === 'Dropping Soon' ? 'Dropping soon' : `${brand.stockStatus === 'In Stock' ? 'Size M' : 'Size M'} · ${brand.stockStatus.toLowerCase()}`}
         </Text>
       </View>
+    </View>
 
+    <View style={{ alignItems: 'flex-end', gap: 8 }}>
+      <Text style={{ fontSize: 16, fontWeight: '800', color: '#111827' }}>
+        ${brand.price}
+      </Text>
       <TouchableOpacity
         onPress={onBuy}
-        className="bg-green-600 px-5 py-2 rounded-full"
+        style={{ backgroundColor: '#22C55E', paddingHorizontal: 14, paddingVertical: 8, borderRadius: 999 }}
       >
-        <Text className="text-white text-sm font-extrabold">
-          Buy
-        </Text>
+        <Text style={{ color: '#fff', fontSize: 12, fontWeight: '700' }}>View item</Text>
       </TouchableOpacity>
     </View>
   </TouchableOpacity>
@@ -125,24 +82,17 @@ export const DiscoverBrands: React.FC<DiscoverBrandsProps> = ({
   onBrandPress,
   onWishlistToggle,
 }) => (
-  <View className="mt-7 px-5">
-    <View className="flex-row items-center justify-between">
-      <Text className="text-2xl font-extrabold text-neutral-900">
-        From Your Brands
+  <View style={{ marginTop: 24, paddingHorizontal: 20 }}>
+    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+      <Text style={{ fontSize: 18, fontWeight: '800', color: '#111827' }}>
+        From your brands
       </Text>
-
       <TouchableOpacity onPress={onSeeAll}>
-        <Text className="text-lg font-semibold text-green-600">
-          See all
-        </Text>
+        <Text style={{ fontSize: 14, fontWeight: '700', color: '#22C55E' }}>See all</Text>
       </TouchableOpacity>
     </View>
 
-    <Text className="text-sm text-neutral-400 mt-1 mb-3">
-      Sneakers and apparel from the brands you follow
-    </Text>
-
-    <View className="bg-white rounded-2xl overflow-hidden shadow-sm">
+    <View style={{ marginTop: 4 }}>
       {brands.map((brand, index) => (
         <BrandRow
           key={brand.id}

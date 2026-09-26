@@ -278,7 +278,9 @@ components/
     DiscoverNearBy.tsx
     DiscoverStores.tsx
   map/
+    MapFloatingControls.tsx
     MapSearchBar.tsx
+    MapTopBar.tsx
     StoreBottomSheet.tsx
     StoreMarker.tsx
     StoreProductCard.tsx
@@ -350,7 +352,9 @@ components/
       WishlistFilterTabs.tsx
       WishlistHeader.tsx
       WishlistList.tsx
+    DiscoverCollectionsRow.tsx
     FavoriteBrands.tsx
+    HelpSupportRow.tsx
     MemberShipCard.tsx
     MyLocker.tsx
     MySizes.tsx
@@ -392,7 +396,9 @@ components/
         RatingSummary.tsx
         ReviewCard.tsx
       notifications/
+        LocationDropdown.tsx
         NotificationCard.tsx
+        NotificationFilterChips.tsx
       DashboardHeader.tsx
       HomeActions.tsx
       HomeAlert.tsx
@@ -488,6 +494,8 @@ services/
       useTrending.ts
       useWishList.ts
     map/
+      geoapifyTiles.ts
+      useGeoapifyAutocomplete.ts
       useMap.ts
     onboarding/
       useSliding.ts
@@ -611,441 +619,497 @@ tsconfig.json
 
 # Files
 
-## File: components/retailer/home/addproduct/orDivider.tsx
+## File: components/map/MapFloatingControls.tsx
 ```typescript
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+// components/map/MapFloatingControls.tsx
+import React from "react";
+import { Text, TouchableOpacity, View } from "react-native";
+import { Feather } from "@expo/vector-icons";
 
-const OrDivider = () => (
-  <View style={styles.container}>
-    <View style={styles.line} />
-    <Text style={styles.text}>OR</Text>
-    <View style={styles.line} />
-  </View>
-);
+const DARK = "#0F0F0F";
+const GREEN = "#22C55E";
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginHorizontal: 16,
-    marginTop: 20,
-    marginBottom: 4,
-  },
-  line: { flex: 1, height: 1, backgroundColor: '#F3F4F6' },
-  text: { fontSize: 11, fontWeight: '700', color: '#9CA3AF', marginHorizontal: 12 },
-});
-
-export default OrDivider;
-```
-
-## File: components/retailer/home/addproduct/productBarcodeScan.tsx
-```typescript
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { Feather } from '@expo/vector-icons';
-
-interface ProductBarcodeScanProps {
-  onOpenScanner: () => void;
-  onEnterManually: () => void;
+interface SearchThisAreaPillProps {
+  onPress: () => void;
+  top: number;
 }
 
-const ProductBarcodeScan = ({ onOpenScanner, onEnterManually }: ProductBarcodeScanProps) => (
-  <View style={styles.card}>
-    <View style={styles.row}>
-      <View style={styles.iconBox}>
-        <Feather name="maximize" size={20} color="#111" />
-      </View>
-      <View style={styles.textCol}>
-        <Text style={styles.title}>Scan Barcode</Text>
-        <Text style={styles.subtitle}>Scan a UPC to fill product details automatically</Text>
-      </View>
-    </View>
-
-    <TouchableOpacity style={styles.scanBtn} onPress={onOpenScanner} activeOpacity={0.85}>
-      <Feather name="camera" size={16} color="#fff" />
-      <Text style={styles.scanBtnText}>Open Scanner</Text>
-    </TouchableOpacity>
-
-    <TouchableOpacity onPress={onEnterManually} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-      <Text style={styles.manualText}>Enter barcode manually</Text>
+export const SearchThisAreaPill = ({ onPress, top }: SearchThisAreaPillProps) => (
+  <View style={{ position: "absolute", top, left: 0, right: 0, alignItems: "center", zIndex: 5 }}>
+    <TouchableOpacity
+      onPress={onPress}
+      activeOpacity={0.85}
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 6,
+        backgroundColor: "#FFFFFF",
+        borderRadius: 100,
+        paddingHorizontal: 14,
+        paddingVertical: 9,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.12,
+        shadowRadius: 8,
+        elevation: 5,
+      }}
+    >
+      <Feather name="rotate-cw" size={13} color={DARK} />
+      <Text style={{ fontSize: 12, fontWeight: "700", color: DARK }}>Search this area</Text>
     </TouchableOpacity>
   </View>
 );
 
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: '#F0FDF4',
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#DCFCE7',
-    marginHorizontal: 16,
-    marginTop: 16,
-    padding: 16,
-    alignItems: 'center',
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'stretch',
-    marginBottom: 14,
-  },
-  iconBox: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  textCol: { flex: 1 },
-  title: { fontSize: 15, fontWeight: '800', color: '#111' },
-  subtitle: { fontSize: 12, color: '#4B7A5A', marginTop: 2 },
-  scanBtn: {
-    flexDirection: 'row',
-    backgroundColor: '#111',
-    alignSelf: 'stretch',
-    height: 50,
-    borderRadius: 14,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 10,
-    gap: 8,
-  },
-  scanBtnText: { color: '#fff', fontSize: 14, fontWeight: '800' },
-  manualText: { fontSize: 13, fontWeight: '700', color: '#16A34A' },
-});
-
-export default ProductBarcodeScan;
-```
-
-## File: components/retailer/home/addproduct/productFoundCard.tsx
-```typescript
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import { Feather } from '@expo/vector-icons';
-
-interface ProductFoundCardProps {
-  productName: string;
-  imageUri?: string;
-  onPress?: () => void;
+interface StoreCountPillProps {
+  count: number;
+  onListView: () => void;
+  bottom: number;
 }
 
-const ProductFoundCard = ({ productName, imageUri, onPress }: ProductFoundCardProps) => (
-  <TouchableOpacity style={styles.card} activeOpacity={0.85} onPress={onPress} disabled={!onPress}>
-    {imageUri ? (
-      <Image source={{ uri: imageUri }} style={styles.thumb} resizeMode="contain" />
-    ) : (
-      <View style={styles.thumbPlaceholder}>
-        <Feather name="image" size={20} color="#9CA3AF" />
-      </View>
-    )}
-
-    <View style={styles.textCol}>
-      <View style={styles.titleRow}>
-        <View style={styles.checkCircle}>
-          <Feather name="check" size={11} color="#fff" />
-        </View>
-        <Text style={styles.title}>Product found - Review details</Text>
-      </View>
-      <Text style={styles.subtitle} numberOfLines={1}>{productName}</Text>
+export const StoreCountPill = ({ count, onListView, bottom }: StoreCountPillProps) => (
+  <View style={{ position: "absolute", left: 16, bottom, zIndex: 5 }}>
+    <View
+      style={{
+        backgroundColor: "#FFFFFF",
+        borderRadius: 16,
+        paddingHorizontal: 14,
+        paddingVertical: 10,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+        elevation: 4,
+      }}
+    >
+      <Text style={{ fontSize: 13, fontWeight: "800", color: DARK, marginBottom: 4 }}>
+        {count} stores
+      </Text>
+      <TouchableOpacity
+        onPress={onListView}
+        activeOpacity={0.7}
+        style={{ flexDirection: "row", alignItems: "center", gap: 5 }}
+      >
+        <Feather name="list" size={13} color={GREEN} />
+        <Text style={{ fontSize: 12, fontWeight: "700", color: GREEN }}>List view</Text>
+      </TouchableOpacity>
     </View>
-
-    <Feather name="chevron-right" size={18} color="#16A34A" />
-  </TouchableOpacity>
+  </View>
 );
 
-const styles = StyleSheet.create({
-  card: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F0FDF4',
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#DCFCE7',
-    marginHorizontal: 16,
-    marginTop: 16,
-    padding: 12,
-  },
-  thumb: { width: 48, height: 48, marginRight: 12 },
-  thumbPlaceholder: {
-    width: 48,
-    height: 48,
-    borderRadius: 10,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  textCol: { flex: 1 },
-  titleRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 2 },
-  checkCircle: {
-    width: 16,
-    height: 16,
-    borderRadius: 8,
-    backgroundColor: '#22C55E',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 6,
-  },
-  title: { fontSize: 13, fontWeight: '800', color: '#111' },
-  subtitle: { fontSize: 12, color: '#4B7A5A', marginLeft: 22 },
-});
-
-export default ProductFoundCard;
-```
-
-## File: components/retailer/inventory/InventoryActions.tsx
-```typescript
-import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
-import { Feather } from '@expo/vector-icons';
-
-interface InventoryActionsProps {
-  onAddProduct?: () => void;
-  onScan?: () => void;
+interface LocateButtonProps {
+  onPress: () => void;
+  isLoading?: boolean;
+  bottom: number;
 }
 
-const InventoryActions: React.FC<InventoryActionsProps> = ({ onAddProduct, onScan }) => {
+export const LocateButton = ({ onPress, isLoading, bottom }: LocateButtonProps) => (
+  <View style={{ position: "absolute", right: 16, bottom, zIndex: 5 }}>
+    <TouchableOpacity
+      onPress={onPress}
+      activeOpacity={0.85}
+      style={{
+        width: 48,
+        height: 48,
+        borderRadius: 24,
+        backgroundColor: GREEN,
+        alignItems: "center",
+        justifyContent: "center",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.15,
+        shadowRadius: 8,
+        elevation: 5,
+      }}
+    >
+      <Feather name="navigation" size={20} color="#fff" />
+    </TouchableOpacity>
+  </View>
+);
+```
+
+## File: components/map/MapTopBar.tsx
+```typescript
+// components/map/MapTopBar.tsx
+import React from "react";
+import {
+  ActivityIndicator,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { Feather } from "@expo/vector-icons";
+
+const GREEN = "#22C55E";
+const DARK = "#0F0F0F";
+
+interface MapTopBarProps {
+  locationLabel: string;
+  onLocationPillPress?: () => void;
+  query: string;
+  onChangeQuery: (text: string) => void;
+  onClear: () => void;
+  onFilterPress: () => void;
+  activeFilterCount?: number;
+  mySizesLabel: string;
+  isOpenNow: boolean;
+  onToggleOpenNow: () => void;
+  radiusLabel: string;
+  onRadiusPress: () => void;
+}
+
+const MapTopBar = ({
+  locationLabel,
+  onLocationPillPress,
+  query,
+  onChangeQuery,
+  onClear,
+  onFilterPress,
+  activeFilterCount = 0,
+  mySizesLabel,
+  isOpenNow,
+  onToggleOpenNow,
+  radiusLabel,
+  onRadiusPress,
+}: MapTopBarProps) => {
+  const hasFilters = activeFilterCount > 0;
+
   return (
-    <View style={{
-      flexDirection: 'row',
-      gap: 10,
-      paddingHorizontal: 16,
-      paddingBottom: 14,
-      backgroundColor: '#fff',
-    }}>
-      <TouchableOpacity
-        onPress={onAddProduct}
-        activeOpacity={0.85}
+    <View style={{ backgroundColor: "#fff", paddingBottom: 10 }}>
+      {/* ── Title row ── */}
+      <View
         style={{
-          flex: 1,
-          flexDirection: 'row',
-          backgroundColor: '#00C853',
-          borderRadius: 14,
-          height: 48,
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 8,
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          paddingHorizontal: 16,
+          paddingTop: 8,
+          paddingBottom: 10,
         }}
       >
-        <Feather name="plus" size={18} color="#fff" />
-        <Text style={{ color: '#fff', fontSize: 14, fontWeight: '800' }}>Add Product</Text>
-      </TouchableOpacity>
+        <Text style={{ fontSize: 20, fontWeight: "800", color: DARK }}>
+          Nearby stores
+        </Text>
+        <TouchableOpacity
+          onPress={onLocationPillPress}
+          activeOpacity={0.8}
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 4,
+            backgroundColor: "#F5F5F7",
+            borderRadius: 100,
+            paddingHorizontal: 10,
+            paddingVertical: 6,
+          }}
+        >
+          <Feather name="map-pin" size={12} color={GREEN} />
+          <Text style={{ fontSize: 12, fontWeight: "700", color: DARK }}>
+            {locationLabel}
+          </Text>
+          <Feather name="chevron-down" size={12} color="#8A8A9A" />
+        </TouchableOpacity>
+      </View>
 
-      <TouchableOpacity
-        onPress={onScan}
-        activeOpacity={0.85}
-        style={{
-          flex: 1,
-          flexDirection: 'row',
-          backgroundColor: '#fff',
-          borderWidth: 1,
-          borderColor: '#E5E7EB',
-          borderRadius: 14,
-          height: 48,
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 8,
-        }}
+      {/* ── Search bar row ── */}
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 10, paddingHorizontal: 16 }}>
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "row",
+            alignItems: "center",
+            backgroundColor: "#F5F5F7",
+            borderRadius: 14,
+            paddingHorizontal: 14,
+            height: 46,
+          }}
+        >
+          <Feather name="search" size={17} color="#8A8A9A" style={{ marginRight: 10 }} />
+          <TextInput
+            style={{ flex: 1, color: DARK, fontSize: 14 }}
+            placeholder="Search products, brands, stores"
+            placeholderTextColor="#9CA3AF"
+            value={query}
+            onChangeText={onChangeQuery}
+            returnKeyType="search"
+            autoCapitalize="none"
+            autoCorrect={false}
+          />
+          {query.length > 0 && (
+            <TouchableOpacity onPress={onClear} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+              <Feather name="x" size={16} color="#9CA3AF" />
+            </TouchableOpacity>
+          )}
+        </View>
+
+        <TouchableOpacity
+          onPress={onFilterPress}
+          activeOpacity={0.8}
+          style={{
+            width: 46,
+            height: 46,
+            borderRadius: 14,
+            backgroundColor: "#F5F5F7",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Feather name="sliders" size={18} color={hasFilters ? GREEN : DARK} />
+          {hasFilters && (
+            <View
+              style={{
+                position: "absolute",
+                top: -3,
+                right: -3,
+                width: 15,
+                height: 15,
+                borderRadius: 8,
+                backgroundColor: GREEN,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Text style={{ color: "#fff", fontSize: 8, fontWeight: "700" }}>
+                {activeFilterCount > 9 ? "9+" : activeFilterCount}
+              </Text>
+            </View>
+          )}
+        </TouchableOpacity>
+      </View>
+
+      {/* ── Filter chip row ── */}
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 10, gap: 8 }}
       >
-        <Feather name="maximize" size={16} color="#111" />
-        <Text style={{ color: '#111', fontSize: 14, fontWeight: '800' }}>Scan</Text>
-      </TouchableOpacity>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 5,
+            backgroundColor: "#EAFBF0",
+            borderRadius: 100,
+            paddingHorizontal: 12,
+            paddingVertical: 7,
+          }}
+        >
+          <Text style={{ fontSize: 12 }}>👟</Text>
+          <Text style={{ fontSize: 12, fontWeight: "700", color: "#15803D" }}>
+            My sizes: {mySizesLabel}
+          </Text>
+        </View>
+
+        <TouchableOpacity
+          onPress={onToggleOpenNow}
+          activeOpacity={0.8}
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 5,
+            backgroundColor: isOpenNow ? DARK : "#F5F5F7",
+            borderRadius: 100,
+            paddingHorizontal: 12,
+            paddingVertical: 7,
+          }}
+        >
+          <Feather name="clock" size={12} color={isOpenNow ? "#fff" : DARK} />
+          <Text style={{ fontSize: 12, fontWeight: "700", color: isOpenNow ? "#fff" : DARK }}>
+            Open now
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={onRadiusPress}
+          activeOpacity={0.8}
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 5,
+            backgroundColor: "#F5F5F7",
+            borderRadius: 100,
+            paddingHorizontal: 12,
+            paddingVertical: 7,
+          }}
+        >
+          <Feather name="navigation" size={12} color={DARK} />
+          <Text style={{ fontSize: 12, fontWeight: "700", color: DARK }}>{radiusLabel}</Text>
+          <Feather name="chevron-down" size={12} color="#8A8A9A" />
+        </TouchableOpacity>
+      </ScrollView>
     </View>
   );
 };
 
-export default InventoryActions;
+export default MapTopBar;
 ```
 
-## File: components/retailer/orders/OrdersSummary.tsx
+## File: components/profile/DiscoverCollectionsRow.tsx
 ```typescript
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+// components/profile/DiscoverCollectionsRow.tsx
+import React from 'react'
+import { View, Text, TouchableOpacity } from 'react-native'
+import { Feather } from '@expo/vector-icons'
 
-interface OrdersSummaryProps {
-    ordersToday: number;
-    avgPrepMinutes: number;
+interface DiscoverCollectionsRowProps {
+  onPress: () => void
 }
 
-const OrdersSummary: React.FC<OrdersSummaryProps> = ({ ordersToday, avgPrepMinutes }) => (
-    <View style={styles.row}>
-        <Text style={styles.text}>{ordersToday} orders today</Text>
-        <View style={styles.right}>
-            <Feather name="bar-chart-2" size={13} color="#9CA3AF" />
-            <Text style={styles.text}>Avg. prep {avgPrepMinutes} min</Text>
-        </View>
+const DiscoverCollectionsRow: React.FC<DiscoverCollectionsRowProps> = ({ onPress }) => (
+  <TouchableOpacity
+    onPress={onPress}
+    activeOpacity={0.8}
+    className="flex-row items-center justify-between bg-white rounded-2xl px-4 py-4 mb-3"
+    style={{
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.06,
+      shadowRadius: 10,
+      elevation: 3,
+    }}
+  >
+    <View className="flex-row items-center gap-3">
+      <View className="w-10 h-10 bg-green-50 rounded-xl items-center justify-center">
+        <Feather name="grid" size={18} color="#22C55E" />
+      </View>
+      <View>
+        <Text className="text-sm font-bold text-gray-900">Discover collections</Text>
+        <Text className="text-xs text-gray-400 mt-0.5">Curated drops, trends and more</Text>
+      </View>
     </View>
-);
+    <Feather name="chevron-right" size={18} color="#D1D5DB" />
+  </TouchableOpacity>
+)
 
-const styles = StyleSheet.create({
-    row: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-        backgroundColor: '#fff',
-        borderBottomWidth: 1,
-        borderBottomColor: '#F3F4F6',
-    },
-    right: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 5,
-    },
-    text: {
-        fontSize: 12,
-        color: '#6B7280',
-        fontWeight: '500',
-    },
-});
-
-export default OrdersSummary;
+export default DiscoverCollectionsRow
 ```
 
-## File: components/retailer/orders/RecentActivity.tsx
+## File: components/profile/HelpSupportRow.tsx
 ```typescript
-import React from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import { Feather } from '@expo/vector-icons';
-import { Order } from '@/types/Orders';
+// components/profile/HelpSupportRow.tsx
+import React from 'react'
+import { View, Text, TouchableOpacity } from 'react-native'
+import { Feather } from '@expo/vector-icons'
 
-interface RecentActivityProps {
-    orders: Order[];
-    onViewAll: () => void;
-    onOrderPress: (orderId: string) => void;
+interface HelpSupportRowProps {
+  onPress: () => void
 }
 
-const RecentActivity: React.FC<RecentActivityProps> = ({ orders, onViewAll, onOrderPress }) => {
-    if (orders.length === 0) return null;
+const HelpSupportRow: React.FC<HelpSupportRowProps> = ({ onPress }) => (
+  <TouchableOpacity
+    onPress={onPress}
+    activeOpacity={0.8}
+    className="flex-row items-center justify-between bg-white rounded-2xl px-4 py-4 mb-3"
+    style={{
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.06,
+      shadowRadius: 10,
+      elevation: 3,
+    }}
+  >
+    <View className="flex-row items-center gap-3">
+      <View className="w-10 h-10 bg-gray-50 rounded-xl items-center justify-center">
+        <Feather name="help-circle" size={18} color="#6B7280" />
+      </View>
+      <Text className="text-sm font-bold text-gray-900">Help & support</Text>
+    </View>
+    <Feather name="chevron-right" size={18} color="#D1D5DB" />
+  </TouchableOpacity>
+)
 
-    return (
-        <View style={styles.container}>
-            <View style={styles.headerRow}>
-                <Text style={styles.title}>Recent Activity</Text>
-                <TouchableOpacity onPress={onViewAll} hitSlop={8}>
-                    <Text style={styles.viewAll}>View All</Text>
-                </TouchableOpacity>
-            </View>
+export default HelpSupportRow
+```
 
-            {orders.map((order) => (
-                <TouchableOpacity
-                    key={order.id}
-                    style={styles.row}
-                    activeOpacity={0.7}
-                    onPress={() => onOrderPress(order.id)}
-                >
-                    <View style={styles.imgWrapper}>
-                        {order.imageUrl ? (
-                            <Image source={{ uri: order.imageUrl }} style={styles.img} resizeMode="cover" />
-                        ) : (
-                            <View style={styles.imgPlaceholder} />
-                        )}
-                    </View>
+## File: services/hooks/map/geoapifyTiles.ts
+```typescript
+// services/map/geoapifyTiles.ts
 
-                    <View style={styles.info}>
-                        <View style={styles.statusBadge}>
-                            <Text style={styles.statusText}>
-                                {order.status === 'cancelled' ? 'Cancelled' : 'Completed'}
-                            </Text>
-                        </View>
-                        <Text style={styles.productName} numberOfLines={1}>{order.productName}</Text>
-                        <Text style={styles.meta}>
-                            #{order.orderNumber} · ${order.price} · {order.completedDate ?? order.cancelledDate}
-                        </Text>
-                    </View>
+const GEOAPIFY_API_KEY = process.env.EXPO_PUBLIC_GEOAPIFY_API_KEY;
 
-                    <Feather name="chevron-right" size={18} color="#D1D5DB" />
-                </TouchableOpacity>
-            ))}
-        </View>
-    );
-};
+if (!GEOAPIFY_API_KEY) {
+  console.warn(
+    "[geoapifyTiles] EXPO_PUBLIC_GEOAPIFY_API_KEY is not set — map tiles will fail to load.",
+  );
+}
 
-const styles = StyleSheet.create({
-    container: {
-        marginTop: 4,
-        paddingHorizontal: 4,
-    },
-    headerRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: 8,
-        marginBottom: 8,
-    },
-    title: {
-        fontSize: 15,
-        fontWeight: '800',
-        color: '#111',
-    },
-    viewAll: {
-        fontSize: 12,
-        fontWeight: '700',
-        color: '#00C853',
-    },
-    row: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#fff',
-        borderRadius: 12,
-        padding: 10,
-        marginBottom: 8,
-        gap: 10,
-    },
-    imgWrapper: {
-        width: 48,
-        height: 48,
-        borderRadius: 8,
-        overflow: 'hidden',
-        backgroundColor: '#F0F0F0',
-        flexShrink: 0,
-    },
-    img: { width: 48, height: 48 },
-    imgPlaceholder: { width: 48, height: 48, backgroundColor: '#E8E8E8' },
-    info: { flex: 1, minWidth: 0 },
-    statusBadge: {
-        alignSelf: 'flex-start',
-        backgroundColor: '#F3F3F3',
-        borderRadius: 8,
-        paddingHorizontal: 6,
-        paddingVertical: 1,
-        marginBottom: 3,
-    },
-    statusText: {
-        fontSize: 9,
-        fontWeight: '700',
-        color: '#555',
-    },
-    productName: {
-        fontSize: 13,
-        fontWeight: '700',
-        color: '#111',
-        marginBottom: 2,
-    },
-    meta: {
-        fontSize: 11,
-        color: '#9CA3AF',
-    },
-});
+// Pick any Geoapify style: osm-carto, osm-bright, klokantech-basic,
+// positron, dark-matter, etc. Full list: https://apidocs.geoapify.com/docs/map-tiles/
+export const GEOAPIFY_STYLE = "osm-bright";
 
-export default RecentActivity;
+// react-native-maps' UrlTile expects {x}/{y}/{z} placeholders (lowercase).
+export const GEOAPIFY_TILE_URL = `https://maps.geoapify.com/v1/tile/${GEOAPIFY_STYLE}/{z}/{x}/{y}.png?apiKey=${GEOAPIFY_API_KEY}`;
+```
+
+## File: services/hooks/map/useGeoapifyAutocomplete.ts
+```typescript
+// services/hooks/map/useGeoapifyAutocomplete.ts
+import { useCallback, useRef, useState } from "react";
+
+const GEOAPIFY_API_KEY = process.env.EXPO_PUBLIC_GEOAPIFY_API_KEY;
+
+export interface GeoapifyPlace {
+  formatted: string;
+  lat: number;
+  lon: number;
+}
+
+export function useGeoapifyAutocomplete() {
+  const [results, setResults] = useState<GeoapifyPlace[]>([]);
+  const [loading, setLoading] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const search = useCallback((text: string) => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+
+    if (!text || text.length < 3) {
+      setResults([]);
+      return;
+    }
+
+    debounceRef.current = setTimeout(async () => {
+      setLoading(true);
+      try {
+        const url = `https://api.geoapify.com/v1/geocode/autocomplete?text=${encodeURIComponent(
+          text,
+        )}&apiKey=${GEOAPIFY_API_KEY}`;
+        const res = await fetch(url);
+        const json = await res.json();
+
+        const places: GeoapifyPlace[] = (json.features ?? []).map(
+          (f: any) => ({
+            formatted: f.properties.formatted,
+            lat: f.properties.lat,
+            lon: f.properties.lon,
+          }),
+        );
+        setResults(places);
+      } catch (err) {
+        console.warn("[useGeoapifyAutocomplete] request failed", err);
+        setResults([]);
+      } finally {
+        setLoading(false);
+      }
+    }, 350);
+  }, []);
+
+  return { results, loading, search };
+}
 ```
 
 ## File: app/onboarding/splashScreen.tsx
 ```typescript
 /**
  * SplashScreen.tsx
- * Pure React Native — zero native dependencies.
+ * Simple, static splash screen — logo, tagline, and a progress bar.
+ * No blinking, no sparks, no squeeze animation.
  */
 
 import React, { useEffect, useRef } from 'react'
 import {
   View,
+  Text,
   Animated,
   Easing,
   Dimensions,
@@ -1054,29 +1118,11 @@ import {
 } from 'react-native'
 import { useRouter } from 'expo-router'
 
-// ── Replace with your actual imports ───────────────────────────
-import SplashSvg   from '@/assets/images/onboarding/splash.svg'
-import ShowPicture from '@/components/shared/ShowPicture'
+const { width } = Dimensions.get('window')
 
-const { width, height } = Dimensions.get('window')
-
-// ── Geometry ───────────────────────────────────────────────────
-const STREAK_W     = width * 0.86
-const STREAK_H     = 5
-const STREAK_TOP   = height * 0.62
-const STREAK_LEFT  = (width - STREAK_W) / 2
-const ANGLE        = '-18deg'
-const POINT_TRAVEL = STREAK_W * 0.44
-
-// ── Timing (ms) ────────────────────────────────────────────────
-const T_LOGO_IN       = 650
-const T_SPARK_SHOOT   = 500
-const T_SPARK_HOLD    = 300
-const T_SPARK_FADE    = 440
-const T_SQUEEZE_PRESS = 300
-const T_SQUEEZE_HOLD  = 480
-const T_SCREEN_OUT    = 560
-const SQUEEZE_ITERS   = 3
+const LOAD_DURATION = 1400 // ms — how long the progress bar takes to fill
+const HOLD_AFTER    = 200
+  // ms — small pause once full before navigating
 
 interface Props {
   nextRoute?: string
@@ -1086,300 +1132,50 @@ const SplashScreen: React.FC<Props> = ({
   nextRoute = '/onboarding/slidingScreen',
 }) => {
   const router = useRouter()
+  const progress = useRef(new Animated.Value(0)).current
 
-  // ── Animated values ────────────────────────────────────────
-  const logoOpacity   = useRef(new Animated.Value(0)).current
-  const logoTint      = useRef(new Animated.Value(0)).current  // 0..1, only during spark
-  const squeeze       = useRef(new Animated.Value(1)).current
-  const sparkProgress = useRef(new Animated.Value(0)).current
-  const sparkAlpha    = useRef(new Animated.Value(0)).current  // master spark visibility
-  const pointAlpha    = useRef(new Animated.Value(0)).current
-  const pointX        = useRef(new Animated.Value(0)).current
-  const screenOpacity = useRef(new Animated.Value(1)).current
-
-  // Pre-computed layer opacities — created ONCE in refs so they
-  // never re-instantiate and always track sparkAlpha correctly.
-  const bloomOpacity  = useRef(Animated.multiply(sparkAlpha, 0.11)).current
-  const coronaOpacity = useRef(Animated.multiply(sparkAlpha, 0.20)).current
-  const innerOpacity  = useRef(Animated.multiply(sparkAlpha, 0.40)).current
-  const tipOpacity    = useRef(Animated.multiply(sparkAlpha, 0.93)).current
-
-  // ── Spark + logo-flash cycle ──────────────────────────────
-  const runSparkCycle = (onDone?: () => void) => {
-    // Hard-reset everything to 0 before each cycle
-    sparkProgress.setValue(0)
-    sparkAlpha.setValue(0)
-    pointAlpha.setValue(0)
-    pointX.setValue(0)
-    logoTint.setValue(0)
-
-    Animated.sequence([
-      // Flash point blinks on
-      Animated.timing(pointAlpha, {
-        toValue: 1, duration: 55, useNativeDriver: true,
-      }),
-
-      // Shoot streak + logo flash
-      Animated.parallel([
-        Animated.timing(sparkProgress, {
-          toValue: 1, duration: T_SPARK_SHOOT,
-          easing: Easing.out(Easing.exp), useNativeDriver: true,
-        }),
-        Animated.timing(pointX, {
-          toValue: 1, duration: T_SPARK_SHOOT,
-          easing: Easing.out(Easing.exp), useNativeDriver: true,
-        }),
-        Animated.timing(sparkAlpha, {
-          toValue: 1, duration: 190, useNativeDriver: true,
-        }),
-        // Logo tint: ramp up then back to 0 within the shoot window
-        Animated.sequence([
-          Animated.timing(logoTint, {
-            toValue: 1, duration: T_SPARK_SHOOT * 0.4,
-            easing: Easing.out(Easing.quad), useNativeDriver: true,
-          }),
-          Animated.timing(logoTint, {
-            toValue: 0, duration: T_SPARK_SHOOT * 0.6,
-            easing: Easing.in(Easing.quad), useNativeDriver: true,
-          }),
-        ]),
-      ]),
-
-      Animated.delay(T_SPARK_HOLD),
-
-      // Fade out spark layers AND point together
-      Animated.parallel([
-        Animated.timing(sparkAlpha, {
-          toValue: 0, duration: T_SPARK_FADE, useNativeDriver: true,
-        }),
-        Animated.timing(pointAlpha, {
-          toValue: 0, duration: T_SPARK_FADE * 0.55, useNativeDriver: true,
-        }),
-        // Guarantee logoTint is 0 after spark (belt + braces)
-        Animated.timing(logoTint, {
-          toValue: 0, duration: 80, useNativeDriver: true,
-        }),
-      ]),
-    ]).start(({ finished }) => {
-      if (finished) {
-        // Hard-reset all spark values to absolute 0 so nothing bleeds
-        sparkAlpha.setValue(0)
-        sparkProgress.setValue(0)
-        pointAlpha.setValue(0)
-        logoTint.setValue(0)
-      }
-      onDone?.()
-    })
-  }
-
-  // ── Squeeze loop ──────────────────────────────────────────
-  const runSqueezeLoop = (onDone?: () => void) => {
-    squeeze.setValue(1)
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(squeeze, {
-          toValue: 0.82, duration: T_SQUEEZE_PRESS,
-          easing: Easing.inOut(Easing.quad), useNativeDriver: true,
-        }),
-        Animated.spring(squeeze, {
-          toValue: 1, friction: 3, tension: 150, useNativeDriver: true,
-        }),
-        Animated.delay(T_SQUEEZE_HOLD),
-      ]),
-      { iterations: SQUEEZE_ITERS },
-    ).start(onDone)
-  }
-
-  // ── Master sequence ───────────────────────────────────────
   useEffect(() => {
-    Animated.timing(logoOpacity, {
-      toValue: 1, duration: T_LOGO_IN,
-      easing: Easing.out(Easing.quad), useNativeDriver: true,
+    Animated.timing(progress, {
+      toValue: 1,
+      duration: LOAD_DURATION,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: false, // width interpolation isn't supported by the native driver
     }).start(() => {
-      runSparkCycle(() => {
-        runSqueezeLoop(() => {
-          runSparkCycle(() => {
-            Animated.timing(screenOpacity, {
-              toValue: 0, duration: T_SCREEN_OUT,
-              easing: Easing.in(Easing.quad), useNativeDriver: true,
-            }).start(() => router.replace(nextRoute as never))
-          })
-        })
-      })
+      setTimeout(() => {
+        router.replace(nextRoute as never)
+      }, HOLD_AFTER)
     })
   }, [])
 
-  // ── Interpolations ────────────────────────────────────────
-  const streakScaleX = sparkProgress.interpolate({
-    inputRange: [0, 1], outputRange: [0.001, 1],
+  const barWidth = progress.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0%', '100%'],
   })
-
-  const pointTranslate = pointX.interpolate({
-    inputRange: [0, 1], outputRange: [0, POINT_TRAVEL],
-  })
-
-  // Logo tint opacity 0→0.22 (green flash) then back to 0
-  const logoTintOpacity = logoTint.interpolate({
-    inputRange: [0, 1], outputRange: [0, 0.22],
-  })
-
-  // Shared streak transform — grows left→right
-  const streakTransform = [
-    { rotate: ANGLE },
-    { translateX: -(STREAK_W / 2) },
-    { scaleX: streakScaleX },
-    { translateX: STREAK_W / 2 },
-  ] as const
 
   return (
-    <Animated.View style={[s.root, { opacity: screenOpacity }]}>
+    <View style={s.root}>
       <StatusBar barStyle="light-content" backgroundColor="#000" />
 
-      {/* ── Logo ───────────────────────────────────────────── */}
-      <Animated.View
-        style={[
-          s.logoWrap,
-          {
-            top:       height * 0.28,
-            opacity:   logoOpacity,
-            transform: [{ scale: squeeze }],
-          },
-        ]}
-      >
+      {/* ── Wordmark + tagline, centered ─────────────────────── */}
+      <View style={s.center}>
+        <Text style={s.logoGo}>GO</Text>
+        <Text style={s.logoSnkr}>SNKR</Text>
+        <Text style={s.tagline}>Your size. Nearby. Now.</Text>
+      </View>
 
-          <ShowPicture
-            SvgComponent={SplashSvg}
-            width={width * 0.72}
-            height={height * 0.22}
-          />
-       
-        <View style={s.logoPlaceholder} />
-
-        {/* Green blink — ONLY visible during spark, hard-0 otherwise */}
-        <Animated.View
-          pointerEvents="none"
-          style={[s.logoTint, { opacity: logoTintOpacity }]}
-        />
-      </Animated.View>
-
-      {/* ═══════════════════════════════════════════════════════
-          SPARK LAYERS
-          All opacity is driven by sparkAlpha (0 when idle).
-          Pre-multiplied refs prevent inline Value leaks.
-      ══════════════════════════════════════════════════════ */}
-
-      {/* Layer 1 — Outer bloom  60 px */}
-      <Animated.View
-        pointerEvents="none"
-        style={[s.layer, {
-          top:          STREAK_TOP - 27,
-          left:         STREAK_LEFT,
-          width:        STREAK_W,
-          height:       60,
-          borderRadius: 30,
-          backgroundColor: '#22c55e',
-          opacity:      bloomOpacity,
-          transform:    streakTransform,
-        }]}
-      />
-
-      {/* Layer 2 — Mid corona  36 px */}
-      <Animated.View
-        pointerEvents="none"
-        style={[s.layer, {
-          top:          STREAK_TOP - 15,
-          left:         STREAK_LEFT,
-          width:        STREAK_W,
-          height:       36,
-          borderRadius: 18,
-          backgroundColor: '#4ade80',
-          opacity:      coronaOpacity,
-          transform:    streakTransform,
-        }]}
-      />
-
-      {/* Layer 3 — Inner corona  18 px */}
-      <Animated.View
-        pointerEvents="none"
-        style={[s.layer, {
-          top:          STREAK_TOP - 6,
-          left:         STREAK_LEFT,
-          width:        STREAK_W,
-          height:       18,
-          borderRadius: 9,
-          backgroundColor: '#86efac',
-          opacity:      innerOpacity,
-          transform:    streakTransform,
-        }]}
-      />
-
-      {/* Layer 4 — Bright core line  5 px */}
-      <Animated.View
-        pointerEvents="none"
-        style={[s.layer, {
-          top:          STREAK_TOP - STREAK_H / 2,
-          left:         STREAK_LEFT,
-          width:        STREAK_W,
-          height:       STREAK_H,
-          borderRadius: STREAK_H / 2,
-          overflow:     'hidden',
-          opacity:      sparkAlpha,
-          transform:    streakTransform,
-        }]}
-      >
-        {/* Dark green tail */}
-        <View style={[s.strip, { left: 0,     width: '45%', backgroundColor: '#052e16', opacity: 0.85 }]} />
-        {/* Mid */}
-        <View style={[s.strip, { left: '30%', width: '40%', backgroundColor: '#16a34a', opacity: 0.95 }]} />
-        {/* Bright */}
-        <View style={[s.strip, { left: '58%', width: '28%', backgroundColor: '#4ade80'                }]} />
-        {/* Near-white */}
-        <View style={[s.strip, { left: '78%', width: '16%', backgroundColor: '#dcfce7'                }]} />
-        {/* White tip */}
-        <View style={[s.strip, { left: '90%', right: 0,     backgroundColor: '#ffffff'                }]} />
-      </Animated.View>
-
-      {/* Layer 5 — White-hot tip orb */}
-      <Animated.View
-        pointerEvents="none"
-        style={[s.layer, {
-          top:          STREAK_TOP - 10,
-          left:         STREAK_LEFT + STREAK_W - 22,
-          width:        22,
-          height:       22,
-          borderRadius: 11,
-          backgroundColor: '#ffffff',
-          opacity:      tipOpacity,
-          shadowColor:  '#86efac',
-          shadowOffset: { width: 0, height: 0 },
-          shadowOpacity: 1,
-          shadowRadius: 14,
-          elevation:    16,
-          transform:    streakTransform,
-        }]}
-      />
-
-      {/* ── Flash point (travels along streak) ─────────────── */}
-      <Animated.View
-        pointerEvents="none"
-        style={[s.flashPoint, {
-          top:     STREAK_TOP - 8,
-          left:    STREAK_LEFT - 9,
-          opacity: pointAlpha,
-          transform: [
-            { rotate: ANGLE },
-            { translateX: pointTranslate },
-          ],
-        }]}
-      />
-
-    </Animated.View>
+      {/* ── Loading bar + status text, near bottom ───────────── */}
+      <View style={s.footer}>
+        <View style={s.track}>
+          <Animated.View style={[s.fill, { width: barWidth }]} />
+        </View>
+        <Text style={s.statusText}>Finding nearby inventory...</Text>
+      </View>
+    </View>
   )
 }
 
 export default SplashScreen
 
-// ── Styles ──────────────────────────────────────────────────────
 const s = StyleSheet.create({
   root: {
     flex:            1,
@@ -1388,42 +1184,55 @@ const s = StyleSheet.create({
     justifyContent:  'center',
   },
 
-  logoWrap: {
-    position:  'absolute',
-    alignSelf: 'center',
+  center: {
+    alignItems:     'center',
+    justifyContent: 'center',
   },
-  logoPlaceholder: {
-    width:           width * 0.72,
-    height:          height * 0.22,
-    backgroundColor: 'transparent',
+  logoGo: {
+    fontSize:      46,
+    fontWeight:    '900',
+    color:         '#ffffff',
+    letterSpacing: 2,
+    textAlign:     'center',
+    lineHeight:    38,
   },
-  logoTint: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: '#22c55e',
-    borderRadius:    12,
+  logoSnkr: {
+    fontSize:      50,
+    fontWeight:    '900',
+    color:         '#22c55e',
+    letterSpacing: 1,
+    textAlign:     'center',
+    lineHeight:    46,
+  },
+  tagline: {
+    marginTop: 12,
+    fontSize:  14,
+    color:     '#9ca3af',
+    letterSpacing: 0.3,
   },
 
-  layer: {
-    position: 'absolute',
+  footer: {
+    position:   'absolute',
+    bottom:     64,
+    width:      '70%',
+    alignItems: 'center',
   },
-
-  strip: {
-    position: 'absolute',
-    top:      0,
-    bottom:   0,
+  track: {
+    width:            '100%',
+    height:           4,
+    borderRadius:     2,
+    backgroundColor:  '#3f3f46',
+    overflow:         'hidden',
   },
-
-  flashPoint: {
-    position:        'absolute',
-    width:           18,
-    height:          18,
-    borderRadius:    9,
-    backgroundColor: '#ffffff',
-    shadowColor:     '#22c55e',
-    shadowOffset:    { width: 0, height: 0 },
-    shadowOpacity:   1,
-    shadowRadius:    22,
-    elevation:       20,
+  fill: {
+    height:           '100%',
+    borderRadius:     2,
+    backgroundColor:  '#22c55e',
+  },
+  statusText: {
+    marginTop: 14,
+    fontSize:  13,
+    color:     '#a1a1aa',
   },
 })
 ```
@@ -2109,96 +1918,6 @@ export default function PickupRulesScreen() {
     </BaseContainer>
   )
 }
-```
-
-## File: app/retailerTabs/orders.tsx
-```typescript
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
-
-import BaseContainer from '@/components/shared/BaseContainer';
-import OrdersHeader from '@/components/retailer/orders/OrdersHeader';
-import OrdersSummary from '@/components/retailer/orders/OrdersSummary';
-import OrdersTabs from '@/components/retailer/orders/OrdersTabs';
-import OrdersList from '@/components/retailer/orders/OrdersList';
-import { useOrders } from '@/services/hooks/retailer/orders/useOrders';
-
-
-export const OrdersScreen: React.FC = () => {
-    const {
-        activeTab,
-        tabCounts,
-        filteredOrders,
-        recentActivity,
-        ordersToday,
-        avgPrepMinutes,
-        isRefreshing,
-        handleTabChange,
-        handleRefresh,
-        handleConfirmOrder,
-        handleMarkReady,
-        handleMarkPickedUp,
-        handleViewDetails,
-        handleViewHoldDetails,
-        handleSearch,
-        handleFilter,
-        handleViewAllActivity,
-    } = useOrders();
-
-    return (
-        <BaseContainer backgroundColor="#fff" scrollable={false}>
-            <View style={styles.container}>
-
-                {/* ── Fixed top ── */}
-                <View style={styles.topSection}>
-                    <OrdersHeader
-                        storeLabel="Sonny's Kicks · Novi"
-                        onLocationPress={() => console.log('switch location')}
-                        onSearchPress={handleSearch}
-                        onFilterPress={handleFilter}
-                    />
-                    <OrdersSummary
-                        ordersToday={ordersToday}
-                        avgPrepMinutes={avgPrepMinutes}
-                    />
-                    <OrdersTabs
-                        activeTab={activeTab}
-                        tabCounts={tabCounts}
-                        onTabChange={handleTabChange}
-                    />
-                </View>
-
-                {/* ── Scrollable list ── */}
-                <OrdersList
-                    orders={filteredOrders}
-                    recentActivity={recentActivity}
-                    isRefreshing={isRefreshing}
-                    onRefresh={handleRefresh}
-                    onConfirmOrder={handleConfirmOrder}
-                    onMarkReady={handleMarkReady}
-                    onMarkPickedUp={handleMarkPickedUp}
-                    onViewDetails={handleViewDetails}
-                    onViewHoldDetails={handleViewHoldDetails}
-                    onViewAllActivity={handleViewAllActivity}
-                />
-
-            </View>
-        </BaseContainer>
-    );
-};
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        paddingTop: 40,
-        paddingBottom: 150,
-    },
-    topSection: {
-        backgroundColor: '#fff',
-    },
-});
-
-export default OrdersScreen;
 ```
 
 ## File: app/screens/community/communityScreen.tsx
@@ -3018,87 +2737,91 @@ const styles = StyleSheet.create({
 
 ## File: app/screens/discover/notificationsScreen.tsx
 ```typescript
-// screens/NotificationsScreen.tsx
+// app/screens/discover/notificationsScreen.tsx
 import React from 'react'
-import {
-    View,
-    Text,
-    ScrollView,
-    TouchableOpacity,
-} from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native'
 import { Feather } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
+import { router } from 'expo-router'
 
 import { useNotifications } from '@/services/hooks/discover/useNotifications'
-import NotificationBanner from '@/components/discover/notifications/NotificationBanner'
 import NotificationFilterTabs from '@/components/discover/notifications/NotificationsFilterTabs'
 import NotificationGroup from '@/components/discover/notifications/NotificationGroup'
 import BaseContainer from '@/components/shared/BaseContainer'
-import { router } from 'expo-router'
+
 const NotificationsScreen = () => {
-    const navigation = useNavigation()
-    const {
-        grouped,
-        activeCategory,
-        unreadCount,
-        setActiveCategory,
-        markAllRead,
-        clearAll,
-        markRead,
-    } = useNotifications()
+  const navigation = useNavigation()
+  const {
+    grouped,
+    activeCategory,
+    unreadCount,
+    setActiveCategory,
+    markAllRead,
+    markRead,
+  } = useNotifications()
 
-    return (
-        <BaseContainer scrollable backgroundColor='#fff'>
+  return (
+    <BaseContainer backgroundColor="#fff">
+      <View className="pt-10 flex-1">
+        {/* ── Top bar ── */}
+        <View className="flex-row items-center justify-between px-4 py-3 bg-white">
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <Feather name="arrow-left" size={22} color="#374151" />
+          </TouchableOpacity>
 
-            <View className='pt-10'>
-                <View className="flex-row items-center justify-between px-4 py-3 bg-white border-b border-gray-100">
-                    <TouchableOpacity onPress={() => navigation.goBack()} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-                        <Feather name="arrow-left" size={22} color="#374151" />
-                    </TouchableOpacity>
+          <Text className="text-base font-extrabold text-gray-900">Notifications</Text>
 
-                    <Text className="text-base font-extrabold text-gray-900">Notifications</Text>
+          <TouchableOpacity
+            onPress={() => router.push('/screens/discover/notificationsSettingsScreen')}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <Feather name="settings" size={20} color="#374151" />
+          </TouchableOpacity>
+        </View>
 
-                    <TouchableOpacity onPress={() => router.push("/screens/discover/notificationsSettingsScreen")}>
-                        <Feather name="settings" size={20} color="#374151" />
-                    </TouchableOpacity>
-                </View>
+        {/* ── Unread count + Mark all read ── */}
+        <View className="flex-row items-center justify-between px-4 pb-1">
+          <Text className="text-sm font-bold text-green-600">
+            {unreadCount} unread
+          </Text>
+          <TouchableOpacity onPress={markAllRead}>
+            <Text className="text-sm font-bold text-green-600">Mark all read</Text>
+          </TouchableOpacity>
+        </View>
 
-                {/* ── Mark all read ── */}
-                <View className="flex-row justify-end px-5 pt-2">
-                    <TouchableOpacity onPress={markAllRead}>
-                        <Text className="text-xs font-semibold text-green-500">Mark all read</Text>
-                    </TouchableOpacity>
-                </View>
+        {/* ── Category pills ── */}
+        <NotificationFilterTabs
+          active={activeCategory}
+          onChange={setActiveCategory}
+          unreadCount={unreadCount}
+        />
 
-                {/* ── Unread banner ── */}
-                <NotificationBanner unreadCount={unreadCount} onClearAll={clearAll} />
-
-                {/* ── Category pills ── */}
-                <NotificationFilterTabs active={activeCategory} onChange={setActiveCategory} />
-
-                {/* ── Grouped list ── */}
-                <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
-                    {grouped.length === 0 ? (
-                        <View className="items-center justify-center py-24">
-                            <Feather name="bell-off" size={40} color="#D1D5DB" />
-                            <Text className="text-sm text-gray-400 mt-4 font-medium">
-                                No notifications here
-                            </Text>
-                        </View>
-                    ) : (
-                        grouped.map(({ group, items }) => (
-                            <NotificationGroup
-                                key={group}
-                                group={group}
-                                items={items}
-                                onPressItem={markRead}
-                            />
-                        ))
-                    )}
-                </ScrollView>
+        {/* ── Grouped list ── */}
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
+          {grouped.length === 0 ? (
+            <View className="items-center justify-center py-24">
+              <Feather name="bell-off" size={40} color="#D1D5DB" />
+              <Text className="text-sm text-gray-400 mt-4 font-medium">
+                No notifications here
+              </Text>
             </View>
-        </BaseContainer>
-    )
+          ) : (
+            grouped.map(({ group, items }) => (
+              <NotificationGroup
+                key={group}
+                group={group}
+                items={items}
+                onPressItem={markRead}
+              />
+            ))
+          )}
+        </ScrollView>
+      </View>
+    </BaseContainer>
+  )
 }
 
 export default NotificationsScreen
@@ -5648,187 +5371,375 @@ const styles = StyleSheet.create({
 
 ## File: app/screens/product/productScreen.tsx
 ```typescript
-// screens/discover/reStockAlertScreen.tsx
-import React, { useCallback } from 'react'
-import { View, Text, ScrollView, TouchableOpacity, Image, ActivityIndicator } from 'react-native'
+// app/screens/product/productScreen.tsx
+import React, { useState, useCallback } from 'react'
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+  ActivityIndicator,
+} from 'react-native'
 import { useRouter, useLocalSearchParams } from 'expo-router'
-import { Feather, MaterialCommunityIcons } from '@expo/vector-icons'
-import { useRestockAlert } from '@/services/hooks/discover/useReStockAlert'
-import RestockHeroBadge from '@/components/discover/notifications/ReStockHeroBadge'
-import RestockActionButtons from '@/components/discover/notifications/ReStockActionButtons'
-import RestockStoreInfo from '@/components/discover/notifications/ReStockStoreInfo'
-import RestockWatchlistPairs from '@/components/discover/notifications/ReStockWatchListPairs'
+import { Feather } from '@expo/vector-icons'
 import BaseContainer from '@/components/shared/BaseContainer'
 
-// ─── Skeleton ─────────────────────────────────────────────────────────────────
+// ─── Params passed in from wherever the product card was tapped
+// (Discover "Nearby in your size", brand row, store row, ads, etc). ─────────
 
-const RestockAlertSkeleton: React.FC = () => (
-  <BaseContainer backgroundColor="#fff">
-    <View className="pt-10">
-      {/* Header */}
-      <View className="flex-row items-center px-4 pt-2 pb-3 border-b border-gray-100">
-        <View className="w-6 h-6 bg-gray-200 rounded-full" />
-        <View className="flex-1 items-center">
-          <View className="w-32 h-4 bg-gray-200 rounded-lg" />
-        </View>
-        <View className="w-12 h-3 bg-gray-100 rounded-lg" />
-      </View>
+type ProductScreenParams = {
+  productId?: string
+  name?: string
+  brand?: string
+  image?: string
+  price?: string
+  size?: string
+  store?: string
+  distance?: string
+}
 
-      <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
-        {/* Hero card skeleton — same dark bg so it matches the real card */}
-        <View className="mx-4 mt-4 rounded-3xl bg-gray-900 overflow-hidden items-center justify-center" style={{ height: 320 }}>
+// ─── Data hook — uses whatever the tapped card actually was, with sane
+// fallbacks for fields the source list doesn't carry yet (store hours,
+// full size run) until those are wired through too. ─────────────────────────
+
+const useProductDetail = (params: ProductScreenParams) => {
+  const {
+    productId = 'aj4-black-cat',
+    name = 'Black Cat',
+    brand = 'Air Jordan 4',
+    image = 'https://images.stockx.com/images/Air-Jordan-4-Retro-Black-Cat-2020.png',
+    price = '220',
+    size,
+    store = "Sonny's",
+    distance = '1.1 mi',
+  } = params
+
+  const priceNum = Number(price) || 220
+  const defaultSize = size || '10.5'
+
+  return {
+    loading: false,
+    product: {
+      productId,
+      brand,
+      name,
+      imageUrl: image,
+      price: priceNum,
+      originalPrice: Math.round(priceNum * 1.09),
+      backInStock: true,
+      sizes: ['9.5', '10', '10.5', '11', '11.5'].map(label => ({
+        label,
+        available: label !== '11.5',
+      })),
+      defaultSize,
+      availableInSize: 2,
+      store: {
+        name: store,
+        initials: store.slice(0, 2).toUpperCase(),
+        location: 'Twelve Oaks Mall',
+        distance,
+        isOpen: true,
+        closesAt: '9 PM',
+      },
+      alsoBackInSize: [
+        {
+          id: 'a1',
+          name: 'Nike Dunk Low Panda',
+          store: 'Kicks City',
+          distance: '2.5 mi',
+          status: 'In stock',
+          price: 120,
+          statusColor: 'green' as const,
+        },
+        {
+          id: 'a2',
+          name: 'Yeezy Boost 350 Carbon',
+          store: 'Jordan Hub',
+          distance: '1.3 mi',
+          status: 'Low stock',
+          price: 320,
+          statusColor: 'orange' as const,
+        },
+      ],
+    },
+  }
+}
+
+// ─── Screen ──────────────────────────────────────────────────────────────────
+
+const ProductScreen: React.FC = () => {
+  const router = useRouter()
+  const params = useLocalSearchParams<ProductScreenParams>()
+  const { product, loading } = useProductDetail(params)
+
+  const [selectedSize, setSelectedSize] = useState(product.defaultSize)
+
+  const handleBuyNow = useCallback(() => {
+    router.push(
+      `/screens/discover/buyNowScreen?productId=${product.productId}&size=${encodeURIComponent(selectedSize)}` as any
+    )
+  }, [product, selectedSize, router])
+
+  const handleHold = useCallback(() => {
+    router.push(
+      `/screens/discover/holdWithDepositScreen?productId=${product.productId}&size=${encodeURIComponent(selectedSize)}` as any
+    )
+  }, [product, selectedSize, router])
+
+  const handleCompareStores = useCallback(() => {
+    router.push(`/screens/discover/storeListScreen?productId=${product.productId}` as any)
+  }, [product, router])
+
+  if (loading || !product) {
+    return (
+      <BaseContainer backgroundColor="#fff">
+        <View className="flex-1 items-center justify-center">
           <ActivityIndicator size="large" color="#22C55E" />
         </View>
-
-        {/* Scarcity row */}
-        <View className="flex-row items-center justify-between px-5 mt-4">
-          <View className="w-40 h-3 bg-gray-200 rounded-lg" />
-          <View className="w-20 h-3 bg-gray-100 rounded-lg" />
-        </View>
-
-        {/* Price */}
-        <View className="px-5 mt-5 gap-2">
-          <View className="w-36 h-10 bg-gray-200 rounded-xl" />
-          <View className="w-48 h-3 bg-gray-100 rounded-lg" />
-        </View>
-
-        {/* Button skeletons */}
-        <View className="px-4 mt-6 gap-3">
-          <View className="h-14 bg-gray-200 rounded-2xl" />
-          <View className="h-14 bg-gray-100 rounded-2xl" />
-          <View className="h-14 bg-gray-100 rounded-2xl" />
-        </View>
-      </ScrollView>
-    </View>
-  </BaseContainer>
-)
-
-// ─── Screen ───────────────────────────────────────────────────────────────────
-
-const RestockAlertScreen: React.FC = () => {
-  const router = useRouter()
-  const { id: notificationId } = useLocalSearchParams<{ id: string }>()
-  const { alert, watchlistPairs, loading } = useRestockAlert(notificationId)
-  const handleBuyNow = useCallback(() => {
-    if (!alert) return
-    router.push(
-      `/screens/discover/buyNowScreen?productId=${alert.productId}&size=${encodeURIComponent(alert.size)}` as any
+      </BaseContainer>
     )
-  }, [alert, router])
-  const handleHold = useCallback(() => {
-    if (!alert) return
-    router.push(
-      `/screens/discover/holdWithDepositScreen?productId=${alert.productId}&size=${encodeURIComponent(alert.size)}` as any
-    )
-  }, [alert, router])
+  }
 
-  const handleReserve = useCallback(() => {
-    if (!alert) return
-    router.push(
-      `/screens/discover/reserveForPickupScreen?productId=${alert.productId}&storeId=${alert.store.id}&size=${encodeURIComponent(alert.size)}` as any
-    )
-  }, [alert, router])
-
-  const handleSeeOtherStores = useCallback(() => {
-    if (!alert) return
-    router.push(`/screens/discover/storeListScreen?productId=${alert.productId}` as any)
-  }, [alert, router])
-
-  // ✅ Skeleton instead of null — eliminates blank screen flash
-  if (loading || !alert) return <RestockAlertSkeleton />
+  const savings = product.originalPrice - product.price
 
   return (
-    <BaseContainer scrollable backgroundColor="#fff">
-      <View className="pt-10">
-        <View className="flex-row items-center px-4 pt-2 pb-3 border-b border-gray-100">
+    <BaseContainer backgroundColor="#fff">
+      <View className="flex-1 pt-10">
+        {/* ── Header ── */}
+        <View className="flex-row items-center justify-between px-4 pt-2 pb-2">
           <TouchableOpacity
             onPress={() => router.back()}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
             <Feather name="arrow-left" size={22} color="#111" />
           </TouchableOpacity>
-          <View className="flex-1">
-            <Text className="text-center text-base font-bold text-gray-900">
-            Product
-            </Text>
+          <Text className="text-base font-bold text-gray-900">Product details</Text>
+          <View className="flex-row items-center gap-4">
+            <TouchableOpacity hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+              <Feather name="heart" size={20} color="#111" />
+            </TouchableOpacity>
+            <TouchableOpacity hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+              <Feather name="share" size={20} color="#111" />
+            </TouchableOpacity>
           </View>
-          <Text className="text-xs text-gray-400">Just now</Text>
         </View>
 
         <ScrollView showsVerticalScrollIndicator={false} bounces>
-
-          {/* ── Hero card ── */}
-          <View className="mx-4 mt-4 rounded-3xl bg-gray-900 overflow-hidden">
-            <RestockHeroBadge />
-
-            <View className="items-center py-5">
-              <Image
-                source={{ uri: alert.imageUrl }}
-                className="w-56 h-36"
-                resizeMode="contain"
-              />
+          {/* ── Back in stock badge ── */}
+          {product.backInStock && (
+            <View className="mx-4 mt-1 mb-2 self-start flex-row items-center gap-1.5 bg-green-50 rounded-full px-3 py-1.5">
+              <Text>🔥</Text>
+              <Text className="text-green-700 text-xs font-bold">Back in stock</Text>
             </View>
+          )}
 
-            <View className="items-center px-6 pb-6">
-              <Text className="text-white text-xl font-bold text-center leading-snug">
-                {alert.name}
+          {/* ── Hero image ── */}
+          <View className="items-center justify-center bg-white" style={{ height: 260 }}>
+            <Image
+              source={{ uri: product.imageUrl }}
+              className="w-full h-full"
+              resizeMode="contain"
+            />
+            <View className="absolute bottom-3 right-4 bg-black/60 rounded-full px-2 py-0.5">
+              <Text className="text-white text-[10px] font-semibold">1/4</Text>
+            </View>
+            <View className="absolute bottom-3 left-0 right-0 flex-row justify-center gap-1.5">
+              {[0, 1, 2, 3].map(i => (
+                <View key={i} className={`rounded-full w-1.5 h-1.5 ${i === 0 ? 'bg-gray-800' : 'bg-gray-300'}`} />
+              ))}
+            </View>
+          </View>
+
+          {/* ── Name / price ── */}
+          <View className="px-4 mt-3">
+            <Text className="text-sm text-gray-500">{product.brand}</Text>
+            <Text className="text-xl font-black text-gray-900 mt-0.5">{product.name}</Text>
+            <View className="flex-row items-center gap-2 mt-1.5">
+              <Text className="text-2xl font-black text-gray-900">${product.price}</Text>
+              <Text className="text-base text-gray-400 line-through">${product.originalPrice}</Text>
+              <Text className="text-sm font-bold text-green-600">Save ${savings}</Text>
+            </View>
+          </View>
+
+          {/* ── Size selector ── */}
+          <View className="px-4 mt-5">
+            <View className="flex-row items-center justify-between mb-2.5">
+              <Text className="text-sm font-bold text-gray-900">Select size · US Men</Text>
+              <TouchableOpacity>
+                <Text className="text-xs font-semibold text-gray-500 underline">Size guide</Text>
+              </TouchableOpacity>
+            </View>
+            <View className="flex-row gap-2">
+              {product.sizes.map(s => {
+                const selected = s.label === selectedSize
+                return (
+                  <TouchableOpacity
+                    key={s.label}
+                    disabled={!s.available}
+                    onPress={() => setSelectedSize(s.label)}
+                    activeOpacity={0.8}
+                    className={`flex-1 items-center justify-center py-3 rounded-xl border ${
+                      selected
+                        ? 'bg-green-500 border-green-500'
+                        : s.available
+                        ? 'bg-white border-gray-200'
+                        : 'bg-gray-50 border-gray-100'
+                    }`}
+                  >
+                    <Text
+                      className={`text-sm font-bold ${
+                        selected ? 'text-white' : s.available ? 'text-gray-900' : 'text-gray-300 line-through'
+                      }`}
+                    >
+                      {s.label}
+                    </Text>
+                  </TouchableOpacity>
+                )
+              })}
+            </View>
+            <Text className="text-xs font-semibold text-green-600 mt-2.5">
+              {product.availableInSize} available in US Men {selectedSize}
+            </Text>
+          </View>
+
+          {/* ── Store row ── */}
+          <View className="mx-4 mt-4 flex-row items-center gap-3 bg-white border border-gray-100 rounded-2xl px-4 py-3">
+            <View className="w-9 h-9 rounded-full bg-green-500 items-center justify-center">
+              <Text className="text-white text-xs font-black">{product.store.initials}</Text>
+            </View>
+            <View className="flex-1">
+              <Text className="text-sm font-bold text-gray-900">{product.store.name}</Text>
+              <Text className="text-xs text-gray-400 mt-0.5">
+                {product.store.location} · {product.store.distance}
               </Text>
-              <Text className="text-gray-400 text-xs mt-1">{alert.colorway}</Text>
-              <View className="mt-4 bg-green-500 rounded-full px-5 py-1.5">
-                <Text className="text-white text-xs font-bold">{alert.size}</Text>
+              <View className="flex-row items-center gap-1 mt-0.5">
+                <View className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                <Text className="text-xs text-gray-400">
+                  {product.store.isOpen ? `Open · Closes ${product.store.closesAt}` : 'Closed'}
+                </Text>
               </View>
             </View>
-
-            <RestockStoreInfo store={alert.store} />
+            <TouchableOpacity className="flex-row items-center gap-1">
+              <Text className="text-xs font-semibold text-gray-600">View store</Text>
+              <Feather name="chevron-right" size={14} color="#6B7280" />
+            </TouchableOpacity>
           </View>
 
-          {/* ── Scarcity + social proof ── */}
-          <View className="flex-row items-center justify-between px-5 mt-4">
-            <View className="flex-row items-center gap-1.5">
-              <MaterialCommunityIcons name="fire" size={16} color="#F97316" />
-              <Text className="text-orange-600 text-xs font-bold uppercase tracking-tight">
-                Only {alert.stockLeft} left in this size
+          {/* ── Pickup note ── */}
+          <View className="mx-4 mt-3 flex-row items-center gap-2">
+            <Feather name="shopping-bag" size={14} color="#6B7280" />
+            <Text className="text-xs text-gray-400">Pickup at this store</Text>
+          </View>
+          <Text className="mx-4 text-xs text-gray-300 mt-0.5">Pickup timing shown at checkout</Text>
+
+          {/* ── Hold with deposit ── */}
+          <TouchableOpacity
+            onPress={handleHold}
+            activeOpacity={0.8}
+            className="mx-4 mt-5 flex-row items-center gap-3 bg-green-50 rounded-2xl px-4 py-3"
+          >
+            <View className="w-8 h-8 rounded-full bg-green-100 items-center justify-center">
+              <Feather name="lock" size={14} color="#16A34A" />
+            </View>
+            <View className="flex-1">
+              <Text className="text-sm font-bold text-gray-900">Hold with a deposit</Text>
+              <Text className="text-xs text-gray-500 mt-0.5">
+                Review the deposit amount, hold deadline and refund policy before paying.
               </Text>
             </View>
-            <Text className="text-gray-400 text-xs">{alert.viewerCount} viewing</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={handleHold}
+            activeOpacity={0.8}
+            className="mx-4 mt-2.5 items-center justify-center border border-gray-200 rounded-2xl py-3"
+          >
+            <Text className="text-sm font-bold text-gray-900">View hold options</Text>
+          </TouchableOpacity>
+
+          {/* ── Info rows ── */}
+          <View className="mx-4 mt-4 bg-white border border-gray-100 rounded-2xl overflow-hidden">
+            {[
+              { icon: 'shopping-bag' as const, label: 'Compare other stores', sub: `Prices and availability in US Men ${selectedSize}`, onPress: handleCompareStores },
+              { icon: 'file-text' as const, label: 'Product details', sub: undefined, onPress: undefined },
+              { icon: 'briefcase' as const, label: 'Pickup information', sub: undefined, onPress: undefined },
+              { icon: 'shield' as const, label: 'Returns & store policies', sub: undefined, onPress: undefined },
+            ].map((row, i, arr) => (
+              <TouchableOpacity
+                key={row.label}
+                onPress={row.onPress}
+                activeOpacity={0.7}
+                className={`flex-row items-center gap-3 px-4 py-3.5 ${i < arr.length - 1 ? 'border-b border-gray-100' : ''}`}
+              >
+                <Feather name={row.icon} size={16} color="#6B7280" />
+                <View className="flex-1">
+                  <Text className="text-sm font-semibold text-gray-900">{row.label}</Text>
+                  {row.sub && <Text className="text-xs text-gray-400 mt-0.5">{row.sub}</Text>}
+                </View>
+                <Feather name="chevron-right" size={16} color="#D1D5DB" />
+              </TouchableOpacity>
+            ))}
           </View>
 
-          {/* ── Price ── */}
-          <View className="px-5 mt-5">
-            <Text className="text-4xl font-black text-gray-900">
-              ${alert.currentPrice.toFixed(2)}
-            </Text>
-            <View className="flex-row items-center gap-2 mt-1">
-              <Text className="text-gray-400 text-sm line-through">
-                Was ${alert.originalPrice}
-              </Text>
-              <Text className="text-green-600 text-sm font-bold">
-                ${(alert.originalPrice - alert.currentPrice).toFixed(2)} saved
-              </Text>
-            </View>
+          {/* ── Also back in your size ── */}
+          <View className="mt-6 px-4 mb-10">
+            <Text className="text-sm font-bold text-gray-900">Also back in your size</Text>
+            <Text className="text-xs text-gray-400 mt-0.5 mb-3">From your wishlist</Text>
+
+            {product.alsoBackInSize.map(item => (
+              <View
+                key={item.id}
+                className="flex-row items-center gap-3 bg-white border border-gray-100 rounded-2xl p-3 mb-3"
+              >
+                <View className="w-16 h-16 bg-gray-50 rounded-xl items-center justify-center">
+                  <Feather name="image" size={20} color="#D1D5DB" />
+                </View>
+                <View className="flex-1">
+                  <Text className="text-sm font-bold text-gray-900" numberOfLines={1}>{item.name}</Text>
+                  <Text className="text-xs text-gray-400 mt-0.5">{item.store} · {item.distance}</Text>
+                  <View className="flex-row items-center gap-1 mt-1">
+                    <View className={`w-1.5 h-1.5 rounded-full ${item.statusColor === 'green' ? 'bg-green-500' : 'bg-orange-500'}`} />
+                    <Text className={`text-xs font-semibold ${item.statusColor === 'green' ? 'text-green-600' : 'text-orange-500'}`}>
+                      {item.status}
+                    </Text>
+                  </View>
+                </View>
+                <View className="items-end gap-2">
+                  <Text className="text-sm font-black text-gray-900">${item.price}</Text>
+                  <TouchableOpacity className="flex-row items-center gap-1">
+                    <Text className="text-xs font-semibold text-gray-600">View item</Text>
+                    <Feather name="chevron-right" size={12} color="#6B7280" />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            ))}
           </View>
 
-          {/* ── Action buttons ── */}
-          <View className="px-1">
-            <RestockActionButtons
-              onBuyNow={handleBuyNow}
-              onHold={handleHold}
-              onReserve={handleReserve}
-              onSeeOtherStores={handleSeeOtherStores}
-            />
-          </View>
-
-          {/* ── Watchlist pairs ── */}
-          <RestockWatchlistPairs pairs={watchlistPairs} />
-
-          <View className="h-10" />
+          <View className="h-28" />
         </ScrollView>
+
+        {/* ── Sticky footer CTA ── */}
+        <View className="absolute bottom-0 left-0 right-0 px-4 pt-3 pb-6 bg-white border-t border-gray-100">
+          <View className="mb-3">
+            <Text className="text-lg font-black text-gray-900">
+              ${product.price} · US Men {selectedSize}
+            </Text>
+            <Text className="text-xs text-gray-400">Before tax</Text>
+          </View>
+          <TouchableOpacity
+            onPress={handleBuyNow}
+            activeOpacity={0.85}
+            className="bg-green-500 rounded-2xl py-4 items-center justify-center"
+          >
+            <Text className="text-white font-black text-base">Buy now</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </BaseContainer>
   )
 }
 
-export default RestockAlertScreen
+export default ProductScreen
 ```
 
 ## File: app/screens/profile/alertPreferencesScreen.tsx
@@ -6963,166 +6874,284 @@ export default function ChangePasswordScreen() {
 
 ## File: app/screens/reseller/notifications.tsx
 ```typescript
-import React from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { Swipeable, GestureHandlerRootView } from 'react-native-gesture-handler';
 import BaseContainer from '@/components/shared/BaseContainer';
-import { useNotifications } from '@/services/hooks/reseller/dashboard/useNotifications';
+import { useNotifications, NotificationItem } from '@/services/hooks/reseller/dashboard/useNotifications';
 
 const Notifications = () => {
-    const { sections, activeTab, setActiveTab } = useNotifications();
+    const router = useRouter();
+    const { sections, activeTab, setActiveTab, tabCounts, markAllRead, markRead, deleteNotification, totalCount } = useNotifications();
+    const [showConfirm, setShowConfirm] = useState(false);
+    const swipeRefs = useRef<Record<string, Swipeable | null>>({});
+
+    const handleMarkAllRead = () => {
+        markAllRead();
+        setShowConfirm(true);
+        setTimeout(() => setShowConfirm(false), 2200);
+    };
+
+    const closeOthers = (exceptId: string) => {
+        Object.entries(swipeRefs.current).forEach(([id, ref]) => {
+            if (id !== exceptId) ref?.close();
+        });
+    };
+
+    // 9. Tapping a notification opens the relevant request, deal, or listing
+    const handleNotificationTap = (item: NotificationItem) => {
+        markRead(item.id);
+        if (item.type === 'request') return router.push('/screens/reseller/requestDetailsScreen');
+        if (item.type === 'counter') return router.push('/screens/reseller/requestDetailsScreen');
+        if (item.type === 'deal') return router.push('/screens/reseller/submittedRequestsScreen');
+        if (item.type === 'declined') return router.push('/resellerTabs/listing');
+        if (item.type === 'trust') return router.push('/resellerTabs/profile');
+        if (item.type === 'info') return router.push('/resellerTabs/profile');
+    };
+
+    const renderLeftActions = (item: NotificationItem) => (
+        <TouchableOpacity
+            style={styles.swipeUnreadBtn}
+            onPress={() => {
+                markRead(item.id, !item.isRead);
+                swipeRefs.current[item.id]?.close();
+            }}
+        >
+            <Ionicons name={item.isRead ? 'mail-unread-outline' : 'mail-open-outline'} size={20} color="#FFF" />
+            <Text style={styles.swipeActionText}>{item.isRead ? 'Unread' : 'Read'}</Text>
+        </TouchableOpacity>
+    );
+
+    const renderRightActions = (item: NotificationItem) => (
+        <TouchableOpacity
+            style={styles.swipeDeleteBtn}
+            onPress={() => {
+                deleteNotification(item.id);
+                swipeRefs.current[item.id]?.close();
+            }}
+        >
+            <Ionicons name="trash-outline" size={20} color="#FFF" />
+            <Text style={styles.swipeActionText}>Delete</Text>
+        </TouchableOpacity>
+    );
 
     return (
-        <BaseContainer backgroundColor='#fff'>
-            <View className='pt-10 pb-20'>
-                <View style={styles.header}>
-                    <TouchableOpacity>
-                        <Ionicons name="arrow-back" size={24} color="black" />
-                    </TouchableOpacity>
-                    <Text style={styles.headerTitle}>Notifications</Text>
-                    <TouchableOpacity>
-                        <Text style={styles.markReadText}>Mark all read</Text>
-                    </TouchableOpacity>
-                </View>
-
-                {/* Filter Tabs */}
-                <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={styles.tabScroll}
-                    style={styles.tabScrollView}
-                >
-                    {['All 4', 'Requests 1', 'Deals 2', 'Alerts 1'].map((tab) => (
-                        <TouchableOpacity
-                            key={tab}
-                            onPress={() => setActiveTab(tab)}
-                            style={[styles.tabChip, activeTab === tab && styles.tabChipActive]}
-                        >
-                            <Text style={[styles.tabText, activeTab === tab && styles.tabTextActive]}>
-                                {tab}
-                            </Text>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+            <BaseContainer backgroundColor='#fff'>
+                <View className='pt-10 pb-20 flex-1'>
+                    <View style={styles.header}>
+                        <TouchableOpacity onPress={() => router.back()}>
+                            <Ionicons name="arrow-back" size={22} color="black" />
                         </TouchableOpacity>
-                    ))}
-                </ScrollView>
-
-                <ScrollView showsVerticalScrollIndicator={false}>
-                    <View className='pb-20'>
-                        {sections.map((section) => (
-                            <View key={section.title}>
-                                <Text style={styles.sectionTitle}>{section.title}</Text>
-                                {section.data.map((item) => (
-                                    <View
-                                        key={item.id}
-                                        style={[
-                                            styles.notificationCard,
-                                            { backgroundColor: item.bgColor, borderLeftColor: item.color }
-                                        ]}
-                                    >
-                                        <View style={styles.cardHeader}>
-                                            <View style={styles.iconRow}>
-                                                <View style={[styles.avatarPlaceholder, { backgroundColor: `${item.color}20` }]}>
-                                                    {item.initials ? (
-                                                        <Text style={{ color: item.color, fontWeight: 'bold' }}>{item.initials}</Text>
-                                                    ) : (
-                                                        <Ionicons name={item.icon as any} size={20} color={item.color} />
-                                                    )}
-                                                    <View style={[styles.statusDot, { backgroundColor: item.color }]} />
-                                                </View>
-                                                <View style={styles.titleContainer}>
-                                                    <Text style={styles.itemTitle}>{item.title}</Text>
-                                                    <Text style={styles.timeText}>{item.time}</Text>
-                                                </View>
-                                            </View>
-                                        </View>
-
-                                        <Text style={styles.description}>{item.description}</Text>
-
-                                        {item.actions && (
-                                            <View style={styles.actionRow}>
-                                                {item.actions.map((action, idx) => (
-                                                    <TouchableOpacity
-                                                        key={idx}
-                                                        style={[
-                                                            styles.actionBtn,
-                                                            action.includes('Accept') ? styles.primaryAction : styles.secondaryAction,
-                                                            action === 'Decline' && styles.dangerAction
-                                                        ]}
-                                                    >
-                                                        <Text style={[
-                                                            styles.actionBtnText,
-                                                            action.includes('Accept') && { color: '#FFF' },
-                                                            action === 'Decline' && { color: '#EF4444' }
-                                                        ]}>
-                                                            {action}{action.includes('View') ? '' : ''}
-                                                        </Text>
-                                                    </TouchableOpacity>
-                                                ))}
-                                            </View>
-                                        )}
-                                    </View>
-                                ))}
-                            </View>
-                        ))}
+                        <Text style={styles.headerTitle}>Notifications</Text>
+                        <TouchableOpacity onPress={handleMarkAllRead}>
+                            <Text style={styles.markReadText}>Mark all read</Text>
+                        </TouchableOpacity>
                     </View>
-                </ScrollView>
-            </View>
-        </BaseContainer>
+
+                    {showConfirm && (
+                        <View style={styles.confirmBanner}>
+                            <Ionicons name="checkmark-circle" size={16} color="#22C55E" />
+                            <Text style={styles.confirmText}>All notifications marked as read</Text>
+                        </View>
+                    )}
+
+                    {/* Filter tabs with counts in parentheses */}
+                    <ScrollView
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        contentContainerStyle={styles.tabScroll}
+                        style={styles.tabScrollView}
+                    >
+                        {(['All', 'Requests', 'Deals', 'Alerts'] as const).map((tab) => (
+                            <TouchableOpacity
+                                key={tab}
+                                onPress={() => setActiveTab(tab)}
+                                style={[styles.tabChip, activeTab === tab && styles.tabChipActive]}
+                            >
+                                <Text style={[styles.tabText, activeTab === tab && styles.tabTextActive]}>
+                                    {tab} ({tabCounts[tab]})
+                                </Text>
+                            </TouchableOpacity>
+                        ))}
+                    </ScrollView>
+
+                    <ScrollView showsVerticalScrollIndicator={false}>
+                        <View className='pb-20'>
+                            {sections.map((section) => (
+                                <View key={section.title}>
+                                    <View style={styles.sectionHeaderRow}>
+                                        {section.title === 'Action Required' && (
+                                            <Ionicons name="warning" size={13} color="#EF4444" />
+                                        )}
+                                        <Text style={[styles.sectionTitle, section.title === 'Action Required' && styles.sectionTitleAlert]}>
+                                            {section.title} {section.title === 'Action Required' ? `(${section.data.length})` : ''}
+                                        </Text>
+                                    </View>
+                                    {section.data.map((item) => (
+                                        <Swipeable
+                                            key={item.id}
+                                            ref={(ref) => { swipeRefs.current[item.id] = ref }}
+                                            onSwipeableWillOpen={() => closeOthers(item.id)}
+                                            renderLeftActions={() => renderLeftActions(item)}
+                                            renderRightActions={() => renderRightActions(item)}
+                                            overshootLeft={false}
+                                            overshootRight={false}
+                                        >
+                                            <TouchableOpacity
+                                                activeOpacity={0.8}
+                                                onPress={() => handleNotificationTap(item)}
+                                                style={[
+                                                    styles.notificationCard,
+                                                    { backgroundColor: item.bgColor, borderLeftColor: item.color }
+                                                ]}
+                                            >
+                                                <View style={styles.cardHeader}>
+                                                    <View style={styles.iconRow}>
+                                                        <View style={[styles.avatarPlaceholder, { backgroundColor: `${item.color}20` }]}>
+                                                            {item.initials ? (
+                                                                <Text style={{ color: item.color, fontWeight: 'bold', fontSize: 12 }}>{item.initials}</Text>
+                                                            ) : (
+                                                                <Ionicons name={item.icon as any} size={16} color={item.color} />
+                                                            )}
+                                                            {!item.isRead && <View style={[styles.statusDot, { backgroundColor: item.color }]} />}
+                                                        </View>
+                                                        <View style={styles.titleContainer}>
+                                                            <Text style={styles.itemTitle}>{item.title}</Text>
+                                                            <Text style={styles.timeText}>{item.time}</Text>
+                                                        </View>
+                                                    </View>
+                                                </View>
+
+                                                <Text style={styles.description} numberOfLines={2}>{item.description}</Text>
+
+                                                {item.actions && (
+                                                    <View style={styles.actionRow}>
+                                                        {item.actions.map((action, idx) => (
+                                                            <TouchableOpacity
+                                                                key={idx}
+                                                                onPress={() => handleNotificationTap(item)}
+                                                                style={[
+                                                                    styles.actionBtn,
+                                                                    action.includes('Accept') ? styles.primaryAction : styles.secondaryAction,
+                                                                    action === 'Decline' && styles.dangerAction
+                                                                ]}
+                                                            >
+                                                                <Text style={[
+                                                                    styles.actionBtnText,
+                                                                    action.includes('Accept') && { color: '#FFF' },
+                                                                    action === 'Decline' && { color: '#EF4444' }
+                                                                ]}>
+                                                                    {action}
+                                                                </Text>
+                                                            </TouchableOpacity>
+                                                        ))}
+                                                    </View>
+                                                )}
+                                            </TouchableOpacity>
+                                        </Swipeable>
+                                    ))}
+                                </View>
+                            ))}
+                        </View>
+                    </ScrollView>
+                </View>
+            </BaseContainer>
+        </GestureHandlerRootView>
     );
 };
 
 const styles = StyleSheet.create({
     header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16 },
-    headerTitle: { fontSize: 20, fontWeight: 'bold' },
+    headerTitle: { fontSize: 18, fontWeight: 'bold' },
     markReadText: { fontSize: 13, color: '#22C55E', fontWeight: '600' },
+    confirmBanner: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 6,
+        backgroundColor: '#F0FDF4',
+        marginHorizontal: 16,
+        marginBottom: 8,
+        paddingVertical: 8,
+        paddingHorizontal: 12,
+        borderRadius: 10,
+    },
+    confirmText: { color: '#22C55E', fontSize: 12, fontWeight: '600' },
 
-    // KEY FIX: overflow visible so chips aren't clipped
     tabScrollView: {
         overflow: 'visible',
     },
     tabScroll: {
         paddingHorizontal: 16,
-        alignItems: 'center', // ← vertically centers chips inside the scroll
+        alignItems: 'center',
     },
     tabChip: {
-        paddingHorizontal: 16,
-        paddingVertical: 10,
-        borderRadius: 25,
+        paddingHorizontal: 14,
+        paddingVertical: 8,
+        borderRadius: 20,
         backgroundColor: '#F3F4F6',
-        marginRight: 10,
-        minWidth: 60,
+        marginRight: 8,
+        minWidth: 56,
         alignItems: 'center',
         justifyContent: 'center',
     },
     tabChipActive: { backgroundColor: '#000' },
     tabText: {
-        fontSize: 14,
-        color: '#1F2937', // darkened for visibility
+        fontSize: 13,
+        color: '#1F2937',
         fontWeight: '700',
     },
     tabTextActive: { color: '#FFF' },
 
-    sectionTitle: { fontSize: 11, fontWeight: 'bold', color: '#9CA3AF', paddingHorizontal: 16, marginVertical: 12 },
+    sectionHeaderRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, marginVertical: 10, gap: 5 },
+    sectionTitle: { fontSize: 11, fontWeight: 'bold', color: '#9CA3AF' },
+    sectionTitleAlert: { color: '#EF4444' },
+
     notificationCard: {
         marginHorizontal: 16,
-        marginBottom: 12,
-        padding: 16,
-        borderRadius: 16,
-        borderLeftWidth: 4
+        marginBottom: 10,
+        padding: 12,
+        borderRadius: 14,
+        borderLeftWidth: 4,
     },
-    cardHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 },
+    cardHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 },
     iconRow: { flexDirection: 'row', alignItems: 'center' },
-    avatarPlaceholder: { width: 40, height: 40, borderRadius: 10, justifyContent: 'center', alignItems: 'center', position: 'relative' },
+    avatarPlaceholder: { width: 34, height: 34, borderRadius: 9, justifyContent: 'center', alignItems: 'center', position: 'relative' },
     statusDot: { position: 'absolute', top: -2, right: -2, width: 8, height: 8, borderRadius: 4, borderWidth: 1, borderColor: '#FFF' },
-    titleContainer: { marginLeft: 12 },
-    itemTitle: { fontSize: 14, fontWeight: 'bold', color: '#111827' },
-    timeText: { fontSize: 11, color: '#9CA3AF', marginTop: 2 },
-    description: { fontSize: 13, color: '#4B5563', lineHeight: 18, marginBottom: 15 },
+    titleContainer: { marginLeft: 10 },
+    itemTitle: { fontSize: 13, fontWeight: 'bold', color: '#111827' },
+    timeText: { fontSize: 10, color: '#9CA3AF', marginTop: 1 },
+    description: { fontSize: 12, color: '#4B5563', lineHeight: 16, marginBottom: 10 },
     actionRow: { flexDirection: 'row', flexWrap: 'wrap' },
-    actionBtn: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 10, marginRight: 8, marginBottom: 8 },
+    actionBtn: { paddingHorizontal: 14, paddingVertical: 7, borderRadius: 10, marginRight: 8, marginBottom: 6 },
     primaryAction: { backgroundColor: '#22C55E' },
     secondaryAction: { backgroundColor: '#FFF', borderWidth: 1, borderColor: '#E5E7EB' },
     dangerAction: { backgroundColor: '#FFF1F2', borderColor: '#FECACA' },
-    actionBtnText: { fontSize: 12, fontWeight: 'bold', color: '#111827' },
+    actionBtnText: { fontSize: 11, fontWeight: 'bold', color: '#111827' },
+
+    swipeUnreadBtn: {
+        backgroundColor: '#3B82F6',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 84,
+        gap: 4,
+        marginBottom: 10,
+        marginLeft: 16,
+        borderRadius: 14,
+    },
+    swipeDeleteBtn: {
+        backgroundColor: '#EF4444',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 84,
+        gap: 4,
+        marginBottom: 10,
+        marginRight: 16,
+        borderRadius: 14,
+    },
+    swipeActionText: { color: '#FFF', fontSize: 11, fontWeight: '700' },
 });
 
 export default Notifications;
@@ -7738,104 +7767,6 @@ const styles = StyleSheet.create({
   rowLabel: { fontSize: 15, fontWeight: '600', color: '#0a0a0a', marginBottom: 2 },
   rowDesc: { fontSize: 12, color: '#6b7280', lineHeight: 17 },
 })
-```
-
-## File: app/screens/retailer/home/analytics/analyticsScreen.tsx
-```typescript
-import React from 'react';
-import { View, ScrollView, StyleSheet } from 'react-native';
-import BaseContainer from '@/components/shared/BaseContainer';
-import { useAnalytics } from '@/services/hooks/retailer/home/useAnalytics';
-import AnalyticsHeader from '@/components/retailer/home/analytics/AnalyticsHeader';
-import AnalyticsTimeFilter from '@/components/retailer/home/analytics/AnalyticsTimeFilter';
-import AnalyticsRevenueCard from '@/components/retailer/home/analytics/AnalyticsRevenueCard';
-import AnalyticsStatCards from '@/components/retailer/home/analytics/AnalyticsStatCards';
-import AnalyticsRevenueChart from '@/components/retailer/home/analytics/AnalyticsReveueChart';
-import AnalyticsTopProducts from '@/components/retailer/home/analytics/AnalyticsTopProduct';
-import AnalyticsOrderStatus from '@/components/retailer/home/analytics/AnalyticsOrderStatus';
-import AnalyticsSizes from '@/components/retailer/home/analytics/AnalyticsSizes';
-
-const AnalyticsScreen: React.FC = () => {
-    const {
-        activeFilter,
-        chartMode,
-        data,
-        barData,
-        barLabels,
-        handleFilterChange,
-        handleChartModeChange,
-    } = useAnalytics();
-
-    return (
-        <BaseContainer scrollable backgroundColor='#fff'>
-            <View className='pt-10'>
-                <AnalyticsHeader
-                    locationLabel="All Locations"
-                    brandLabel="GoSNKR Sales"
-                    onLocationPress={() => console.log('change location')}
-                    onBrandPress={() => console.log('change brand')}
-                    onCalendarPress={() => console.log('open calendar')}
-                    onExportPress={() => console.log('export')}
-                />
-
-                <AnalyticsTimeFilter
-                    active={activeFilter}
-                    onChange={handleFilterChange}
-                />
-
-                <ScrollView
-                    showsVerticalScrollIndicator={false}
-                    contentContainerStyle={s.body}
-                >
-                    <AnalyticsRevenueCard
-                        totalRevenue={data.totalRevenue}
-                        revenueChange={data.revenueChange}
-                        revenueChangePercent={data.revenueChangePercent}
-                        sparklineData={data.sparklineData}
-                    />
-
-                    <AnalyticsStatCards
-                        orders={data.orders}
-                        ordersChange={data.ordersChange}
-                        grossProfit={data.grossProfit}
-                        grossProfitMargin={data.grossProfitMargin}
-                        grossProfitChange={data.grossProfitChange}
-                        avgOrder={data.avgOrder}
-                        avgOrderChange={data.avgOrderChange}
-                        pickupRate={data.pickupRate}
-                        pickupRateChange={data.pickupRateChange}
-                    />
-
-                    <AnalyticsRevenueChart
-                        chartMode={chartMode}
-                        barData={barData}
-                        barLabels={barLabels}
-                        onChartModeChange={handleChartModeChange}
-                    />
-
-                    <AnalyticsTopProducts
-                        products={data.topProducts}
-                        onViewAll={() => console.log('view all products')}
-                    />
-
-                    <AnalyticsOrderStatus orderStatus={data.orderStatus} />
-
-                    <AnalyticsSizes
-                        sizes={data.sizes}
-                        onViewInventoryOpportunities={() => console.log('view inventory opportunities')}
-                    />
-                </ScrollView>
-            </View>
-        </BaseContainer>
-    );
-};
-
-const s = StyleSheet.create({
-    root: { flex: 1, backgroundColor: '#F9FAFB', paddingTop: 52 },
-    body: { paddingHorizontal: 16, paddingTop: 4 },
-});
-
-export default AnalyticsScreen;
 ```
 
 ## File: app/screens/retailer/home/more/addBranchScreen.tsx
@@ -8510,361 +8441,6 @@ const s = StyleSheet.create({
 });
 ```
 
-## File: app/screens/retailer/home/more/businessOverViewScreen.tsx
-```typescript
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Feather } from '@expo/vector-icons';
-import { router } from 'expo-router';
-import BaseContainer from '@/components/shared/BaseContainer';
-import {
-  useBusinessOverview,
-  type Location,
-  type LocationAlert,
-} from '@/services/hooks/retailer/home/useBusinessOverview';
-
-export default function BusinessOverviewScreen() {
-  const {
-    periods,
-    period,
-    setPeriod,
-    business,
-    stats,
-    ordersNeedingAttention,
-    locations,
-  } = useBusinessOverview();
-
-  return (
-    <BaseContainer backgroundColor="#F9FAFB" scrollable>
-      <View className="flex-1 pb-10">
-        {/* Header */}
-        <View style={s.header}>
-          <TouchableOpacity onPress={() => router.back()} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-            <Feather name="arrow-left" size={24} color="#111827" />
-          </TouchableOpacity>
-          <Text style={s.headerTitle}>Business Overview</Text>
-          <TouchableOpacity onPress={() => router.push('/')}>
-            <Text style={s.addLocationText}>+ Add Location</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Business Identity */}
-        <View style={s.identityRow}>
-          <View style={s.avatar}>
-            <Text style={s.avatarText}>{business.initials}</Text>
-          </View>
-          <View style={{ marginLeft: 12, flex: 1 }}>
-            <Text style={s.businessName}>{business.name}</Text>
-            <Text style={s.businessMeta}>{business.locationCount} locations · {business.city}</Text>
-            <View style={s.pillRow}>
-              <TouchableOpacity style={s.pill}>
-                <Text style={s.pillText}>Owner</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={s.pill}>
-                <Text style={s.pillText}>Business Settings →</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-
-        {/* Period tabs */}
-        <View style={s.periodRow}>
-          <View style={s.periodTabs}>
-            {periods.map((p) => (
-              <TouchableOpacity
-                key={p}
-                onPress={() => setPeriod(p)}
-                style={[s.periodTab, period === p && s.periodTabActive]}
-              >
-                <Text style={[s.periodTabText, period === p && s.periodTabTextActive]}>{p}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-          <TouchableOpacity style={s.calendarBtn}>
-            <Feather name="calendar" size={18} color="#111827" />
-          </TouchableOpacity>
-        </View>
-
-        {/* Gross sales hero card */}
-        <View style={s.heroCard}>
-          <Text style={s.heroValue}>{stats.grossSales}</Text>
-          <View style={s.heroFooterRow}>
-            <Text style={s.heroLabel}>Gross sales</Text>
-            <View style={s.deltaRow}>
-              <Feather
-                name={stats.deltaIsPositive ? 'arrow-up-right' : 'arrow-down-right'}
-                size={12}
-                color={stats.deltaIsPositive ? '#34D399' : '#F87171'}
-              />
-              <Text style={[s.deltaText, { color: stats.deltaIsPositive ? '#34D399' : '#F87171' }]}>
-                {stats.deltaVsPrevious}
-              </Text>
-              <Text style={s.deltaSubtext}>vs yesterday</Text>
-            </View>
-          </View>
-        </View>
-
-        {/* Stats Grid */}
-        <View style={s.statsGrid}>
-          <View style={s.statCard}>
-            <Text style={s.statValue}>{stats.netSales}</Text>
-            <Text style={s.statLabel}>Net sales</Text>
-          </View>
-          <View style={s.statCard}>
-            <Text style={s.statValue}>{stats.orders}</Text>
-            <Text style={s.statLabel}>Orders</Text>
-          </View>
-          <View style={s.statCard}>
-            <Text style={s.statValue}>{stats.avgOrder}</Text>
-            <Text style={s.statLabel}>Avg order</Text>
-          </View>
-          <View style={s.statCard}>
-            <Text style={s.statValue}>{stats.activeListings}</Text>
-            <Text style={s.statLabel}>Active listings</Text>
-          </View>
-        </View>
-
-        {/* Orders need attention alert */}
-        {ordersNeedingAttention > 0 && (
-          <TouchableOpacity style={s.attentionBanner} activeOpacity={0.85}>
-            <Feather name="alert-triangle" size={16} color="#D97706" />
-            <Text style={s.attentionText}>{ordersNeedingAttention} orders need attention</Text>
-            <Text style={s.attentionLink}>Review →</Text>
-          </TouchableOpacity>
-        )}
-
-        {/* Locations */}
-        <View style={s.section}>
-          <View style={s.sectionHeader}>
-            <Text style={s.sectionTitle}>Locations</Text>
-            <TouchableOpacity onPress={() => router.push('/')}>
-              <Text style={s.compareLink}>Compare →</Text>
-            </TouchableOpacity>
-          </View>
-
-          {locations.map((loc) => (
-            <LocationCard key={loc.id} location={loc} />
-          ))}
-
-          {/* Add new location */}
-          <TouchableOpacity style={s.addNewCard} onPress={() => router.push('/')}>
-            <Text style={s.addNewText}>+ Add another location</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </BaseContainer>
-  );
-}
-
-function LocationCard({ location }: { location: Location }) {
-  return (
-    <View style={s.locationCard}>
-      <View style={s.locLeft}>
-        <View style={s.locAvatar}>
-          <Text style={s.locAvatarText}>{location.initials}</Text>
-        </View>
-        <View style={{ marginLeft: 12, flex: 1 }}>
-          <View style={s.locNameRow}>
-            <Text style={s.locName}>{location.name}</Text>
-            <Feather name="chevron-right" size={16} color="#D1D5DB" />
-          </View>
-          <Text style={s.locAddress}>{location.address}</Text>
-          <View style={s.locStatusRow}>
-            <View style={[s.statusDot, { backgroundColor: location.isOpen ? '#10B981' : '#EF4444' }]} />
-            <Text style={s.locStatus}>
-              {location.isOpen ? 'Open' : 'Closed'} · {location.hoursNote}
-            </Text>
-          </View>
-          <Text style={s.locRevenue}>{location.salesToday} sales · {location.ordersToday} orders</Text>
-        </View>
-      </View>
-
-      {/* Alert chips */}
-      {location.alerts.length > 0 && (
-        <View style={s.alertChipsRow}>
-          {location.alerts.map((alert, i) => (
-            <AlertChip key={i} alert={alert} />
-          ))}
-        </View>
-      )}
-
-      <View style={s.locActions}>
-        <TouchableOpacity style={s.manageBtn} onPress={() => router.push('/')}>
-          <Text style={s.manageBtnText}>Manage Location</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={s.viewOrdersBtn} onPress={() => router.push('/')}>
-          <Text style={s.viewOrdersText}>View Orders</Text>
-        </TouchableOpacity>
-      </View>
-
-      <Text style={s.syncedText}>{location.syncedAgo}</Text>
-    </View>
-  );
-}
-
-function AlertChip({ alert }: { alert: LocationAlert }) {
-  if (alert.type === 'ready') {
-    return (
-      <View style={[s.alertChip, s.chipGreen]}>
-        <Feather name="check-circle" size={11} color="#059669" />
-        <Text style={[s.alertChipText, { color: '#059669' }]}>{alert.count} ready</Text>
-      </View>
-    );
-  }
-  if (alert.type === 'overdue') {
-    return (
-      <View style={[s.alertChip, alert.count > 0 ? s.chipAmber : s.chipGray]}>
-        <Feather name={alert.count > 0 ? 'alert-triangle' : 'check-circle'} size={11} color={alert.count > 0 ? '#D97706' : '#9CA3AF'} />
-        <Text style={[s.alertChipText, { color: alert.count > 0 ? '#D97706' : '#9CA3AF' }]}>
-          {alert.count > 0 ? `${alert.count} overdue` : 'No overdue'}
-        </Text>
-      </View>
-    );
-  }
-  return (
-    <View style={[s.alertChip, s.chipAmber]}>
-      <Feather name="alert-triangle" size={11} color="#D97706" />
-      <Text style={[s.alertChipText, { color: '#D97706' }]}>{alert.count} low-stock alerts</Text>
-    </View>
-  );
-}
-
-const s = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingTop: 40,
-    paddingBottom: 12,
-  },
-  headerTitle: { fontSize: 17, fontWeight: '900', color: '#111827' },
-  addLocationText: { fontSize: 13, fontWeight: '800', color: '#10B981' },
-
-  identityRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, marginBottom: 18 },
-  avatar: {
-    width: 52,
-    height: 52,
-    borderRadius: 14,
-    backgroundColor: '#111827',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  avatarText: { color: '#fff', fontWeight: '900', fontSize: 18 },
-  businessName: { fontSize: 16, fontWeight: '900', color: '#111827' },
-  businessMeta: { fontSize: 12, color: '#6B7280', marginTop: 2, fontWeight: '600' },
-  pillRow: { flexDirection: 'row', gap: 8, marginTop: 8 },
-  pill: { backgroundColor: '#F3F4F6', paddingHorizontal: 10, paddingVertical: 5, borderRadius: 8 },
-  pillText: { fontSize: 11, fontWeight: '700', color: '#374151' },
-
-  periodRow: { flexDirection: 'row', gap: 10, paddingHorizontal: 16, marginBottom: 16 },
-  periodTabs: { flex: 1, flexDirection: 'row', backgroundColor: '#F3F4F6', borderRadius: 14, padding: 4 },
-  periodTab: { flex: 1, paddingVertical: 10, alignItems: 'center', borderRadius: 10 },
-  periodTabActive: { backgroundColor: '#111827' },
-  periodTabText: { fontSize: 12, fontWeight: '700', color: '#6B7280' },
-  periodTabTextActive: { color: '#fff' },
-  calendarBtn: {
-    width: 44,
-    backgroundColor: '#F3F4F6',
-    borderRadius: 14,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  heroCard: {
-    backgroundColor: '#111827',
-    marginHorizontal: 16,
-    borderRadius: 22,
-    padding: 20,
-    marginBottom: 12,
-  },
-  heroValue: { color: '#fff', fontSize: 34, fontWeight: '900' },
-  heroFooterRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 },
-  heroLabel: { color: '#9CA3AF', fontSize: 13, fontWeight: '600' },
-  deltaRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  deltaText: { fontSize: 13, fontWeight: '800' },
-  deltaSubtext: { fontSize: 12, color: '#9CA3AF', fontWeight: '600' },
-
-  statsGrid: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 16, gap: 10, marginBottom: 16 },
-  statCard: { flex: 1, minWidth: '45%', backgroundColor: '#fff', borderRadius: 18, padding: 16 },
-  statValue: { fontSize: 20, fontWeight: '900', color: '#111827' },
-  statLabel: { color: '#9CA3AF', fontSize: 11, marginTop: 4, fontWeight: '600' },
-
-  attentionBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    backgroundColor: '#FFF7ED',
-    marginHorizontal: 16,
-    padding: 14,
-    borderRadius: 14,
-    marginBottom: 20,
-  },
-  attentionText: { flex: 1, fontSize: 13, fontWeight: '700', color: '#9A3412' },
-  attentionLink: { fontSize: 13, fontWeight: '800', color: '#059669' },
-
-  section: { paddingHorizontal: 16 },
-  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
-  sectionTitle: { fontSize: 16, fontWeight: '900', color: '#111827' },
-  compareLink: { fontSize: 12, fontWeight: '800', color: '#10B981' },
-
-  locationCard: {
-    backgroundColor: '#fff',
-    borderRadius: 20,
-    padding: 16,
-    marginBottom: 14,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOpacity: 0.06,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
-  },
-  locLeft: { flexDirection: 'row', marginBottom: 12 },
-  locAvatar: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
-    backgroundColor: '#111827',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  locAvatarText: { color: '#fff', fontWeight: '900', fontSize: 14 },
-  locNameRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  locName: { fontSize: 14, fontWeight: '800', color: '#111827', flexShrink: 1 },
-  locAddress: { fontSize: 11, color: '#6B7280', marginTop: 2, fontWeight: '600' },
-  locStatusRow: { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 4 },
-  statusDot: { width: 7, height: 7, borderRadius: 4 },
-  locStatus: { fontSize: 11, color: '#6B7280', fontWeight: '600' },
-  locRevenue: { fontSize: 12, color: '#111827', fontWeight: '700', marginTop: 4 },
-
-  alertChipsRow: { flexDirection: 'row', gap: 8, marginBottom: 14 },
-  alertChip: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 10 },
-  chipGreen: { backgroundColor: '#ECFDF5' },
-  chipAmber: { backgroundColor: '#FFFBEB' },
-  chipGray: { backgroundColor: '#F3F4F6' },
-  alertChipText: { fontSize: 11, fontWeight: '800' },
-
-  locActions: { flexDirection: 'row', gap: 10, marginBottom: 8 },
-  manageBtn: { flex: 1, backgroundColor: '#111827', height: 42, borderRadius: 13, justifyContent: 'center', alignItems: 'center' },
-  manageBtnText: { color: '#fff', fontSize: 12, fontWeight: '800' },
-  viewOrdersBtn: { flex: 1, backgroundColor: '#F3F4F6', height: 42, borderRadius: 13, justifyContent: 'center', alignItems: 'center' },
-  viewOrdersText: { color: '#374151', fontSize: 12, fontWeight: '700' },
-  syncedText: { fontSize: 10, color: '#D1D5DB', fontWeight: '600', textAlign: 'right' },
-
-  addNewCard: {
-    borderWidth: 1.5,
-    borderColor: '#E5E7EB',
-    borderStyle: 'dashed',
-    borderRadius: 20,
-    height: 52,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  addNewText: { fontSize: 13, color: '#9CA3AF', fontWeight: '700' },
-});
-```
-
 ## File: app/screens/retailer/home/more/demandGapsScreen.tsx
 ```typescript
 import React from 'react';
@@ -9519,839 +9095,6 @@ const styles = StyleSheet.create({
 })
 ```
 
-## File: app/screens/retailer/home/more/localDemandScreen.tsx
-```typescript
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Feather, MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
-import BaseContainer from '@/components/shared/BaseContainer';
-import {
-  useLocalDemand,
-  type OpportunityItem,
-  type SizeDemand,
-} from '@/services/hooks/retailer/home/useLocalDemand';
-
-export default function LocalDemandScreen() {
-  const {
-    store,
-    dayRanges,
-    dayRange,
-    setDayRange,
-    categoryFilters,
-    category,
-    setCategory,
-    missedSearchesCount,
-    opportunities,
-    bestOpportunity,
-  } = useLocalDemand();
-
-  return (
-    <BaseContainer backgroundColor="#F9FAFB" scrollable>
-      <View className="flex-1 pb-10">
-        {/* Header */}
-        <View style={s.header}>
-          <TouchableOpacity onPress={() => router.back()} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-            <Feather name="arrow-left" size={24} color="#111827" />
-          </TouchableOpacity>
-          <Text style={s.headerTitle}>Local Demand</Text>
-          <TouchableOpacity hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-            <Feather name="info" size={20} color="#111827" />
-          </TouchableOpacity>
-        </View>
-
-        {/* Store + Radius selectors */}
-        <View style={s.selectorsRow}>
-          <TouchableOpacity style={s.selectorPill}>
-            <Feather name="home" size={16} color="#10B981" />
-            <Text style={s.selectorText} numberOfLines={1}>{store.name}</Text>
-            <Feather name="chevron-down" size={16} color="#6B7280" />
-          </TouchableOpacity>
-          <TouchableOpacity style={s.selectorPill}>
-            <Feather name="map-pin" size={16} color="#10B981" />
-            <Text style={s.selectorText}>{store.radiusMiles} mi</Text>
-            <Feather name="chevron-down" size={16} color="#6B7280" />
-          </TouchableOpacity>
-        </View>
-
-        {/* Day range tabs */}
-        <View style={s.dayTabsRow}>
-          {dayRanges.map((d) => (
-            <TouchableOpacity
-              key={d.key}
-              onPress={() => setDayRange(d.key)}
-              style={[s.dayTab, dayRange === d.key && s.dayTabActive]}
-            >
-              <Text style={[s.dayTabText, dayRange === d.key && s.dayTabTextActive]}>{d.label}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        {/* Category filter tabs */}
-        <View style={s.categoryTabsRow}>
-          {categoryFilters.map((c) => (
-            <TouchableOpacity
-              key={c}
-              onPress={() => setCategory(c)}
-              style={[s.categoryTab, category === c && s.categoryTabActive]}
-            >
-              <Text style={[s.categoryTabText, category === c && s.categoryTabTextActive]}>{c}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        <Text style={s.aggregatedText}>Aggregated nearby shopper activity · Updated today</Text>
-
-        {/* Missed searches banner */}
-        <TouchableOpacity style={s.missedBanner} activeOpacity={0.85}>
-          <View style={s.missedIconWrap}>
-            <Feather name="bar-chart-2" size={18} color="#10B981" />
-          </View>
-          <View style={{ flex: 1 }}>
-            <Text style={s.missedTitle}>{missedSearchesCount} missed searches this week</Text>
-            <Text style={s.missedSubtitle}>Products and sizes shoppers wanted but you did not have.</Text>
-          </View>
-          <Feather name="chevron-right" size={18} color="#9CA3AF" />
-        </TouchableOpacity>
-
-        {/* Section title */}
-        <View style={s.sectionHeader}>
-          <Text style={s.sectionTitle}>Top Opportunities Near You</Text>
-          <Text style={s.sectionSubtitle}>Based on search demand</Text>
-        </View>
-
-        {/* Opportunity cards */}
-        <View style={{ paddingHorizontal: 16 }}>
-          {opportunities.map((item) => (
-            <OpportunityCard key={item.id} item={item} />
-          ))}
-
-          {opportunities.length === 0 && (
-            <View style={s.emptyState}>
-              <Feather name="search" size={28} color="#D1D5DB" />
-              <Text style={s.emptyStateText}>No opportunities in this category yet.</Text>
-            </View>
-          )}
-        </View>
-
-        {/* Best opportunity callout */}
-        {bestOpportunity && (
-          <View style={s.bestOppCard}>
-            <View style={s.bestOppHeader}>
-              <View style={s.bestOppIconWrap}>
-                <Ionicons name="flash" size={16} color="#F59E0B" />
-              </View>
-              <View style={{ flex: 1 }}>
-                <Text style={s.bestOppTitle}>Best opportunity</Text>
-                <Text style={s.bestOppBody}>
-                  {bestOpportunity.itemName} {bestOpportunity.reason}
-                </Text>
-                <Text style={s.bestOppBuyers}>Potential demand: {bestOpportunity.potentialBuyers} buyers</Text>
-              </View>
-              <Feather name="chevron-right" size={18} color="#B45309" />
-            </View>
-            <TouchableOpacity style={s.bestOppBtn}>
-              <Feather name="plus-circle" size={16} color="#fff" />
-              <Text style={s.bestOppBtnText}>Add to Sourcing List</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      </View>
-    </BaseContainer>
-  );
-}
-
-function OpportunityCard({ item }: { item: OpportunityItem }) {
-  const statusMeta = getStockStatusMeta(item.stockStatus);
-
-  return (
-    <View style={s.card}>
-      <View style={s.cardTopRow}>
-        <View style={s.rankBadge}>
-          <Text style={s.rankBadgeText}>#{item.rank}</Text>
-        </View>
-
-        <View style={s.imgPlaceholder}>
-          <MaterialCommunityIcons name="shoe-sneaker" size={26} color="#9CA3AF" />
-        </View>
-
-        <View style={{ flex: 1, marginLeft: 12 }}>
-          <View style={s.nameRow}>
-            <Text style={s.itemName} numberOfLines={1}>{item.name}</Text>
-            <View style={[s.statusDot, { backgroundColor: statusMeta.dotColor }]} />
-            <Text style={[s.statusLabel, { color: statusMeta.dotColor }]}>{statusMeta.label}</Text>
-          </View>
-          <View style={s.metaRow}>
-            <Text style={s.searchesText}>{item.searchesLabel}</Text>
-            <Feather
-              name={item.trendPct >= 0 ? 'arrow-up' : 'arrow-down'}
-              size={12}
-              color={item.trendPct >= 0 ? '#10B981' : '#EF4444'}
-            />
-            <Text style={[s.trendText, { color: item.trendPct >= 0 ? '#10B981' : '#EF4444' }]}>
-              {Math.abs(item.trendPct)}% vs last week
-            </Text>
-          </View>
-        </View>
-      </View>
-
-      <Text style={s.sizesLabel}>Most requested sizes</Text>
-      <View style={s.sizesRow}>
-        {item.sizes.map((size) => (
-          <SizeChip key={size.label} size={size} />
-        ))}
-      </View>
-
-      <View style={s.cardBottomRow}>
-        <TouchableOpacity style={s.viewDemandBtn}>
-          <Feather name="bar-chart-2" size={14} color="#111827" />
-          <Text style={s.viewDemandText}>View Demand</Text>
-        </TouchableOpacity>
-
-        <PrimaryActionButton action={item.primaryAction} />
-      </View>
-    </View>
-  );
-}
-
-function SizeChip({ size }: { size: SizeDemand }) {
-  if (size.status === 'out') {
-    return (
-      <View style={[s.sizeChip, s.sizeChipOut]}>
-        <Text style={s.sizeChipLabel}>{size.label}</Text>
-        <Text style={s.sizeChipOutText}>Out</Text>
-      </View>
-    );
-  }
-  if (size.status === 'low') {
-    return (
-      <View style={[s.sizeChip, s.sizeChipLow]}>
-        <Text style={s.sizeChipLabel}>{size.label}</Text>
-        <Text style={s.sizeChipLowText}>Low</Text>
-      </View>
-    );
-  }
-  return (
-    <View style={s.sizeChip}>
-      <Text style={s.sizeChipLabel}>{size.label}</Text>
-      <Text style={s.sizeChipSearches}>{size.searches} searches</Text>
-    </View>
-  );
-}
-
-function PrimaryActionButton({ action }: { action: OpportunityItem['primaryAction'] }) {
-  const iconName = action.icon === 'plus' ? 'plus-circle' : action.icon === 'box' ? 'package' : 'file-text';
-  const isSecondary = action.kind === 'view_details';
-
-  return (
-    <TouchableOpacity style={[s.primaryActionBtn, isSecondary && s.primaryActionBtnSecondary]}>
-      <Feather name={iconName as any} size={14} color={isSecondary ? '#111827' : '#fff'} />
-      <Text style={[s.primaryActionText, isSecondary && s.primaryActionTextSecondary]}>{action.label}</Text>
-    </TouchableOpacity>
-  );
-}
-
-function getStockStatusMeta(status: OpportunityItem['stockStatus']) {
-  switch (status) {
-    case 'not_stocked':
-      return { label: 'Not Stocked', dotColor: '#EF4444' };
-    case 'missing_sizes':
-      return { label: 'Missing Top Sizes', dotColor: '#F59E0B' };
-    case 'demand_covered':
-      return { label: 'Demand Covered', dotColor: '#10B981' };
-  }
-}
-
-const s = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingTop: 40,
-    paddingBottom: 8,
-  },
-  headerTitle: { fontSize: 18, fontWeight: '900', color: '#111827' },
-
-  selectorsRow: { flexDirection: 'row', gap: 10, paddingHorizontal: 16, marginTop: 8 },
-  selectorPill: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    borderRadius: 14,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-  },
-  selectorText: { flex: 1, fontSize: 13, fontWeight: '700', color: '#111827' },
-
-  dayTabsRow: { flexDirection: 'row', gap: 8, paddingHorizontal: 16, marginTop: 14 },
-  dayTab: {
-    flex: 1,
-    backgroundColor: '#F3F4F6',
-    paddingVertical: 10,
-    borderRadius: 12,
-    alignItems: 'center',
-  },
-  dayTabActive: { backgroundColor: '#111827' },
-  dayTabText: { fontSize: 13, fontWeight: '700', color: '#4B5563' },
-  dayTabTextActive: { color: '#fff' },
-
-  categoryTabsRow: { flexDirection: 'row', gap: 8, paddingHorizontal: 16, marginTop: 8 },
-  categoryTab: {
-    flex: 1,
-    backgroundColor: '#F3F4F6',
-    paddingVertical: 10,
-    borderRadius: 12,
-    alignItems: 'center',
-  },
-  categoryTabActive: { backgroundColor: '#D1FAE5' },
-  categoryTabText: { fontSize: 13, fontWeight: '700', color: '#9CA3AF' },
-  categoryTabTextActive: { color: '#059669' },
-
-  aggregatedText: {
-    textAlign: 'center',
-    color: '#9CA3AF',
-    fontSize: 11,
-    marginTop: 10,
-    marginBottom: 14,
-  },
-
-  missedBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#ECFDF5',
-    marginHorizontal: 16,
-    padding: 14,
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: '#D1FAE5',
-    marginBottom: 22,
-  },
-  missedIconWrap: {
-    width: 34,
-    height: 34,
-    borderRadius: 10,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  missedTitle: { fontSize: 14, fontWeight: '800', color: '#065F46' },
-  missedSubtitle: { fontSize: 12, color: '#047857', marginTop: 2 },
-
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'baseline',
-    paddingHorizontal: 16,
-    marginBottom: 14,
-  },
-  sectionTitle: { fontSize: 17, fontWeight: '900', color: '#111827' },
-  sectionSubtitle: { fontSize: 11, color: '#9CA3AF', fontWeight: '600' },
-
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: 22,
-    padding: 16,
-    marginBottom: 14,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
-  },
-  cardTopRow: { flexDirection: 'row', alignItems: 'center' },
-  rankBadge: {
-    width: 26,
-    height: 26,
-    borderRadius: 8,
-    backgroundColor: '#FEF3C7',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 10,
-  },
-  rankBadgeText: { fontSize: 11, fontWeight: '900', color: '#B45309' },
-  imgPlaceholder: {
-    width: 56,
-    height: 56,
-    backgroundColor: '#F9FAFB',
-    borderRadius: 14,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  nameRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  itemName: { fontSize: 14, fontWeight: '800', color: '#111827', flexShrink: 1 },
-  statusDot: { width: 6, height: 6, borderRadius: 3 },
-  statusLabel: { fontSize: 10, fontWeight: '800' },
-  metaRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4 },
-  searchesText: { fontSize: 12, color: '#6B7280', fontWeight: '600' },
-  trendText: { fontSize: 11, fontWeight: '700' },
-
-  sizesLabel: { fontSize: 11, color: '#9CA3AF', fontWeight: '700', marginTop: 16, marginBottom: 8 },
-  sizesRow: { flexDirection: 'row', gap: 8 },
-  sizeChip: {
-    flex: 1,
-    backgroundColor: '#F9FAFB',
-    borderRadius: 12,
-    paddingVertical: 8,
-    alignItems: 'center',
-  },
-  sizeChipLow: { backgroundColor: '#FEF3C7' },
-  sizeChipOut: { backgroundColor: '#FEE2E2' },
-  sizeChipLabel: { fontSize: 13, fontWeight: '900', color: '#111827' },
-  sizeChipSearches: { fontSize: 9, color: '#9CA3AF', marginTop: 2, fontWeight: '600' },
-  sizeChipLowText: { fontSize: 9, color: '#B45309', marginTop: 2, fontWeight: '800' },
-  sizeChipOutText: { fontSize: 9, color: '#DC2626', marginTop: 2, fontWeight: '800' },
-
-  cardBottomRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 16,
-  },
-  viewDemandBtn: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  viewDemandText: { fontSize: 12, fontWeight: '800', color: '#111827' },
-
-  primaryActionBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    backgroundColor: '#10B981',
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 14,
-  },
-  primaryActionBtnSecondary: { backgroundColor: '#F3F4F6' },
-  primaryActionText: { fontSize: 12, fontWeight: '800', color: '#fff' },
-  primaryActionTextSecondary: { color: '#111827' },
-
-  emptyState: { alignItems: 'center', paddingVertical: 40, gap: 10 },
-  emptyStateText: { color: '#9CA3AF', fontSize: 13, fontWeight: '600' },
-
-  bestOppCard: {
-    backgroundColor: '#FFFBEB',
-    marginHorizontal: 16,
-    marginTop: 6,
-    padding: 18,
-    borderRadius: 22,
-    borderWidth: 1,
-    borderColor: '#FEF3C7',
-  },
-  bestOppHeader: { flexDirection: 'row', alignItems: 'flex-start' },
-  bestOppIconWrap: {
-    width: 32,
-    height: 32,
-    borderRadius: 10,
-    backgroundColor: '#FEF3C7',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  bestOppTitle: { fontSize: 13, fontWeight: '900', color: '#92400E' },
-  bestOppBody: { fontSize: 13, color: '#78350F', marginTop: 4, lineHeight: 18, fontWeight: '600' },
-  bestOppBuyers: { fontSize: 12, color: '#B45309', marginTop: 6, fontWeight: '700' },
-  bestOppBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    backgroundColor: '#D97706',
-    paddingVertical: 14,
-    borderRadius: 16,
-    marginTop: 16,
-  },
-  bestOppBtnText: { color: '#fff', fontSize: 14, fontWeight: '800' },
-});
-```
-
-## File: app/screens/retailer/home/more/makeOfferScreen.tsx
-```typescript
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native';
-import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
-import { router } from 'expo-router';
-import BaseContainer from '@/components/shared/BaseContainer';
-import { useMakeOffer } from '@/services/hooks/retailer/home/useMakeOffer';
-
-export default function MakeOfferScreen() {
-  const {
-    item,
-    marketContext,
-    quickOffers,
-    offerValue,
-    setOfferValue,
-    note,
-    setNote,
-    expiryOptions,
-    expiry,
-    setExpiry,
-    costBreakdown,
-    isSending,
-    handleReviewOffer,
-  } = useMakeOffer();
-
-  return (
-    <BaseContainer backgroundColor="#F9FAFB" scrollable>
-      <View style={{ flex: 1, paddingBottom: 40 }}>
-        {/* Header */}
-        <View style={s.header}>
-          <TouchableOpacity onPress={() => router.back()} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-            <Feather name="arrow-left" size={24} color="#111827" />
-          </TouchableOpacity>
-          <Text style={s.headerTitle}>Make an Offer</Text>
-          <View style={{ width: 24 }} />
-        </View>
-
-        {/* Item Card */}
-        <View style={s.itemCard}>
-          <View style={s.imgPlaceholder}>
-            <MaterialCommunityIcons name="shoe-sneaker" size={32} color="#D1D5DB" />
-          </View>
-          <View style={{ flex: 1, marginLeft: 14 }}>
-            <Text style={s.itemName} numberOfLines={1}>{item.name}</Text>
-            <Text style={s.itemMeta}>{item.subtitle}</Text>
-
-            <View style={s.sellerRow}>
-              <View style={s.sellerAvatar}>
-                <Text style={s.sellerAvatarText}>{item.seller.initials}</Text>
-              </View>
-              <Text style={s.sellerName}>{item.seller.name}</Text>
-              {item.seller.verified && <Feather name="check-circle" size={13} color="#10B981" />}
-            </View>
-            <Text style={s.sellerMeta}>
-              {item.seller.rating} ★ · {item.seller.completedSales} completed sales
-            </Text>
-          </View>
-        </View>
-
-        <View style={s.verifiedRow}>
-          <Feather name="shield" size={13} color="#10B981" />
-          <Text style={s.verifiedText}>{item.verifiedNote}</Text>
-          <View style={{ flex: 1 }} />
-          <Feather name="truck" size={13} color="#9CA3AF" />
-          <Text style={s.shipText}>{item.shipFromTo}</Text>
-          <Feather name="chevron-right" size={14} color="#9CA3AF" />
-        </View>
-
-        {/* Market Context */}
-        <View style={s.marketCard}>
-          <View style={s.marketHeaderRow}>
-            <Text style={s.sectionLabel}>Market Context · Size {marketContext.sizeLabel}</Text>
-            <View style={s.updatedRow}>
-              <Text style={s.updatedText}>Updated {marketContext.updatedAgo}</Text>
-              <Feather name="info" size={12} color="#9CA3AF" />
-            </View>
-          </View>
-
-          <View style={s.marketRow}>
-            <Text style={s.marketLabel}>Recent market sale</Text>
-            <Text style={s.marketValue}>${marketContext.recentMarketSale}</Text>
-          </View>
-          <View style={s.marketRow}>
-            <Text style={s.marketLabel}>30-day average</Text>
-            <Text style={s.marketValue}>${marketContext.thirtyDayAverage}</Text>
-          </View>
-          <View style={s.marketRow}>
-            <Text style={s.marketLabel}>GoSNKR asking average</Text>
-            <Text style={s.marketValue}>${marketContext.goSnkrAskingAverage}</Text>
-          </View>
-
-          <View style={s.suggestedBanner}>
-            <Feather name="bar-chart-2" size={14} color="#059669" />
-            <Text style={s.suggestedText}>
-              Suggested offer range: ${marketContext.suggestedRangeLow}–${marketContext.suggestedRangeHigh}
-            </Text>
-          </View>
-        </View>
-
-        {/* Offer Input Section */}
-        <View style={s.paddingContainer}>
-          <Text style={s.offerSectionLabel}>Your offer</Text>
-          <View style={s.inputContainer}>
-            <Text style={s.dollarSign}>$</Text>
-            <TextInput
-              style={s.offerInput}
-              value={offerValue}
-              onChangeText={setOfferValue}
-              keyboardType="numeric"
-              maxLength={4}
-            />
-          </View>
-
-          {/* Quick Offer Pills */}
-          <View style={s.quickOfferRow}>
-            {quickOffers.map((val) => (
-              <TouchableOpacity
-                key={val}
-                style={[s.quickPill, offerValue === val && s.quickPillActive]}
-                onPress={() => setOfferValue(val)}
-              >
-                <Text style={[s.quickPillText, offerValue === val && s.quickPillTextActive]}>${val}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-
-          {/* Your Numbers */}
-          <View style={s.numbersCard}>
-            <View style={s.numbersHeaderRow}>
-              <Feather name="dollar-sign" size={16} color="#059669" />
-              <Text style={s.numbersTitle}>Your Numbers</Text>
-            </View>
-            <Text style={s.numbersSubtitle}>See your true cost and potential profit.</Text>
-
-            <View style={s.numberRow}>
-              <Text style={s.numberLabel}>Offer</Text>
-              <Text style={s.numberValue}>${costBreakdown.offer}</Text>
-            </View>
-            <View style={s.numberRow}>
-              <View style={s.numberLabelRow}>
-                <Text style={s.numberLabel}>Buyer protection fee</Text>
-                <Feather name="info" size={11} color="#9CA3AF" />
-              </View>
-              <Text style={s.numberValue}>${costBreakdown.buyerProtectionFee}</Text>
-            </View>
-            <View style={s.numberRow}>
-              <Text style={s.numberLabel}>Shipping (to you)</Text>
-              <Text style={s.numberValue}>${costBreakdown.shippingToYou}</Text>
-            </View>
-
-            <View style={s.divider} />
-
-            <View style={s.numberRow}>
-              <Text style={s.numberLabelStrong}>Total landed cost</Text>
-              <Text style={s.numberValueStrong}>${costBreakdown.totalLandedCost}</Text>
-            </View>
-            <View style={s.numberRow}>
-              <View style={s.numberLabelRow}>
-                <Text style={s.numberLabel}>Expected store price</Text>
-                <Feather name="info" size={11} color="#9CA3AF" />
-              </View>
-              <Text style={s.numberValue}>${costBreakdown.expectedStorePrice}</Text>
-            </View>
-            <View style={s.numberRow}>
-              <Text style={s.numberLabel}>Projected profit</Text>
-              <Text style={s.numberValue}>${costBreakdown.projectedProfit}</Text>
-            </View>
-            <View style={s.numberRow}>
-              <View style={s.numberLabelRow}>
-                <Text style={s.numberLabel}>Margin</Text>
-                <Feather name="info" size={11} color="#9CA3AF" />
-              </View>
-              <Text style={s.marginValue}>{costBreakdown.marginPct.toFixed(1)}%</Text>
-            </View>
-          </View>
-
-          {/* Note Input */}
-          <Text style={[s.offerSectionLabel, { marginTop: 22 }]}>Note to seller (optional)</Text>
-          <TextInput
-            style={s.noteInput}
-            placeholder="e.g. Looking to add this to our store. Let me know if you can do $205. Thanks!"
-            placeholderTextColor="#9CA3AF"
-            multiline
-            maxLength={500}
-            value={note}
-            onChangeText={setNote}
-          />
-          <Text style={s.noteCounter}>{note.length}/500</Text>
-
-          {/* Expiry Selection */}
-          <Text style={[s.offerSectionLabel, { marginTop: 12 }]}>Offer expires after</Text>
-          <View style={s.expiryRow}>
-            {expiryOptions.map((opt) => (
-              <TouchableOpacity
-                key={opt}
-                onPress={() => setExpiry(opt)}
-                style={[s.expiryPill, expiry === opt && s.expiryPillActive]}
-              >
-                <Text style={[s.expiryText, expiry === opt && s.expiryTextActive]}>{opt}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-
-          {/* Notice */}
-          <View style={s.noticeRow}>
-            <Feather name="info" size={13} color="#9CA3AF" />
-            <Text style={s.noticeText}>
-              You'll only be charged if the seller accepts. Accepted offers are binding.
-            </Text>
-          </View>
-
-          {/* Submit Button */}
-          <TouchableOpacity
-            style={[s.submitBtn, isSending && { opacity: 0.8 }]}
-            onPress={handleReviewOffer}
-            disabled={isSending}
-          >
-            {isSending ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={s.submitBtnText}>
-                Review Offer · ${costBreakdown.totalLandedCost} Total →
-              </Text>
-            )}
-          </TouchableOpacity>
-
-          <View style={s.protectedFooter}>
-            <Feather name="shield" size={12} color="#9CA3AF" />
-            <Text style={s.protectedFooterText}>Protected payment through GoSNKR</Text>
-          </View>
-        </View>
-      </View>
-    </BaseContainer>
-  );
-}
-
-const s = StyleSheet.create({
-  header: { flexDirection: 'row', justifyContent: 'space-between', padding: 16, alignItems: 'center' ,paddingTop:40},
-  headerTitle: { fontSize: 18, fontWeight: '900', color: '#111827' },
-  paddingContainer: { paddingHorizontal: 16 },
-
-  itemCard: {
-    backgroundColor: '#fff',
-    marginHorizontal: 16,
-    padding: 16,
-    borderRadius: 22,
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-  },
-  imgPlaceholder: {
-    width: 68,
-    height: 68,
-    backgroundColor: '#F9FAFB',
-    borderRadius: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  itemName: { fontSize: 15, fontWeight: '800', color: '#111827' },
-  itemMeta: { color: '#6B7280', fontSize: 12, marginTop: 2, fontWeight: '600' },
-  sellerRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 10 },
-  sellerAvatar: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    backgroundColor: '#111827',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  sellerAvatarText: { color: '#fff', fontSize: 8, fontWeight: '900' },
-  sellerName: { fontSize: 13, fontWeight: '800', color: '#111827' },
-  sellerMeta: { fontSize: 11, color: '#9CA3AF', marginTop: 3, fontWeight: '600' },
-
-  verifiedRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-    marginHorizontal: 16,
-    marginTop: 12,
-    marginBottom: 20,
-  },
-  verifiedText: { fontSize: 11, color: '#059669', fontWeight: '700' },
-  shipText: { fontSize: 11, color: '#9CA3AF', fontWeight: '600' },
-
-  marketCard: {
-    backgroundColor: '#fff',
-    marginHorizontal: 16,
-    padding: 18,
-    borderRadius: 22,
-    marginBottom: 22,
-  },
-  marketHeaderRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 },
-  sectionLabel: { fontSize: 14, fontWeight: '800', color: '#111827' },
-  updatedRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  updatedText: { fontSize: 10, color: '#9CA3AF', fontWeight: '600' },
-  marketRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 },
-  marketLabel: { color: '#6B7280', fontSize: 13, fontWeight: '600' },
-  marketValue: { fontWeight: '800', fontSize: 13, color: '#111827' },
-  suggestedBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    backgroundColor: '#ECFDF5',
-    borderRadius: 12,
-    padding: 12,
-    marginTop: 6,
-  },
-  suggestedText: { color: '#059669', fontSize: 13, fontWeight: '800' },
-
-  offerSectionLabel: { fontSize: 15, fontWeight: '900', color: '#111827', marginBottom: 12 },
-  inputContainer: {
-    backgroundColor: '#fff',
-    height: 80,
-    borderRadius: 20,
-    borderWidth: 2,
-    borderColor: '#111827',
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 24,
-  },
-  dollarSign: { fontSize: 32, fontWeight: '900', color: '#111827', marginRight: 4 },
-  offerInput: { flex: 1, fontSize: 48, fontWeight: '900', color: '#111827' },
-  quickOfferRow: { flexDirection: 'row', gap: 8, marginTop: 16, marginBottom: 22 },
-  quickPill: {
-    flex: 1,
-    backgroundColor: '#F9FAFB',
-    paddingVertical: 12,
-    borderRadius: 14,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#F3F4F6',
-  },
-  quickPillActive: { backgroundColor: '#111827', borderColor: '#111827' },
-  quickPillText: { fontSize: 14, fontWeight: '800', color: '#4B5563' },
-  quickPillTextActive: { color: '#fff' },
-
-  numbersCard: {
-    backgroundColor: '#fff',
-    borderRadius: 22,
-    padding: 18,
-    marginBottom: 4,
-  },
-  numbersHeaderRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  numbersTitle: { fontSize: 14, fontWeight: '900', color: '#111827' },
-  numbersSubtitle: { fontSize: 12, color: '#9CA3AF', marginTop: 4, marginBottom: 16, fontWeight: '600' },
-  numberRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 },
-  numberLabelRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  numberLabel: { fontSize: 13, color: '#6B7280', fontWeight: '600' },
-  numberValue: { fontSize: 13, fontWeight: '800', color: '#111827' },
-  numberLabelStrong: { fontSize: 14, fontWeight: '900', color: '#111827' },
-  numberValueStrong: { fontSize: 15, fontWeight: '900', color: '#111827' },
-  divider: { height: 1, backgroundColor: '#F3F4F6', marginVertical: 6 },
-  marginValue: { fontSize: 13, fontWeight: '900', color: '#059669' },
-
-  noteInput: {
-    backgroundColor: '#fff',
-    borderRadius: 20,
-    padding: 16,
-    height: 90,
-    textAlignVertical: 'top',
-    borderWidth: 1,
-    borderColor: '#F3F4F6',
-    fontSize: 13,
-    color: '#111827',
-  },
-  noteCounter: { textAlign: 'right', fontSize: 10, color: '#D1D5DB', marginTop: 6, fontWeight: '600' },
-
-  expiryRow: { flexDirection: 'row', gap: 8 },
-  expiryPill: { flex: 1, backgroundColor: '#fff', paddingVertical: 14, borderRadius: 16, alignItems: 'center', borderWidth: 1, borderColor: '#F3F4F6' },
-  expiryPillActive: { backgroundColor: '#111827', borderColor: '#111827' },
-  expiryText: { fontSize: 13, fontWeight: '800', color: '#4B5563' },
-  expiryTextActive: { color: '#fff' },
-
-  noticeRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 6, marginTop: 16, marginBottom: 18 },
-  noticeText: { flex: 1, fontSize: 11, color: '#9CA3AF', lineHeight: 16, fontWeight: '600' },
-
-  submitBtn: { backgroundColor: '#111827', height: 60, borderRadius: 18, justifyContent: 'center', alignItems: 'center' },
-  submitBtnText: { color: '#fff', fontSize: 15, fontWeight: '900' },
-
-  protectedFooter: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 6, marginTop: 14 },
-  protectedFooterText: { fontSize: 11, color: '#9CA3AF', fontWeight: '600' },
-});
-```
-
 ## File: app/screens/retailer/home/more/moreScreen.tsx
 ```typescript
 import React from 'react';
@@ -10561,176 +9304,6 @@ const s = StyleSheet.create({
   },
   secondaryBtnText: { color: '#EF4444', fontSize: 15, fontWeight: '700' }
 });
-```
-
-## File: app/screens/retailer/home/more/pickupSettingsScreen.tsx
-```typescript
-// app/screens/retailer/home/more/pickupSettingsScreen.tsx
-import React, { useState } from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Switch, TextInput } from 'react-native'
-import { Feather } from '@expo/vector-icons'
-import { useRouter } from 'expo-router'
-import BaseContainer from '@/components/shared/BaseContainer'
-
-const BRANCHES = [
-  { id: '1', name: 'Main Store', address: '123 Main St, Miami, FL' },
-  { id: '2', name: 'Brickell Branch', address: '456 Brickell Ave, Miami, FL' },
-]
-
-const TIME_WINDOWS = ['9:00 AM – 1:00 PM', '1:00 PM – 5:00 PM', '5:00 PM – 8:00 PM']
-
-export default function PickupSettingsScreen() {
-  const router = useRouter()
-  const [selectedBranch, setSelectedBranch] = useState('1')
-  const [selectedWindow, setSelectedWindow] = useState(0)
-  const [notifyReady, setNotifyReady] = useState(true)
-  const [notifyReminder, setNotifyReminder] = useState(true)
-  const [prepTime, setPrepTime] = useState('30')
-  const [holdDuration, setHoldDuration] = useState('48')
-
-  return (
-    <BaseContainer backgroundColor="#fff">
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <Feather name="arrow-left" size={22} color="#0a0a0a" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Pickup Settings</Text>
-        <View style={{ width: 22 }} />
-      </View>
-
-      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
-        {/* Branch selection */}
-        <Text style={styles.sectionTitle}>Branch Selection</Text>
-        {BRANCHES.map(branch => (
-          <TouchableOpacity
-            key={branch.id}
-            style={[styles.branchRow, selectedBranch === branch.id && styles.branchRowActive]}
-            onPress={() => setSelectedBranch(branch.id)}
-          >
-            <View style={[styles.radio, selectedBranch === branch.id && styles.radioActive]}>
-              {selectedBranch === branch.id && <View style={styles.radioDot} />}
-            </View>
-            <View style={styles.branchInfo}>
-              <Text style={styles.branchName}>{branch.name}</Text>
-              <Text style={styles.branchAddr}>{branch.address}</Text>
-            </View>
-          </TouchableOpacity>
-        ))}
-
-        {/* Pickup window */}
-        <Text style={[styles.sectionTitle, { marginTop: 24 }]}>Pickup Time Window</Text>
-        {TIME_WINDOWS.map((w, i) => (
-          <TouchableOpacity key={w} style={[styles.windowRow, selectedWindow === i && styles.windowRowActive]} onPress={() => setSelectedWindow(i)}>
-            <View style={[styles.radio, selectedWindow === i && styles.radioActive]}>
-              {selectedWindow === i && <View style={styles.radioDot} />}
-            </View>
-            <Text style={styles.windowText}>{w}</Text>
-          </TouchableOpacity>
-        ))}
-
-        {/* Prep time */}
-        <Text style={[styles.sectionTitle, { marginTop: 24 }]}>Preparation Time (minutes)</Text>
-        <View style={styles.inputRow}>
-          <TextInput
-            value={prepTime}
-            onChangeText={setPrepTime}
-            keyboardType="numeric"
-            style={styles.numInput}
-          />
-          <Text style={styles.inputUnit}>min</Text>
-        </View>
-
-        {/* Hold duration */}
-        <Text style={[styles.sectionTitle, { marginTop: 24 }]}>Hold Duration (hours)</Text>
-        <View style={styles.holdRow}>
-          {['1', '3', '6'].map(h => (
-            <TouchableOpacity
-              key={h}
-              style={[styles.holdBtn, holdDuration === h && styles.holdBtnActive]}
-              onPress={() => setHoldDuration(h)}
-            >
-              <Text style={[styles.holdBtnText, holdDuration === h && styles.holdBtnTextActive]}>{h}h</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        {/* Notifications */}
-        <Text style={[styles.sectionTitle, { marginTop: 24 }]}>Order Ready Notifications</Text>
-        <View style={styles.switchRow}>
-          <View style={styles.switchInfo}>
-            <Text style={styles.switchLabel}>Notify when order is ready</Text>
-            <Text style={styles.switchDesc}>Send customer notification when pickup is prepared</Text>
-          </View>
-          <Switch value={notifyReady} onValueChange={setNotifyReady} trackColor={{ true: '#0a0a0a', false: '#e5e7eb' }} thumbColor="#fff" />
-        </View>
-        <View style={styles.switchRow}>
-          <View style={styles.switchInfo}>
-            <Text style={styles.switchLabel}>Send pickup reminder</Text>
-            <Text style={styles.switchDesc}>Remind customer 2hrs before hold expires</Text>
-          </View>
-          <Switch value={notifyReminder} onValueChange={setNotifyReminder} trackColor={{ true: '#0a0a0a', false: '#e5e7eb' }} thumbColor="#fff" />
-        </View>
-
-        {/* Policies */}
-        <Text style={[styles.sectionTitle, { marginTop: 24 }]}>Pickup Instructions</Text>
-        <View style={styles.policyCard}>
-          {[
-            { icon: 'clock', text: `Hold duration: ${holdDuration} hours after notification` },
-            { icon: 'alert-circle', text: 'Late pickup: Item returned to inventory' },
-            { icon: 'x-circle', text: 'No-show: Deposit forfeited after 2nd missed pickup' },
-          ].map(p => (
-            <View key={p.text} style={styles.policyRow}>
-              <Feather name={p.icon as any} size={14} color="#6b7280" />
-              <Text style={styles.policyText}>{p.text}</Text>
-            </View>
-          ))}
-        </View>
-      </ScrollView>
-
-      <View style={styles.footer}>
-        <TouchableOpacity style={styles.saveBtn} onPress={() => router.back()}>
-          <Text style={styles.saveBtnText}>Save Settings</Text>
-        </TouchableOpacity>
-      </View>
-    </BaseContainer>
-  )
-}
-
-const styles = StyleSheet.create({
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 52, paddingBottom: 16 },
-  headerTitle: { fontSize: 18, fontWeight: '700', color: '#0a0a0a' },
-  scroll: { paddingHorizontal: 16, paddingBottom: 120 },
-  sectionTitle: { fontSize: 13, fontWeight: '700', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 12 },
-  branchRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 14, borderRadius: 14, paddingHorizontal: 8, marginHorizontal: -8, marginBottom: 4 },
-  branchRowActive: { backgroundColor: '#f9fafb' },
-  radio: { width: 20, height: 20, borderRadius: 10, borderWidth: 2, borderColor: '#d1d5db', alignItems: 'center', justifyContent: 'center' },
-  radioActive: { borderColor: '#0a0a0a' },
-  radioDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: '#0a0a0a' },
-  branchInfo: { flex: 1 },
-  branchName: { fontSize: 15, fontWeight: '600', color: '#0a0a0a' },
-  branchAddr: { fontSize: 12, color: '#6b7280', marginTop: 2 },
-  windowRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 14, borderRadius: 14, paddingHorizontal: 8, marginHorizontal: -8 },
-  windowRowActive: { backgroundColor: '#f9fafb' },
-  windowText: { fontSize: 14, color: '#374151' },
-  inputRow: { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: '#f9fafb', borderRadius: 12, paddingHorizontal: 16, paddingVertical: 12 },
-  numInput: { fontSize: 20, fontWeight: '700', color: '#0a0a0a', flex: 1 },
-  inputUnit: { fontSize: 14, color: '#6b7280' },
-  holdRow: { flexDirection: 'row', gap: 10 },
-  holdBtn: { flex: 1, paddingVertical: 12, borderRadius: 12, backgroundColor: '#f3f4f6', alignItems: 'center' },
-  holdBtnActive: { backgroundColor: '#0a0a0a' },
-  holdBtnText: { fontSize: 14, fontWeight: '600', color: '#374151' },
-  holdBtnTextActive: { color: '#fff' },
-  switchRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#f3f4f6', gap: 16 },
-  switchInfo: { flex: 1 },
-  switchLabel: { fontSize: 15, fontWeight: '600', color: '#0a0a0a', marginBottom: 2 },
-  switchDesc: { fontSize: 12, color: '#6b7280' },
-  policyCard: { backgroundColor: '#f9fafb', borderRadius: 14, padding: 14, gap: 10 },
-  policyRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
-  policyText: { fontSize: 13, color: '#374151', flex: 1, lineHeight: 19 },
-  footer: { position: 'absolute', bottom: 0, left: 0, right: 0, padding: 20, backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: '#f3f4f6' },
-  saveBtn: { backgroundColor: '#0a0a0a', paddingVertical: 16, borderRadius: 14, alignItems: 'center' },
-  saveBtnText: { fontSize: 16, fontWeight: '700', color: '#fff' },
-})
 ```
 
 ## File: app/screens/retailer/home/more/radiusPromotionScreen.tsx
@@ -11035,794 +9608,6 @@ const styles = StyleSheet.create({
   msgBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, backgroundColor: '#f3f4f6', paddingVertical: 12, borderRadius: 12 },
   msgBtnText: { fontSize: 14, fontWeight: '700', color: '#374151' },
 })
-```
-
-## File: app/screens/retailer/home/more/sizeDemandScreen.tsx
-```typescript
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Feather, Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
-import BaseContainer from '@/components/shared/BaseContainer';
-import { useSizeDemand, type StockRow } from '@/services/hooks/retailer/home/useSizeDemand';
-
-export default function SizeDemandScreen() {
-  const {
-    store,
-    dayRanges,
-    dayRange,
-    setDayRange,
-    genderCategories,
-    category,
-    setCategory,
-    categoryLabel,
-    topSize,
-    sizeBars,
-    maxSearches,
-    restockNote,
-    stockRows,
-  } = useSizeDemand();
-
-  return (
-    <BaseContainer backgroundColor="#F9FAFB" scrollable>
-      <View className="flex-1 pb-10">
-        {/* Header */}
-        <View style={s.header}>
-          <TouchableOpacity onPress={() => router.back()} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-            <Feather name="arrow-left" size={24} color="#111827" />
-          </TouchableOpacity>
-          <Text style={s.headerTitle}>Size Demand</Text>
-          <View style={{ width: 24 }} />
-        </View>
-
-        {/* Store + Radius selectors */}
-        <View style={s.selectorsRow}>
-          <TouchableOpacity style={s.selectorPill}>
-            <Feather name="home" size={16} color="#10B981" />
-            <Text style={s.selectorText} numberOfLines={1}>{store.name}</Text>
-            <Feather name="chevron-down" size={16} color="#6B7280" />
-          </TouchableOpacity>
-          <TouchableOpacity style={s.selectorPill}>
-            <Feather name="map-pin" size={16} color="#10B981" />
-            <Text style={s.selectorText}>{store.radiusMiles} mi</Text>
-            <Feather name="chevron-down" size={16} color="#6B7280" />
-          </TouchableOpacity>
-        </View>
-
-        {/* Day range tabs */}
-        <View style={s.dayTabsRow}>
-          {dayRanges.map((d) => (
-            <TouchableOpacity
-              key={d.key}
-              onPress={() => setDayRange(d.key)}
-              style={[s.dayTab, dayRange === d.key && s.dayTabActive]}
-            >
-              <Text style={[s.dayTabText, dayRange === d.key && s.dayTabTextActive]}>{d.label}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        {/* Gender category tabs */}
-        <View style={s.categoryTabsRow}>
-          {genderCategories.map((c) => (
-            <TouchableOpacity
-              key={c}
-              onPress={() => setCategory(c)}
-              style={[s.categoryTab, category === c && s.categoryTabActive]}
-            >
-              <Text style={[s.categoryTabText, category === c && s.categoryTabTextActive]}>{c}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        {/* Sub-category dropdown */}
-        <TouchableOpacity style={s.subCategoryPill}>
-          <Text style={s.subCategoryText}>{categoryLabel}</Text>
-          <Feather name="chevron-down" size={16} color="#6B7280" />
-        </TouchableOpacity>
-
-        <Text style={s.aggregatedText}>Aggregated nearby shopper activity · Updated today</Text>
-
-        {/* Top requested size card */}
-        <View style={s.topSizeCard}>
-          <View style={{ flex: 1 }}>
-            <Text style={s.topSizeLabel}>Top requested size</Text>
-            <Text style={s.topSizeValue}>{topSize.label}</Text>
-            <Text style={s.topSizeSub}>{topSize.searches} searches in the last {dayRange} days</Text>
-            <View style={s.topSizeTrendRow}>
-              <Feather name="arrow-up-right" size={13} color="#059669" />
-              <Text style={s.topSizeTrendText}>+{topSize.trendPct}% vs previous {dayRange} days</Text>
-            </View>
-          </View>
-          <View style={s.topSizeIconWrap}>
-            <Feather name="trending-up" size={22} color="#10B981" />
-          </View>
-        </View>
-
-        {/* Demand by size bar chart */}
-        <View style={s.section}>
-          <View style={s.sectionHeaderRow}>
-            <Text style={s.sectionTitle}>Demand by Size</Text>
-            <Text style={s.sectionSubtitle}>Shopper searches (last {dayRange} days)</Text>
-          </View>
-
-          <View style={s.chartCard}>
-            {sizeBars.map((bar) => (
-              <View key={bar.size} style={s.barRow}>
-                <Text style={s.barSizeLabel}>{bar.size}</Text>
-                <View style={s.barTrack}>
-                  <View
-                    style={[
-                      s.barFill,
-                      { width: `${Math.max((bar.searches / maxSearches) * 100, 6)}%` as any },
-                    ]}
-                  />
-                </View>
-                <Text style={s.barValueLabel}>{bar.searches}</Text>
-              </View>
-            ))}
-          </View>
-        </View>
-
-        {/* Restock recommendation */}
-        <View style={s.restockCard}>
-          <View style={s.restockIconWrap}>
-            <Ionicons name="bulb-outline" size={18} color="#059669" />
-          </View>
-          <View style={{ flex: 1 }}>
-            <Text style={s.restockTitle}>Restock recommendation</Text>
-            <Text style={s.restockBody}>{restockNote}</Text>
-            <Text style={s.restockFootnote}>Based on local searches and your current inventory.</Text>
-          </View>
-        </View>
-
-        {/* Stock vs Demand table */}
-        <View style={s.section}>
-          <Text style={s.sectionTitleStandalone}>Your Stock vs Demand</Text>
-          <View style={s.tableCard}>
-            <View style={s.tableHeaderRow}>
-              <Text style={[s.tableHeaderCell, s.colSize]}>Size</Text>
-              <Text style={[s.tableHeaderCell, s.colSearches]}>Searches{'\n'}(last {dayRange} days)</Text>
-              <Text style={[s.tableHeaderCell, s.colOnHand]}>On Hand{'\n'}(units)</Text>
-              <Text style={[s.tableHeaderCell, s.colSuggested]}>Suggested{'\n'}(units)</Text>
-              <Text style={[s.tableHeaderCell, s.colGap]}>Gap</Text>
-            </View>
-
-            {stockRows.map((row) => (
-              <StockTableRow key={row.size} row={row} />
-            ))}
-          </View>
-        </View>
-
-        {/* Actions */}
-        <View style={s.actionsContainer}>
-          <TouchableOpacity style={s.primaryBtn}>
-            <Text style={s.primaryBtnText}>View Products to Restock</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={s.secondaryBtn}>
-            <Text style={s.secondaryBtnText}>Add to Sourcing List</Text>
-          </TouchableOpacity>
-          <Text style={s.disclaimerText}>Suggestions are estimates, not guaranteed sales.</Text>
-        </View>
-      </View>
-    </BaseContainer>
-  );
-}
-
-function StockTableRow({ row }: { row: StockRow }) {
-  const gap = row.suggested - row.onHand;
-  const isCovered = gap <= 0;
-
-  return (
-    <View style={s.tableRow}>
-      <Text style={[s.tableCell, s.colSize, s.tableCellStrong]}>{row.size}</Text>
-      <Text style={[s.tableCell, s.colSearches]}>{row.searches}</Text>
-      <Text style={[s.tableCell, s.colOnHand]}>{row.onHand}</Text>
-      <Text style={[s.tableCell, s.colSuggested]}>{row.suggested}</Text>
-      <Text
-        style={[
-          s.tableCell,
-          s.colGap,
-          s.tableCellStrong,
-          { color: isCovered ? '#059669' : '#EA580C' },
-        ]}
-      >
-        {isCovered ? 'Covered' : `+${gap}`}
-      </Text>
-    </View>
-  );
-}
-
-const s = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingTop: 40,
-    paddingBottom: 8,
-  },
-  headerTitle: { fontSize: 18, fontWeight: '900', color: '#111827' },
-
-  selectorsRow: { flexDirection: 'row', gap: 10, paddingHorizontal: 16, marginTop: 8 },
-  selectorPill: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    borderRadius: 14,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-  },
-  selectorText: { flex: 1, fontSize: 13, fontWeight: '700', color: '#111827' },
-
-  dayTabsRow: { flexDirection: 'row', gap: 8, paddingHorizontal: 16, marginTop: 14 },
-  dayTab: { flex: 1, backgroundColor: '#F3F4F6', paddingVertical: 10, borderRadius: 12, alignItems: 'center' },
-  dayTabActive: { backgroundColor: '#111827' },
-  dayTabText: { fontSize: 13, fontWeight: '700', color: '#4B5563' },
-  dayTabTextActive: { color: '#fff' },
-
-  categoryTabsRow: { flexDirection: 'row', gap: 8, paddingHorizontal: 16, marginTop: 8 },
-  categoryTab: { flex: 1, backgroundColor: '#F3F4F6', paddingVertical: 10, borderRadius: 12, alignItems: 'center' },
-  categoryTabActive: { backgroundColor: '#111827' },
-  categoryTabText: { fontSize: 13, fontWeight: '700', color: '#9CA3AF' },
-  categoryTabTextActive: { color: '#fff' },
-
-  subCategoryPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    borderRadius: 14,
-    marginHorizontal: 16,
-    marginTop: 10,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-  },
-  subCategoryText: { fontSize: 13, fontWeight: '700', color: '#111827' },
-
-  aggregatedText: { textAlign: 'center', color: '#9CA3AF', fontSize: 11, marginTop: 10, marginBottom: 18 },
-
-  topSizeCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#ECFDF5',
-    marginHorizontal: 16,
-    padding: 18,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#D1FAE5',
-    marginBottom: 26,
-  },
-  topSizeLabel: { fontSize: 12, fontWeight: '800', color: '#059669' },
-  topSizeValue: { fontSize: 22, fontWeight: '900', color: '#111827', marginTop: 4 },
-  topSizeSub: { fontSize: 12, color: '#4B5563', marginTop: 4, fontWeight: '600' },
-  topSizeTrendRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 8 },
-  topSizeTrendText: { fontSize: 12, fontWeight: '800', color: '#059669' },
-  topSizeIconWrap: {
-    width: 48,
-    height: 48,
-    borderRadius: 14,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginLeft: 12,
-  },
-
-  section: { paddingHorizontal: 16, marginBottom: 22 },
-  sectionHeaderRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 14 },
-  sectionTitle: { fontSize: 16, fontWeight: '900', color: '#111827' },
-  sectionTitleStandalone: { fontSize: 16, fontWeight: '900', color: '#111827', marginBottom: 14 },
-  sectionSubtitle: { fontSize: 10, color: '#9CA3AF', fontWeight: '600' },
-
-  chartCard: {
-    backgroundColor: '#fff',
-    borderRadius: 20,
-    padding: 18,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
-  },
-  barRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 14 },
-  barSizeLabel: { width: 34, fontSize: 13, fontWeight: '800', color: '#111827' },
-  barTrack: { flex: 1, height: 16, backgroundColor: '#F3F4F6', borderRadius: 8, overflow: 'hidden', marginHorizontal: 8 },
-  barFill: { height: '100%', backgroundColor: '#34D399', borderRadius: 8 },
-  barValueLabel: { width: 30, fontSize: 12, fontWeight: '700', color: '#6B7280', textAlign: 'right' },
-
-  restockCard: {
-    flexDirection: 'row',
-    backgroundColor: '#ECFDF5',
-    marginHorizontal: 16,
-    padding: 16,
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: '#D1FAE5',
-    marginBottom: 26,
-  },
-  restockIconWrap: {
-    width: 32,
-    height: 32,
-    borderRadius: 10,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  restockTitle: { fontSize: 13, fontWeight: '900', color: '#065F46' },
-  restockBody: { fontSize: 12, color: '#065F46', marginTop: 4, lineHeight: 17, fontWeight: '600' },
-  restockFootnote: { fontSize: 11, color: '#6B7280', marginTop: 6 },
-
-  tableCard: {
-    backgroundColor: '#fff',
-    borderRadius: 20,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
-  },
-  tableHeaderRow: { flexDirection: 'row', paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },
-  tableHeaderCell: { fontSize: 10, fontWeight: '700', color: '#9CA3AF' },
-  tableRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#F9FAFB' },
-  tableCell: { fontSize: 13, color: '#374151', fontWeight: '600' },
-  tableCellStrong: { fontWeight: '800', color: '#111827' },
-  colSize: { flex: 0.9 },
-  colSearches: { flex: 1.3 },
-  colOnHand: { flex: 1.1 },
-  colSuggested: { flex: 1.2 },
-  colGap: { flex: 0.9, textAlign: 'right' },
-
-  actionsContainer: { paddingHorizontal: 16, marginTop: 4, gap: 10 },
-  primaryBtn: { backgroundColor: '#111827', paddingVertical: 16, borderRadius: 18, alignItems: 'center' },
-  primaryBtnText: { color: '#fff', fontSize: 14, fontWeight: '800' },
-  secondaryBtn: {
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    paddingVertical: 16,
-    borderRadius: 18,
-    alignItems: 'center',
-  },
-  secondaryBtnText: { color: '#111827', fontSize: 14, fontWeight: '800' },
-  disclaimerText: { textAlign: 'center', fontSize: 11, color: '#9CA3AF', marginTop: 4 },
-});
-```
-
-## File: app/screens/retailer/home/more/sourceInventoryScreen.tsx
-```typescript
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView } from 'react-native';
-import { Feather, MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
-import BaseContainer from '@/components/shared/BaseContainer';
-import { useSourceInventory, type SourceListing } from '@/services/hooks/retailer/home/useSourceInventory';
-
-export default function SourceInventoryScreen() {
-  const {
-    shipTo,
-    searchQuery,
-    setSearchQuery,
-    filters,
-    activeFilter,
-    setActiveFilter,
-    listings,
-    demandMatchCount,
-  } = useSourceInventory();
-
-  return (
-    <BaseContainer backgroundColor="#F9FAFB" scrollable>
-      <View className="flex-1 pb-10">
-        {/* Header */}
-        <View style={s.header}>
-          <Text style={s.headerTitle}>Source Inventory</Text>
-          <TouchableOpacity hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-            <Feather name="search" size={22} color="#111827" />
-          </TouchableOpacity>
-        </View>
-
-        {/* Ship to selector */}
-        <TouchableOpacity style={s.shipToPill}>
-          <Feather name="map-pin" size={14} color="#6B7280" />
-          <Text style={s.shipToText}>Ship to: {shipTo}</Text>
-          <Feather name="chevron-down" size={16} color="#6B7280" />
-        </TouchableOpacity>
-
-        {/* Search bar */}
-        <View style={s.searchBar}>
-          <Feather name="search" size={18} color="#9CA3AF" />
-          <TextInput
-            style={s.searchInput}
-            placeholder="Search product, SKU or supplier"
-            placeholderTextColor="#9CA3AF"
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-          />
-        </View>
-
-        {/* Protected sourcing banner */}
-        <View style={s.protectedBanner}>
-          <View style={s.protectedIconWrap}>
-            <Feather name="shield" size={18} color="#fff" />
-          </View>
-          <View style={{ flex: 1 }}>
-            <Text style={s.protectedTitle}>Protected sourcing</Text>
-            <Text style={s.protectedSubtitle}>Verified suppliers · Secure payment · Order tracking</Text>
-          </View>
-        </View>
-
-        {/* Demand match alert */}
-        {demandMatchCount > 0 && (
-          <TouchableOpacity style={s.demandAlert} activeOpacity={0.85}>
-            <MaterialCommunityIcons name="chart-bar" size={18} color="#B45309" />
-            <Text style={s.demandAlertText}>
-              {demandMatchCount} listings match products your customers want
-            </Text>
-            <Text style={s.demandAlertLink}>View Matches →</Text>
-          </TouchableOpacity>
-        )}
-
-        {/* Filter chips */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={s.filterContainer}
-        >
-          {filters.map((filter) => (
-            <TouchableOpacity
-              key={filter}
-              onPress={() => setActiveFilter(filter)}
-              style={[s.filterPill, activeFilter === filter && s.filterPillActive]}
-            >
-              <Text style={[s.filterText, activeFilter === filter && s.filterTextActive]}>
-                {filter}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-
-        {/* Listings */}
-        <View style={{ paddingHorizontal: 16 }}>
-          {listings.map((listing) => (
-            <ListingCard key={listing.id} listing={listing} />
-          ))}
-
-          {listings.length === 0 && (
-            <View style={s.emptyState}>
-              <Feather name="search" size={28} color="#D1D5DB" />
-              <Text style={s.emptyStateText}>No listings match this filter yet.</Text>
-            </View>
-          )}
-        </View>
-
-        {/* Buyer protection footer */}
-        <View style={s.protectionFooter}>
-          <View style={s.protectionFooterHeader}>
-            <Feather name="shield" size={16} color="#059669" />
-            <Text style={s.protectionFooterTitle}>GoSNKR Buyer Protection</Text>
-          </View>
-          <Text style={s.protectionFooterBody}>
-            Keep payment and messages inside GoSNKR. Funds release after delivery confirmation.
-          </Text>
-          <TouchableOpacity>
-            <Text style={s.protectionFooterLink}>How protection works →</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </BaseContainer>
-  );
-}
-
-function ListingCard({ listing }: { listing: SourceListing }) {
-  return (
-    <View style={s.card}>
-      {/* Badge row */}
-      {(listing.isDemandMatch || listing.isBulkAvailable) && (
-        <View style={s.badgeRow}>
-          {listing.isDemandMatch && (
-            <View style={s.demandBadge}>
-              <Feather name="trending-up" size={11} color="#fff" />
-              <Text style={s.demandBadgeText}>Demand Match</Text>
-              <View style={s.newDot}>
-                <Text style={s.newDotText}>New</Text>
-              </View>
-            </View>
-          )}
-          {listing.isBulkAvailable && (
-            <View style={s.bulkBadge}>
-              <Feather name="package" size={11} color="#B45309" />
-              <Text style={s.bulkBadgeText}>Bulk Available</Text>
-            </View>
-          )}
-        </View>
-      )}
-
-      {/* Product row */}
-      <View style={s.productRow}>
-        <View style={s.imgPlaceholder}>
-          <MaterialCommunityIcons name="shoe-sneaker" size={30} color="#9CA3AF" />
-        </View>
-        <View style={{ flex: 1, marginLeft: 12 }}>
-          <Text style={s.productName}>{listing.productName}</Text>
-          <Text style={s.productSize}>{listing.sizeLabel}</Text>
-          <Text style={s.availabilityText}>
-            {listing.availableCount} available · Minimum {listing.minPairs} pair{listing.minPairs > 1 ? 's' : ''}
-          </Text>
-        </View>
-        <TouchableOpacity hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-          <Feather name="heart" size={20} color="#D1D5DB" />
-        </TouchableOpacity>
-      </View>
-
-      {/* Supplier row */}
-      <View style={s.supplierRow}>
-        <View style={s.avatar}>
-          <Text style={s.avatarText}>{listing.supplier.initials}</Text>
-        </View>
-        <View style={{ flex: 1, marginLeft: 10 }}>
-          <View style={s.supplierNameRow}>
-            <Text style={s.supplierName}>{listing.supplier.name}</Text>
-            <Feather name="check-circle" size={13} color="#10B981" />
-          </View>
-          <Text style={s.supplierMeta}>
-            {listing.supplier.rating} ★ · {listing.supplier.completedOrders} completed orders
-            {listing.supplier.respondsIn ? ` · Responds in ${listing.supplier.respondsIn}` : ''}
-          </Text>
-        </View>
-        <Feather name="chevron-right" size={18} color="#D1D5DB" />
-      </View>
-
-      {/* Pricing grid */}
-      <View style={s.pricingRow}>
-        <PricingCell label="Item" value={`$${listing.pricing.itemCost}`} />
-        <PricingCell label="Shipping + fees" value={`$${listing.pricing.shippingFees}`} />
-        <PricingCell label="Landed cost" value={`$${listing.pricing.landedCost}`} valueColor="#059669" />
-        <PricingCell label="Expected retail" value={`$${listing.pricing.expectedRetail}`} valueColor="#059669" />
-        <PricingCell label="Estimated margin" value={`${listing.pricing.estimatedMarginPct}%`} valueColor="#059669" />
-      </View>
-
-      {/* Fulfillment note */}
-      <View style={s.fulfillmentRow}>
-        <Feather
-          name={listing.fulfillment === 'ships' ? 'truck' : 'package'}
-          size={13}
-          color="#6B7280"
-        />
-        <Text style={s.fulfillmentText}>{listing.fulfillmentNote}</Text>
-      </View>
-
-      {/* Actions */}
-      <View style={s.cardActions}>
-        <TouchableOpacity style={s.quoteBtn}>
-          <Text style={s.quoteBtnText}>Request Quote</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={s.listingBtn} onPress={() => router.push('/')}>
-          <Text style={s.listingBtnText}>View Listing</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
-}
-
-function PricingCell({
-  label,
-  value,
-  valueColor = '#111827',
-}: {
-  label: string;
-  value: string;
-  valueColor?: string;
-}) {
-  return (
-    <View style={s.pricingCell}>
-      <Text style={s.pricingLabel}>{label}</Text>
-      <Text style={[s.pricingValue, { color: valueColor }]}>{value}</Text>
-    </View>
-  );
-}
-
-const s = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingTop: 40,
-    paddingBottom: 12,
-  },
-  headerTitle: { fontSize: 20, fontWeight: '900', color: '#111827' },
-
-  shipToPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginHorizontal: 16,
-    marginBottom: 12,
-  },
-  shipToText: { fontSize: 13, color: '#4B5563', fontWeight: '600' },
-
-  searchBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    backgroundColor: '#F3F4F6',
-    marginHorizontal: 16,
-    borderRadius: 14,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    marginBottom: 16,
-  },
-  searchInput: { flex: 1, fontSize: 14, color: '#111827' },
-
-  protectedBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#ECFDF5',
-    marginHorizontal: 16,
-    padding: 16,
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: '#D1FAE5',
-    marginBottom: 12,
-  },
-  protectedIconWrap: {
-    width: 34,
-    height: 34,
-    borderRadius: 10,
-    backgroundColor: '#10B981',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  protectedTitle: { fontSize: 14, fontWeight: '900', color: '#065F46' },
-  protectedSubtitle: { fontSize: 12, color: '#047857', marginTop: 2, fontWeight: '600' },
-
-  demandAlert: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    backgroundColor: '#FEFCE8',
-    marginHorizontal: 16,
-    padding: 14,
-    borderRadius: 14,
-    marginBottom: 16,
-  },
-  demandAlertText: { flex: 1, fontSize: 12, fontWeight: '700', color: '#854D0E' },
-  demandAlertLink: { fontSize: 12, fontWeight: '800', color: '#D97706' },
-
-  filterContainer: { paddingHorizontal: 16, gap: 8, paddingBottom: 18 },
-  filterPill: {
-    backgroundColor: '#F3F4F6',
-    paddingHorizontal: 18,
-    paddingVertical: 10,
-    borderRadius: 20,
-    marginRight: 8,
-  },
-  filterPillActive: { backgroundColor: '#111827' },
-  filterText: { fontSize: 13, fontWeight: '700', color: '#4B5563' },
-  filterTextActive: { color: '#fff' },
-
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: 24,
-    padding: 18,
-    marginBottom: 16,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
-  },
-  badgeRow: { flexDirection: 'row', gap: 8, marginBottom: 12 },
-  demandBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-    backgroundColor: '#10B981',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 10,
-  },
-  demandBadgeText: { color: '#fff', fontSize: 11, fontWeight: '800' },
-  newDot: { backgroundColor: 'rgba(255,255,255,0.25)', paddingHorizontal: 6, borderRadius: 6, marginLeft: 2 },
-  newDotText: { color: '#fff', fontSize: 9, fontWeight: '900' },
-  bulkBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-    backgroundColor: '#FEF3C7',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 10,
-  },
-  bulkBadgeText: { color: '#B45309', fontSize: 11, fontWeight: '800' },
-
-  productRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 16 },
-  imgPlaceholder: {
-    width: 64,
-    height: 64,
-    backgroundColor: '#F9FAFB',
-    borderRadius: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  productName: { fontSize: 15, fontWeight: '800', color: '#111827' },
-  productSize: { fontSize: 12, color: '#6B7280', marginTop: 2, fontWeight: '600' },
-  availabilityText: { fontSize: 11, color: '#9CA3AF', marginTop: 4, fontWeight: '600' },
-
-  supplierRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F9FAFB',
-    borderRadius: 16,
-    padding: 12,
-    marginBottom: 16,
-  },
-  avatar: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: '#111827',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  avatarText: { color: '#fff', fontWeight: '900', fontSize: 12 },
-  supplierNameRow: { flexDirection: 'row', alignItems: 'center', gap: 5 },
-  supplierName: { fontSize: 13, fontWeight: '800', color: '#111827' },
-  supplierMeta: { fontSize: 11, color: '#9CA3AF', marginTop: 2, fontWeight: '600' },
-
-  pricingRow: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: 14 },
-  pricingCell: { width: '33.33%', marginBottom: 10 },
-  pricingLabel: { fontSize: 10, color: '#9CA3AF', fontWeight: '600' },
-  pricingValue: { fontSize: 14, fontWeight: '800', marginTop: 2 },
-
-  fulfillmentRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 16 },
-  fulfillmentText: { fontSize: 12, color: '#6B7280', fontWeight: '600' },
-
-  cardActions: { flexDirection: 'row', gap: 10 },
-  quoteBtn: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: '#111827',
-    paddingVertical: 13,
-    borderRadius: 14,
-    alignItems: 'center',
-  },
-  quoteBtnText: { fontSize: 13, fontWeight: '800', color: '#111827' },
-  listingBtn: {
-    flex: 1,
-    backgroundColor: '#10B981',
-    paddingVertical: 13,
-    borderRadius: 14,
-    alignItems: 'center',
-  },
-  listingBtnText: { fontSize: 13, fontWeight: '800', color: '#fff' },
-
-  emptyState: { alignItems: 'center', paddingVertical: 40, gap: 10 },
-  emptyStateText: { color: '#9CA3AF', fontSize: 13, fontWeight: '600' },
-
-  protectionFooter: {
-    backgroundColor: '#ECFDF5',
-    marginHorizontal: 16,
-    padding: 16,
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: '#D1FAE5',
-    marginTop: 4,
-  },
-  protectionFooterHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 6 },
-  protectionFooterTitle: { fontSize: 13, fontWeight: '900', color: '#065F46' },
-  protectionFooterBody: { fontSize: 12, color: '#047857', lineHeight: 17, fontWeight: '600' },
-  protectionFooterLink: { fontSize: 12, fontWeight: '800', color: '#059669', marginTop: 8 },
-});
 ```
 
 ## File: app/screens/retailer/home/more/storeSubscriptionScreen.tsx
@@ -12202,269 +9987,6 @@ const styles = StyleSheet.create({
   syncNowBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: '#0a0a0a', borderRadius: 14, paddingVertical: 16 },
   syncNowText: { fontSize: 16, fontWeight: '700', color: '#fff' },
 })
-```
-
-## File: app/screens/retailer/home/notifications/notificationsScreen.tsx
-```typescript
-import React from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
-import { useNotifications } from '@/services/hooks/retailer/home/useNotifications';
-import { NotificationCard } from '@/components/retailer/home/notifications/NotificationCard';
-import BaseContainer from '@/components/shared/BaseContainer';
-const Filters = ['All', 'Orders', 'Refunds', 'Inventory'];
-
-export default function NotificationsScreen() {
-    const { activeFilter, setActiveFilter, filteredData } = useNotifications();
-
-    return (
-        <BaseContainer scrollable backgroundColor='#fff'>
-            <View className='pt-10'>
-                <View style={styles.header}>
-                    <Text style={styles.headerTitle}>Notifications</Text>
-                    <TouchableOpacity><Text style={styles.markRead}>Mark all read</Text></TouchableOpacity>
-                </View>
-
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterScroll}>
-                    {Filters.map(f => (
-                        <TouchableOpacity
-                            key={f}
-                            onPress={() => setActiveFilter(f)}
-                            style={[styles.filterBtn, activeFilter === f && styles.activeFilter]}
-                        >
-                            <Text style={[styles.filterText, activeFilter === f && styles.activeFilterText]}>{f}</Text>
-                        </TouchableOpacity>
-                    ))}
-                </ScrollView>
-
-                <ScrollView contentContainerStyle={styles.list}>
-                    <Text style={styles.sectionHeader}>TODAY</Text>
-                    {filteredData.map(item => <NotificationCard key={item.id} item={item} />)}
-                </ScrollView>
-            </View>
-        </BaseContainer>
-    );
-}
-
-const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#fff', paddingTop: 60 },
-    header: { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20, alignItems: 'center' },
-    headerTitle: { fontSize: 20, fontWeight: '800' },
-    markRead: { color: '#10B981', fontWeight: '600', fontSize: 14 },
-    filterScroll: { paddingLeft: 20, marginVertical: 20, flexGrow: 0 },
-    filterBtn: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, backgroundColor: '#F3F4F6', marginRight: 8 },
-    activeFilter: { backgroundColor: '#111' },
-    filterText: { fontSize: 13, fontWeight: '600', color: '#6B7280' },
-    activeFilterText: { color: '#fff' },
-    list: { paddingHorizontal: 20 },
-    sectionHeader: { fontSize: 11, fontWeight: '700', color: '#9CA3AF', marginBottom: 12, letterSpacing: 1 },
-});
-```
-
-## File: app/screens/retailer/home/product/AddProductScreen.tsx
-```typescript
-import React from 'react';
-import { ScrollView, View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
-import ProductHeader from '@/components/retailer/home/addproduct/productHeader';
-import ProductBarcodeScan from '@/components/retailer/home/addproduct/productBarcodeScan';
-import OrDivider from '@/components/retailer/home/addproduct/orDivider';
-import ProductImageUpload from '@/components/retailer/home/addproduct/productImageUpload';
-import ProductFoundCard from '@/components/retailer/home/addproduct/productFoundCard';
-import ProductSizeTable from '@/components/retailer/home/addproduct/productSizeTable';
-import { useAddProduct } from '@/services/hooks/retailer/home/useAddProduct';
-import BaseContainer from '@/components/shared/BaseContainer';
-
-interface InputFieldProps {
-    placeholder: string;
-    value: string;
-    onChangeText: (v: string) => void;
-}
-
-const InputField = ({ placeholder, value, onChangeText }: InputFieldProps) => (
-    <View style={styles.inputWrapper}>
-        <TextInput
-            style={styles.input}
-            placeholder={placeholder}
-            value={value}
-            onChangeText={onChangeText}
-            placeholderTextColor="#9CA3AF"
-            autoCorrect={false}
-            underlineColorAndroid="transparent"
-        />
-    </View>
-);
-
-const AddProductScreen = () => {
-    const {
-        form,
-        sizes,
-        scannedFound,
-        updateField,
-        updateSizeQty,
-        addSize,
-        removeSize,
-        openScanner,
-        enterBarcodeManually,
-        handleSave,
-    } = useAddProduct();
-
-    return (
-        <BaseContainer backgroundColor='#fff'>
-            <View style={styles.container}>
-                <ProductHeader />
-
-                <ScrollView
-                    showsVerticalScrollIndicator={false}
-                    keyboardShouldPersistTaps="handled"
-                    contentContainerStyle={styles.scrollContent}
-                >
-                    <ProductBarcodeScan
-                        onOpenScanner={openScanner}
-                        onEnterManually={enterBarcodeManually}
-                    />
-
-                    <OrDivider />
-
-                    <ProductImageUpload />
-
-                    {scannedFound && <ProductFoundCard productName={form.name} />}
-
-                    <Text style={styles.sectionLabel}>PRODUCT DETAILS</Text>
-
-                    <InputField
-                        placeholder="Product Name"
-                        value={form.name}
-                        onChangeText={(v) => updateField('name', v)}
-                    />
-                    <InputField
-                        placeholder="Brand"
-                        value={form.brand}
-                        onChangeText={(v) => updateField('brand', v)}
-                    />
-                    <InputField
-                        placeholder="Category"
-                        value={form.category}
-                        onChangeText={(v) => updateField('category', v)}
-                    />
-                    <InputField
-                        placeholder="Colorway"
-                        value={form.colorway}
-                        onChangeText={(v) => updateField('colorway', v)}
-                    />
-                    <InputField
-                        placeholder="SKU / Style Code"
-                        value={form.sku}
-                        onChangeText={(v) => updateField('sku', v)}
-                    />
-
-                    <Text style={styles.sectionLabel}>SIZES & PRICING</Text>
-                    <ProductSizeTable
-                        sizes={sizes}
-                        onUpdateQty={updateSizeQty}
-                        onRemove={removeSize}
-                        onAddSize={addSize}
-                    />
-
-                    <Text style={styles.sectionLabel}>AVAILABILITY</Text>
-                    <View style={styles.availabilityRow}>
-                        {(['Active', 'Coming Soon'] as const).map((status) => (
-                            <TouchableOpacity
-                                key={status}
-                                style={[
-                                    styles.availabilityItem,
-                                    form.availability === status && styles.activeItem
-                                ]}
-                                onPress={() => updateField('availability', status)}
-                            >
-                                <Text style={[
-                                    styles.availabilityText,
-                                    form.availability === status && styles.activeAvailabilityText
-                                ]}>
-                                    {status} {form.availability === status && '✓'}
-                                </Text>
-                            </TouchableOpacity>
-                        ))}
-                    </View>
-
-                    <TouchableOpacity style={styles.saveBtn} onPress={handleSave}>
-                        <Text style={styles.saveBtnText}>Save Product</Text>
-                    </TouchableOpacity>
-                </ScrollView>
-            </View>
-        </BaseContainer>
-    );
-};
-
-const styles = StyleSheet.create({
-    container: { flex: 1, paddingTop: 40 },
-    scrollContent: { paddingBottom: 100 },
-    sectionLabel: {
-        fontSize: 10,
-        fontWeight: '800',
-        color: '#9CA3AF',
-        marginLeft: 20,
-        marginTop: 24,
-        marginBottom: 8,
-        letterSpacing: 1
-    },
-    inputWrapper: {
-        backgroundColor: '#fff',
-        marginHorizontal: 16,
-        marginBottom: 8,
-        borderRadius: 16,
-        borderWidth: 1,
-        borderColor: '#F3F4F6',
-        paddingHorizontal: 16
-    },
-    input: {
-        height: 50,
-        fontSize: 15,
-        fontWeight: '500',
-        color: '#111'
-    },
-    availabilityRow: {
-        flexDirection: 'row',
-        paddingHorizontal: 16,
-        gap: 12,
-    },
-    availabilityItem: {
-        flex: 1,
-        backgroundColor: '#fff',
-        height: 50,
-        borderRadius: 14,
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderWidth: 1,
-        borderColor: '#F3F4F6'
-    },
-    activeItem: {
-        borderColor: '#22C55E',
-        backgroundColor: '#F0FDF4'
-    },
-    availabilityText: {
-        fontSize: 13,
-        fontWeight: '700',
-        color: '#4B5563'
-    },
-    activeAvailabilityText: {
-        color: '#22C55E'
-    },
-    saveBtn: {
-        backgroundColor: '#111',
-        margin: 16,
-        height: 56,
-        borderRadius: 16,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: 32
-    },
-    saveBtnText: {
-        color: '#fff',
-        fontSize: 16,
-        fontWeight: '800'
-    },
-});
-
-export default AddProductScreen;
 ```
 
 ## File: app/screens/retailer/pro/freeTrialOnboardingScreen.tsx
@@ -17660,7 +15182,7 @@ export default NotificationBanner
 
 ## File: components/discover/notifications/NotificationGroup.tsx
 ```typescript
-// components/notifications/NotificationGroup.tsx
+// components/discover/notifications/NotificationGroup.tsx
 import React from 'react'
 import { View, Text } from 'react-native'
 import NotificationItem from './NotificationItem'
@@ -17672,31 +15194,17 @@ interface NotificationGroupProps {
   onPressItem: (id: string) => void
 }
 
-const NotificationGroup: React.FC<NotificationGroupProps> = ({
-  group,
-  items,
-  onPressItem,
-}) => {
+const NotificationGroup: React.FC<NotificationGroupProps> = ({ group, items, onPressItem }) => {
   return (
-    <View className="mb-2">
-      {/* Section label */}
-      <Text className="text-[11px] font-bold text-gray-400 tracking-widest px-4 pt-4 pb-1">
-        {group}
-      </Text>
+    <View>
+      <Text className="text-sm font-extrabold text-gray-900 px-4 pt-4 pb-1">{group}</Text>
 
-      {/* Items card */}
-      <View className="bg-white mx-4 rounded-2xl overflow-hidden"
-        style={{ shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 8, elevation: 2 }}
-      >
-        {items.map((item, index) => (
-          <View key={item.id}>
-            <NotificationItem item={item} onPress={onPressItem} />
-            {index < items.length - 1 && (
-              <View className="h-px bg-gray-100 ml-16" />
-            )}
-          </View>
-        ))}
-      </View>
+      {items.map((item, index) => (
+        <View key={item.id}>
+          <NotificationItem item={item} onPress={onPressItem} />
+          {index < items.length - 1 && <View className="h-px bg-gray-100 mx-4" />}
+        </View>
+      ))}
     </View>
   )
 }
@@ -17706,58 +15214,110 @@ export default NotificationGroup
 
 ## File: components/discover/notifications/NotificationsFilterTabs.tsx
 ```typescript
-// components/notifications/NotificationFilterTabs.tsx
+// components/discover/notifications/NotificationsFilterTabs.tsx
 import React from 'react'
 import { ScrollView, TouchableOpacity, Text, View } from 'react-native'
+import { Feather, MaterialCommunityIcons } from '@expo/vector-icons'
 import type { NotificationCategory } from '@/services/hooks/discover/useNotifications'
-
-const TABS: { label: NotificationCategory; emoji: string }[] = [
-  { label: 'All',      emoji: ''   },
-  { label: 'Restocks', emoji: '🔔' },
-  { label: 'Orders',   emoji: '🛍️' },
-  { label: 'Drops',    emoji: '🔥' },
-  { label: 'Stores',   emoji: '📍' },
-]
 
 interface NotificationFilterTabsProps {
   active: NotificationCategory
   onChange: (tab: NotificationCategory) => void
+  unreadCount: number
 }
+
+const ROW_1: { label: NotificationCategory; text: string }[] = [
+  { label: 'All', text: 'All' },
+  { label: 'Unread', text: 'Unread' },
+  { label: 'Orders', text: 'Orders' },
+]
+
+const ROW_2_ICON = (label: string, color: string) => {
+  switch (label) {
+    case 'Restocks':
+      return <Feather name="refresh-cw" size={13} color={color} />
+    case 'Drops':
+      return <MaterialCommunityIcons name="water-outline" size={14} color={color} />
+    case 'PriceDrops':
+      return <Feather name="trending-down" size={13} color={color} />
+    case 'Offers':
+      return <Feather name="tag" size={13} color={color} />
+    default:
+      return null
+  }
+}
+
+const ROW_2: { label: NotificationCategory; text: string }[] = [
+  { label: 'Restocks', text: 'Restocks' },
+  { label: 'Drops', text: 'Drops' },
+  { label: 'PriceDrops', text: 'Price drops' },
+  { label: 'Offers', text: 'Offers' },
+]
 
 const NotificationFilterTabs: React.FC<NotificationFilterTabsProps> = ({
   active,
   onChange,
+  unreadCount,
 }) => {
   return (
-    <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 10, gap: 8 }}
-    >
-      {TABS.map(({ label, emoji }) => {
-        const isActive = active === label
-        return (
-          <TouchableOpacity
-            key={label}
-            onPress={() => onChange(label)}
-            activeOpacity={0.75}
-            className={`flex-row items-center gap-1 px-4 py-2 rounded-full ${
-              isActive ? 'bg-gray-900' : 'bg-white border border-gray-200'
-            }`}
-            style={
-              isActive
-                ? { shadowColor: '#000', shadowOpacity: 0.12, shadowRadius: 2 }
-                : {}
-            }
-          >
-            <Text className={`text-sm font-semibold ${isActive ? 'text-white' : 'text-gray-600'}`}>
-              {label}
-            </Text>
-            {emoji ? <Text className="text-sm">{emoji}</Text> : null}
-          </TouchableOpacity>
-        )
-      })}
-    </ScrollView>
+    <View className="pb-1">
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 10, gap: 8 }}
+      >
+        {ROW_1.map(({ label, text }) => {
+          const isActive = active === label
+          return (
+            <TouchableOpacity
+              key={label}
+              onPress={() => onChange(label)}
+              activeOpacity={0.75}
+              className={`flex-row items-center gap-1.5 px-4 py-2 rounded-full ${
+                isActive ? 'bg-gray-900' : 'bg-white border border-gray-200'
+              }`}
+            >
+              {label === 'Unread' && (
+                <View className="w-1.5 h-1.5 rounded-full bg-green-500" />
+              )}
+              <Text
+                className={`text-sm font-bold ${isActive ? 'text-white' : 'text-gray-700'}`}
+              >
+                {text}
+                {label === 'Unread' && unreadCount > 0 ? ` (${unreadCount})` : ''}
+              </Text>
+            </TouchableOpacity>
+          )
+        })}
+      </ScrollView>
+
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 8, gap: 8 }}
+      >
+        {ROW_2.map(({ label, text }) => {
+          const isActive = active === label
+          return (
+            <TouchableOpacity
+              key={label}
+              onPress={() => onChange(label)}
+              activeOpacity={0.75}
+              className={`flex-row items-center gap-1.5 px-3.5 py-1.5 rounded-full ${
+                isActive ? 'bg-gray-900' : 'bg-white border border-gray-200'
+              }`}
+            >
+              {ROW_2_ICON(label, isActive ? '#FFFFFF' : '#6B7280')}
+              <Text
+                className={`text-xs font-semibold ${isActive ? 'text-white' : 'text-gray-600'}`}
+              >
+                {text}
+              </Text>
+            </TouchableOpacity>
+          )
+        })}
+      </ScrollView>
+    </View>
   )
 }
 
@@ -18467,84 +16027,132 @@ export default MapSearchBar;
 ```typescript
 // components/map/StoreMarker.tsx
 import { Store } from "@/services/hooks/map/useMap";
+import { Feather } from "@expo/vector-icons";
 import React from "react";
 import { Text, View } from "react-native";
 import { Marker } from "react-native-maps";
 
 const GREEN = "#22C55E";
+const DARK = "#0F0F0F";
 
 interface StoreMarkerProps {
-    store: Store;
-    isSelected: boolean;
-    onPress: (store: Store) => void;
+  store: Store;
+  isSelected: boolean;
+  onPress: (store: Store) => void;
 }
 
 const StoreMarker = ({ store, isSelected, onPress }: StoreMarkerProps) => {
-    return (
-        <Marker
-            coordinate={{ latitude: store.latitude, longitude: store.longitude }}
-            onPress={() => onPress(store)}
-            tracksViewChanges={false}
-        >
-            <View
-                style={{
-                    backgroundColor: "#FFFFFF",
-                    borderRadius: 12,
-                    paddingHorizontal: 12,
-                    paddingVertical: 8,
-                    borderWidth: isSelected ? 2 : 1,
-                    borderColor: isSelected ? GREEN : "#E0E0EA",
-                    shadowColor: "#000",
-                    shadowOffset: { width: 0, height: 2 },
-                    shadowOpacity: isSelected ? 0.15 : 0.08,
-                    shadowRadius: 6,
-                    elevation: isSelected ? 6 : 3,
-                    alignItems: "flex-start",
-                    minWidth: 120,
-                }}
-            >
-                <Text
-                    style={{
-                        fontSize: 13,
-                        fontWeight: "700",
-                        color: "#0F0F0F",
-                        marginBottom: 3,
-                    }}
-                >
-                    {store.name}
-                </Text>
-                <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-                    <View
-                        style={{
-                            width: 7,
-                            height: 7,
-                            borderRadius: 4,
-                            backgroundColor: GREEN,
-                        }}
-                    />
-                    <Text style={{ fontSize: 12, color: "#3A3A4A", fontWeight: "500" }}>
-                        {store.stock} in stock
-                    </Text>
-                </View>
-            </View>
+  const pinColor = isSelected ? GREEN : DARK;
 
-            {/* Tail / pointer */}
+  return (
+    <Marker
+      coordinate={{ latitude: store.latitude, longitude: store.longitude }}
+      onPress={() => onPress(store)}
+      tracksViewChanges={false}
+      anchor={{ x: 0.5, y: 1 }}
+    >
+      <View style={{ alignItems: "center" }}>
+        {/* Label pill — only the selected store gets the expanded pill in the
+            reference design; others show just the icon pin. */}
+        {isSelected ? (
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              backgroundColor: GREEN,
+              borderRadius: 100,
+              paddingLeft: 6,
+              paddingRight: 12,
+              paddingVertical: 6,
+              gap: 6,
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.15,
+              shadowRadius: 6,
+              elevation: 6,
+              marginBottom: 2,
+            }}
+          >
             <View
-                style={{
-                    alignSelf: "center",
-                    width: 0,
-                    height: 0,
-                    borderLeftWidth: 6,
-                    borderRightWidth: 6,
-                    borderTopWidth: 7,
-                    borderLeftColor: "transparent",
-                    borderRightColor: "transparent",
-                    borderTopColor: isSelected ? GREEN : "#E0E0EA",
-                    marginTop: -1,
-                }}
-            />
-        </Marker>
-    );
+              style={{
+                width: 22,
+                height: 22,
+                borderRadius: 11,
+                backgroundColor: "rgba(255,255,255,0.25)",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Text style={{ color: "#fff", fontSize: 11, fontWeight: "800" }}>
+                {store.name.charAt(0).toUpperCase()}
+              </Text>
+            </View>
+            <View>
+              <Text style={{ color: "#fff", fontSize: 13, fontWeight: "800" }}>
+                {store.name}
+              </Text>
+              <Text style={{ color: "rgba(255,255,255,0.85)", fontSize: 10, fontWeight: "600" }}>
+                {store.stock} matches
+              </Text>
+            </View>
+          </View>
+        ) : (
+          <View
+            style={{
+              backgroundColor: "#FFFFFF",
+              borderRadius: 100,
+              paddingHorizontal: 10,
+              paddingVertical: 6,
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 6,
+              borderWidth: 1,
+              borderColor: "#E5E7EB",
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.08,
+              shadowRadius: 4,
+              elevation: 3,
+              marginBottom: 2,
+            }}
+          >
+            <View
+              style={{
+                width: 18,
+                height: 18,
+                borderRadius: 9,
+                backgroundColor: DARK,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Feather name="package" size={9} color="#fff" />
+            </View>
+            <View>
+              <Text style={{ fontSize: 12, fontWeight: "700", color: DARK }}>
+                {store.name}
+              </Text>
+              <Text style={{ fontSize: 10, color: "#8A8A9A", fontWeight: "600" }}>
+                {store.stock} matches
+              </Text>
+            </View>
+          </View>
+        )}
+
+        {/* Pin dot */}
+        <View
+          style={{
+            width: 12,
+            height: 12,
+            borderRadius: 6,
+            backgroundColor: pinColor,
+            borderWidth: 2,
+            borderColor: "#fff",
+          }}
+        />
+      </View>
+    </Marker>
+  );
 };
 
 export default StoreMarker;
@@ -22701,63 +20309,53 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
   pointsProgress,
   tierColor,
   onViewBenefits,
-}) => (
-  <View className="mb-4 shadow-lg" style={{ shadowColor: tierColor, shadowOpacity: 0.15, shadowRadius: 15, elevation: 5 }}>
+}) => {
+  const percent = Math.min(pointsProgress * 100, 100)
+  const remaining = Math.max(pointsToNextTier - points, 0)
+
+  return (
     <LinearGradient
-      // Approximating your 135deg gradient with the simplified yellow palette
-      colors={['#FEF9C3', '#FFFBEB']}
+      colors={['#FEF3C7', '#FFFBEB']}
       start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      className="rounded-3xl px-5 py-6 border border-white/50"
+      end={{ x: 1, y: 0.3 }}
+      className="rounded-2xl px-4 py-4 mb-4"
     >
-      {/* Top row - Scaled Up */}
-      <View className="flex-row justify-between items-center mb-2">
+      <View className="flex-row justify-between items-center mb-2.5">
         <View className="flex-row items-center gap-2">
-          <View className="bg-white/40 p-1.5 rounded-lg">
-            <MaterialCommunityIcons name="trophy" size={22} color={tierColor} />
-          </View>
-          <Text className="text-lg font-black tracking-tight" style={{ color: tierColor }}>
-            {memberTier} Member
+          <MaterialCommunityIcons name="trophy" size={18} color={tierColor} />
+          <Text className="text-[15px] font-extrabold" style={{ color: tierColor }}>
+            {memberTier} member
           </Text>
         </View>
 
-        <TouchableOpacity 
-          onPress={onViewBenefits} 
-          className="flex-row items-center gap-1 bg-white/40 px-3 py-1 rounded-full"
-        >
-          <Text className="text-xs font-black uppercase tracking-wider" style={{ color: tierColor }}>
-            Benefits
-          </Text>
-          <Feather name="chevron-right" size={14} color={tierColor} />
+        <TouchableOpacity onPress={onViewBenefits} className="flex-row items-center gap-0.5">
+          <Text className="text-xs font-bold text-gray-500">View benefits</Text>
+          <Feather name="chevron-right" size={13} color="#6B7280" />
         </TouchableOpacity>
       </View>
 
-      {/* Subtitle - More readable */}
-      <Text className="text-sm font-semibold text-gray-600/80 mb-5 ml-1">
-        {(pointsToNextTier - points).toLocaleString()} points to reach {nextTier}
-      </Text>
+      <View className="flex-row items-baseline gap-1.5 mb-2">
+        <Text className="text-[13px] font-bold text-gray-700">
+          {points.toLocaleString()} / {pointsToNextTier.toLocaleString()} points
+        </Text>
+        <Text className="text-xs font-bold" style={{ color: tierColor }}>
+          {Math.round(percent)}%
+        </Text>
+      </View>
 
-      {/* Progress bar - Thicker (h-3) */}
-      <View className="h-3 bg-white/60 rounded-full overflow-hidden mb-2 shadow-inner">
+      <View className="h-2 bg-white/70 rounded-full overflow-hidden">
         <View
           className="h-full rounded-full"
-          style={{
-            width: `${Math.min(pointsProgress * 100, 100)}%`,
-            backgroundColor: tierColor,
-          }}
+          style={{ width: `${percent}%`, backgroundColor: tierColor }}
         />
       </View>
 
-      {/* Points label - Larger font */}
-      <View className="flex-row justify-between items-center px-1">
-        <Text className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Progress</Text>
-        <Text className="text-xs font-black" style={{ color: tierColor }}>
-          {points.toLocaleString()} <Text className="text-gray-400">/ {pointsToNextTier.toLocaleString()}</Text>
-        </Text>
-      </View>
+      <Text className="text-xs text-gray-500 mt-2">
+        {remaining.toLocaleString()} points to {nextTier}
+      </Text>
     </LinearGradient>
-  </View>
-)
+  )
+}
 
 export default MembershipCard
 ```
@@ -22767,51 +20365,67 @@ export default MembershipCard
 // components/profile/MySizes.tsx
 import React from 'react'
 import { View, Text, TouchableOpacity } from 'react-native'
-import { Feather } from '@expo/vector-icons'
+import { Feather, MaterialCommunityIcons } from '@expo/vector-icons'
+import type { ProfileData } from '@/services/hooks/profile/useProfile'
 
 interface MySizesProps {
-  sizes: string[]
+  categories: ProfileData['sizeCategories']
   onEdit: () => void
 }
 
-const MySizes: React.FC<MySizesProps> = ({ sizes, onEdit }) => (
+const CATEGORY_ICON: Record<string, React.ReactNode> = {
+  sneaker: <MaterialCommunityIcons name="shoe-sneaker" size={18} color="#6B7280" />,
+  shirt: <Feather name="user" size={17} color="#6B7280" />,
+}
+
+const MySizes: React.FC<MySizesProps> = ({ categories, onEdit }) => (
   <View
-    className="bg-white rounded-3xl px-5 py-5 mb-4"
-    style={{ 
-      shadowColor: '#000', 
+    className="bg-white rounded-2xl px-4 py-4 mb-4"
+    style={{
+      shadowColor: '#000',
       shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.08, 
-      shadowRadius: 12, 
-      elevation: 4 
+      shadowOpacity: 0.06,
+      shadowRadius: 10,
+      elevation: 3,
     }}
   >
-    {/* Header Section */}
-    <View className="flex-row justify-between items-center mb-4">
-      <Text className="text-lg font-black text-gray-900 tracking-tight">My Sizes</Text>
-      
-      <TouchableOpacity 
-        onPress={onEdit} 
-        className="flex-row items-center gap-1 bg-gray-50 px-3 py-1.5 rounded-full"
-      >
-        <Text className="text-xs text-gray-500 font-bold">Edit</Text>
-        <Feather name="chevron-right" size={14} color="#6B7280" />
+    <View className="flex-row justify-between items-center mb-3.5">
+      <Text className="text-base font-extrabold text-gray-900">Saved sizes</Text>
+      <TouchableOpacity onPress={onEdit} className="flex-row items-center gap-0.5">
+        <Text className="text-xs font-bold text-green-600">Edit</Text>
+        <Feather name="chevron-right" size={13} color="#16A34A" />
       </TouchableOpacity>
     </View>
 
-    {/* Sizes Grid */}
-    <View className="flex-row flex-wrap gap-2.5">
-      {sizes.map((size) => (
-        <View 
-          key={size} 
-          className="px-10 py-2.5 bg-gray-900 rounded-2xl shadow-sm"
-          style={{ elevation: 2 }}
-        >
-          <Text className="text-white text-sm font-black tracking-wide">
-            {size}
-          </Text>
+    <View className="gap-3">
+      {categories.map((cat) => (
+        <View key={cat.id} className="flex-row items-center justify-between">
+          <View className="flex-row items-center gap-2.5">
+            {CATEGORY_ICON[cat.icon]}
+            <Text className="text-sm font-semibold text-gray-700">
+              {cat.label}
+              {cat.editableLabel ? ` · ${cat.editableLabel}` : ''}
+            </Text>
+          </View>
+
+          <View className="flex-row gap-2">
+            {cat.values.map((v) => (
+              <View
+                key={v.label}
+                className="flex-row items-center gap-1 bg-gray-100 rounded-full px-3 py-1.5"
+              >
+                <Text className="text-xs font-bold text-gray-900">{v.value}</Text>
+                <Text className="text-[10px] text-gray-400 font-medium">{v.label}</Text>
+              </View>
+            ))}
+          </View>
         </View>
       ))}
     </View>
+
+    <Text className="text-[11px] text-gray-300 mt-3">
+      Choose which sizes to show when checking out
+    </Text>
   </View>
 )
 
@@ -23486,6 +21100,191 @@ const styles = StyleSheet.create({
 })
 ```
 
+## File: components/retailer/home/addproduct/orDivider.tsx
+```typescript
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+
+const OrDivider = () => (
+  <View style={styles.container}>
+    <View style={styles.line} />
+    <Text style={styles.text}>OR</Text>
+    <View style={styles.line} />
+  </View>
+);
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 16,
+    marginTop: 20,
+    marginBottom: 4,
+  },
+  line: { flex: 1, height: 1, backgroundColor: '#F3F4F6' },
+  text: { fontSize: 11, fontWeight: '700', color: '#9CA3AF', marginHorizontal: 12 },
+});
+
+export default OrDivider;
+```
+
+## File: components/retailer/home/addproduct/productBarcodeScan.tsx
+```typescript
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { Feather } from '@expo/vector-icons';
+
+interface ProductBarcodeScanProps {
+  onOpenScanner: () => void;
+  onEnterManually: () => void;
+}
+
+const ProductBarcodeScan = ({ onOpenScanner, onEnterManually }: ProductBarcodeScanProps) => (
+  <View style={styles.card}>
+    <View style={styles.row}>
+      <View style={styles.iconBox}>
+        <Feather name="maximize" size={20} color="#111" />
+      </View>
+      <View style={styles.textCol}>
+        <Text style={styles.title}>Scan Barcode</Text>
+        <Text style={styles.subtitle}>Scan a UPC to fill product details automatically</Text>
+      </View>
+    </View>
+
+    <TouchableOpacity style={styles.scanBtn} onPress={onOpenScanner} activeOpacity={0.85}>
+      <Feather name="camera" size={16} color="#fff" />
+      <Text style={styles.scanBtnText}>Open Scanner</Text>
+    </TouchableOpacity>
+
+    <TouchableOpacity onPress={onEnterManually} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+      <Text style={styles.manualText}>Enter barcode manually</Text>
+    </TouchableOpacity>
+  </View>
+);
+
+const styles = StyleSheet.create({
+  card: {
+    backgroundColor: '#F0FDF4',
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#DCFCE7',
+    marginHorizontal: 16,
+    marginTop: 16,
+    padding: 16,
+    alignItems: 'center',
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'stretch',
+    marginBottom: 14,
+  },
+  iconBox: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  textCol: { flex: 1 },
+  title: { fontSize: 15, fontWeight: '800', color: '#111' },
+  subtitle: { fontSize: 12, color: '#4B7A5A', marginTop: 2 },
+  scanBtn: {
+    flexDirection: 'row',
+    backgroundColor: '#111',
+    alignSelf: 'stretch',
+    height: 50,
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
+    gap: 8,
+  },
+  scanBtnText: { color: '#fff', fontSize: 14, fontWeight: '800' },
+  manualText: { fontSize: 13, fontWeight: '700', color: '#16A34A' },
+});
+
+export default ProductBarcodeScan;
+```
+
+## File: components/retailer/home/addproduct/productFoundCard.tsx
+```typescript
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { Feather } from '@expo/vector-icons';
+
+interface ProductFoundCardProps {
+  productName: string;
+  imageUri?: string;
+  onPress?: () => void;
+}
+
+const ProductFoundCard = ({ productName, imageUri, onPress }: ProductFoundCardProps) => (
+  <TouchableOpacity style={styles.card} activeOpacity={0.85} onPress={onPress} disabled={!onPress}>
+    {imageUri ? (
+      <Image source={{ uri: imageUri }} style={styles.thumb} resizeMode="contain" />
+    ) : (
+      <View style={styles.thumbPlaceholder}>
+        <Feather name="image" size={20} color="#9CA3AF" />
+      </View>
+    )}
+
+    <View style={styles.textCol}>
+      <View style={styles.titleRow}>
+        <View style={styles.checkCircle}>
+          <Feather name="check" size={11} color="#fff" />
+        </View>
+        <Text style={styles.title}>Product found - Review details</Text>
+      </View>
+      <Text style={styles.subtitle} numberOfLines={1}>{productName}</Text>
+    </View>
+
+    <Feather name="chevron-right" size={18} color="#16A34A" />
+  </TouchableOpacity>
+);
+
+const styles = StyleSheet.create({
+  card: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F0FDF4',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#DCFCE7',
+    marginHorizontal: 16,
+    marginTop: 16,
+    padding: 12,
+  },
+  thumb: { width: 48, height: 48, marginRight: 12 },
+  thumbPlaceholder: {
+    width: 48,
+    height: 48,
+    borderRadius: 10,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  textCol: { flex: 1 },
+  titleRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 2 },
+  checkCircle: {
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: '#22C55E',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 6,
+  },
+  title: { fontSize: 13, fontWeight: '800', color: '#111' },
+  subtitle: { fontSize: 12, color: '#4B7A5A', marginLeft: 22 },
+});
+
+export default ProductFoundCard;
+```
+
 ## File: components/retailer/home/addproduct/productHeader.tsx
 ```typescript
 import React from 'react';
@@ -23510,719 +21309,6 @@ const styles = StyleSheet.create({
 });
 
 export default ProductHeader;
-```
-
-## File: components/retailer/home/addproduct/productImageUpload.tsx
-```typescript
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { Feather } from '@expo/vector-icons';
-
-const ProductImageUpload = ({ onPress }: { onPress?: () => void }) => (
-  <TouchableOpacity style={styles.container} activeOpacity={0.7} onPress={onPress}>
-    <Feather name="camera" size={32} color="#9CA3AF" />
-    <Text style={styles.mainText}>Add product photos</Text>
-    <Text style={styles.subText}>Up to 8 - First photo is the cover</Text>
-  </TouchableOpacity>
-);
-
-const styles = StyleSheet.create({
-  container: { height: 160, backgroundColor: '#fff', marginHorizontal: 16, marginTop: 16, borderRadius: 20, borderWidth: 1, borderColor: '#F3F4F6', borderStyle: 'dashed', justifyContent: 'center', alignItems: 'center' },
-  mainText: { fontSize: 14, fontWeight: '700', color: '#111', marginTop: 10 },
-  subText: { fontSize: 12, color: '#9CA3AF', marginTop: 4 },
-});
-
-export default ProductImageUpload;
-```
-
-## File: components/retailer/home/addproduct/productSizeTable.tsx
-```typescript
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { Feather } from '@expo/vector-icons';
-
-const ProductSizeTable = ({ sizes, onUpdateQty, onRemove, onAddSize }: any) => (
-  <View style={styles.card}>
-    <View style={styles.headerRow}>
-      <Text style={[styles.headerText, styles.sizeCol]}>Size</Text>
-      <Text style={[styles.headerText, styles.qtyCol]}>Qty</Text>
-      <Text style={[styles.headerText, styles.priceCol]}>Price</Text>
-      <View style={styles.deleteCol} />
-    </View>
-    {sizes.map((item: any, index: number) => (
-      <View key={index} style={styles.row}>
-        <Text style={[styles.sizeText, styles.sizeCol]}>{item.size}</Text>
-
-        <View style={[styles.qtyContainer, styles.qtyCol]}>
-          <TouchableOpacity onPress={() => onUpdateQty(index, -1)} style={styles.qtyBtn}>
-            <Feather name="minus" size={14} color="#111" />
-          </TouchableOpacity>
-          <Text style={styles.qtyVal}>{item.qty}</Text>
-          <TouchableOpacity onPress={() => onUpdateQty(index, 1)} style={styles.qtyBtn}>
-            <Feather name="plus" size={14} color="#111" />
-          </TouchableOpacity>
-        </View>
-
-        <Text style={[styles.priceText, styles.priceCol]}>${item.price}</Text>
-
-        <TouchableOpacity
-          style={styles.deleteCol}
-          onPress={() => onRemove?.(index)}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-        >
-          <Feather name="trash-2" size={16} color="#D1D5DB" />
-        </TouchableOpacity>
-      </View>
-    ))}
-    <TouchableOpacity style={styles.addBtn} onPress={onAddSize}>
-      <Feather name="plus" size={16} color="#22C55E" />
-      <Text style={styles.addText}>Add size or scan another</Text>
-    </TouchableOpacity>
-  </View>
-);
-
-const styles = StyleSheet.create({
-  card: { backgroundColor: '#fff', marginHorizontal: 16, borderRadius: 20, padding: 16, borderColor: '#F3F4F6', borderWidth: 1 },
-  headerRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 12, paddingHorizontal: 4 },
-  headerText: { fontSize: 11, color: '#9CA3AF', fontWeight: '600' },
-  row: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#F9FAFB' },
-  sizeCol: { width: 44 },
-  qtyCol: { flex: 1, alignItems: 'center' },
-  priceCol: { width: 56, textAlign: 'right' },
-  deleteCol: { width: 28, alignItems: 'flex-end' },
-  sizeText: { fontSize: 14, fontWeight: '700', color: '#111' },
-  qtyContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#F3F4F6', borderRadius: 8, padding: 4, alignSelf: 'center' },
-  qtyBtn: { padding: 4 },
-  qtyVal: { paddingHorizontal: 10, fontWeight: '700', fontSize: 13 },
-  priceText: { fontWeight: '700', fontSize: 13, color: '#111' },
-  addBtn: { flexDirection: 'row', justifyContent: 'center', marginTop: 12, alignItems: 'center' },
-  addText: { color: '#22C55E', fontSize: 13, fontWeight: '700', marginLeft: 6 },
-});
-
-export default ProductSizeTable;
-```
-
-## File: components/retailer/home/analytics/AnalyticsOrderStatus.tsx
-```typescript
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { OrderStatusItem } from '@/types/analytics';
-
-interface AnalyticsOrderStatusProps {
-  orderStatus: OrderStatusItem[];
-}
-
-const AnalyticsOrderStatus: React.FC<AnalyticsOrderStatusProps> = ({ orderStatus }) => {
-  const total = orderStatus.reduce((sum, o) => sum + Number(o.value), 0) || 1;
-
-  return (
-    <View style={s.section}>
-      <Text style={s.sectionTitle}>Order Status</Text>
-
-      <View style={s.barContainer}>
-        {orderStatus.map(o => (
-          <View
-            key={o.label}
-            style={[
-              s.segment,
-              { flex: Number(o.value) > 0 ? o.value : 0.0001, backgroundColor: o.color }
-            ]}
-          />
-        ))}
-      </View>
-
-      {/* Legend */}
-      <View style={s.legend}>
-        {orderStatus.map(o => {
-          const pct = Math.round((Number(o.value) / total) * 1000) / 10;
-          return (
-            <View key={o.label} style={s.legendItem}>
-              <View style={s.legendTopRow}>
-                <View style={[s.dot, { backgroundColor: o.color }]} />
-                <Text style={s.legendLabel}>{o.label}</Text>
-              </View>
-              <Text style={s.legendVal}>{o.value}</Text>
-              <Text style={s.legendPct}>{pct}%</Text>
-            </View>
-          );
-        })}
-      </View>
-    </View>
-  );
-};
-
-const s = StyleSheet.create({
-  section: {
-    backgroundColor: '#fff', borderRadius: 14, padding: 16,
-    marginBottom: 12, borderWidth: 1, borderColor: '#F3F4F6',
-  },
-  sectionTitle: { fontSize: 14, fontWeight: '800', color: '#111' },
-  barContainer: {
-    flexDirection: 'row', height: 10, borderRadius: 5,
-    overflow: 'hidden', marginTop: 10, marginBottom: 12,
-  },
-  segment: { height: '100%' },
-  legend: { flexDirection: 'row', flexWrap: 'wrap' },
-  legendItem: { width: '25%', marginBottom: 8 },
-  legendTopRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  dot: { width: 6, height: 6, borderRadius: 3 },
-  legendLabel: { fontSize: 10, color: '#6B7280', fontWeight: '600' },
-  legendVal: { fontSize: 13, fontWeight: '800', color: '#111', marginTop: 2 },
-  legendPct: { fontSize: 10, color: '#9CA3AF', marginTop: 1 },
-});
-
-export default AnalyticsOrderStatus;
-```
-
-## File: components/retailer/home/analytics/AnalyticsRevenueCard.tsx
-```typescript
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { Feather } from '@expo/vector-icons';
-import Svg, { Polyline } from 'react-native-svg';
-
-// ── Sparkline ────────────────────────────────────────────────────────────────
-interface SparklineProps {
-  data: number[];
-  color?: string;
-}
-
-const Sparkline: React.FC<SparklineProps> = ({ data, color = '#00C853' }) => {
-  const w = 80, h = 36;
-  const max = Math.max(...data);
-  const min = Math.min(...data);
-  const pts = data
-    .map((v, i) => {
-      const x = (i / (data.length - 1)) * w;
-      const y = h - ((v - min) / (max - min || 1)) * h;
-      return `${x},${y}`;
-    })
-    .join(' ');
-  return (
-    <Svg width={w} height={h}>
-      <Polyline points={pts} fill="none" stroke={color} strokeWidth="2" strokeLinejoin="round" />
-    </Svg>
-  );
-};
-
-// ── Revenue Card ─────────────────────────────────────────────────────────────
-interface AnalyticsRevenueCardProps {
-  totalRevenue: string;
-  revenueChange: string;
-  revenueChangePercent: string;
-  sparklineData: number[];
-}
-
-const AnalyticsRevenueCard: React.FC<AnalyticsRevenueCardProps> = ({
-  totalRevenue,
-  revenueChange,
-  revenueChangePercent,
-  sparklineData,
-}) => (
-  <View style={s.card}>
-    <View style={s.left}>
-      <View style={s.labelRow}>
-        <Text style={s.label}>NET SALES</Text>
-        <View style={s.percentBadge}>
-          <Feather name="arrow-up-right" size={10} color="#00C853" />
-          <Text style={s.percentText}>{revenueChangePercent}</Text>
-        </View>
-      </View>
-      <Text style={s.amount}>{totalRevenue}</Text>
-      <View style={s.changeRow}>
-        <Feather name="arrow-up-right" size={12} color="#00C853" />
-        <Text style={s.changeText}>{revenueChange}</Text>
-      </View>
-    </View>
-    <Sparkline data={sparklineData} color="#00C853" />
-  </View>
-);
-
-const s = StyleSheet.create({
-  card: {
-    backgroundColor: '#111',
-    borderRadius: 16,
-    padding: 16,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  left: { flex: 1 },
-  labelRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  label: {
-    fontSize: 10, fontWeight: '700',
-    color: 'rgba(255,255,255,0.5)', letterSpacing: 1,
-  },
-  percentBadge: { flexDirection: 'row', alignItems: 'center', gap: 2 },
-  percentText: { fontSize: 11, fontWeight: '700', color: '#00C853' },
-  amount: { fontSize: 32, fontWeight: '900', color: '#fff', marginTop: 2 },
-  changeRow: { flexDirection: 'row', alignItems: 'center', marginTop: 4 },
-  changeText: { fontSize: 11, color: '#00C853', marginLeft: 2 },
-});
-
-export default AnalyticsRevenueCard;
-```
-
-## File: components/retailer/home/analytics/AnalyticsReveueChart.tsx
-```typescript
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
-import Svg, { Rect, Text as SvgText, G } from 'react-native-svg';
-import { ChartMode } from '@/types/analytics';
-
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
-
-// ── Bar Chart ─────────────────────────────────────────────────────────────────
-interface BarChartProps {
-  data: number[];
-  labels: string[];
-  valuePrefix?: string;
-}
-
-const BarChart: React.FC<BarChartProps> = ({ data, labels, valuePrefix = '$' }) => {
-  const chartW = SCREEN_WIDTH - 64;
-  const chartH = 110;
-
-  if (!data || data.length === 0) return null;
-
-  const gap = chartW / data.length;
-  const barW = gap * 0.55;
-  const max = Math.max(...data) || 1;
-
-  return (
-    <Svg width={chartW} height={chartH + 46}>
-      {data.map((v, i) => {
-        const barH = (v / max) * chartH;
-        const x = i * gap + (gap - barW) / 2;
-        const y = chartH - barH + 20;
-
-        return (
-          <G key={`bar-${i}`}>
-            <SvgText
-              x={x + barW / 2}
-              y={y - 6}
-              fontSize="11"
-              fontWeight="700"
-              fill="#111"
-              textAnchor="middle"
-            >
-              {valuePrefix}{v}
-            </SvgText>
-            <Rect
-              x={x}
-              y={y}
-              width={barW}
-              height={barH}
-              rx={6}
-              fill="#00C853"
-            />
-            <SvgText
-              x={x + barW / 2}
-              y={chartH + 40}
-              fontSize="11"
-              fontWeight="600"
-              fill="#9CA3AF"
-              textAnchor="middle"
-            >
-              {labels[i]}
-            </SvgText>
-          </G>
-        );
-      })}
-    </Svg>
-  );
-};
-
-// ── Sales by Day Section ───────────────────────────────────────────────────────
-interface AnalyticsRevenueChartProps {
-  chartMode: ChartMode;
-  barData: number[];
-  barLabels: string[];
-  onChartModeChange: (mode: ChartMode) => void;
-}
-
-const CHART_MODES: ChartMode[] = ['Sales', 'Orders'];
-
-const AnalyticsRevenueChart: React.FC<AnalyticsRevenueChartProps> = ({
-  chartMode,
-  barData,
-  barLabels,
-  onChartModeChange,
-}) => (
-  <View style={s.section}>
-    <View style={s.sectionHeader}>
-      <Text style={s.sectionTitle}>Sales by Day</Text>
-      <View style={s.toggleRow}>
-        {CHART_MODES.map(m => (
-          <TouchableOpacity
-            key={m}
-            onPress={() => onChartModeChange(m)}
-            style={[s.toggleBtn, chartMode === m && s.toggleBtnActive]}
-          >
-            <Text style={[s.toggleText, chartMode === m && s.toggleTextActive]}>{m}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-    </View>
-    <View style={{ marginTop: 8 }}>
-      <BarChart
-        data={barData}
-        labels={barLabels}
-        valuePrefix={chartMode === 'Sales' ? '$' : ''}
-      />
-    </View>
-  </View>
-);
-
-const s = StyleSheet.create({
-  section: {
-    backgroundColor: '#fff', borderRadius: 14, padding: 16,
-    marginBottom: 12, borderWidth: 1, borderColor: '#F3F4F6',
-  },
-  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  sectionTitle: { fontSize: 14, fontWeight: '800', color: '#111' },
-  toggleRow: {
-    flexDirection: 'row', backgroundColor: '#111',
-    borderRadius: 8, padding: 2,
-  },
-  toggleBtn: { paddingHorizontal: 12, paddingVertical: 5, borderRadius: 6 },
-  toggleBtnActive: { backgroundColor: '#fff' },
-  toggleText: { fontSize: 11, fontWeight: '600', color: 'rgba(255,255,255,0.6)' },
-  toggleTextActive: { color: '#111' },
-});
-
-export default AnalyticsRevenueChart;
-```
-
-## File: components/retailer/home/analytics/AnalyticsSizes.tsx
-```typescript
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { Feather } from '@expo/vector-icons';
-import { SizeItem } from '@/types/analytics';
-import { DimensionValue } from 'react-native';
-
-interface SizeBarProps {
-    label: string;
-    value: number;
-    max: number;
-    color: string;
-}
-
-const SizeBar: React.FC<SizeBarProps> = ({ label, value, max, color }) => {
-  const percentage = Math.min(100, (value / (max || 1)) * 100);
-  const barWidth = `${percentage}%` as DimensionValue;
-
-  return (
-    <View style={s.row}>
-      <Text style={s.label}>{label}</Text>
-      <View style={s.track}>
-        <View
-          style={[
-            s.fill,
-            {
-              width: barWidth,
-              backgroundColor: color
-            }
-          ]}
-        />
-      </View>
-      <Text style={s.val}>{value} searches</Text>
-    </View>
-  );
-};
-
-interface AnalyticsSizesProps {
-    sizes: SizeItem[];
-    onViewInventoryOpportunities?: () => void;
-}
-
-const MAX_SIZE_VALUE = 40;
-
-const AnalyticsSizes: React.FC<AnalyticsSizesProps> = ({ sizes, onViewInventoryOpportunities }) => (
-    <View style={[s.section, { marginBottom: 32 }]}>
-        <Text style={s.sectionTitle}>Missed Demand by Size</Text>
-        <Text style={s.sectionSubtitle}>Searches with no matching inventory</Text>
-
-        <View style={{ marginTop: 12 }}>
-            {sizes.map(sz => (
-                <SizeBar
-                    key={sz.label}
-                    label={sz.label}
-                    value={sz.value}
-                    max={MAX_SIZE_VALUE}
-                    color={sz.color}
-                />
-            ))}
-        </View>
-
-        <TouchableOpacity style={s.opportunitiesBtn} onPress={onViewInventoryOpportunities} activeOpacity={0.8}>
-            <Text style={s.opportunitiesText}>View Inventory Opportunities</Text>
-            <Feather name="chevron-right" size={14} color="#00C853" />
-        </TouchableOpacity>
-    </View>
-);
-
-const s = StyleSheet.create({
-    section: {
-        backgroundColor: '#fff', borderRadius: 14, padding: 16,
-        marginBottom: 12, borderWidth: 1, borderColor: '#F3F4F6',
-    },
-    sectionTitle: { fontSize: 14, fontWeight: '800', color: '#111' },
-    sectionSubtitle: { fontSize: 11, color: '#9CA3AF', marginTop: 2 },
-    row: { flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
-    label: { width: 44, fontSize: 12, fontWeight: '700', color: '#111' },
-    track: {
-        flex: 1, height: 8, backgroundColor: '#F3F4F6',
-        borderRadius: 4, marginHorizontal: 8,
-    },
-    fill: { height: 8, borderRadius: 4 },
-    val: { fontSize: 11, color: '#6B7280', width: 72, textAlign: 'right' },
-    opportunitiesBtn: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 6,
-        marginTop: 8,
-        height: 46,
-        borderRadius: 12,
-        borderWidth: 1,
-        borderColor: '#DCFCE7',
-        backgroundColor: '#F0FDF4',
-    },
-    opportunitiesText: { fontSize: 13, fontWeight: '700', color: '#00C853' },
-});
-
-export default AnalyticsSizes;
-```
-
-## File: components/retailer/home/analytics/AnalyticsStatCards.tsx
-```typescript
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { Feather } from '@expo/vector-icons';
-
-interface AnalyticsStatCardsProps {
-  orders: number;
-  ordersChange: string;
-  grossProfit: string;
-  grossProfitMargin: string;
-  grossProfitChange: string;
-  avgOrder: string;
-  avgOrderChange: string;
-  pickupRate: string;
-  pickupRateChange: string;
-}
-
-const AnalyticsStatCards: React.FC<AnalyticsStatCardsProps> = ({
-  orders,
-  ordersChange,
-  grossProfit,
-  grossProfitMargin,
-  grossProfitChange,
-  avgOrder,
-  avgOrderChange,
-  pickupRate,
-  pickupRateChange,
-}) => {
-
-  const StatCard = ({ icon, label, value, change, isPositive = true, subValue, isLast = false }: any) => (
-    <View style={[s.card, !isLast && { marginRight: 8 }]}>
-      <View style={s.labelRow}>
-        <Feather name={icon} size={13} color="#9CA3AF" />
-        <Text style={s.label}>{label}</Text>
-      </View>
-      <Text style={s.value}>{value}</Text>
-      {subValue ? <Text style={s.subValue}>{subValue}</Text> : null}
-      <View style={s.changeRow}>
-        {isPositive ? (
-          <Feather name="arrow-up-right" size={10} color="#00C853" />
-        ) : null}
-        <Text style={[s.changeText, { color: isPositive ? '#00C853' : '#9CA3AF' }]}>
-          {change}
-        </Text>
-      </View>
-    </View>
-  );
-
-  return (
-    <View style={s.container}>
-      <View style={s.row}>
-        <StatCard
-          icon="box"
-          label="ORDERS"
-          value={orders}
-          change={ordersChange}
-        />
-        <StatCard
-          icon="dollar-sign"
-          label="GROSS PROFIT"
-          value={grossProfit}
-          subValue={`${grossProfitMargin} margin`}
-          change={grossProfitChange}
-          isLast
-        />
-      </View>
-
-      <View style={s.row}>
-        <StatCard
-          icon="tag"
-          label="AVG. ORDER"
-          value={avgOrder}
-          change={avgOrderChange}
-        />
-        <StatCard
-          icon="users"
-          label="PICKUP RATE"
-          value={pickupRate}
-          change={pickupRateChange}
-          isPositive={pickupRateChange !== 'No change'}
-          isLast
-        />
-      </View>
-    </View>
-  );
-};
-
-const s = StyleSheet.create({
-  container: { marginBottom: 12 },
-  row: { flexDirection: 'row', marginBottom: 8 },
-  card: {
-    flex: 1,
-    backgroundColor: '#fff',
-    borderRadius: 14,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: '#F3F4F6',
-  },
-  labelRow: { flexDirection: 'row', alignItems: 'center', gap: 5 },
-  label: { fontSize: 10, color: '#9CA3AF', fontWeight: '700', letterSpacing: 0.5 },
-  value: { fontSize: 18, fontWeight: '900', color: '#111', marginTop: 6 },
-  subValue: { fontSize: 10, color: '#00C853', fontWeight: '600', marginTop: 1 },
-  changeRow: { flexDirection: 'row', alignItems: 'center', marginTop: 4, gap: 2 },
-  changeText: { fontSize: 10, fontWeight: '600' },
-});
-
-export default AnalyticsStatCards;
-```
-
-## File: components/retailer/home/analytics/AnalyticsTimeFilter.tsx
-```typescript
-import React from 'react';
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { TimeFilter } from '@/types/analytics';
-
-const TIME_FILTERS: TimeFilter[] = ['Today', 'Week', 'Month', 'Custom'];
-
-interface AnalyticsTimeFilterProps {
-    active: TimeFilter;
-    onChange: (filter: TimeFilter) => void;
-}
-
-const AnalyticsTimeFilter: React.FC<AnalyticsTimeFilterProps> = ({ active, onChange }) => (
-    <View style={s.row}>
-        {TIME_FILTERS.map(f => (
-            <TouchableOpacity
-                key={f}
-                onPress={() => onChange(f)}
-                style={[s.pill, active === f && s.pillActive]}
-                activeOpacity={0.8}
-            >
-                <Text style={[s.text, active === f && s.textActive]}>{f}</Text>
-            </TouchableOpacity>
-        ))}
-    </View>
-);
-
-const s = StyleSheet.create({
-    row: {
-        flexDirection: 'row',
-        paddingHorizontal: 16,
-        paddingVertical: 10,
-        gap: 8,
-        backgroundColor: '#fff',
-    },
-    pill: {
-        flex: 1,
-        height: 38,
-        borderRadius: 19,
-        backgroundColor: '#F3F4F6',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    pillActive: {
-        backgroundColor: '#111',
-    },
-    text: {
-        fontSize: 13,
-        fontWeight: '700',
-        color: '#6B7280',
-    },
-    textActive: {
-        color: '#fff',
-    },
-});
-
-export default AnalyticsTimeFilter;
-```
-
-## File: components/retailer/home/analytics/AnalyticsTopProduct.tsx
-```typescript
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { TopProduct } from '@/types/analytics';
-
-interface AnalyticsTopProductsProps {
-  products: TopProduct[];
-  onViewAll?: () => void;
-}
-
-const AnalyticsTopProducts: React.FC<AnalyticsTopProductsProps> = ({ products, onViewAll }) => (
-  <View style={s.section}>
-    <View style={s.headerRow}>
-      <Text style={s.sectionTitle}>Top Products</Text>
-      <TouchableOpacity onPress={onViewAll} hitSlop={8}>
-        <Text style={s.viewAll}>View All</Text>
-      </TouchableOpacity>
-    </View>
-    {products.map((p, index) => (
-      <View
-        key={p.rank}
-        style={[s.row, index === products.length - 1 && { borderBottomWidth: 0 }]}
-      >
-        <Text style={s.rank}>{p.rank}</Text>
-        <View style={s.info}>
-          <Text style={s.name}>{p.name}</Text>
-          <Text style={s.sub}>{p.sub}</Text>
-        </View>
-        <Text style={s.price}>{p.price}</Text>
-      </View>
-    ))}
-  </View>
-);
-
-const s = StyleSheet.create({
-  section: {
-    backgroundColor: '#fff', borderRadius: 14, padding: 16,
-    marginBottom: 12, borderWidth: 1, borderColor: '#F3F4F6',
-  },
-  headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 },
-  sectionTitle: { fontSize: 14, fontWeight: '800', color: '#111' },
-  viewAll: { fontSize: 12, fontWeight: '700', color: '#00C853' },
-  row: {
-    flexDirection: 'row', alignItems: 'center',
-    paddingVertical: 10,
-    borderBottomWidth: 1, borderColor: '#F3F4F6',
-  },
-  rank: { fontSize: 13, fontWeight: '800', color: '#111', width: 20 },
-  info: { flex: 1, marginLeft: 8 },
-  name: { fontSize: 13, fontWeight: '700', color: '#111' },
-  sub: { fontSize: 11, color: '#9CA3AF', marginTop: 1 },
-  price: { fontSize: 13, fontWeight: '800', color: '#111' },
-});
-
-export default AnalyticsTopProducts;
 ```
 
 ## File: components/retailer/home/more/ActiveDropCard.tsx
@@ -24482,96 +21568,189 @@ const s = StyleSheet.create({
 });
 ```
 
-## File: components/retailer/home/notifications/NotificationCard.tsx
+## File: components/retailer/home/notifications/LocationDropdown.tsx
+```typescript
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, Modal, Pressable, StyleSheet } from 'react-native';
+import { Feather } from '@expo/vector-icons';
+
+interface Props<T extends string> {
+  value: T;
+  options: readonly T[];
+  onChange: (v: T) => void;
+}
+
+function LocationDropdown<T extends string>({ value, options, onChange }: Props<T>) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <View>
+      <TouchableOpacity
+        activeOpacity={0.8}
+        onPress={() => setOpen(true)}
+        style={styles.pill}
+      >
+        <Feather name="map-pin" size={14} color="#374151" />
+        <Text style={styles.pillText}>{value}</Text>
+        <Feather name="chevron-down" size={14} color="#374151" />
+      </TouchableOpacity>
+
+      <Modal transparent visible={open} animationType="fade" onRequestClose={() => setOpen(false)}>
+        <Pressable style={styles.backdrop} onPress={() => setOpen(false)}>
+          <View style={styles.menu}>
+            {options.map((opt, i) => {
+              const selected = opt === value;
+              return (
+                <TouchableOpacity
+                  key={opt}
+                  activeOpacity={0.7}
+                  onPress={() => {
+                    onChange(opt);
+                    setOpen(false);
+                  }}
+                  style={[styles.option, i > 0 && styles.optionBorder]}
+                >
+                  <Text style={[styles.optionText, selected && styles.optionTextSelected]}>
+                    {opt}
+                  </Text>
+                  {selected && <Feather name="check" size={16} color="#00C853" />}
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </Pressable>
+      </Modal>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  pill: {
+    alignSelf: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    height: 34,
+    paddingHorizontal: 12,
+    borderRadius: 17,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    backgroundColor: '#fff',
+  },
+  pillText: { fontSize: 13, fontWeight: '600', color: '#111' },
+  backdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.25)',
+    justifyContent: 'flex-start',
+    paddingTop: 150,
+    paddingHorizontal: 16,
+  },
+  menu: {
+    alignSelf: 'flex-start',
+    minWidth: 200,
+    backgroundColor: '#fff',
+    borderRadius: 14,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOpacity: 0.12,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 8,
+  },
+  option: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+  },
+  optionBorder: { borderTopWidth: 1, borderTopColor: '#F3F4F6' },
+  optionText: { fontSize: 14, fontWeight: '500', color: '#111' },
+  optionTextSelected: { fontWeight: '700' },
+});
+
+export default LocationDropdown;
+```
+
+## File: components/retailer/home/notifications/NotificationFilterChips.tsx
 ```typescript
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Feather } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { ScrollView, TouchableOpacity, Text, View, StyleSheet } from 'react-native';
+import type { NotificationFilter } from '@/services/hooks/retailer/home/useNotifications';
 
-const getTypeStyles = (type: string) => {
-    switch (type) {
-        case 'refund': return { bg: '#FFF5F5', border: '#FEB2B2', icon: 'arrow-left', iconBg: '#FED7D7', iconCol: '#C53030' };
-        case 'alert': return { bg: '#FFFBEB', border: '#FDE68A', icon: 'alert-triangle', iconBg: 'transparent', iconCol: '#D97706' };
-        default: return { bg: '#F0FFF4', border: '#C6F6D5', icon: 'shopping-bag', iconBg: '#DCFCE7', iconCol: '#166534' };
-    }
-};
+interface Props {
+  filters: NotificationFilter[];
+  active: NotificationFilter;
+  counts: Record<NotificationFilter, number>;
+  onChange: (f: NotificationFilter) => void;
+}
 
-export const NotificationCard = ({ item }: { item: any }) => {
-    const styles = getTypeStyles(item.type);
-    const router = useRouter();
-
-    const handlePress = () => {
-        if (item.type === 'refund') {
-            router.push({
-                pathname: '/screens/retailer/refund/refundClaimsScreen',
-                params: {
-                    id: item.id,
-                    title: item.title,
-                    description: item.description,
-                },
-            });
-        }
-    };
-
-    return (
-        <TouchableOpacity activeOpacity={0.8} onPress={handlePress}>
-            <View style={[s.card, { backgroundColor: styles.bg, borderColor: styles.border }]}>
-                <View style={s.header}>
-                    <View style={[s.iconBox, { backgroundColor: styles.iconBg }]}>
-                        <Feather name={styles.icon as any} size={16} color={styles.iconCol} />
-                    </View>
-
-                    <View style={s.content}>
-                        <View style={s.topRow}>
-                            <Text style={s.title}>{item.title}</Text>
-                            <Text style={s.time}>{item.time}</Text>
-                        </View>
-
-                        <Text style={s.desc}>{item.description}</Text>
-
-                        {item.deadline && (
-                            <View style={s.deadlineBox}>
-                                <Feather name="clock" size={12} color="#D97706" />
-                                <Text style={s.deadlineText}>Respond by {item.deadline}</Text>
-                            </View>
-                        )}
-
-                        <View style={s.actionRow}>
-                            <TouchableOpacity style={s.btnMain}>
-                                <Text style={s.btnTextMain}>View Order</Text>
-                            </TouchableOpacity>
-
-                            {item.type === 'order' && (
-                                <TouchableOpacity style={s.btnSec}>
-                                    <Text style={s.btnTextSec}>Mark Ready</Text>
-                                </TouchableOpacity>
-                            )}
-                        </View>
-                    </View>
-                </View>
+const NotificationFilterChips: React.FC<Props> = ({ filters, active, counts, onChange }) => (
+  <ScrollView
+    horizontal
+    showsHorizontalScrollIndicator={false}
+    contentContainerStyle={styles.row}
+    style={styles.scroll}
+  >
+    {filters.map(f => {
+      const isActive = f === active;
+      const count = counts[f] ?? 0;
+      return (
+        <TouchableOpacity
+          key={f}
+          activeOpacity={0.8}
+          onPress={() => onChange(f)}
+          style={[styles.chip, isActive ? styles.chipActive : styles.chipIdle]}
+        >
+          <Text style={[styles.label, isActive ? styles.labelActive : styles.labelIdle]}>
+            {f}
+          </Text>
+          {count > 0 && (
+            <View style={[styles.badge, isActive ? styles.badgeActive : styles.badgeIdle]}>
+              <Text style={[styles.badgeText, isActive ? styles.badgeTextActive : styles.badgeTextIdle]}>
+                {count}
+              </Text>
             </View>
+          )}
         </TouchableOpacity>
-    );
-};
+      );
+    })}
+  </ScrollView>
+);
 
-const s = StyleSheet.create({
-    card: { borderRadius: 16, padding: 16, marginBottom: 12, borderWidth: 1 },
-    header: { flexDirection: 'row' },
-    iconBox: { width: 40, height: 40, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
-    content: { flex: 1, marginLeft: 12 },
-    topRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-    title: { fontSize: 14, fontWeight: '700', color: '#111' },
-    time: { fontSize: 11, color: '#9CA3AF' },
-    desc: { fontSize: 13, color: '#4B5563', marginTop: 4, lineHeight: 18 },
-    deadlineBox: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#FEF3C7', padding: 6, borderRadius: 6, marginTop: 8 },
-    deadlineText: { fontSize: 11, fontWeight: '600', color: '#D97706', marginLeft: 4 },
-    actionRow: { flexDirection: 'row', marginTop: 12, gap: 8 },
-    btnMain: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, backgroundColor: '#fff', borderWidth: 1, borderColor: '#E5E7EB' },
-    btnTextMain: { fontSize: 12, fontWeight: '600', color: '#111' },
-    btnSec: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, backgroundColor: '#111' },
-    btnTextSec: { fontSize: 12, fontWeight: '600', color: '#fff' },
+const styles = StyleSheet.create({
+  scroll: { flexGrow: 0 },
+  row: { paddingHorizontal: 16, paddingVertical: 4, gap: 8 },
+  chip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    height: 34,
+    paddingHorizontal: 14,
+    borderRadius: 17,
+    borderWidth: 1,
+  },
+  chipActive: { backgroundColor: '#0A0A0A', borderColor: '#0A0A0A' },
+  chipIdle: { backgroundColor: '#fff', borderColor: '#E5E7EB' },
+  label: { fontSize: 13, fontWeight: '700' },
+  labelActive: { color: '#fff' },
+  labelIdle: { color: '#111' },
+  badge: {
+    minWidth: 20,
+    height: 18,
+    paddingHorizontal: 5,
+    borderRadius: 9,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  badgeActive: { backgroundColor: '#00C853' },
+  badgeIdle: { backgroundColor: '#F3F4F6' },
+  badgeText: { fontSize: 11, fontWeight: '800' },
+  badgeTextActive: { color: '#fff' },
+  badgeTextIdle: { color: '#374151' },
 });
+
+export default NotificationFilterChips;
 ```
 
 ## File: components/retailer/home/DashboardHeader.tsx
@@ -24635,964 +21814,244 @@ const styles = StyleSheet.create({
 export default DashboardHeader;
 ```
 
-## File: components/retailer/inventory/InventoryFilter.tsx
-```typescript
-import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import { FilterTab } from '@/services/hooks/retailer/inventory/useInventory';
-
-interface InventoryFilterProps {
-  tabs: FilterTab[];
-  active: FilterTab;
-  counts: Record<FilterTab, number>;
-  onChange: (tab: FilterTab) => void;
-}
-
-const InventoryFilter: React.FC<InventoryFilterProps> = ({
-  tabs, active, counts, onChange,
-}) => {
-  return (
-    <View style={{
-      backgroundColor: '#fff',
-      borderBottomWidth: 1, borderBottomColor: '#F3F4F6',
-    }}>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingHorizontal: 16, paddingVertical: 10, gap: 8,
-        }}
-      >
-        {tabs.map(tab => {
-          const isActive = tab === active;
-          return (
-            <TouchableOpacity
-              key={tab}
-              onPress={() => onChange(tab)}
-              activeOpacity={0.7}
-              style={{
-                backgroundColor: isActive ? '#00C853' : '#F3F4F6',
-                borderRadius: 20,
-                paddingHorizontal: 16, paddingVertical: 8,
-              }}
-            >
-              <Text style={{
-                fontSize: 13,
-                fontWeight: '700',
-                color: isActive ? '#fff' : '#374151',
-              }}>
-                {tab} ({counts[tab]})
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
-      </ScrollView>
-    </View>
-  );
-};
-
-export default InventoryFilter;
-```
-
-## File: components/retailer/inventory/InventoryHeader.tsx
+## File: components/retailer/inventory/InventoryActions.tsx
 ```typescript
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
-interface InventoryHeaderProps {
-  locationLabel: string;
-  onLocationPress?: () => void;
-  onSearchPress?: () => void;
-  onFilterPress?: () => void;
+interface InventoryActionsProps {
+  onAddProduct?: () => void;
+  onScan?: () => void;
 }
 
-const InventoryHeader: React.FC<InventoryHeaderProps> = ({
-  locationLabel,
-  onLocationPress,
-  onSearchPress,
-  onFilterPress,
-}) => {
+const InventoryActions: React.FC<InventoryActionsProps> = ({ onAddProduct, onScan }) => {
   return (
     <View style={{
+      flexDirection: 'row',
+      gap: 10,
+      paddingHorizontal: 16,
+      paddingBottom: 14,
       backgroundColor: '#fff',
-      paddingHorizontal: 16, paddingTop: 16, paddingBottom: 12,
     }}>
-      <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 24, fontWeight: '800', color: '#111' }}>
-            Inventory
-          </Text>
+      <TouchableOpacity
+        onPress={onAddProduct}
+        activeOpacity={0.85}
+        style={{
+          flex: 1,
+          flexDirection: 'row',
+          backgroundColor: '#00C853',
+          borderRadius: 14,
+          height: 48,
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 8,
+        }}
+      >
+        <Feather name="plus" size={18} color="#fff" />
+        <Text style={{ color: '#fff', fontSize: 14, fontWeight: '800' }}>Add Product</Text>
+      </TouchableOpacity>
 
-          <TouchableOpacity
-            onPress={onLocationPress}
-            activeOpacity={0.7}
-            style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4, gap: 4 }}
-          >
-            <Feather name="map-pin" size={13} color="#9CA3AF" />
-            <Text style={{ fontSize: 13, color: '#6B7280', fontWeight: '500' }}>
-              {locationLabel}
-            </Text>
-            <Feather name="chevron-down" size={14} color="#9CA3AF" />
-          </TouchableOpacity>
-        </View>
-
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 18, marginTop: 4 }}>
-          <TouchableOpacity onPress={onSearchPress} hitSlop={8}>
-            <Feather name="search" size={22} color="#111" />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={onFilterPress} hitSlop={8}>
-            <Feather name="sliders" size={22} color="#111" />
-          </TouchableOpacity>
-        </View>
-      </View>
+      <TouchableOpacity
+        onPress={onScan}
+        activeOpacity={0.85}
+        style={{
+          flex: 1,
+          flexDirection: 'row',
+          backgroundColor: '#fff',
+          borderWidth: 1,
+          borderColor: '#E5E7EB',
+          borderRadius: 14,
+          height: 48,
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 8,
+        }}
+      >
+        <Feather name="maximize" size={16} color="#111" />
+        <Text style={{ color: '#111', fontSize: 14, fontWeight: '800' }}>Scan</Text>
+      </TouchableOpacity>
     </View>
   );
 };
 
-export default InventoryHeader;
+export default InventoryActions;
 ```
 
-## File: components/retailer/inventory/InventoryStats.tsx
+## File: components/retailer/orders/OrdersSummary.tsx
 ```typescript
 import React from 'react';
-import { View, Text } from 'react-native';
-import { InventorySummary, SyncInfo } from '@/services/hooks/retailer/inventory/useInventory';
-
-interface InventoryStatsProps {
-  summary: InventorySummary;
-  syncInfo: SyncInfo;
-}
-
-const STAT_ITEMS = (summary: InventorySummary) => [
-  { label: 'Active', value: summary.active, color: '#00C853', bg: '#ECFDF3' },
-  { label: 'Low Stock', value: summary.lowStock, color: '#F59E0B', bg: '#FFFBEB' },
-  { label: 'Out of Stock', value: summary.outOfStock, color: '#EF4444', bg: '#FEF2F2' },
-  { label: 'On Hold', value: summary.onHold, color: '#6B7280', bg: '#F9FAFB' },
-];
-
-const InventoryStats: React.FC<InventoryStatsProps> = ({ summary, syncInfo }) => {
-  const stats = STAT_ITEMS(summary);
-
-  return (
-    <View style={{ backgroundColor: '#fff' }}>
-      {/* Stat cards row */}
-      <View style={{
-        flexDirection: 'row',
-        paddingHorizontal: 16,
-        paddingBottom: 10,
-        gap: 8,
-      }}>
-        {stats.map((stat) => (
-          <View
-            key={stat.label}
-            style={{
-              flex: 1,
-              backgroundColor: stat.bg,
-              borderRadius: 14,
-              paddingVertical: 10,
-              alignItems: 'center',
-            }}
-          >
-            <Text style={{ fontSize: 18, fontWeight: '800', color: stat.color }}>
-              {stat.value}
-            </Text>
-            <Text style={{ fontSize: 10, fontWeight: '600', color: '#6B7280', marginTop: 2 }}>
-              {stat.label}
-            </Text>
-          </View>
-        ))}
-      </View>
-
-      {/* Sync row */}
-      <View style={{
-        flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-        paddingHorizontal: 16, paddingVertical: 8,
-        borderBottomWidth: 1, borderBottomColor: '#F3F4F6',
-      }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
-          <View style={{
-            width: 7, height: 7, borderRadius: 4,
-            backgroundColor: syncInfo.isSynced ? '#00C853' : '#EF4444',
-          }} />
-          <Text style={{
-            fontSize: 11, fontWeight: '500',
-            color: syncInfo.isSynced ? '#00C853' : '#EF4444',
-          }}>
-            {syncInfo.lastSyncedLabel}
-          </Text>
-        </View>
-
-        {syncInfo.isPosConnected && (
-          <Text style={{ fontSize: 11, color: '#9CA3AF', fontWeight: '500' }}>
-            POS Connected
-          </Text>
-        )}
-      </View>
-    </View>
-  );
-};
-
-export default InventoryStats;
-```
-
-## File: components/retailer/orders/OrderCard.tsx
-```typescript
-import React from 'react';
-import {
-    View,
-    Text,
-    Image,
-    TouchableOpacity,
-    StyleSheet,
-} from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-import { Order, OrderStatus } from '@/types/Orders';
 
-interface OrderCardProps {
-    order: Order;
-    onConfirmOrder: (orderId: string) => void;
-    onMarkReady: (orderId: string) => void;
-    onMarkPickedUp: (orderId: string) => void;
-    onViewDetails: (orderId: string) => void;
-    onViewHoldDetails: (orderId: string) => void;
+interface OrdersSummaryProps {
+    ordersToday: number;
+    avgPrepMinutes: number;
 }
 
-const TAG_STYLE: Record<string, { bg: string; color: string }> = {
-    'BUY NOW': { bg: '#EDE7F6', color: '#4A148C' },
-    'DETAILS': { bg: '#EDE7F6', color: '#4A148C' },
-    'PICKUP':  { bg: '#EDE7F6', color: '#4A148C' },
-};
+const OrdersSummary: React.FC<OrdersSummaryProps> = ({ ordersToday, avgPrepMinutes }) => (
+    <View style={styles.row}>
+        <Text style={styles.text}>{ordersToday} orders today</Text>
+        <View style={styles.right}>
+            <Feather name="bar-chart-2" size={13} color="#9CA3AF" />
+            <Text style={styles.text}>Avg. prep {avgPrepMinutes} min</Text>
+        </View>
+    </View>
+);
 
-const STATUS_CONFIG: Record<OrderStatus, { label: string; bg: string; color: string }> = {
-    new:       { label: 'Paid',          bg: '#E8F5E9', color: '#2E7D32' },
-    holding:   { label: 'Hold',          bg: '#FFF3E0', color: '#E65100' },
-    ready:     { label: 'Pickup Ready',  bg: '#E3F2FD', color: '#1565C0' },
-    completed: { label: 'Completed',     bg: '#F3F3F3', color: '#555555' },
-    cancelled: { label: 'Cancelled',     bg: '#FFEBEE', color: '#B71C1C' },
-};
+const styles = StyleSheet.create({
+    row: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+        backgroundColor: '#fff',
+        borderBottomWidth: 1,
+        borderBottomColor: '#F3F4F6',
+    },
+    right: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 5,
+    },
+    text: {
+        fontSize: 12,
+        color: '#6B7280',
+        fontWeight: '500',
+    },
+});
 
-type ActionConfig = {
-    label: string;
-    bg: string;
-    icon?: keyof typeof Feather.glyphMap;
-    onPress: () => void;
-};
+export default OrdersSummary;
+```
 
-const getPrimaryAction = (
-    status: OrderStatus,
-    id: string,
-    onConfirm: (id: string) => void,
-    onReady: (id: string) => void,
-    onPickup: (id: string) => void,
-): ActionConfig | null => {
-    switch (status) {
-        case 'new':     return { label: 'Accept & Prepare', bg: '#1B5E20', onPress: () => onConfirm(id) };
-        case 'holding': return { label: 'Mark Ready',        bg: '#111111', onPress: () => onReady(id)   };
-        case 'ready':   return { label: 'Verify Pickup',     bg: '#1565C0', icon: 'grid', onPress: () => onPickup(id) };
-        default:        return null;
-    }
-};
+## File: components/retailer/orders/RecentActivity.tsx
+```typescript
+import React from 'react';
+import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { Feather } from '@expo/vector-icons';
+import { Order } from '@/types/Orders';
 
-const getSecondaryLabel = (status: OrderStatus): string => {
-    if (status === 'holding') return 'Hold Details';
-    if (status === 'ready') return 'Details';
-    return 'Order Details';
-};
+interface RecentActivityProps {
+    orders: Order[];
+    onViewAll: () => void;
+    onOrderPress: (orderId: string) => void;
+}
 
-const OrderCard: React.FC<OrderCardProps> = ({
-    order,
-    onConfirmOrder,
-    onMarkReady,
-    onMarkPickedUp,
-    onViewDetails,
-    onViewHoldDetails,
-}) => {
-    const tagCfg         = TAG_STYLE[order.tag] ?? TAG_STYLE['BUY NOW'];
-    const statusCfg      = STATUS_CONFIG[order.status];
-    const primary        = getPrimaryAction(order.status, order.id, onConfirmOrder, onMarkReady, onMarkPickedUp);
-    const secondaryLabel = getSecondaryLabel(order.status);
-    const isCompleted    = order.status === 'completed';
-    const isCancelled    = order.status === 'cancelled';
-    const showActions    = !isCompleted && !isCancelled;
-
-    const onSecondaryPress = order.status === 'holding'
-        ? () => onViewHoldDetails(order.id)
-        : () => onViewDetails(order.id);
+const RecentActivity: React.FC<RecentActivityProps> = ({ orders, onViewAll, onOrderPress }) => {
+    if (orders.length === 0) return null;
 
     return (
-        <View style={styles.card}>
+        <View style={styles.container}>
+            <View style={styles.headerRow}>
+                <Text style={styles.title}>Recent Activity</Text>
+                <TouchableOpacity onPress={onViewAll} hitSlop={8}>
+                    <Text style={styles.viewAll}>View All</Text>
+                </TouchableOpacity>
+            </View>
 
-            {/* ── Row 1: tag + status pill + urgency/time ── */}
-            <View style={styles.topRow}>
-                <View style={styles.topLeft}>
-                    <View style={[styles.tagBadge, { backgroundColor: tagCfg.bg }]}>
-                        <Text style={[styles.tagText, { color: tagCfg.color }]}>{order.tag}</Text>
+            {orders.map((order) => (
+                <TouchableOpacity
+                    key={order.id}
+                    style={styles.row}
+                    activeOpacity={0.7}
+                    onPress={() => onOrderPress(order.id)}
+                >
+                    <View style={styles.imgWrapper}>
+                        {order.imageUrl ? (
+                            <Image source={{ uri: order.imageUrl }} style={styles.img} resizeMode="cover" />
+                        ) : (
+                            <View style={styles.imgPlaceholder} />
+                        )}
                     </View>
-                    <View style={[styles.statusPill, { backgroundColor: statusCfg.bg }]}>
-                        <Text style={[styles.statusText, { color: statusCfg.color }]}>
-                            {statusCfg.label}
+
+                    <View style={styles.info}>
+                        <View style={styles.statusBadge}>
+                            <Text style={styles.statusText}>
+                                {order.status === 'cancelled' ? 'Cancelled' : 'Completed'}
+                            </Text>
+                        </View>
+                        <Text style={styles.productName} numberOfLines={1}>{order.productName}</Text>
+                        <Text style={styles.meta}>
+                            #{order.orderNumber} · ${order.price} · {order.completedDate ?? order.cancelledDate}
                         </Text>
                     </View>
-                </View>
 
-                {order.status === 'new' && order.confirmWithinMinutes != null ? (
-                    <View style={styles.urgencyPill}>
-                        <Feather name="clock" size={10} color="#EA580C" />
-                        <Text style={styles.urgencyText}>Confirm in {order.confirmWithinMinutes} min</Text>
-                    </View>
-                ) : (
-                    <Text style={styles.timeText}>{order.timeAgo}</Text>
-                )}
-            </View>
-
-            {/* ── Row 2: image + product info ── */}
-            <View style={styles.productRow}>
-                <View style={styles.imgWrapper}>
-                    {order.imageUrl ? (
-                        <Image
-                            source={{ uri: order.imageUrl }}
-                            style={styles.productImg}
-                            resizeMode="cover"
-                        />
-                    ) : (
-                        <View style={styles.imgPlaceholder} />
-                    )}
-                </View>
-                <View style={styles.productInfo}>
-                    <Text style={styles.productName} numberOfLines={1}>{order.productName}</Text>
-                    <Text style={styles.productMeta}>Size {order.size} · {order.gender}</Text>
-                    <Text style={styles.customerName}>{order.customerName} · Order #{order.orderNumber}</Text>
-                </View>
-            </View>
-
-            {/* ── Inventory reserved (new only) ── */}
-            {order.status === 'new' && order.inventoryReserved ? (
-                <Text style={styles.reservedText}>Inventory reserved</Text>
-            ) : null}
-
-            {/* ── Expiry row (holding only) ── */}
-            {order.status === 'holding' && order.expiresIn ? (
-                <View style={styles.expiryRow}>
-                    <View style={[styles.expiryDot, { backgroundColor: '#FF9800' }]} />
-                    <Text style={[styles.expiryText, { color: '#FF9800' }]}>
-                        Expires in {order.expiresIn}
-                    </Text>
-                </View>
-            ) : null}
-
-            {/* ── Ready-since row (ready only) ── */}
-            {order.status === 'ready' && order.readySince ? (
-                <View style={styles.expiryRow}>
-                    <View style={[styles.expiryDot, { backgroundColor: '#00C853' }]} />
-                    <Text style={[styles.expiryText, { color: '#00C853' }]}>
-                        Ready since {order.readySince}
-                    </Text>
-                </View>
-            ) : null}
-
-            {/* ── Customer notified + waiting (ready only) ── */}
-            {order.status === 'ready' && order.customerNotified ? (
-                <Text style={styles.customerNotif}>
-                    Customer notified{order.waitingSince ? ` · Waiting ${order.waitingSince}` : ''}
-                </Text>
-            ) : null}
-
-            {/* ── Price row (deposit-aware for holds) ── */}
-            {order.status === 'holding' && order.depositPaid ? (
-                <Text style={styles.price}>
-                    ${order.price} total <Text style={styles.priceSub}>· ${order.depositAmount} deposit</Text>
-                </Text>
-            ) : (
-                <Text style={styles.price}>${order.price}</Text>
-            )}
-
-            {/* ── Completed footer ── */}
-            {isCompleted && order.completedDate ? (
-                <View style={styles.footerRow}>
-                    <View style={styles.checkCircle}>
-                        <Text style={styles.checkMark}>✓</Text>
-                    </View>
-                    <Text style={styles.completedText}>
-                        Completed {order.completedDate} · ${order.price}
-                    </Text>
-                </View>
-            ) : null}
-
-            {/* ── Cancelled footer ── */}
-            {isCancelled && order.cancelledDate ? (
-                <View style={styles.footerRow}>
-                    <Text style={styles.cancelledText}>
-                        Cancelled by {order.cancelledBy ?? 'customer'} · {order.cancelledDate}
-                    </Text>
-                </View>
-            ) : null}
-
-            {/* ── Action buttons (new / holding / ready only) ── */}
-            {showActions ? (
-                <>
-                    <View style={styles.divider} />
-                    <View style={styles.actionRow}>
-                        {primary ? (
-                            <TouchableOpacity
-                                style={[styles.primaryBtn, { backgroundColor: primary.bg }]}
-                                onPress={primary.onPress}
-                                activeOpacity={0.85}
-                            >
-                                {primary.icon ? (
-                                    <Feather name={primary.icon} size={14} color="#fff" style={{ marginRight: 6 }} />
-                                ) : null}
-                                <Text style={styles.primaryBtnText}>{primary.label}</Text>
-                            </TouchableOpacity>
-                        ) : null}
-                        <TouchableOpacity
-                            style={styles.secondaryBtn}
-                            onPress={onSecondaryPress}
-                            activeOpacity={0.7}
-                        >
-                            <Text style={styles.secondaryBtnText}>{secondaryLabel}</Text>
-                        </TouchableOpacity>
-                    </View>
-                </>
-            ) : null}
-
+                    <Feather name="chevron-right" size={18} color="#D1D5DB" />
+                </TouchableOpacity>
+            ))}
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    card: {
-        backgroundColor: '#FFFFFF',
-        borderRadius: 12,
-        paddingHorizontal: 14,
-        paddingTop: 12,
-        paddingBottom: 14,
+    container: {
+        marginTop: 4,
+        paddingHorizontal: 4,
     },
-    topRow: {
+    headerRow: {
         flexDirection: 'row',
+        alignItems: 'center',
         justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 10,
-    },
-    topLeft: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 6,
-    },
-    tagBadge: {
         paddingHorizontal: 8,
-        paddingVertical: 3,
-        borderRadius: 20,
-    },
-    tagText: {
-        fontSize: 10,
-        fontWeight: '700',
-        letterSpacing: 0.3,
-    },
-    statusPill: {
-        paddingHorizontal: 9,
-        paddingVertical: 3,
-        borderRadius: 20,
-    },
-    statusText: {
-        fontSize: 11,
-        fontWeight: '600',
-    },
-    timeText: {
-        fontSize: 11,
-        color: '#999999',
-    },
-    urgencyPill: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 4,
-        backgroundColor: '#FFF7ED',
-        borderRadius: 20,
-        paddingHorizontal: 8,
-        paddingVertical: 3,
-    },
-    urgencyText: {
-        fontSize: 10,
-        fontWeight: '700',
-        color: '#EA580C',
-    },
-    productRow: {
-        flexDirection: 'row',
-        alignItems: 'flex-start',
-        gap: 10,
         marginBottom: 8,
     },
+    title: {
+        fontSize: 15,
+        fontWeight: '800',
+        color: '#111',
+    },
+    viewAll: {
+        fontSize: 12,
+        fontWeight: '700',
+        color: '#00C853',
+    },
+    row: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#fff',
+        borderRadius: 12,
+        padding: 10,
+        marginBottom: 8,
+        gap: 10,
+    },
     imgWrapper: {
-        width: 56,
-        height: 56,
+        width: 48,
+        height: 48,
         borderRadius: 8,
         overflow: 'hidden',
         backgroundColor: '#F0F0F0',
         flexShrink: 0,
     },
-    productImg: {
-        width: 56,
-        height: 56,
+    img: { width: 48, height: 48 },
+    imgPlaceholder: { width: 48, height: 48, backgroundColor: '#E8E8E8' },
+    info: { flex: 1, minWidth: 0 },
+    statusBadge: {
+        alignSelf: 'flex-start',
+        backgroundColor: '#F3F3F3',
+        borderRadius: 8,
+        paddingHorizontal: 6,
+        paddingVertical: 1,
+        marginBottom: 3,
     },
-    imgPlaceholder: {
-        width: 56,
-        height: 56,
-        backgroundColor: '#E8E8E8',
-    },
-    productInfo: {
-        flex: 1,
+    statusText: {
+        fontSize: 9,
+        fontWeight: '700',
+        color: '#555',
     },
     productName: {
-        fontSize: 14,
+        fontSize: 13,
         fontWeight: '700',
-        color: '#111111',
-        lineHeight: 18,
-        marginBottom: 2,
-    },
-    productMeta: {
-        fontSize: 11,
-        color: '#888888',
-        lineHeight: 15,
-        marginBottom: 2,
-    },
-    customerName: {
-        fontSize: 12,
-        color: '#666666',
-    },
-    reservedText: {
-        fontSize: 11,
-        color: '#00C853',
-        fontWeight: '500',
-        marginBottom: 4,
-    },
-    expiryRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 5,
-        marginBottom: 4,
-    },
-    expiryDot: {
-        width: 6,
-        height: 6,
-        borderRadius: 3,
-    },
-    expiryText: {
-        fontSize: 11,
-        fontWeight: '500',
-    },
-    customerNotif: {
-        fontSize: 11,
-        color: '#888888',
-        marginBottom: 4,
-    },
-    price: {
-        fontSize: 18,
-        fontWeight: '700',
-        color: '#111111',
-        marginTop: 4,
-        marginBottom: 6,
-    },
-    priceSub: {
-        fontSize: 12,
-        fontWeight: '500',
-        color: '#888888',
-    },
-    footerRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 5,
-        marginTop: 2,
-    },
-    checkCircle: {
-        width: 14,
-        height: 14,
-        borderRadius: 7,
-        backgroundColor: '#E8F5E9',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    checkMark: {
-        fontSize: 9,
-        color: '#2E7D32',
-        fontWeight: '700',
-        lineHeight: 14,
-    },
-    completedText: {
-        fontSize: 11,
-        color: '#888888',
-    },
-    cancelledText: {
-        fontSize: 11,
-        color: '#D32F2F',
-    },
-    divider: {
-        height: 1,
-        backgroundColor: '#F0F0F0',
-        marginVertical: 10,
-    },
-    actionRow: {
-        flexDirection: 'row',
-        gap: 8,
-    },
-    primaryBtn: {
-        flex: 1,
-        flexDirection: 'row',
-        paddingVertical: 9,
-        borderRadius: 8,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    primaryBtnText: {
-        fontSize: 12,
-        fontWeight: '600',
-        color: '#FFFFFF',
-    },
-    secondaryBtn: {
-        flex: 1,
-        paddingVertical: 9,
-        borderRadius: 8,
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderWidth: 1.5,
-        borderColor: '#DDDDDD',
-        backgroundColor: '#FFFFFF',
-    },
-    secondaryBtnText: {
-        fontSize: 12,
-        fontWeight: '500',
-        color: '#333333',
-    },
-});
-
-export default OrderCard;
-```
-
-## File: components/retailer/orders/OrdersHeader.tsx
-```typescript
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { Feather, Ionicons } from '@expo/vector-icons';
-
-interface OrdersHeaderProps {
-    storeLabel: string;
-    onLocationPress?: () => void;
-    onSearchPress: () => void;
-    onFilterPress: () => void;
-}
-
-const OrdersHeader: React.FC<OrdersHeaderProps> = ({
-    storeLabel,
-    onLocationPress,
-    onSearchPress,
-    onFilterPress,
-}) => {
-    return (
-        <View style={styles.container}>
-            <View style={styles.topRow}>
-                <Text style={styles.title}>Order Management</Text>
-                <View style={styles.actions}>
-                    <TouchableOpacity onPress={onFilterPress} style={styles.iconBtn}>
-                        <Ionicons name="filter-outline" size={22} color="#222" />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={onSearchPress} style={styles.iconBtn}>
-                        <Ionicons name="search-outline" size={22} color="#222" />
-                    </TouchableOpacity>
-                </View>
-            </View>
-
-            <TouchableOpacity
-                onPress={onLocationPress}
-                activeOpacity={0.7}
-                style={styles.locationRow}
-            >
-                <Feather name="map-pin" size={13} color="#9CA3AF" />
-                <Text style={styles.locationText}>{storeLabel}</Text>
-                <Feather name="chevron-down" size={14} color="#9CA3AF" />
-            </TouchableOpacity>
-
-            <View style={styles.retailerPill}>
-                <Feather name="briefcase" size={12} color="#6B7280" />
-                <Text style={styles.retailerPillText}>Retailer view</Text>
-            </View>
-        </View>
-    );
-};
-
-const styles = StyleSheet.create({
-    container: {
-        paddingHorizontal: 16,
-        paddingTop: 12,
-        paddingBottom: 10,
-        backgroundColor: '#fff',
-    },
-    topRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-    },
-    title: {
-        fontSize: 22,
-        fontWeight: '800',
         color: '#111',
+        marginBottom: 2,
     },
-    actions: {
-        flexDirection: 'row',
-        gap: 8,
-    },
-    iconBtn: {
-        padding: 6,
-    },
-    locationRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 4,
-        marginTop: 2,
-    },
-    locationText: {
-        fontSize: 13,
-        color: '#6B7280',
-        fontWeight: '500',
-    },
-    retailerPill: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        alignSelf: 'flex-start',
-        gap: 5,
-        backgroundColor: '#F3F4F6',
-        borderRadius: 8,
-        paddingHorizontal: 8,
-        paddingVertical: 4,
-        marginTop: 8,
-    },
-    retailerPillText: {
+    meta: {
         fontSize: 11,
-        fontWeight: '600',
-        color: '#6B7280',
+        color: '#9CA3AF',
     },
 });
 
-export default OrdersHeader;
-```
-
-## File: components/retailer/orders/OrdersList.tsx
-```typescript
-import React from 'react';
-import { ScrollView, RefreshControl, StyleSheet, View, Text } from 'react-native';
-import OrderCard from './OrderCard';
-import RecentActivity from './RecentActivity';
-import { Order } from '@/types/Orders';
-
-interface OrdersListProps {
-    orders: Order[];
-    recentActivity?: Order[];
-    isRefreshing: boolean;
-    onRefresh: () => void;
-    onConfirmOrder: (orderId: string) => void;
-    onMarkReady: (orderId: string) => void;
-    onMarkPickedUp: (orderId: string) => void;
-    onViewDetails: (orderId: string) => void;
-    onViewHoldDetails: (orderId: string) => void;
-    onViewAllActivity?: () => void;
-}
-
-const OrdersList: React.FC<OrdersListProps> = ({
-    orders,
-    recentActivity = [],
-    isRefreshing,
-    onRefresh,
-    onConfirmOrder,
-    onMarkReady,
-    onMarkPickedUp,
-    onViewDetails,
-    onViewHoldDetails,
-    onViewAllActivity,
-}) => {
-    if (orders.length === 0 && recentActivity.length === 0) {
-        return (
-            <View style={styles.emptyContainer}>
-                <Text style={styles.emptyText}>No orders found</Text>
-            </View>
-        );
-    }
-
-    return (
-        <ScrollView
-            style={styles.scroll}
-            contentContainerStyle={styles.content}
-            showsVerticalScrollIndicator={false}
-            refreshControl={
-                <RefreshControl
-                    refreshing={isRefreshing}
-                    onRefresh={onRefresh}
-                    tintColor="#00C853"
-                    colors={['#00C853']}
-                />
-            }
-        >
-            {orders.map(order => (
-                <OrderCard
-                    key={order.id}
-                    order={order}
-                    onConfirmOrder={onConfirmOrder}
-                    onMarkReady={onMarkReady}
-                    onMarkPickedUp={onMarkPickedUp}
-                    onViewDetails={onViewDetails}
-                    onViewHoldDetails={onViewHoldDetails}
-                />
-            ))}
-
-            {recentActivity.length > 0 && (
-                <RecentActivity
-                    orders={recentActivity}
-                    onViewAll={() => onViewAllActivity?.()}
-                    onOrderPress={onViewDetails}
-                />
-            )}
-        </ScrollView>
-    );
-};
-
-const styles = StyleSheet.create({
-    scroll: {
-        flex: 1,
-        backgroundColor: '#F5F5F5',
-    },
-    content: {
-        padding: 12,
-        gap: 10,
-        paddingBottom: 24,
-    },
-    emptyContainer: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingTop: 60,
-    },
-    emptyText: {
-        fontSize: 15,
-        color: '#999',
-    },
-});
-
-export default OrdersList;
-```
-
-## File: components/retailer/orders/OrdersTabs.tsx
-```typescript
-import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
-
-export type OrderTab = 'Needs Action' | 'Holds' | 'Ready' | 'History';
-
-export interface TabCounts {
-    'Needs Action': number;
-    Holds: number;
-    Ready: number;
-    History: number;
-}
-
-interface OrdersTabsProps {
-    activeTab: OrderTab;
-    tabCounts: TabCounts;
-    onTabChange: (tab: OrderTab) => void;
-}
-
-const TABS: OrderTab[] = ['Needs Action', 'Holds', 'Ready', 'History'];
-
-const OrdersTabs: React.FC<OrdersTabsProps> = ({ activeTab, tabCounts, onTabChange }) => {
-    return (
-        <View style={styles.wrapper}>
-            <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.container}
-            >
-                {TABS.map((tab) => {
-                    const isActive = activeTab === tab;
-                    const count = tabCounts[tab];
-                    return (
-                        <TouchableOpacity
-                            key={tab}
-                            onPress={() => onTabChange(tab)}
-                            style={[styles.tab, isActive && styles.activeTab]}
-                            activeOpacity={0.7}
-                        >
-                            <Text style={[styles.tabText, isActive && styles.activeTabText]}>
-                                {tab}
-                            </Text>
-                            {count > 0 && (
-                                <View style={[styles.badge, isActive && styles.activeBadge]}>
-                                    <Text style={[styles.badgeText, isActive && styles.activeBadgeText]}>
-                                        {count}
-                                    </Text>
-                                </View>
-                            )}
-                        </TouchableOpacity>
-                    );
-                })}
-            </ScrollView>
-            <View style={styles.divider} />
-        </View>
-    );
-};
-
-const styles = StyleSheet.create({
-    wrapper: {
-        backgroundColor: '#fff',
-    },
-    container: {
-        flexDirection: 'row',
-        paddingHorizontal: 12,
-        paddingVertical: 8,
-        gap: 6,
-    },
-    tab: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingHorizontal: 14,
-        paddingVertical: 8,
-        borderRadius: 20,
-        gap: 6,
-        backgroundColor: '#F3F4F6',
-    },
-    activeTab: {
-        backgroundColor: '#111',
-    },
-    tabText: {
-        fontSize: 13,
-        fontWeight: '600',
-        color: '#6B7280',
-    },
-    activeTabText: {
-        color: '#fff',
-    },
-    badge: {
-        backgroundColor: '#E5E7EB',
-        borderRadius: 10,
-        minWidth: 18,
-        height: 18,
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingHorizontal: 5,
-    },
-    activeBadge: {
-        backgroundColor: '#00C853',
-    },
-    badgeText: {
-        fontSize: 11,
-        fontWeight: '700',
-        color: '#6B7280',
-    },
-    activeBadgeText: {
-        color: '#fff',
-    },
-    divider: {
-        height: 1,
-        backgroundColor: '#F0F0F0',
-    },
-});
-
-export default OrdersTabs;
+export default RecentActivity;
 ```
 
 ## File: components/retailer/promote/AdvanceOptionCard.tsx
@@ -30237,9 +26696,8 @@ export function useLocation() {
 
 ## File: services/hooks/reseller/dashboard/useNotifications.ts
 ```typescript
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
-// Define the shape of a single notification
 export interface NotificationItem {
     id: string;
     type: string;
@@ -30248,9 +26706,11 @@ export interface NotificationItem {
     time: string;
     color: string;
     bgColor: string;
-    initials?: string;    // Optional
-    icon?: string;        // Optional
-    actions?: string[];   // Optional
+    initials?: string;
+    icon?: string;
+    actions?: string[];
+    isRead: boolean;
+    category: 'Requests' | 'Deals' | 'Alerts';
 }
 
 interface NotificationSection {
@@ -30258,376 +26718,135 @@ interface NotificationSection {
     data: NotificationItem[];
 }
 
+const RAW_ITEMS: NotificationItem[] = [
+    {
+        id: '1',
+        type: 'request',
+        title: 'New request from Kicks City',
+        description: 'Air Jordan 4 "Black Cat" Size 10.5 · Deadstock — Offer: $185',
+        time: '5 min ago',
+        initials: 'KC',
+        color: '#22C55E',
+        bgColor: '#F0FDF4',
+        actions: ['View Request', 'Ignore'],
+        isRead: false,
+        category: 'Requests',
+    },
+    {
+        id: '2',
+        type: 'counter',
+        title: 'Counter offer from Sole House',
+        description: 'Nike Dunk Low - Size 11 · Your ask: $210 → Counter offer: $195',
+        time: '1 hr ago',
+        initials: 'SH',
+        color: '#F59E0B',
+        bgColor: '#FFFBEB',
+        actions: ['Accept $195', 'Counter', 'Decline'],
+        isRead: false,
+        category: 'Deals',
+    },
+    {
+        id: '3',
+        type: 'deal',
+        title: 'Deal confirmed',
+        description: 'Nike Dunk Low - $155 · Arrange pickup/shipping details.',
+        time: '3 hrs ago',
+        icon: 'checkmark-circle-outline',
+        color: '#22C55E',
+        bgColor: '#F0FDF4',
+        actions: ['View Deal'],
+        isRead: false,
+        category: 'Deals',
+    },
+    {
+        id: '4',
+        type: 'info',
+        title: '3 stores viewed your inventory',
+        description: 'Kicks City, Sole House, and 1 other store viewed your listings today.',
+        time: 'Today',
+        icon: 'eye-outline',
+        color: '#6B7280',
+        bgColor: '#F9FAFB',
+        actions: ['View Stores'],
+        isRead: true,
+        category: 'Alerts',
+    },
+    {
+        id: '5',
+        type: 'declined',
+        title: 'Request declined',
+        description: 'Premier Kicks declined your Air Max 90 listing.',
+        time: 'Yesterday',
+        icon: 'close-outline',
+        color: '#EF4444',
+        bgColor: '#FFF1F2',
+        actions: ['View Listing'],
+        isRead: true,
+        category: 'Alerts',
+    },
+    {
+        id: '6',
+        type: 'trust',
+        title: 'Trust Score updated',
+        description: 'Your Trust Score is now 98/100. Response rate: 99%',
+        time: 'Yesterday',
+        icon: 'shield-checkmark-outline',
+        color: '#22C55E',
+        bgColor: '#F0FDF4',
+        actions: ['View Trust Score'],
+        isRead: true,
+        category: 'Alerts',
+    },
+];
+
 export const useNotifications = () => {
-    const [activeTab, setActiveTab] = useState('All 4');
+    const [items, setItems] = useState<NotificationItem[]>(RAW_ITEMS);
+    const [activeTab, setActiveTab] = useState<'All' | 'Requests' | 'Deals' | 'Alerts'>('All');
+
+    const filtered = useMemo(
+        () => (activeTab === 'All' ? items : items.filter((i) => i.category === activeTab)),
+        [items, activeTab]
+    );
+
+    const actionRequired = filtered.filter(
+        (i) => i.actions?.some((a) => !a.toLowerCase().startsWith('view'))
+    );
+    const today = filtered.filter(
+        (i) => !actionRequired.includes(i) && (i.time.includes('ago') || i.time === 'Today')
+    );
+    const yesterday = filtered.filter(
+        (i) => !actionRequired.includes(i) && !today.includes(i)
+    );
 
     const sections: NotificationSection[] = [
-        {
-            title: 'TODAY',
-            data: [
-                {
-                    id: '1',
-                    type: 'request',
-                    title: 'New store request',
-                    description: 'Kicks City wants your Air Jordan 4 "Black Cat" Size 10.5 - Deadstock · They offered $185',
-                    time: '5 min ago',
-                    initials: 'KC',
-                    color: '#22C55E',
-                    bgColor: '#F0FDF4',
-                    actions: ['View Request', 'Ignore']
-                },
-                {
-                    id: '2',
-                    type: 'counter',
-                    title: 'Counter offer received',
-                    description: 'Sole House countered your $210 ask with $195 for Nike Dunk Low - Size 11',
-                    time: '1 hr ago',
-                    initials: 'SH',
-                    color: '#F59E0B',
-                    bgColor: '#FFFBEB',
-                    actions: ['Accept $195', 'Counter Again', 'Decline']
-                },
-                {
-                    id: '3',
-                    type: 'deal',
-                    title: 'Deal confirmed!',
-                    description: 'Nike Dunk Low · $155 agreed with Sole House. Arrange handoff details.',
-                    time: '3 hrs ago',
-                    icon: 'checkmark-circle-outline',
-                    color: '#22C55E',
-                    bgColor: '#F0FDF4',
-                    actions: ['View Deal']
-                },
-                {
-                    id: '4',
-                    type: 'info',
-                    title: '3 stores viewed your inventory',
-                    description: 'Kicks City, Sole House, and 1 other store browsed your listings today.',
-                    time: 'Today',
-                    icon: 'eye-outline',
-                    color: '#6B7280',
-                    bgColor: '#F9FAFB',
-                    actions: ['See Who']
-                }
-            ]
-        },
-        {
-            title: 'YESTERDAY',
-            data: [
-                {
-                    id: '5',
-                    type: 'declined',
-                    title: 'Request declined',
-                    description: 'Premier Kicks declined your Air Max 90 listing.',
-                    time: 'Yesterday',
-                    icon: 'close-outline',
-                    color: '#EF4444',
-                    bgColor: '#FFF1F2',
-                },
-                {
-                    id: '6',
-                    type: 'trust',
-                    title: 'Trust Score updated',
-                    description: 'Your Trust Score is now 98/100. Response rate: 99%',
-                    time: 'Yesterday',
-                    icon: 'shield-checkmark-outline',
-                    color: '#22C55E',
-                    bgColor: '#F0FDF4',
-                }
-            ]
-        }
+        ...(actionRequired.length ? [{ title: 'Action Required', data: actionRequired }] : []),
+        ...(today.length ? [{ title: 'TODAY', data: today }] : []),
+        ...(yesterday.length ? [{ title: 'YESTERDAY', data: yesterday }] : []),
     ];
 
-    return { sections, activeTab, setActiveTab };
-};
-```
-
-## File: services/hooks/retailer/home/useAddProduct.ts
-```typescript
-import { useState } from 'react';
-import Toast from 'react-native-toast-message';
-import { router } from 'expo-router';
-
-export interface ProductSize {
-    size: string;
-    qty: number;
-    price: string;
-    status: 'Active' | 'Inactive';
-}
-
-export const useAddProduct = () => {
-    const [form, setForm] = useState({
-        name: '',
-        brand: '',
-        category: '',
-        colorway: '',
-        sku: '',
-        availability: 'Active' as 'Active' | 'Coming Soon',
-    });
-
-    const [sizes, setSizes] = useState<ProductSize[]>([]);
-    const [scannedFound, setScannedFound] = useState(false);
-    const [isScanning, setIsScanning] = useState(false);
-
-    const updateField = (field: string, value: string) => {
-        setForm(prev => ({ ...prev, [field]: value }));
+    const tabCounts = {
+        All: items.length,
+        Requests: items.filter((i) => i.category === 'Requests').length,
+        Deals: items.filter((i) => i.category === 'Deals').length,
+        Alerts: items.filter((i) => i.category === 'Alerts').length,
     };
 
-    const updateSizeQty = (index: number, delta: number) => {
-        setSizes(prev => {
-            const next = [...prev];
-            next[index] = { ...next[index], qty: Math.max(0, next[index].qty + delta) };
-            return next;
-        });
+    const totalCount = items.length;
+
+    const markAllRead = () => {
+        setItems((prev) => prev.map((i) => ({ ...i, isRead: true })));
     };
 
-    const addSize = () => {
-        setSizes(prev => [...prev, { size: '', qty: 1, price: form.category ? '' : '', status: 'Active' }]);
+    // value omitted = mark read; pass false to mark unread (used by swipe action toggle)
+    const markRead = (id: string, value: boolean = true) => {
+        setItems((prev) => prev.map((i) => (i.id === id ? { ...i, isRead: value } : i)));
     };
 
-    const removeSize = (index: number) => {
-        setSizes(prev => prev.filter((_, i) => i !== index));
+    const deleteNotification = (id: string) => {
+        setItems((prev) => prev.filter((i) => i.id !== id));
     };
 
-    // Simulates a barcode scan result filling the form automatically.
-    const openScanner = () => {
-        setIsScanning(true);
-        setTimeout(() => {
-            setForm({
-                name: 'Air Jordan 1 Retro High OG "Black White"',
-                brand: 'Jordan',
-                category: 'Sneakers',
-                colorway: 'Black/White',
-                sku: 'DZ5485-010',
-                availability: 'Active',
-            });
-            setSizes([{ size: '10.5', qty: 1, price: '220', status: 'Active' }]);
-            setScannedFound(true);
-            setIsScanning(false);
-
-            Toast.show({
-                type: 'success',
-                text1: 'Barcode scanned',
-                text2: 'Product details filled in automatically.',
-                position: 'top',
-            });
-        }, 900);
-    };
-
-    const enterBarcodeManually = () => {
-        // Hand off to a manual barcode-entry input/modal
-        console.log('Enter barcode manually');
-    };
-
-    const handleSave = () => {
-        if (!form.name) {
-            Toast.show({
-                type: 'error',
-                text1: 'Missing Information',
-                text2: 'Please enter a product name. ⚠️',
-                position: 'top',
-            });
-            return;
-        }
-
-        // Logic to save to your database would go here
-        console.log('Saving Product:', { ...form, sizes });
-
-        Toast.show({
-            type: 'success',
-            text1: 'Product Saved!',
-            text2: `${form.name} added successfully.`,
-            position: 'top',
-        });
-
-        setTimeout(() => {
-            router.back();
-        }, 600);
-    };
-
-    return {
-        form,
-        sizes,
-        scannedFound,
-        isScanning,
-        updateField,
-        updateSizeQty,
-        addSize,
-        removeSize,
-        setForm,
-        openScanner,
-        enterBarcodeManually,
-        handleSave,
-    };
-};
-```
-
-## File: services/hooks/retailer/home/useAnalytics.ts
-```typescript
-import { useState, useCallback } from 'react';
-import { TimeFilter, ChartMode, AnalyticsData } from '@/types/analytics';
-
-// ── Mock data per filter (swap with real API calls) ────────────────────────
-const MOCK_DATA: Record<TimeFilter, AnalyticsData> = {
-  Today: {
-    totalRevenue: '$340',
-    revenueChange: '+$40 vs yesterday',
-    revenueChangePercent: '+13.3%',
-    sparklineData: [120, 180, 150, 200, 220, 310, 340],
-    orders: 2,
-    ordersChange: '+1 vs yesterday',
-    grossProfit: '$140',
-    grossProfitMargin: '41.2%',
-    grossProfitChange: '+$20 vs yesterday',
-    avgOrder: '$170',
-    avgOrderChange: '+$5 vs yesterday',
-    pickupRate: '100%',
-    pickupRateChange: 'No change',
-    dailySalesBarData: [40, 80, 60, 120, 100, 180, 160],
-    dailyOrdersBarData: [1, 2, 1, 3, 2, 4, 3],
-    barLabelsDaily: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-    topProducts: [
-      { rank: 1, name: 'Air Jordan 1 Retro High', sub: '2 colorways · 12 viewed', price: '$1100' },
-      { rank: 2, name: 'Nike Dunk Low', sub: '1 colorway · 8 viewed', price: '$450' },
-    ],
-    orderStatus: [
-      { label: 'Completed', color: '#00C853', value: 1 },
-      { label: 'Pending', color: '#F59E0B', value: 1 },
-    ],
-    sizes: [
-      { label: 'US 9', value: 12, color: '#111' },
-      { label: 'US 10', value: 9, color: '#6B7280' },
-    ],
-  },
-  Week: {
-    totalRevenue: '$980',
-    revenueChange: '+$120 vs last week',
-    revenueChangePercent: '+13.9%',
-    sparklineData: [200, 350, 300, 500, 450, 700, 980],
-    orders: 4,
-    ordersChange: '+2 vs last week',
-    grossProfit: '$390',
-    grossProfitMargin: '39.8%',
-    grossProfitChange: '+$60 vs last week',
-    avgOrder: '$245',
-    avgOrderChange: '+$12 vs last week',
-    pickupRate: '96%',
-    pickupRateChange: '+2% vs last week',
-    dailySalesBarData: [120, 180, 140, 260, 200, 340, 300],
-    dailyOrdersBarData: [1, 2, 1, 3, 2, 4, 3],
-    barLabelsDaily: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-    topProducts: [
-      { rank: 1, name: 'Air Jordan 1 Retro High', sub: '2 colorways · 25 viewed', price: '$1100' },
-      { rank: 2, name: 'Yeezy Boost 350 V2', sub: '3 colorways · 18 viewed', price: '$1120' },
-    ],
-    orderStatus: [
-      { label: 'Completed', color: '#00C853', value: 3 },
-      { label: 'Pending', color: '#F59E0B', value: 1 },
-    ],
-    sizes: [
-      { label: 'US 9', value: 22, color: '#111' },
-      { label: 'US 10', value: 18, color: '#6B7280' },
-      { label: 'US 8', value: 12, color: '#9CA3AF' },
-    ],
-  },
-  Month: {
-    totalRevenue: '$2,840',
-    revenueChange: '+$237 vs last month (+9.1%)',
-    revenueChangePercent: '+9.1%',
-    sparklineData: [820, 932, 701, 1050, 980, 1120, 1400, 1280, 1600, 2840],
-    orders: 8,
-    ordersChange: '+1 vs last month',
-    grossProfit: '$1,120',
-    grossProfitMargin: '39.4%',
-    grossProfitChange: '+12.6% vs last month',
-    avgOrder: '$355',
-    avgOrderChange: '+$18 vs last month',
-    pickupRate: '94%',
-    pickupRateChange: 'No change',
-    dailySalesBarData: [280, 360, 240, 420, 380, 610, 550],
-    dailyOrdersBarData: [1, 2, 1, 2, 1, 3, 2],
-    barLabelsDaily: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-    topProducts: [
-      { rank: 1, name: 'Yeezy Boost 350 V2', sub: '4 sold · 4 colorways', price: '$1,120' },
-      { rank: 2, name: 'Air Jordan 1 Retro High', sub: '5 sold · 2 colorways', price: '$1,100' },
-      { rank: 3, name: 'Nike Dunk Low', sub: '3 sold · 3 colorways', price: '$450' },
-    ],
-    orderStatus: [
-      { label: 'Completed', color: '#00C853', value: 5 },
-      { label: 'Pending', color: '#F59E0B', value: 1 },
-      { label: 'Not Confirmed', color: '#3B82F6', value: 1 },
-      { label: 'Cancelled', color: '#EF4444', value: 1 },
-    ],
-    sizes: [
-      { label: 'US 9', value: 37, color: '#065F46' },
-      { label: 'US 10', value: 32, color: '#065F46' },
-      { label: 'US 8', value: 28, color: '#065F46' },
-      { label: 'US 11', value: 18, color: '#065F46' },
-    ],
-  },
-  Custom: {
-    totalRevenue: '$14,200',
-    revenueChange: '+$2,840 vs previous period',
-    revenueChangePercent: '+25%',
-    sparklineData: [1000, 2000, 1800, 3200, 2900, 4100, 5800, 7200, 9400, 14200],
-    orders: 52,
-    ordersChange: '+8 vs previous period',
-    grossProfit: '$5,680',
-    grossProfitMargin: '40%',
-    grossProfitChange: '+$820 vs previous period',
-    avgOrder: '$273',
-    avgOrderChange: '+$14 vs previous period',
-    pickupRate: '95%',
-    pickupRateChange: '+1% vs previous period',
-    dailySalesBarData: [1200, 1800, 1400, 2600, 2000, 3400, 3000],
-    dailyOrdersBarData: [4, 6, 5, 9, 7, 12, 10],
-    barLabelsDaily: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-    topProducts: [
-      { rank: 1, name: 'Air Jordan 1 Retro High', sub: '5 colorways · 210 sold', price: '$1100' },
-      { rank: 2, name: 'Yeezy Boost 350 V2', sub: '7 colorways · 184 sold', price: '$1120' },
-      { rank: 3, name: 'Nike Dunk Low', sub: '6 colorways · 152 sold', price: '$450' },
-    ],
-    orderStatus: [
-      { label: 'Completed', color: '#00C853', value: 42 },
-      { label: 'Pending', color: '#F59E0B', value: 4 },
-      { label: 'Not Confirmed', color: '#3B82F6', value: 3 },
-      { label: 'Cancelled', color: '#EF4444', value: 3 },
-    ],
-    sizes: [
-      { label: 'US 9', value: 38, color: '#065F46' },
-      { label: 'US 10', value: 34, color: '#065F46' },
-      { label: 'US 8', value: 30, color: '#065F46' },
-      { label: 'US 11', value: 22, color: '#065F46' },
-    ],
-  },
-};
-
-export const useAnalytics = () => {
-  const [activeFilter, setActiveFilter] = useState<TimeFilter>('Month');
-  const [chartMode, setChartMode] = useState<ChartMode>('Sales');
-
-  const data = MOCK_DATA[activeFilter];
-
-  const barData = chartMode === 'Sales' ? data.dailySalesBarData : data.dailyOrdersBarData;
-  const barLabels = data.barLabelsDaily;
-
-  const handleFilterChange = useCallback((filter: TimeFilter) => {
-    setActiveFilter(filter);
-  }, []);
-
-  const handleChartModeChange = useCallback((mode: ChartMode) => {
-    setChartMode(mode);
-  }, []);
-
-  return {
-    activeFilter,
-    chartMode,
-    data,
-    barData,
-    barLabels,
-    handleFilterChange,
-    handleChartModeChange,
-  };
+    return { sections, activeTab, setActiveTab, tabCounts, totalCount, markAllRead, markRead, deleteNotification };
 };
 ```
 
@@ -30686,148 +26905,6 @@ export const useBoostStore = () => {
   };
 
   return { currentPlan, handleUpgrade, handleActivateBoost };
-};
-```
-
-## File: services/hooks/retailer/home/useBusinessOverview.ts
-```typescript
-import { useMemo, useState } from 'react';
-
-export type OverviewPeriod = 'Today' | 'Yesterday' | 'This Week';
-
-export interface LocationAlert {
-  type: 'ready' | 'overdue' | 'low_stock';
-  count: number;
-}
-
-export interface Location {
-  id: string;
-  initials: string;
-  name: string;
-  address: string;
-  isOpen: boolean;
-  hoursNote: string; // "Closes 9 PM" or "Opens 10 AM"
-  salesToday: string;
-  ordersToday: number;
-  alerts: LocationAlert[];
-  syncedAgo: string;
-}
-
-export interface BusinessSummary {
-  initials: string;
-  name: string;
-  locationCount: number;
-  city: string;
-}
-
-interface PeriodStats {
-  grossSales: string;
-  deltaVsPrevious: string;
-  deltaIsPositive: boolean;
-  netSales: string;
-  orders: number;
-  avgOrder: string;
-  activeListings: number;
-}
-
-const STATS_BY_PERIOD: Record<OverviewPeriod, PeriodStats> = {
-  Today: {
-    grossSales: '$12,480',
-    deltaVsPrevious: '+$1,240',
-    deltaIsPositive: true,
-    netSales: '$11,860',
-    orders: 47,
-    avgOrder: '$266',
-    activeListings: 312,
-  },
-  Yesterday: {
-    grossSales: '$11,240',
-    deltaVsPrevious: '-$680',
-    deltaIsPositive: false,
-    netSales: '$10,690',
-    orders: 41,
-    avgOrder: '$274',
-    activeListings: 308,
-  },
-  'This Week': {
-    grossSales: '$68,910',
-    deltaVsPrevious: '+$5,320',
-    deltaIsPositive: true,
-    netSales: '$65,120',
-    orders: 261,
-    avgOrder: '$264',
-    activeListings: 312,
-  },
-};
-
-export const useBusinessOverview = () => {
-  const [period, setPeriod] = useState<OverviewPeriod>('Today');
-
-  const [business] = useState<BusinessSummary>({
-    initials: 'KE',
-    name: 'Kicks Empire LLC',
-    locationCount: 3,
-    city: 'Miami, FL',
-  });
-
-  const [locations] = useState<Location[]>([
-    {
-      id: '1',
-      initials: 'SK',
-      name: "Sonny's Kicks — Main St",
-      address: '123 Ocean Drive, Miami, FL',
-      isOpen: true,
-      hoursNote: 'Closes 9 PM',
-      salesToday: '$5,200',
-      ordersToday: 18,
-      alerts: [
-        { type: 'ready', count: 2 },
-        { type: 'overdue', count: 1 },
-      ],
-      syncedAgo: 'Synced 2 min ago',
-    },
-    {
-      id: '2',
-      initials: 'SK',
-      name: "Sonny's Kicks — Downtown",
-      address: '456 Bay Street, Miami, FL',
-      isOpen: true,
-      hoursNote: 'Closes 9 PM',
-      salesToday: '$4,180',
-      ordersToday: 15,
-      alerts: [
-        { type: 'ready', count: 3 },
-        { type: 'overdue', count: 0 },
-      ],
-      syncedAgo: 'Synced 1 min ago',
-    },
-    {
-      id: '3',
-      initials: 'SK',
-      name: "Sonny's Kicks — Beach",
-      address: '789 Sunset Blvd, Miami Beach, FL',
-      isOpen: false,
-      hoursNote: 'Opens 10 AM',
-      salesToday: '$3,100',
-      ordersToday: 14,
-      alerts: [{ type: 'low_stock', count: 2 }],
-      syncedAgo: 'Synced 4 min ago',
-    },
-  ]);
-
-  const stats = useMemo(() => STATS_BY_PERIOD[period], [period]);
-
-  const [ordersNeedingAttention] = useState(5);
-
-  return {
-    periods: ['Today', 'Yesterday', 'This Week'] as OverviewPeriod[],
-    period,
-    setPeriod,
-    business,
-    stats,
-    ordersNeedingAttention,
-    locations,
-  };
 };
 ```
 
@@ -31016,324 +27093,6 @@ export const useEditBranch = (id: string) => {
 };
 ```
 
-## File: services/hooks/retailer/home/useLocalDemand.ts
-```typescript
-import { useMemo, useState } from 'react';
-
-export type DayRange = '7' | '30' | '90';
-export type CategoryFilter = 'All' | 'Sneakers' | 'Clothing';
-
-export interface SizeDemand {
-  label: string;
-  searches: number;
-  status: 'searches' | 'low' | 'out';
-}
-
-export interface OpportunityItem {
-  id: string;
-  rank: number;
-  name: string;
-  searchesLabel: string;
-  trendPct: number; // positive = up, negative = down
-  stockStatus: 'not_stocked' | 'missing_sizes' | 'demand_covered';
-  stockNote: string; // e.g. "Not Stocked", "In stock: 3 pairs", "In stock: 12 pairs"
-  sizes: SizeDemand[];
-  primaryAction: {
-    label: string;
-    icon: 'plus' | 'box' | 'file';
-    kind: 'add_to_sourcing' | 'review_inventory' | 'view_details';
-  };
-}
-
-export interface BestOpportunity {
-  itemName: string;
-  reason: string;
-  potentialBuyers: number;
-}
-
-interface StoreOption {
-  id: string;
-  name: string;
-  radiusMiles: number;
-}
-
-const DAY_RANGES: { key: DayRange; label: string }[] = [
-  { key: '7', label: '7 Days' },
-  { key: '30', label: '30 Days' },
-  { key: '90', label: '90 Days' },
-];
-
-const CATEGORY_FILTERS: CategoryFilter[] = ['All', 'Sneakers', 'Clothing'];
-
-const OPPORTUNITIES_BY_RANGE: Record<DayRange, OpportunityItem[]> = {
-  '7': [
-    {
-      id: 'panda',
-      rank: 1,
-      name: "Nike Dunk Low 'Panda'",
-      searchesLabel: '2,104 searches',
-      trendPct: 18,
-      stockStatus: 'not_stocked',
-      stockNote: 'Not Stocked',
-      sizes: [
-        { label: '9', searches: 24, status: 'searches' },
-        { label: '10', searches: 18, status: 'searches' },
-        { label: '10.5', searches: 16, status: 'searches' },
-      ],
-      primaryAction: { label: 'Add to Sourcing List', icon: 'plus', kind: 'add_to_sourcing' },
-    },
-    {
-      id: 'chicago',
-      rank: 2,
-      name: "Air Jordan 1 'Chicago'",
-      searchesLabel: '2,847 searches',
-      trendPct: 9,
-      stockStatus: 'missing_sizes',
-      stockNote: 'In stock: 3 pairs',
-      sizes: [
-        { label: '9', searches: 0, status: 'low' },
-        { label: '10', searches: 0, status: 'out' },
-        { label: '10.5', searches: 0, status: 'out' },
-      ],
-      primaryAction: { label: 'Review Inventory', icon: 'box', kind: 'review_inventory' },
-    },
-    {
-      id: 'cream',
-      rank: 3,
-      name: "Yeezy 350 'Cream'",
-      searchesLabel: '1,892 searches',
-      trendPct: -4,
-      stockStatus: 'demand_covered',
-      stockNote: 'In stock: 12 pairs',
-      sizes: [
-        { label: '9', searches: 14, status: 'searches' },
-        { label: '10', searches: 12, status: 'searches' },
-        { label: '11', searches: 11, status: 'searches' },
-      ],
-      primaryAction: { label: 'View Details', icon: 'file', kind: 'view_details' },
-    },
-  ],
-  '30': [
-    {
-      id: 'panda-30',
-      rank: 1,
-      name: "Nike Dunk Low 'Panda'",
-      searchesLabel: '7,910 searches',
-      trendPct: 22,
-      stockStatus: 'not_stocked',
-      stockNote: 'Not Stocked',
-      sizes: [
-        { label: '9', searches: 88, status: 'searches' },
-        { label: '10', searches: 71, status: 'searches' },
-        { label: '10.5', searches: 60, status: 'searches' },
-      ],
-      primaryAction: { label: 'Add to Sourcing List', icon: 'plus', kind: 'add_to_sourcing' },
-    },
-    {
-      id: 'chicago-30',
-      rank: 2,
-      name: "Air Jordan 1 'Chicago'",
-      searchesLabel: '9,532 searches',
-      trendPct: 5,
-      stockStatus: 'missing_sizes',
-      stockNote: 'In stock: 3 pairs',
-      sizes: [
-        { label: '9', searches: 0, status: 'low' },
-        { label: '10', searches: 0, status: 'out' },
-        { label: '10.5', searches: 0, status: 'out' },
-      ],
-      primaryAction: { label: 'Review Inventory', icon: 'box', kind: 'review_inventory' },
-    },
-    {
-      id: 'cream-30',
-      rank: 3,
-      name: "Yeezy 350 'Cream'",
-      searchesLabel: '6,203 searches',
-      trendPct: 2,
-      stockStatus: 'demand_covered',
-      stockNote: 'In stock: 12 pairs',
-      sizes: [
-        { label: '9', searches: 49, status: 'searches' },
-        { label: '10', searches: 41, status: 'searches' },
-        { label: '11', searches: 37, status: 'searches' },
-      ],
-      primaryAction: { label: 'View Details', icon: 'file', kind: 'view_details' },
-    },
-  ],
-  '90': [
-    {
-      id: 'panda-90',
-      rank: 1,
-      name: "Nike Dunk Low 'Panda'",
-      searchesLabel: '21,340 searches',
-      trendPct: 31,
-      stockStatus: 'not_stocked',
-      stockNote: 'Not Stocked',
-      sizes: [
-        { label: '9', searches: 240, status: 'searches' },
-        { label: '10', searches: 198, status: 'searches' },
-        { label: '10.5', searches: 172, status: 'searches' },
-      ],
-      primaryAction: { label: 'Add to Sourcing List', icon: 'plus', kind: 'add_to_sourcing' },
-    },
-    {
-      id: 'chicago-90',
-      rank: 2,
-      name: "Air Jordan 1 'Chicago'",
-      searchesLabel: '25,110 searches',
-      trendPct: -3,
-      stockStatus: 'missing_sizes',
-      stockNote: 'In stock: 3 pairs',
-      sizes: [
-        { label: '9', searches: 0, status: 'low' },
-        { label: '10', searches: 0, status: 'out' },
-        { label: '10.5', searches: 0, status: 'out' },
-      ],
-      primaryAction: { label: 'Review Inventory', icon: 'box', kind: 'review_inventory' },
-    },
-    {
-      id: 'cream-90',
-      rank: 3,
-      name: "Yeezy 350 'Cream'",
-      searchesLabel: '17,880 searches',
-      trendPct: -8,
-      stockStatus: 'demand_covered',
-      stockNote: 'In stock: 12 pairs',
-      sizes: [
-        { label: '9', searches: 130, status: 'searches' },
-        { label: '10', searches: 111, status: 'searches' },
-        { label: '11', searches: 98, status: 'searches' },
-      ],
-      primaryAction: { label: 'View Details', icon: 'file', kind: 'view_details' },
-    },
-  ],
-};
-
-export const useLocalDemand = () => {
-  const [dayRange, setDayRange] = useState<DayRange>('7');
-  const [category, setCategory] = useState<CategoryFilter>('All');
-  const [store] = useState<StoreOption>({ id: 'novi', name: "Sonny's Kicks · Novi", radiusMiles: 10 });
-
-  const missedSearchesCount = useMemo(() => {
-    return dayRange === '7' ? 42 : dayRange === '30' ? 168 : 512;
-  }, [dayRange]);
-
-  const opportunities = useMemo(() => {
-    const list = OPPORTUNITIES_BY_RANGE[dayRange];
-    // "Sneakers"/"All" show everything in this mock dataset; "Clothing" has none yet.
-    if (category === 'Clothing') return [];
-    return list;
-  }, [dayRange, category]);
-
-  const bestOpportunity: BestOpportunity | null = useMemo(() => {
-    if (opportunities.length === 0) return null;
-    const top = opportunities.find((o) => o.stockStatus === 'not_stocked') ?? opportunities[0];
-    return {
-      itemName: top.name,
-      reason: 'has high local demand and no inventory.',
-      potentialBuyers: 24,
-    };
-  }, [opportunities]);
-
-  return {
-    store,
-    dayRanges: DAY_RANGES,
-    dayRange,
-    setDayRange,
-    categoryFilters: CATEGORY_FILTERS,
-    category,
-    setCategory,
-    missedSearchesCount,
-    opportunities,
-    bestOpportunity,
-  };
-};
-```
-
-## File: services/hooks/retailer/home/useMakeOffer.ts
-```typescript
-import { useMemo, useState } from 'react';
-import { router } from 'expo-router';
-
-const QUICK_OFFERS = ['185', '195', '200', '210', '215'];
-const EXPIRY_OPTIONS = ['24 hours', '48 hours', '72 hours'];
-
-export const useMakeOffer = () => {
-  const [offerValue, setOfferValue] = useState('205');
-  const [note, setNote] = useState('');
-  const [expiry, setExpiry] = useState('24 hours');
-  const [isSending, setIsSending] = useState(false);
-
-  const item = {
-    name: "Air Jordan 4 'Black Cat'",
-    subtitle: "Men's US 10.5 · New / Deadstock",
-    seller: {
-      initials: 'SL',
-      name: "Sonny's Locker",
-      verified: true,
-      rating: '4.9',
-      completedSales: 126,
-    },
-    verifiedNote: 'Listing verified today',
-    shipFromTo: 'Ship to Sonny\'s Kicks · Miami',
-  };
-
-  const marketContext = {
-    sizeLabel: '10.5',
-    updatedAgo: '5 min ago',
-    recentMarketSale: 240,
-    thirtyDayAverage: 235,
-    goSnkrAskingAverage: 220,
-    suggestedRangeLow: 195,
-    suggestedRangeHigh: 215,
-  };
-
-  const costBreakdown = useMemo(() => {
-    const offer = Number(offerValue) || 0;
-    const buyerProtectionFee = 8;
-    const shippingToYou = 12;
-    const totalLandedCost = offer + buyerProtectionFee + shippingToYou;
-    const expectedStorePrice = 260;
-    const projectedProfit = expectedStorePrice - totalLandedCost;
-    const marginPct = expectedStorePrice > 0 ? (projectedProfit / expectedStorePrice) * 100 : 0;
-
-    return {
-      offer,
-      buyerProtectionFee,
-      shippingToYou,
-      totalLandedCost,
-      expectedStorePrice,
-      projectedProfit,
-      marginPct,
-    };
-  }, [offerValue]);
-
-  const handleReviewOffer = () => {
-    setIsSending(true);
-    setTimeout(() => {
-      setIsSending(false);
-      router.push('/screens/retailer/home/more/offerSuccessScreen');
-    }, 600);
-  };
-
-  return {
-    item,
-    marketContext,
-    quickOffers: QUICK_OFFERS,
-    offerValue,
-    setOfferValue,
-    note,
-    setNote,
-    expiryOptions: EXPIRY_OPTIONS,
-    expiry,
-    setExpiry,
-    costBreakdown,
-    isSending,
-    handleReviewOffer,
-  };
-};
-```
-
 ## File: services/hooks/retailer/home/useNewDrop.ts
 ```typescript
 import { useState } from 'react';
@@ -31381,106 +27140,6 @@ export const useNewDrop = () => {
 };
 ```
 
-## File: services/hooks/retailer/home/useNotifications.ts
-```typescript
-import { useState, useMemo } from 'react';
-
-export type NotificationType = 'order' | 'hold' | 'refund' | 'alert' | 'promo' | 'complete';
-
-export interface NotificationItem {
-  id: string;
-  type: NotificationType;
-  title: string;
-  description: string;
-  time: string;
-  dateSection: 'Today' | 'Yesterday';
-  status?: string;
-  actionRequired?: boolean;
-  deadline?: string;
-}
-
-export const useNotifications = () => {
-  const [activeFilter, setActiveFilter] = useState('All');
-
-  const notifications: NotificationItem[] = [
-    {
-      id: '1',
-      type: 'order',
-      title: 'New order received',
-      description: 'Marcus L. ordered Air Jordan 1 Retro High Size 10.5 - $220 - Pickup',
-      time: '8 min ago',
-      dateSection: 'Today',
-    },
-    {
-      id: '2',
-      type: 'hold',
-      title: 'Hold confirmed',
-      description: 'Sarah K. placed a hold on Yeezy Boost 350 V2 Size 9 - $280 deposit paid.',
-      time: '15 min ago',
-      dateSection: 'Today',
-    },
-    {
-      id: '3',
-      type: 'refund',
-      title: 'Refund claim received',
-      description: 'Sonny Garcia submitted a refund request for ORD-20948 - $44.00 deposit.',
-      time: 'Just now',
-      dateSection: 'Today',
-      actionRequired: true,
-      deadline: 'Apr 05, 10:30 AM',
-    },
-    {
-      id: '4',
-      type: 'alert',
-      title: 'Low stock alert',
-      description: '3 pairs running low in Size 10.5: Jordan 4, Dunk Low, Air Max 90.',
-      time: 'Today',
-      dateSection: 'Today',
-    },    {
-      id: '5',
-      type: 'order',
-      title: 'New order received',
-      description: 'Marcus L. ordered Air Jordan 1 Retro High Size 10.5 - $220 - Pickup',
-      time: '8 min ago',
-      dateSection: 'Today',
-    },
-    {
-      id: '6',
-      type: 'hold',
-      title: 'Hold confirmed',
-      description: 'Sarah K. placed a hold on Yeezy Boost 350 V2 Size 9 - $280 deposit paid.',
-      time: '15 min ago',
-      dateSection: 'Today',
-    },
-    {
-      id: '7',
-      type: 'refund',
-      title: 'Refund claim received',
-      description: 'Sonny Garcia submitted a refund request for ORD-20948 - $44.00 deposit.',
-      time: 'Just now',
-      dateSection: 'Today',
-      actionRequired: true,
-      deadline: 'Apr 05, 10:30 AM',
-    },
-    {
-      id: '8',
-      type: 'alert',
-      title: 'Low stock alert',
-      description: '3 pairs running low in Size 10.5: Jordan 4, Dunk Low, Air Max 90.',
-      time: 'Today',
-      dateSection: 'Today',
-    },
-  ];
-
-  const filteredData = useMemo(() => {
-    if (activeFilter === 'All') return notifications;
-    return notifications.filter(n => n.type.includes(activeFilter.toLowerCase().slice(0, -1)));
-  }, [activeFilter]);
-
-  return { activeFilter, setActiveFilter, filteredData };
-};
-```
-
 ## File: services/hooks/retailer/home/useOfferSuccess.ts
 ```typescript
 import { useState, useEffect } from 'react';
@@ -31509,51 +27168,6 @@ export const useOfferSuccess = () => {
       item: "Jordan 4 DS"
     }
   };
-};
-```
-
-## File: services/hooks/retailer/home/usePickUpRules.ts
-```typescript
-import { useState } from 'react';
-import { router } from 'expo-router';
-import Toast from 'react-native-toast-message';
-
-export interface PickupRules {
-  pickupWindowHours: number;
-  autoRefundDeposit: boolean;
-  sendReminder: boolean;
-  autoRestock: boolean;
-  blackoutDays: string[];
-  instructions: string;
-}
-
-export const windowOptions = [
-  { label: '1 hrs', value: 1 },
-  { label: '3 hrs', value: 3 },
-  { label: '6 hrs', value: 6 },
-];
-
-export const usePickupRules = () => {
-  const [rules, setRules] = useState<PickupRules>({
-    pickupWindowHours: 48,
-    autoRefundDeposit: true,
-    sendReminder: true,
-    autoRestock: true,
-    blackoutDays: [],
-    instructions: '',
-  });
-
-  const setField = <K extends keyof PickupRules>(key: K, value: PickupRules[K]) => {
-    setRules((prev) => ({ ...prev, [key]: value }));
-  };
-
-  const handleSave = () => {
-    // TODO: persist to API / store
-    Toast.show({ type: 'success', text1: 'Pickup rules saved!' });
-    router.back();
-  };
-
-  return { rules, setField, windowOptions, handleSave };
 };
 ```
 
@@ -31603,245 +27217,6 @@ export const useRadiusPromotion = () => {
     setSubMessage,
     customerCount: reachMap[radius],
     handleSend,
-  };
-};
-```
-
-## File: services/hooks/retailer/home/useSizeDemand.ts
-```typescript
-import { useMemo, useState } from 'react';
-
-export type DayRange = '7' | '30' | '90';
-export type GenderCategory = "Men's" | "Women's" | "Kids'";
-
-export interface SizeBar {
-  size: string;
-  searches: number;
-}
-
-export interface StockRow {
-  size: string;
-  searches: number;
-  onHand: number;
-  suggested: number;
-}
-
-interface StoreOption {
-  id: string;
-  name: string;
-  radiusMiles: number;
-}
-
-const DAY_RANGES: { key: DayRange; label: string }[] = [
-  { key: '7', label: '7 Days' },
-  { key: '30', label: '30 Days' },
-  { key: '90', label: '90 Days' },
-];
-
-const GENDER_CATEGORIES: GenderCategory[] = ["Men's", "Women's", "Kids'"];
-
-const SIZE_BARS_BY_GENDER: Record<GenderCategory, SizeBar[]> = {
-  "Men's": [
-    { size: '10.5', searches: 128 },
-    { size: '10', searches: 114 },
-    { size: '11', searches: 98 },
-    { size: '9.5', searches: 90 },
-    { size: '9', searches: 72 },
-    { size: '12', searches: 45 },
-  ],
-  "Women's": [
-    { size: '8', searches: 96 },
-    { size: '7.5', searches: 84 },
-    { size: '8.5', searches: 70 },
-    { size: '9', searches: 58 },
-    { size: '7', searches: 41 },
-    { size: '6.5', searches: 22 },
-  ],
-  "Kids'": [
-    { size: '5Y', searches: 40 },
-    { size: '4Y', searches: 33 },
-    { size: '6Y', searches: 27 },
-    { size: '3Y', searches: 19 },
-    { size: '2Y', searches: 12 },
-    { size: '7Y', searches: 8 },
-  ],
-};
-
-const STOCK_ROWS_BY_GENDER: Record<GenderCategory, StockRow[]> = {
-  "Men's": [
-    { size: '10', searches: 114, onHand: 4, suggested: 10 },
-    { size: '10.5', searches: 128, onHand: 3, suggested: 12 },
-    { size: '11', searches: 98, onHand: 9, suggested: 9 },
-  ],
-  "Women's": [
-    { size: '8', searches: 96, onHand: 5, suggested: 9 },
-    { size: '7.5', searches: 84, onHand: 6, suggested: 8 },
-    { size: '8.5', searches: 70, onHand: 7, suggested: 7 },
-  ],
-  "Kids'": [
-    { size: '5Y', searches: 40, onHand: 3, suggested: 4 },
-    { size: '4Y', searches: 33, onHand: 3, suggested: 3 },
-    { size: '6Y', searches: 27, onHand: 2, suggested: 3 },
-  ],
-};
-
-export const useSizeDemand = () => {
-  const [dayRange, setDayRange] = useState<DayRange>('7');
-  const [category, setCategory] = useState<GenderCategory>("Men's");
-  const [categoryLabel] = useState('All Sneakers');
-  const [store] = useState<StoreOption>({ id: 'novi', name: "Sonny's Kicks · Novi", radiusMiles: 10 });
-
-  const sizeBars = useMemo(() => SIZE_BARS_BY_GENDER[category], [category]);
-  const stockRows = useMemo(() => STOCK_ROWS_BY_GENDER[category], [category]);
-
-  const topSize = useMemo(() => {
-    const top = sizeBars[0];
-    return {
-      label: `${category} US ${top.size}`,
-      searches: top.searches,
-      trendPct: 14,
-    };
-  }, [sizeBars, category]);
-
-  const maxSearches = useMemo(() => Math.max(...sizeBars.map((b) => b.searches)), [sizeBars]);
-
-  const restockNote = useMemo(() => {
-    const [first, second] = sizeBars;
-    return `Prioritize ${category} US ${first.size} and ${second.size} for Jordan and Nike styles.`;
-  }, [sizeBars, category]);
-
-  return {
-    store,
-    dayRanges: DAY_RANGES,
-    dayRange,
-    setDayRange,
-    genderCategories: GENDER_CATEGORIES,
-    category,
-    setCategory,
-    categoryLabel,
-    topSize,
-    sizeBars,
-    maxSearches,
-    restockNote,
-    stockRows,
-  };
-};
-```
-
-## File: services/hooks/retailer/home/useSourceInventory.ts
-```typescript
-import { useMemo, useState } from 'react';
-
-export type SourceFilter = 'All' | 'Local Pickup' | 'Ships' | 'Dropship' | 'Bulk Lots';
-
-export interface SourceListing {
-  id: string;
-  isDemandMatch: boolean;
-  isBulkAvailable: boolean;
-  productName: string;
-  sizeLabel: string;
-  availableCount: number;
-  minPairs: number;
-  imageIcon: 'sneaker';
-  supplier: {
-    initials: string;
-    name: string;
-    verified: boolean;
-    rating: string;
-    completedOrders: number;
-    respondsIn?: string;
-  };
-  pricing: {
-    itemCost: number;
-    shippingFees: number;
-    landedCost: number;
-    expectedRetail: number;
-    estimatedMarginPct: number;
-  };
-  fulfillment: 'ships' | 'pickup_or_ships' | 'pickup';
-  fulfillmentNote: string;
-  filterTags: SourceFilter[];
-}
-
-const FILTERS: SourceFilter[] = ['All', 'Local Pickup', 'Ships', 'Dropship', 'Bulk Lots'];
-
-const ALL_LISTINGS: SourceListing[] = [
-  {
-    id: 'panda-dks',
-    isDemandMatch: true,
-    isBulkAvailable: false,
-    productName: "Nike Dunk Low 'Panda'",
-    sizeLabel: "Men's US 10.5",
-    availableCount: 6,
-    minPairs: 1,
-    imageIcon: 'sneaker',
-    supplier: {
-      initials: 'DKS',
-      name: 'Detroit Kicks Supply',
-      verified: true,
-      rating: '4.9',
-      completedOrders: 247,
-      respondsIn: '12 min',
-    },
-    pricing: { itemCost: 155, shippingFees: 10, landedCost: 165, expectedRetail: 220, estimatedMarginPct: 25 },
-    fulfillment: 'ships',
-    fulfillmentNote: 'Ships in 1–2 days',
-    filterTags: ['All', 'Ships'],
-  },
-  {
-    id: 'chicago-glw',
-    isDemandMatch: false,
-    isBulkAvailable: true,
-    productName: "Air Jordan 1 'Chicago'",
-    sizeLabel: "Men's US 10",
-    availableCount: 12,
-    minPairs: 3,
-    imageIcon: 'sneaker',
-    supplier: {
-      initials: 'GLW',
-      name: 'Great Lakes Wholesale',
-      verified: true,
-      rating: '4.8',
-      completedOrders: 184,
-    },
-    pricing: { itemCost: 245, shippingFees: 13, landedCost: 258, expectedRetail: 340, estimatedMarginPct: 24 },
-    fulfillment: 'pickup_or_ships',
-    fulfillmentNote: 'Pickup or ships',
-    filterTags: ['All', 'Bulk Lots', 'Local Pickup', 'Ships'],
-  },
-];
-
-export const useSourceInventory = () => {
-  const [activeFilter, setActiveFilter] = useState<SourceFilter>('All');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [shipTo] = useState("Sonny's Kicks · Novi");
-
-  const listings = useMemo(() => {
-    return ALL_LISTINGS.filter((listing) => {
-      const matchesFilter = activeFilter === 'All' || listing.filterTags.includes(activeFilter);
-      const q = searchQuery.trim().toLowerCase();
-      const matchesSearch =
-        q.length === 0 ||
-        listing.productName.toLowerCase().includes(q) ||
-        listing.supplier.name.toLowerCase().includes(q);
-      return matchesFilter && matchesSearch;
-    });
-  }, [activeFilter, searchQuery]);
-
-  const demandMatchCount = useMemo(
-    () => ALL_LISTINGS.filter((l) => l.isDemandMatch).length,
-    []
-  );
-
-  return {
-    shipTo,
-    searchQuery,
-    setSearchQuery,
-    filters: FILTERS,
-    activeFilter,
-    setActiveFilter,
-    listings,
-    demandMatchCount,
   };
 };
 ```
@@ -31908,604 +27283,6 @@ export const useReviews = () => {
     }, [activeFilter]);
 
     return { stats, filteredReviews, activeFilter, setActiveFilter };
-};
-```
-
-## File: services/hooks/retailer/orders/useOrders.ts
-```typescript
-import { useState, useMemo, useCallback } from 'react';
-import { Order, OrderStatus } from '@/types/Orders';
-import { OrderTab, TabCounts } from '@/components/retailer/orders/OrdersTabs';
-
-// ── Mock data — pixel-exact match to screenshot ──────────────────────────────
-const MOCK_ORDERS: Order[] = [
-    {
-        id: '1',
-        orderNumber: 'GS-1048',
-        status: 'new',
-        tag: 'BUY NOW',
-        productName: "Air Jordan 4 'Black Cat'",
-        size: '10.5',
-        gender: "Men's",
-        customerName: 'Azafar P.',
-        price: 220,
-        timeAgo: '12 min ago',
-        confirmWithinMinutes: 18,
-        inventoryReserved: true,
-    },
-    {
-        id: '2',
-        orderNumber: 'GS-1047',
-        status: 'holding',
-        tag: 'DETAILS',
-        productName: "Nike Dunk Low 'Panda'",
-        size: '9.5',
-        gender: "Men's",
-        customerName: 'Melten',
-        price: 130,
-        timeAgo: '1 hour ago',
-        expiresIn: '3h 5m',
-        depositPaid: true,
-        depositAmount: 30,
-    },
-    {
-        id: '3',
-        orderNumber: 'GS-1046',
-        status: 'ready',
-        tag: 'PICKUP',
-        productName: "Adidas Yeezy 350 V2 'Zebra'",
-        size: '11',
-        gender: "Men's",
-        customerName: 'Rafiq H.',
-        price: 340,
-        timeAgo: '2 hours ago',
-        readySince: '5:16 PM',
-        customerNotified: true,
-        waitingSince: '2h',
-    },
-    {
-        id: '4',
-        orderNumber: 'GS-1045',
-        status: 'completed',
-        tag: 'BUY NOW',
-        productName: "New Balance 550 'White Green'",
-        size: '9',
-        gender: "Men's",
-        customerName: 'Sadia K.',
-        price: 160,
-        timeAgo: 'Mar 26',
-        completedDate: 'Mar 26',
-    },
-    {
-        id: '5',
-        orderNumber: 'GS-1044',
-        status: 'cancelled',
-        tag: 'DETAILS',
-        productName: "Converse Chuck 70 'Black'",
-        size: '7',
-        gender: "Men's",
-        customerName: 'Tarvin M.',
-        price: 95,
-        timeAgo: 'Mar 31',
-        cancelledDate: 'Mar 23',
-        cancelledBy: 'customer',
-    },
-];
-
-// ── Tab → statuses map ────────────────────────────────────────────────────────
-const TAB_STATUS_MAP: Record<OrderTab, OrderStatus[] | null> = {
-    'Needs Action': ['new'],
-    Holds:          ['holding'],
-    Ready:          ['ready'],
-    History:        ['completed', 'cancelled'],
-};
-
-// ── Hook ─────────────────────────────────────────────────────────────────────
-export const useOrders = () => {
-    const [activeTab, setActiveTab]   = useState<OrderTab>('Needs Action');
-    const [orders, setOrders]         = useState<Order[]>(MOCK_ORDERS);
-    const [isRefreshing, setIsRefreshing] = useState(false);
-
-    // ── Computed tab counts ──────────────────────────────────────────────────
-    const tabCounts = useMemo<TabCounts>(() => ({
-        'Needs Action': orders.filter(o => o.status === 'new').length,
-        Holds:          orders.filter(o => o.status === 'holding').length,
-        Ready:          orders.filter(o => o.status === 'ready').length,
-        History:        orders.filter(o => o.status === 'completed' || o.status === 'cancelled').length,
-    }), [orders]);
-
-    // ── Filtered list ────────────────────────────────────────────────────────
-    const filteredOrders = useMemo(() => {
-        const statuses = TAB_STATUS_MAP[activeTab];
-        if (!statuses) return orders;
-        return orders.filter(o => statuses.includes(o.status));
-    }, [activeTab, orders]);
-
-    // ── Recent activity (completed/cancelled, most recent first) ────────────
-    const recentActivity = useMemo(() => {
-        if (activeTab === 'History') return [];
-        return orders.filter(o => o.status === 'completed' || o.status === 'cancelled');
-    }, [orders, activeTab]);
-
-    // ── Today summary ────────────────────────────────────────────────────────
-    const ordersToday = orders.length;
-    const avgPrepMinutes = 8;
-
-    // ── Handlers ─────────────────────────────────────────────────────────────
-    const handleRefresh = useCallback(async () => {
-        setIsRefreshing(true);
-        // TODO: replace with real API call
-        await new Promise(r => setTimeout(r, 1200));
-        setIsRefreshing(false);
-    }, []);
-
-    const handleTabChange = useCallback((tab: OrderTab) => {
-        setActiveTab(tab);
-    }, []);
-
-    const handleConfirmOrder = useCallback((orderId: string) => {
-        // TODO: call API then update local state
-        setOrders(prev =>
-            prev.map(o => o.id === orderId ? { ...o, status: 'holding' as OrderStatus } : o)
-        );
-    }, []);
-
-    const handleMarkReady = useCallback((orderId: string) => {
-        // TODO: call API then update local state
-        setOrders(prev =>
-            prev.map(o => o.id === orderId ? { ...o, status: 'ready' as OrderStatus } : o)
-        );
-    }, []);
-
-    const handleMarkPickedUp = useCallback((orderId: string) => {
-        // TODO: call API then update local state
-        setOrders(prev =>
-            prev.map(o => o.id === orderId ? { ...o, status: 'completed' as OrderStatus } : o)
-        );
-    }, []);
-
-    const handleViewDetails = useCallback((orderId: string) => {
-        // TODO: navigate to order detail screen
-        console.log('View details', orderId);
-    }, []);
-
-    const handleViewHoldDetails = useCallback((orderId: string) => {
-        // TODO: navigate to hold detail screen
-        console.log('View hold details', orderId);
-    }, []);
-
-    const handleSearch = useCallback(() => {
-        // TODO: open search modal
-        console.log('Search');
-    }, []);
-
-    const handleFilter = useCallback(() => {
-        // TODO: open filter bottom sheet
-        console.log('Filter');
-    }, []);
-
-    const handleViewAllActivity = useCallback(() => {
-        setActiveTab('History');
-    }, []);
-
-    return {
-        activeTab,
-        tabCounts,
-        filteredOrders,
-        recentActivity,
-        ordersToday,
-        avgPrepMinutes,
-        isRefreshing,
-        handleTabChange,
-        handleRefresh,
-        handleConfirmOrder,
-        handleMarkReady,
-        handleMarkPickedUp,
-        handleViewDetails,
-        handleViewHoldDetails,
-        handleSearch,
-        handleFilter,
-        handleViewAllActivity,
-    };
-};
-```
-
-## File: services/hooks/retailer/profile/useStoreProfile.ts
-```typescript
-import { useCallback, useMemo, useState } from 'react';
-
-export interface OperatingHour {
-  day: string;
-  shortDay: string;
-  open: string;
-  close: string;
-  isEnabled: boolean;
-}
-
-export interface SocialLink {
-  id: string;
-  platform: 'instagram' | 'tiktok' | 'twitter' | 'facebook';
-  handle: string;
-}
-
-export interface StoreProfileData {
-  name: string;
-  description: string;
-  location: string;
-  address: string;
-  phone: string;
-  website: string;
-  coverImageUri?: string;
-  avatarLabel: string;
-  isVerified: boolean;
-  isPublic: boolean;
-  operatingHours: OperatingHour[];
-  socialLinks: SocialLink[];
-}
-
-const DEFAULT_HOURS: OperatingHour[] = [
-  { day: 'Monday', shortDay: 'Mon', open: '10:00 AM', close: '9:00 PM', isEnabled: true },
-  { day: 'Tuesday', shortDay: 'Tue', open: '10:00 AM', close: '9:00 PM', isEnabled: true },
-  { day: 'Wednesday', shortDay: 'Wed', open: '10:00 AM', close: '9:00 PM', isEnabled: true },
-  { day: 'Thursday', shortDay: 'Thu', open: '10:00 AM', close: '9:00 PM', isEnabled: true },
-  { day: 'Friday', shortDay: 'Fri', open: '10:00 AM', close: '10:00 PM', isEnabled: true },
-  { day: 'Saturday', shortDay: 'Sat', open: '10:00 AM', close: '8:00 PM', isEnabled: true },
-  { day: 'Sunday', shortDay: 'Sun', open: '12:00 PM', close: '8:00 PM', isEnabled: true },
-];
-
-const DEFAULT_PROFILE: StoreProfileData = {
-  name: "Sonny's Kicks",
-  description:
-    "Miami's destination for sneakers, apparel, new releases, and everyday essentials.",
-  location: 'Miami, FL',
-  address: '123 Ocean Drive, Miami, FL 33139',
-  phone: '+1 (305) 555-0138',
-  website: 'sonnykicks.com',
-  avatarLabel: 'SK',
-  isVerified: true,
-  isPublic: true,
-  operatingHours: DEFAULT_HOURS,
-  socialLinks: [{ id: 'ig', platform: 'instagram', handle: '@SonnyKicks' }],
-};
-
-/** Groups consecutive days that share identical open/close/enabled state, e.g. "Mon – Thu". */
-export function groupOperatingHours(hours: OperatingHour[]) {
-  const groups: { label: string; open: string; close: string; isEnabled: boolean }[] = [];
-
-  hours.forEach((h) => {
-    const last = groups[groups.length - 1];
-    if (last && last.open === h.open && last.close === h.close && last.isEnabled === h.isEnabled) {
-      // Extend the label range, e.g. "Mon" -> "Mon – Thu"
-      const [start] = last.label.split(' – ');
-      last.label = `${start} – ${h.shortDay}`;
-    } else {
-      groups.push({ label: h.shortDay, open: h.open, close: h.close, isEnabled: h.isEnabled });
-    }
-  });
-
-  return groups;
-}
-
-export const useStoreProfile = () => {
-  const [profile, setProfile] = useState<StoreProfileData>(DEFAULT_PROFILE);
-  const [isSaving, setIsSaving] = useState(false);
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-
-  const markDirty = useCallback(() => setHasUnsavedChanges(true), []);
-
-  const updateField = useCallback(
-    <K extends keyof StoreProfileData>(key: K, value: StoreProfileData[K]) => {
-      setProfile((prev) => ({ ...prev, [key]: value }));
-      markDirty();
-    },
-    [markDirty]
-  );
-
-  const toggleDay = useCallback(
-    (day: string) => {
-      setProfile((prev) => ({
-        ...prev,
-        operatingHours: prev.operatingHours.map((h) =>
-          h.day === day ? { ...h, isEnabled: !h.isEnabled } : h
-        ),
-      }));
-      markDirty();
-    },
-    [markDirty]
-  );
-
-  const updateHour = useCallback(
-    (day: string, field: 'open' | 'close', value: string) => {
-      setProfile((prev) => ({
-        ...prev,
-        operatingHours: prev.operatingHours.map((h) =>
-          h.day === day ? { ...h, [field]: value } : h
-        ),
-      }));
-      markDirty();
-    },
-    [markDirty]
-  );
-
-  const copyHoursToAllDays = useCallback(() => {
-    setProfile((prev) => {
-      const source = prev.operatingHours.find((h) => h.isEnabled);
-      if (!source) return prev;
-      return {
-        ...prev,
-        operatingHours: prev.operatingHours.map((h) => ({
-          ...h,
-          open: source.open,
-          close: source.close,
-        })),
-      };
-    });
-    markDirty();
-  }, [markDirty]);
-
-  const addSocialLink = useCallback(() => {
-    setProfile((prev) => ({
-      ...prev,
-      socialLinks: [
-        ...prev.socialLinks,
-        { id: `link-${Date.now()}`, platform: 'tiktok', handle: '' },
-      ],
-    }));
-    markDirty();
-  }, [markDirty]);
-
-  const updateSocialLink = useCallback(
-    (id: string, handle: string) => {
-      setProfile((prev) => ({
-        ...prev,
-        socialLinks: prev.socialLinks.map((link) =>
-          link.id === id ? { ...link, handle } : link
-        ),
-      }));
-      markDirty();
-    },
-    [markDirty]
-  );
-
-  const handleSave = useCallback(async () => {
-    setIsSaving(true);
-    try {
-      await new Promise((res) => setTimeout(res, 900));
-      setHasUnsavedChanges(false);
-    } finally {
-      setIsSaving(false);
-    }
-  }, []);
-
-  const handlePickCoverImage = useCallback(() => {
-    // Replace with real image picker integration
-  }, []);
-
-  const groupedHours = useMemo(() => groupOperatingHours(profile.operatingHours), [
-    profile.operatingHours,
-  ]);
-
-  return {
-    profile,
-    groupedHours,
-    isSaving,
-    hasUnsavedChanges,
-    updateField,
-    toggleDay,
-    updateHour,
-    copyHoursToAllDays,
-    addSocialLink,
-    updateSocialLink,
-    handleSave,
-    handlePickCoverImage,
-  };
-};
-```
-
-## File: services/hooks/retailer/promote/useCreatePromotion.ts
-```typescript
-import { useCallback, useMemo, useState } from 'react';
-
-export type PromotionStep = 'details' | 'audience' | 'review';
-
-export type PromotionType = 'Flash Sale' | 'New Arrivals' | 'Restock' | 'Exclusive Drop' | 'Announcement';
-
-export interface PromotionTypeOption {
-  id: PromotionType;
-  label: string;
-  icon: 'zap' | 'box' | 'bell' | 'circle' | 'megaphone';
-  color: string;
-  bgColor: string;
-}
-
-export type CategoryTag = 'Sneakers' | 'Clothing' | 'Accessories';
-
-export type MatchRule = 'Match any keyword' | 'Match all keywords';
-
-export type DiscountType = '% off' | '$ off' | 'Custom';
-
-export interface AudienceSegment {
-  id: 'store_followers' | 'nearby_opted_in' | 'size_match';
-  label: string;
-  description: string;
-  count: number;
-  icon: 'users' | 'map-pin' | 'bar-chart-2';
-}
-
-export type DeliveryOption = 'send_now' | 'schedule';
-
-const PROMOTION_TYPES: PromotionTypeOption[] = [
-  { id: 'Flash Sale', label: 'Flash Sale', icon: 'zap', color: '#059669', bgColor: '#ECFDF5' },
-  { id: 'New Arrivals', label: 'New Arrivals', icon: 'box', color: '#4B5563', bgColor: '#F9FAFB' },
-  { id: 'Restock', label: 'Restock', icon: 'bell', color: '#4B5563', bgColor: '#F9FAFB' },
-  { id: 'Exclusive Drop', label: 'Exclusive Drop', icon: 'circle', color: '#EF4444', bgColor: '#F9FAFB' },
-  { id: 'Announcement', label: 'Announcement', icon: 'megaphone', color: '#4B5563', bgColor: '#F9FAFB' },
-];
-
-const CATEGORY_TAGS: CategoryTag[] = ['Sneakers', 'Clothing', 'Accessories'];
-
-const AUDIENCE_SEGMENTS: AudienceSegment[] = [
-  {
-    id: 'store_followers',
-    label: 'Store followers',
-    description: 'People who follow your store',
-    count: 156,
-    icon: 'users',
-  },
-  {
-    id: 'nearby_opted_in',
-    label: 'Nearby opted-in customers',
-    description: 'Users within 5 miles who have push notifications enabled',
-    count: 1249,
-    icon: 'map-pin',
-  },
-  {
-    id: 'size_match',
-    label: 'Size-match customers',
-    description: 'Customers who saved sizes that match promotion',
-    count: 820,
-    icon: 'bar-chart-2',
-  },
-];
-
-export const useCreatePromotion = () => {
-  const [step, setStep] = useState<PromotionStep>('details');
-
-  // Promotion type
-  const [selectedType, setSelectedType] = useState<PromotionType>('Flash Sale');
-
-  // Promotion details
-  const [title, setTitle] = useState('Weekend Flash Sale — 20% Off Jordans');
-
-  // Product targeting
-  const [keywords, setKeywords] = useState<string[]>(['Jordan', 'Retro']);
-  const [keywordInput, setKeywordInput] = useState('');
-  const [categoryTags, setCategoryTags] = useState<CategoryTag[]>(['Sneakers']);
-  const [matchRule, setMatchRule] = useState<MatchRule>('Match any keyword');
-  const activeListingsMatched = 48;
-
-  // Discount
-  const [discountType, setDiscountType] = useState<DiscountType>('% off');
-  const [discountValue, setDiscountValue] = useState('20');
-  const [startsAt] = useState('Fri, Jun 7, 6:00 PM');
-  const [endsAt] = useState('Sun, Jun 9, 9:00 PM');
-
-  // Push notification
-  const [notificationMessage, setNotificationMessage] = useState(
-    'This weekend only: Save 20% on selected Jordans while supplies last.'
-  );
-  const notificationCharLimit = 200;
-
-  // Audience
-  const [selectedAudience, setSelectedAudience] = useState<Record<AudienceSegment['id'], boolean>>({
-    store_followers: true,
-    nearby_opted_in: true,
-    size_match: true,
-  });
-
-  // Delivery
-  const [deliveryOption, setDeliveryOption] = useState<DeliveryOption>('schedule');
-  const [scheduledAt] = useState('Friday, Jun 7, 6:00 PM');
-
-  const toggleKeyword = useCallback((kw: string) => {
-    setKeywords((prev) => prev.filter((k) => k !== kw));
-  }, []);
-
-  const addKeyword = useCallback(() => {
-    const trimmed = keywordInput.trim();
-    if (trimmed.length === 0) return;
-    setKeywords((prev) => (prev.includes(trimmed) ? prev : [...prev, trimmed]));
-    setKeywordInput('');
-  }, [keywordInput]);
-
-  const toggleCategoryTag = useCallback((tag: CategoryTag) => {
-    setCategoryTags((prev) =>
-      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
-    );
-  }, []);
-
-  const toggleAudienceSegment = useCallback((id: AudienceSegment['id']) => {
-    setSelectedAudience((prev) => ({ ...prev, [id]: !prev[id] }));
-  }, []);
-
-  const estimatedUniqueReach = useMemo(() => {
-    // Rough de-duplicated estimate across selected segments, matching the mock's ~1,842 figure.
-    const selectedCounts = AUDIENCE_SEGMENTS.filter((seg) => selectedAudience[seg.id]).map(
-      (seg) => seg.count
-    );
-    if (selectedCounts.length === 0) return 0;
-    const raw = selectedCounts.reduce((sum, c) => sum + c, 0);
-    // Apply an overlap discount so combined reach isn't a naive sum.
-    return Math.round(raw * 0.735);
-  }, [selectedAudience]);
-
-  const canGoToAudience = title.trim().length > 0 && keywords.length > 0;
-  const canGoToReview = Object.values(selectedAudience).some(Boolean);
-  const canSubmit = canGoToAudience && canGoToReview;
-
-  const goToStep = useCallback((next: PromotionStep) => {
-    setStep(next);
-  }, []);
-
-  const goNext = useCallback(() => {
-    if (step === 'details' && canGoToAudience) setStep('audience');
-    else if (step === 'audience' && canGoToReview) setStep('review');
-  }, [step, canGoToAudience, canGoToReview]);
-
-  const goBack = useCallback(() => {
-    if (step === 'audience') setStep('details');
-    else if (step === 'review') setStep('audience');
-  }, [step]);
-
-  return {
-    step,
-    goToStep,
-    goNext,
-    goBack,
-
-    promotionTypes: PROMOTION_TYPES,
-    selectedType,
-    setSelectedType,
-
-    title,
-    setTitle,
-
-    keywords,
-    keywordInput,
-    setKeywordInput,
-    addKeyword,
-    toggleKeyword,
-    categoryTags,
-    availableCategoryTags: CATEGORY_TAGS,
-    toggleCategoryTag,
-    matchRule,
-    setMatchRule,
-    activeListingsMatched,
-
-    discountType,
-    setDiscountType,
-    discountValue,
-    setDiscountValue,
-    startsAt,
-    endsAt,
-
-    notificationMessage,
-    setNotificationMessage,
-    notificationCharLimit,
-
-    audienceSegments: AUDIENCE_SEGMENTS,
-    selectedAudience,
-    toggleAudienceSegment,
-    estimatedUniqueReach,
-
-    deliveryOption,
-    setDeliveryOption,
-    scheduledAt,
-
-    canGoToAudience,
-    canGoToReview,
-    canSubmit,
-  };
 };
 ```
 
@@ -33128,54 +27905,6 @@ export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 ```
 
-## File: types/analytics.ts
-```typescript
-export type TimeFilter = 'Today' | 'Week' | 'Month' | 'Custom';
-export type ChartMode = 'Sales' | 'Orders';
-
-export interface TopProduct {
-  rank: number;
-  name: string;
-  sub: string;
-  price: string;
-  imageUri?: string;
-}
-
-export interface OrderStatusItem {
-  label: string;
-  color: string;
-  value: number;
-}
-
-export interface SizeItem {
-  label: string;
-  value: number;
-  color: string;
-}
-
-export interface AnalyticsData {
-  totalRevenue: string;
-  revenueChange: string;
-  revenueChangePercent: string;
-  sparklineData: number[];
-  orders: number;
-  ordersChange: string;
-  grossProfit: string;
-  grossProfitMargin: string;
-  grossProfitChange: string;
-  avgOrder: string;
-  avgOrderChange: string;
-  pickupRate: string;
-  pickupRateChange: string;
-  dailySalesBarData: number[];
-  dailyOrdersBarData: number[];
-  barLabelsDaily: string[];
-  topProducts: TopProduct[];
-  orderStatus: OrderStatusItem[];
-  sizes: SizeItem[];
-}
-```
-
 ## File: types/catalog.ts
 ```typescript
 export type ProductType = 'Sneakers' | 'Clothing'
@@ -33289,42 +28018,6 @@ export interface PublicLockerProfile {
     avgCondition: number
   }
   items: PublicLockerItem[]
-}
-```
-
-## File: types/Orders.ts
-```typescript
-export type OrderStatus = 'new' | 'holding' | 'ready' | 'completed' | 'cancelled';
-
-export type OrderTag = 'BUY NOW' | 'DETAILS' | 'PICKUP';
-
-export interface Order {
-    id: string;
-    orderNumber: string;
-    status: OrderStatus;
-    tag: OrderTag;
-    productName: string;
-    size: string;
-    gender: string;
-    customerName: string;
-    price: number;
-    timeAgo: string;
-    imageUrl?: string;
-    // New order — urgency to confirm
-    confirmWithinMinutes?: number;
-    inventoryReserved?: boolean;
-    // Holding — deposit + expiry
-    expiresIn?: string;
-    depositPaid?: boolean;
-    depositAmount?: number;
-    // Ready — pickup wait tracking
-    readySince?: string;
-    customerNotified?: boolean;
-    waitingSince?: string;
-    // Completed / cancelled
-    completedDate?: string;
-    cancelledDate?: string;
-    cancelledBy?: string;
 }
 ```
 
@@ -33904,9 +28597,8 @@ import Animated, {
   withSpring,
   useSharedValue,
 } from 'react-native-reanimated';
-const ACTIVE_COLOR = '#000000';
+const ACTIVE_COLOR = '#22C55E';
 const INACTIVE_COLOR = '#94a3b8';
-const DOT_COLOR = '#22C55E';
 const BAR_BG = '#FFFFFF';
 
 /**
@@ -33922,7 +28614,7 @@ const tabMap: Record<
     activeIcon: 'home-variant',    // Solid house for active state
   },
   listing: {
-    label: 'Listing',
+    label: 'Listings',
     icon: 'package-variant-closed', // Box/Cube icon as seen in the image
     activeIcon: 'package-variant-closed',
   },
@@ -33994,35 +28686,10 @@ const AnimatedTabItem = ({
 const CustomTabBar = ({ state, navigation }: any) => {
   const { width } = useWindowDimensions();
   const TAB_BAR_WIDTH = width;
-  const TAB_WIDTH = TAB_BAR_WIDTH / state.routes.length;
-
-  const translateX = useSharedValue(0);
-
-  useEffect(() => {
-    translateX.value = withSpring(state.index * TAB_WIDTH, {
-      damping: 20,
-      stiffness: 150,
-    });
-  }, [state.index]);
-
-  const dotStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: translateX.value }],
-  }));
 
   return (
     <View style={styles.tabBarContainer}>
       <View style={[styles.tabBarInner, { width: TAB_BAR_WIDTH }]}>
-        {/* Sliding Dot */}
-        <Animated.View
-          style={[
-            styles.slidingDotContainer,
-            { width: TAB_WIDTH },
-            dotStyle,
-          ]}
-        >
-          <View style={styles.activeDot} />
-        </Animated.View>
-
         {state.routes.map((route: any, index: number) => {
           const isFocused = state.index === index;
 
@@ -34075,20 +28742,6 @@ const styles = StyleSheet.create({
     height: 28,
     justifyContent: 'center',
   },
-  slidingDotContainer: {
-    position: 'absolute',
-    height: 75,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 1,
-  },
-  activeDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: DOT_COLOR,
-    marginTop: 10,
-  },
   label: {
     fontSize: 14,
     marginTop: 4,
@@ -34122,147 +28775,156 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native'
 import { Feather, Ionicons } from '@expo/vector-icons'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import BaseContainer from '@/components/shared/BaseContainer'
 import { useInventory } from '@/services/hooks/reseller/listing/useListing'
 
 const Inventory = () => {
   const { stats, inventory, activeTab, setActiveTab, tabs, tabCounts } = useInventory()
+  const insets = useSafeAreaInsets()
 
   return (
     <BaseContainer backgroundColor="#fff">
-      <View className="pt-10 pb-20 mb-20">
-        <View style={styles.header}>
-          <TouchableOpacity>
-            <Ionicons name="arrow-back" size={24} color="black" />
+      <View style={{ flex: 1 }}>
+        {/* ── Header ─────────────────────────────────────────── */}
+        <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
+          <Text style={styles.headerTitle}>My listings</Text>
+          <TouchableOpacity style={styles.addItemBtn}>
+            <Feather name="plus" size={16} color="#FFF" />
+            <Text style={styles.addItemText}>Add item</Text>
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>My Inventory</Text>
-          <View style={styles.headerIcons}>
-            <TouchableOpacity style={{ marginRight: 20 }}>
-              <Ionicons name="filter-outline" size={22} color="black" />
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <Ionicons name="search-outline" size={22} color="black" />
-            </TouchableOpacity>
-          </View>
         </View>
 
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <View className="pt-4 pb-20">
-            <View style={styles.summaryBar}>
-              <SummaryItem label="Total" value={stats.total} color="#111827" />
-              <SummaryItem label="Visible" value={stats.visible} color="#22C55E" />
-              <SummaryItem label="Private" value={stats.privateCount} color="#F59E0B" />
-              <SummaryItem label="Requests" value={stats.liveRequests} color="#2563EB" />
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+          {/* ── Summary card ─────────────────────────────────── */}
+          <View style={styles.summaryCard}>
+            <SummaryItem label="Total" value={stats.total} color="#111827" />
+            <SummaryItem label="Visible to stores" value={stats.visible} color="#22C55E" />
+            <SummaryItem label="Private" value={stats.privateCount} color="#F59E0B" />
+            <SummaryItem label="Open requests" value={stats.liveRequests} color="#2563EB" />
+          </View>
+
+          {/* ── Search bar ───────────────────────────────────── */}
+          <View style={styles.searchRow}>
+            <View style={styles.searchBar}>
+              <Ionicons name="search-outline" size={18} color="#9CA3AF" />
+              <TextInput
+                placeholder="Search your listings"
+                placeholderTextColor="#9CA3AF"
+                style={styles.searchInput}
+              />
             </View>
+            <TouchableOpacity style={styles.filterBtn}>
+              <Ionicons name="options-outline" size={20} color="#111827" />
+            </TouchableOpacity>
+          </View>
 
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabScroll}>
-              {tabs.map((tab) => {
-                const isActive = activeTab === tab
-                return (
-                  <TouchableOpacity
-                    key={tab}
-                    onPress={() => setActiveTab(tab)}
-                    style={[styles.tabChip, isActive && styles.tabChipActive]}
-                  >
-                    <Text style={[styles.tabText, isActive && styles.tabTextActive]}>
-                      {tab} ({tabCounts[tab]})
-                    </Text>
-                  </TouchableOpacity>
-                )
-              })}
-            </ScrollView>
+          {/* ── Tabs ─────────────────────────────────────────── */}
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabScroll}>
+            {tabs.map((tab) => {
+              const isActive = activeTab === tab
+              return (
+                <TouchableOpacity
+                  key={tab}
+                  onPress={() => setActiveTab(tab)}
+                  style={[styles.tabChip, isActive && styles.tabChipActive]}
+                >
+                  <Text style={[styles.tabText, isActive && styles.tabTextActive]}>
+                    {tab} ({tabCounts[tab]})
+                  </Text>
+                </TouchableOpacity>
+              )
+            })}
+          </ScrollView>
 
-            <View style={styles.listContainer}>
-              {inventory.map((item) => (
-                <View key={item.id} style={styles.cardWrapper}>
-                  <View style={styles.itemCard}>
-                    <View style={styles.imageContainer}>
-                      <Image source={{ uri: item.image }} style={styles.itemImage} />
-                      <View
-                        style={[
-                          styles.statusIndicator,
-                          { backgroundColor: item.isVisible ? '#22C55E' : '#9CA3AF' },
-                        ]}
-                      >
-                        <Ionicons
-                          name={item.isPrivate ? 'lock-closed' : 'eye'}
-                          size={10}
-                          color="white"
-                        />
-                      </View>
-                    </View>
+          {/* ── Visibility / Sort row ────────────────────────── */}
+          <View style={styles.filterRow}>
+            <TouchableOpacity style={styles.filterDropdown}>
+              <Text style={styles.filterDropdownText}>Visibility: All</Text>
+              <Ionicons name="chevron-down" size={14} color="#6B7280" />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.filterDropdown}>
+              <Text style={styles.filterDropdownText}>Sort: Newest</Text>
+              <Ionicons name="chevron-down" size={14} color="#6B7280" />
+            </TouchableOpacity>
+          </View>
 
-                    <View style={styles.infoSection}>
-                      <Text style={styles.brandText}>{item.brand}</Text>
-                      <View style={styles.badgeRow}>
-                        <Text style={styles.nameText} numberOfLines={1}>
-                          {item.name}
-                        </Text>
-                        <View
-                          style={[
-                            styles.productTypeBadge,
-                            {
-                              backgroundColor:
-                                item.productType === 'Clothing' ? '#EFF6FF' : '#ECFDF5',
-                            },
-                          ]}
-                        >
-                          <Text
-                            style={[
-                              styles.productTypeText,
-                              {
-                                color: item.productType === 'Clothing' ? '#1D4ED8' : '#047857',
-                              },
-                            ]}
-                          >
-                            {item.productType}
-                          </Text>
-                        </View>
-                      </View>
-                      <Text style={styles.metaText}>
-                        {item.condition} · Size {item.size}
+          {/* ── Listing cards ────────────────────────────────── */}
+          <View style={styles.listContainer}>
+            {inventory.map((item) => (
+              <View key={item.id} style={styles.cardWrapper}>
+                <View style={styles.itemCard}>
+                  <Image source={{ uri: item.image }} style={styles.itemImage} />
+
+                  <View style={styles.infoSection}>
+                    <Text style={styles.brandText}>{item.brand}</Text>
+                    <View style={styles.nameRow}>
+                      <Text style={styles.nameText} numberOfLines={1}>
+                        {item.name}
                       </Text>
-
-                      <View style={styles.priceRow}>
-                        <Text style={styles.priceText}>${item.price}</Text>
-                        <Text style={styles.marketPrice}>Market ~${item.marketPrice}</Text>
-                      </View>
+                      {item.isVisible ? (
+                        <View style={styles.visibleTag}>
+                          <Ionicons name="eye" size={11} color="#22C55E" />
+                          <Text style={styles.visibleTagText}>Visible to stores</Text>
+                        </View>
+                      ) : (
+                        <View style={styles.privateTag}>
+                          <Ionicons name="lock-closed" size={11} color="#9CA3AF" />
+                          <Text style={styles.privateTagText}>Private</Text>
+                        </View>
+                      )}
                     </View>
+                    <Text style={styles.metaText}>
+                      {item.condition === 'Deadstock' ? 'New / unworn' : item.condition} · Size {item.size}
+                    </Text>
 
-                    <View style={styles.actionColumn}>
-                      <TouchableOpacity
-                        style={[
-                          styles.visibilityBtn,
-                          { backgroundColor: item.isVisible ? '#F0FDF4' : '#F3F4F6' },
-                        ]}
-                      >
-                        <Ionicons
-                          name={item.isVisible ? 'eye-outline' : 'eye-off-outline'}
-                          size={18}
-                          color={item.isVisible ? '#22C55E' : '#9CA3AF'}
-                        />
-                      </TouchableOpacity>
-                      <TouchableOpacity style={styles.moreBtn}>
-                        <Feather name="more-vertical" size={18} color="#9CA3AF" />
-                      </TouchableOpacity>
+                    <View style={styles.priceRow}>
+                      <View>
+                        <Text style={styles.priceText}>${item.price}</Text>
+                        <Text style={styles.askingLabel}>Asking price</Text>
+                      </View>
+                      <View style={styles.actionRow}>
+                        <TouchableOpacity>
+                          <Text style={styles.editText}>Edit</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={{ marginLeft: 14 }}>
+                          <Feather name="more-vertical" size={18} color="#9CA3AF" />
+                        </TouchableOpacity>
+                      </View>
                     </View>
                   </View>
+                </View>
 
-                  {(item.views > 0 || item.requests > 0) && (
-                    <View style={styles.activityRow}>
-                      <Ionicons name="eye" size={12} color="#6B7280" />
-                      <Text style={styles.activityText}>
-                        {item.views} store views · {item.requests} request{item.requests === 1 ? '' : 's'}
+                <View style={styles.activityRow}>
+                  {item.views > 0 && (
+                    <View style={styles.activityLeft}>
+                      <Ionicons name="bar-chart-outline" size={13} color="#9CA3AF" />
+                      <Text style={styles.activityText}>{item.views} store views</Text>
+                    </View>
+                  )}
+                  {item.requests > 0 && (
+                    <View style={styles.requestBadge}>
+                      <Ionicons name="chatbubble-ellipses" size={12} color="#22C55E" />
+                      <Text style={styles.requestBadgeText}>
+                        {item.requests} open request{item.requests === 1 ? '' : 's'}
                       </Text>
+                      <Ionicons name="chevron-forward" size={13} color="#22C55E" />
                     </View>
                   )}
                 </View>
-              ))}
-            </View>
+              </View>
+            ))}
+          </View>
+
+          {/* ── Footer note ──────────────────────────────────── */}
+          <View style={styles.footerNote}>
+            <Ionicons name="shield-checkmark" size={16} color="#22C55E" />
+            <Text style={styles.footerNoteText}>Private listings are hidden from stores.</Text>
           </View>
         </ScrollView>
       </View>
@@ -34294,925 +28956,240 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     backgroundColor: '#FFF',
   },
-  headerTitle: { fontSize: 20, fontWeight: 'bold', flex: 1, marginLeft: 20 },
-  headerIcons: { flexDirection: 'row' },
-  summaryBar: {
+  headerTitle: { fontSize: 24, fontWeight: '800', color: '#111827' },
+  addItemBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: '#22C55E',
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 12,
+  },
+  addItemText: { color: '#FFF', fontWeight: '700', fontSize: 13 },
+
+  scrollContent: { paddingHorizontal: 16, paddingBottom: 100 },
+
+  summaryCard: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    paddingVertical: 15,
     backgroundColor: '#F9FAFB',
-    marginHorizontal: -16,
-    paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
+    borderRadius: 16,
+    paddingVertical: 16,
+    marginTop: 8,
+    marginBottom: 16,
   },
   summaryItem: { alignItems: 'center' },
-  summaryValue: { fontSize: 16, fontWeight: 'bold' },
-  summaryLabel: { fontSize: 11, color: '#9CA3AF', marginTop: 2 },
-  tabScroll: { paddingHorizontal: 16, marginVertical: 20 },
+  summaryValue: { fontSize: 18, fontWeight: '800' },
+  summaryLabel: { fontSize: 11, color: '#9CA3AF', marginTop: 2, textAlign: 'center' },
+
+  searchRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 16 },
+  searchBar: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: '#F3F4F6',
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+  },
+  searchInput: { flex: 1, fontSize: 14, color: '#111827' },
+  filterBtn: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    backgroundColor: '#F3F4F6',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  tabScroll: { gap: 10, marginBottom: 16 },
   tabChip: {
-    paddingHorizontal: 18,
-    paddingVertical: 10,
-    borderRadius: 25,
+    paddingHorizontal: 16,
+    paddingVertical: 9,
+    borderRadius: 20,
     backgroundColor: '#F3F4F6',
     marginRight: 10,
   },
   tabChipActive: { backgroundColor: '#111827' },
   tabText: { fontSize: 13, color: '#6B7280', fontWeight: '600' },
   tabTextActive: { color: '#FFF' },
-  listContainer: { paddingHorizontal: 16 },
-  cardWrapper: { marginBottom: 15 },
+
+  filterRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 16 },
+  filterDropdown: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
+  filterDropdownText: { fontSize: 12, fontWeight: '600', color: '#374151' },
+
+  listContainer: { gap: 16 },
+  cardWrapper: { marginBottom: 4 },
   itemCard: {
     flexDirection: 'row',
     backgroundColor: '#FFF',
     padding: 12,
-    borderRadius: 20,
+    borderRadius: 16,
     borderWidth: 1,
     borderColor: '#F3F4F6',
+  },
+  itemImage: { width: 72, height: 72, borderRadius: 12, backgroundColor: '#F3F4F6' },
+  infoSection: { flex: 1, marginLeft: 12 },
+  brandText: { fontSize: 10, color: '#9CA3AF', fontWeight: '700', letterSpacing: 0.5 },
+  nameRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
+    marginTop: 2,
+    gap: 8,
   },
-  imageContainer: { position: 'relative' },
-  itemImage: { width: 85, height: 85, borderRadius: 15, backgroundColor: '#F3F4F6' },
-  statusIndicator: {
-    position: 'absolute',
-    bottom: -4,
-    right: -4,
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    justifyContent: 'center',
+  nameText: { flex: 1, fontSize: 14, fontWeight: '700', color: '#111827' },
+  visibleTag: { flexDirection: 'row', alignItems: 'center', gap: 3 },
+  visibleTagText: { fontSize: 11, fontWeight: '600', color: '#22C55E' },
+  privateTag: { flexDirection: 'row', alignItems: 'center', gap: 3 },
+  privateTagText: { fontSize: 11, fontWeight: '600', color: '#9CA3AF' },
+  metaText: { fontSize: 12, color: '#6B7280', marginTop: 4 },
+  priceRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+    marginTop: 8,
+  },
+  priceText: { fontSize: 18, fontWeight: '800', color: '#111827' },
+  askingLabel: { fontSize: 10, color: '#9CA3AF', marginTop: 1 },
+  actionRow: { flexDirection: 'row', alignItems: 'center' },
+  editText: { fontSize: 13, fontWeight: '700', color: '#22C55E' },
+
+  activityRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#FFF',
+    marginTop: 8,
+    paddingHorizontal: 4,
   },
-  infoSection: { flex: 1, marginLeft: 15 },
-  brandText: { fontSize: 10, color: '#9CA3AF', fontWeight: 'bold' },
-  badgeRow: { marginTop: 2 },
-  nameText: { fontSize: 14, fontWeight: 'bold', color: '#111827', marginBottom: 6 },
-  productTypeBadge: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 999,
+  activityLeft: { flexDirection: 'row', alignItems: 'center', gap: 5 },
+  activityText: { fontSize: 12, color: '#9CA3AF' },
+  requestBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#F0FDF4',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 20,
+    marginLeft: 'auto',
   },
-  productTypeText: { fontSize: 10, fontWeight: '700' },
-  metaText: { fontSize: 12, color: '#6B7280', marginTop: 2 },
-  priceRow: { flexDirection: 'row', alignItems: 'center', marginTop: 8 },
-  priceText: { fontSize: 16, fontWeight: '900', color: '#111827' },
-  marketPrice: { fontSize: 11, color: '#9CA3AF', marginLeft: 8 },
-  actionColumn: { alignItems: 'center', justifyContent: 'space-between', height: 75 },
-  visibilityBtn: { padding: 8, borderRadius: 12 },
-  moreBtn: { padding: 4 },
-  activityRow: { flexDirection: 'row', alignItems: 'center', marginTop: 8, marginLeft: 12 },
-  activityText: { fontSize: 11, color: '#22C55E', fontWeight: '600', marginLeft: 6 },
+  requestBadgeText: { fontSize: 11, fontWeight: '700', color: '#22C55E' },
+
+  footerNote: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: '#F0FDF4',
+    borderRadius: 12,
+    padding: 12,
+    marginTop: 8,
+  },
+  footerNoteText: { fontSize: 12, color: '#166534', fontWeight: '500' },
 })
 
 export default Inventory
 ```
 
-## File: app/retailerTabs/inventory.tsx
-```typescript
-import React from 'react'
-import {
-  View,
-  FlatList,
-  RefreshControl,
-  StyleSheet,
-} from 'react-native'
-import { router } from 'expo-router'
-import BaseContainer from '@/components/shared/BaseContainer'
-import InventoryCard from '@/components/retailer/inventory/InventoryCard'
-import InventoryFilter from '@/components/retailer/inventory/InventoryFilter'
-import InventoryHeader from '@/components/retailer/inventory/InventoryHeader'
-import InventoryActions from '@/components/retailer/inventory/InventoryActions'
-import InventoryStats from '@/components/retailer/inventory/InventoryStats'
-import {
-  useInventory,
-  InventoryProduct,
-} from '@/services/hooks/retailer/inventory/useInventory'
-
-export const InventoryScreen: React.FC = () => {
-  const {
-    activeFilter,
-    filterTabs,
-    filterCounts,
-    summary,
-    syncInfo,
-    filteredProducts,
-    isRefreshing,
-    handleFilterChange,
-    handleRefresh,
-    handleEditProduct,
-    handleProductPress,
-  } = useInventory()
-
-  const renderItem = ({ item }: { item: InventoryProduct }) => (
-    <InventoryCard
-      product={item}
-      onPress={handleProductPress}
-      onEditPress={handleEditProduct}
-    />
-  )
-
-  return (
-    <BaseContainer backgroundColor="#fff">
-      <View style={styles.container}>
-        <View>
-          <InventoryHeader
-            locationLabel="Novi · Twelve Oaks"
-            onLocationPress={() => console.log('switch location')}
-            onSearchPress={() => console.log('search')}
-            onFilterPress={() => console.log('filter')}
-          />
-          <InventoryActions
-            onAddProduct={() => router.push('/screens/retailer/home/product/AddProductScreen')}
-            onScan={() => router.push('/screens/retailer/home/product/AddProductScreen')}
-          />
-          <InventoryStats summary={summary} syncInfo={syncInfo} />
-          <InventoryFilter
-            tabs={filterTabs}
-            active={activeFilter}
-            counts={filterCounts}
-            onChange={handleFilterChange}
-          />
-        </View>
-
-        <FlatList
-          data={filteredProducts}
-          keyExtractor={(item) => item.id}
-          renderItem={renderItem}
-          contentContainerStyle={styles.listContent}
-          showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl
-              refreshing={isRefreshing}
-              onRefresh={handleRefresh}
-              tintColor="#00C853"
-              colors={['#00C853']}
-            />
-          }
-        />
-      </View>
-    </BaseContainer>
-  )
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: 40,
-  },
-  listContent: {
-    padding: 12,
-    paddingBottom: 32,
-  },
-})
-
-export default InventoryScreen
-```
-
-## File: app/retailerTabs/promote.tsx
+## File: app/retailerTabs/orders.tsx
 ```typescript
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
-import { useRouter } from 'expo-router';
-import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import { View, StyleSheet } from 'react-native';
+
 import BaseContainer from '@/components/shared/BaseContainer';
-import {
-  useCreatePromotion,
-  type PromotionTypeOption,
-  type CategoryTag,
-  type AudienceSegment,
-  type PromotionStep,
-} from '@/services/hooks/retailer/promote/useCreatePromotion';
+import OrdersHeader from '@/components/retailer/orders/OrdersHeader';
+import OrdersSummary from '@/components/retailer/orders/OrdersSummary';
+import OrdersTabs from '@/components/retailer/orders/OrdersTabs';
+import OrdersList from '@/components/retailer/orders/OrdersList';
+import { useOrders } from '@/services/hooks/retailer/orders/useOrders';
 
-const STEPS: { key: PromotionStep; label: string }[] = [
-  { key: 'details', label: 'Details' },
-  { key: 'audience', label: 'Audience' },
-  { key: 'review', label: 'Review' },
-];
 
-export default function CreatePromotionScreen() {
-  const router = useRouter();
-  const promo = useCreatePromotion();
+export const OrdersScreen: React.FC = () => {
+    const {
+        activeTab,
+        tabCounts,
+        filteredOrders,
+        recentActivity,
+        ordersToday,
+        avgPrepMinutes,
+        isRefreshing,
+        handleTabChange,
+        handleRefresh,
+        handleConfirmOrder,
+        handleMarkReady,
+        handleMarkPickedUp,
+        handleViewDetails,
+        handleViewHoldDetails,
+        handleSearch,
+        handleFilter,
+        handleViewAllActivity,
+    } = useOrders();
 
-  return (
-    <BaseContainer scrollable backgroundColor="#fff">
-      <View style={{ paddingBottom: 120 }}>
-        {/* Header */}
-        <View style={s.header}>
-          <TouchableOpacity onPress={() => router.back()} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-            <Feather name="arrow-left" size={22} color="#111827" />
-          </TouchableOpacity>
-          <Text style={s.headerTitle}>Create Promotion</Text>
-          <TouchableOpacity
-            onPress={() => router.push('/screens/retailer/promote/promotionHistoryScreen')}
-            style={s.historyBtn}
-          >
-            <Feather name="clock" size={15} color="#10B981" />
-            <Text style={s.historyText}>History</Text>
-          </TouchableOpacity>
-        </View>
+    return (
+        <BaseContainer backgroundColor="#fff" scrollable={false}>
+            <View style={styles.container}>
 
-        {/* Stepper */}
-        <View style={s.stepperRow}>
-          {STEPS.map((st, i) => (
-            <React.Fragment key={st.key}>
-              <StepDot
-                index={i + 1}
-                label={st.label}
-                state={getStepState(st.key, promo.step)}
-                onPress={() => promo.goToStep(st.key)}
-              />
-              {i < STEPS.length - 1 && <View style={s.stepConnector} />}
-            </React.Fragment>
-          ))}
-        </View>
+                {/* ── Fixed top ── */}
+                <View style={styles.topSection}>
+                    <OrdersHeader
+                        storeLabel="Sonny's Kicks · Novi"
+                        onLocationPress={() => console.log('switch location')}
+                        onSearchPress={handleSearch}
+                        onFilterPress={handleFilter}
+                    />
+                    <OrdersSummary
+                        ordersToday={ordersToday}
+                        avgPrepMinutes={avgPrepMinutes}
+                    />
+                    <OrdersTabs
+                        activeTab={activeTab}
+                        tabCounts={tabCounts}
+                        onTabChange={handleTabChange}
+                    />
+                </View>
 
-        <View style={{ paddingHorizontal: 16, paddingTop: 20 }}>
-          {promo.step === 'details' && <DetailsStep promo={promo} />}
-          {promo.step === 'audience' && <AudienceStep promo={promo} />}
-          {promo.step === 'review' && <ReviewStep promo={promo} />}
-        </View>
+                {/* ── Scrollable list ── */}
+                <OrdersList
+                    orders={filteredOrders}
+                    recentActivity={recentActivity}
+                    isRefreshing={isRefreshing}
+                    onRefresh={handleRefresh}
+                    onConfirmOrder={handleConfirmOrder}
+                    onMarkReady={handleMarkReady}
+                    onMarkPickedUp={handleMarkPickedUp}
+                    onViewDetails={handleViewDetails}
+                    onViewHoldDetails={handleViewHoldDetails}
+                    onViewAllActivity={handleViewAllActivity}
+                />
 
-        {/* Footer button */}
-        <View style={{ paddingHorizontal: 16, marginTop: 24 }}>
-          <TouchableOpacity
-            style={[
-              s.reviewBtn,
-              promo.step === 'review'
-                ? { opacity: promo.canSubmit ? 1 : 0.5 }
-                : { opacity: promo.step === 'details' ? (promo.canGoToAudience ? 1 : 0.5) : promo.canGoToReview ? 1 : 0.5 },
-            ]}
-            disabled={promo.step === 'review' ? !promo.canSubmit : promo.step === 'details' ? !promo.canGoToAudience : !promo.canGoToReview}
-            onPress={promo.step === 'review' ? undefined : promo.goNext}
-          >
-            <Text style={s.reviewBtnText}>
-              {promo.step === 'review' ? 'Review Promotion' : promo.step === 'details' ? 'Continue to Audience' : 'Continue to Review'}
-            </Text>
-          </TouchableOpacity>
-          {promo.step === 'review' && (
-            <Text style={s.reviewFootnote}>Nothing will be sent until you confirm on the next screen.</Text>
-          )}
-        </View>
-      </View>
-    </BaseContainer>
-  );
-}
+            </View>
+        </BaseContainer>
+    );
+};
 
-function getStepState(key: PromotionStep, current: PromotionStep): 'done' | 'active' | 'upcoming' {
-  const order: PromotionStep[] = ['details', 'audience', 'review'];
-  const curIdx = order.indexOf(current);
-  const idx = order.indexOf(key);
-  if (idx < curIdx) return 'done';
-  if (idx === curIdx) return 'active';
-  return 'upcoming';
-}
-
-function StepDot({
-  index,
-  label,
-  state,
-  onPress,
-}: {
-  index: number;
-  label: string;
-  state: 'done' | 'active' | 'upcoming';
-  onPress: () => void;
-}) {
-  const bg = state === 'upcoming' ? '#F3F4F6' : '#10B981';
-  const textColor = state === 'upcoming' ? '#9CA3AF' : '#fff';
-  const labelColor = state === 'upcoming' ? '#9CA3AF' : '#111827';
-
-  return (
-    <TouchableOpacity onPress={onPress} style={s.stepDotWrap} disabled={state === 'upcoming'}>
-      <View style={[s.stepDot, { backgroundColor: bg }]}>
-        {state === 'done' ? (
-          <Feather name="check" size={13} color="#fff" />
-        ) : (
-          <Text style={{ color: textColor, fontSize: 12, fontWeight: '800' }}>{index}</Text>
-        )}
-      </View>
-      <Text style={[s.stepLabel, { color: labelColor }]}>{label}</Text>
-    </TouchableOpacity>
-  );
-}
-
-/* ------------------------------- DETAILS STEP ------------------------------- */
-
-function DetailsStep({ promo }: { promo: ReturnType<typeof useCreatePromotion> }) {
-  return (
-    <View>
-      {/* Promotion type */}
-      <Text style={s.sectionTitle}>Promotion type</Text>
-      <View style={s.typeRow}>
-        {promo.promotionTypes.map((opt) => (
-          <PromotionTypeChip
-            key={opt.id}
-            option={opt}
-            selected={promo.selectedType === opt.id}
-            onSelect={() => promo.setSelectedType(opt.id)}
-          />
-        ))}
-      </View>
-
-      {/* Locations */}
-      <Text style={[s.sectionTitle, { marginTop: 24 }]}>Locations</Text>
-      <TouchableOpacity style={s.locationsCard}>
-        <View style={s.locationsIconWrap}>
-          <Feather name="home" size={16} color="#4B5563" />
-        </View>
-        <View style={{ flex: 1 }}>
-          <Text style={s.locationsTitle}>All 3 locations</Text>
-          <Text style={s.locationsSubtitle}>Customers will see availability for their nearest store</Text>
-        </View>
-        <Feather name="chevron-right" size={18} color="#D1D5DB" />
-      </TouchableOpacity>
-
-      {/* Promotion details */}
-      <Text style={[s.sectionTitle, { marginTop: 24 }]}>Promotion details</Text>
-      <Text style={s.fieldLabel}>Promotion title</Text>
-      <View style={s.inputBox}>
-        <TextInput
-          value={promo.title}
-          onChangeText={promo.setTitle}
-          maxLength={80}
-          placeholder="e.g. Weekend Flash Sale — 20% Off Jordans"
-          placeholderTextColor="#9CA3AF"
-          style={s.inputText}
-        />
-      </View>
-      <Text style={s.charCounter}>{promo.title.length}/80</Text>
-
-      {/* Product targeting */}
-      <Text style={[s.sectionTitle, { marginTop: 20 }]}>Product targeting</Text>
-      <Text style={s.fieldLabel}>Keywords or product names</Text>
-      <View style={s.searchBox}>
-        <Feather name="search" size={16} color="#9CA3AF" />
-        <TextInput
-          value={promo.keywordInput}
-          onChangeText={promo.setKeywordInput}
-          onSubmitEditing={promo.addKeyword}
-          placeholder="Add keywords or product names (e.g. Jordan, Air Max, Dunk)"
-          placeholderTextColor="#9CA3AF"
-          style={s.searchInput}
-          returnKeyType="done"
-        />
-      </View>
-
-      <View style={s.keywordChipsRow}>
-        {promo.keywords.map((kw) => (
-          <View key={kw} style={s.keywordChip}>
-            <Text style={s.keywordChipText}>{kw}</Text>
-            <TouchableOpacity onPress={() => promo.toggleKeyword(kw)} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
-              <Feather name="x" size={12} color="#059669" />
-            </TouchableOpacity>
-          </View>
-        ))}
-        <TouchableOpacity style={s.addKeywordChip} onPress={promo.addKeyword}>
-          <Feather name="plus" size={12} color="#4B5563" />
-          <Text style={s.addKeywordText}>Add keyword</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Category tags */}
-      <View style={s.categoryTagsRow}>
-        {promo.availableCategoryTags.map((tag) => (
-          <TouchableOpacity
-            key={tag}
-            onPress={() => promo.toggleCategoryTag(tag)}
-            style={[s.categoryTag, promo.categoryTags.includes(tag) && s.categoryTagActive]}
-          >
-            <Text
-              style={[
-                s.categoryTagText,
-                promo.categoryTags.includes(tag) && s.categoryTagTextActive,
-              ]}
-            >
-              {tag}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-
-      {/* Match rule */}
-      <Text style={[s.fieldLabel, { marginTop: 18 }]}>Match rule</Text>
-      <TouchableOpacity style={s.matchRuleSelect}>
-        <Text style={s.matchRuleText}>{promo.matchRule}</Text>
-        <Feather name="chevron-down" size={16} color="#6B7280" />
-      </TouchableOpacity>
-
-      {/* Matching listings banner */}
-      <View style={s.matchBanner}>
-        <Feather name="bar-chart-2" size={16} color="#059669" />
-        <Text style={s.matchBannerText}>{promo.activeListingsMatched} active listings match</Text>
-        <Text style={s.matchBannerLink}>Preview matching products →</Text>
-      </View>
-      <Text style={s.matchBannerFootnote}>
-        All matching active listings will be included automatically.
-      </Text>
-
-      {/* Discount */}
-      <Text style={[s.sectionTitle, { marginTop: 20 }]}>Discount</Text>
-      <View style={s.discountTabsRow}>
-        {(['% off', '$ off', 'Custom'] as const).map((dt) => (
-          <TouchableOpacity
-            key={dt}
-            onPress={() => promo.setDiscountType(dt)}
-            style={[s.discountTab, promo.discountType === dt && s.discountTabActive]}
-          >
-            <Text style={[s.discountTabText, promo.discountType === dt && s.discountTabTextActive]}>
-              {dt === '% off' ? `${promo.discountValue}% off` : dt}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-
-      <View style={s.dateRow}>
-        <View style={s.dateCell}>
-          <Feather name="calendar" size={13} color="#9CA3AF" />
-          <View>
-            <Text style={s.dateLabel}>Starts</Text>
-            <Text style={s.dateValue}>{promo.startsAt}</Text>
-          </View>
-        </View>
-        <View style={s.dateCell}>
-          <Feather name="calendar" size={13} color="#9CA3AF" />
-          <View>
-            <Text style={s.dateLabel}>Ends</Text>
-            <Text style={s.dateValue}>{promo.endsAt}</Text>
-          </View>
-        </View>
-      </View>
-
-      <View style={s.autoApplyNote}>
-        <Feather name="info" size={13} color="#6B7280" />
-        <Text style={s.autoApplyNoteText}>
-          This discount will automatically apply to all active inventory matching selected keywords or categories at the chosen locations.
-        </Text>
-      </View>
-
-      {/* Push notification */}
-      <Text style={[s.sectionTitle, { marginTop: 20 }]}>Push notification</Text>
-      <View style={s.notifInputBox}>
-        <TextInput
-          value={promo.notificationMessage}
-          onChangeText={promo.setNotificationMessage}
-          maxLength={promo.notificationCharLimit}
-          multiline
-          style={s.notifInputText}
-        />
-      </View>
-      <Text style={s.charCounter}>
-        {promo.notificationMessage.length}/{promo.notificationCharLimit}
-      </Text>
-
-      {/* Notification preview */}
-      <View style={s.notifPreviewCard}>
-        <View style={s.notifPreviewIcon}>
-          <Text style={s.notifPreviewIconText}>SNKR</Text>
-        </View>
-        <View style={{ flex: 1 }}>
-          <Text style={s.notifPreviewTitle}>GoSNKR</Text>
-          <Text style={s.notifPreviewBody} numberOfLines={2}>
-            {promo.notificationMessage}
-          </Text>
-        </View>
-        <Text style={s.notifPreviewNow}>now</Text>
-      </View>
-      <TouchableOpacity>
-        <Text style={s.previewFullLink}>Preview full customer view →</Text>
-      </TouchableOpacity>
-    </View>
-  );
-}
-
-function PromotionTypeChip({
-  option,
-  selected,
-  onSelect,
-}: {
-  option: PromotionTypeOption;
-  selected: boolean;
-  onSelect: () => void;
-}) {
-  const iconName =
-    option.icon === 'zap'
-      ? 'zap'
-      : option.icon === 'box'
-      ? 'package'
-      : option.icon === 'bell'
-      ? 'bell'
-      : option.icon === 'circle'
-      ? 'circle'
-      : 'megaphone';
-
-  return (
-    <TouchableOpacity
-      onPress={onSelect}
-      style={[
-        s.typeChip,
-        { backgroundColor: selected ? option.bgColor : '#F9FAFB' },
-        selected && { borderColor: option.color, borderWidth: 1.5 },
-      ]}
-    >
-      {option.icon === 'circle' ? (
-        <Feather name="circle" size={20} color={option.color} />
-      ) : option.icon === 'megaphone' ? (
-        <MaterialCommunityIcons name="bullhorn-outline" size={20} color={selected ? option.color : '#9CA3AF'} />
-      ) : (
-        <Feather name={iconName as any} size={20} color={selected ? option.color : '#9CA3AF'} />
-      )}
-      <Text style={[s.typeChipText, selected && { color: option.color, fontWeight: '800' }]}>
-        {option.label}
-      </Text>
-    </TouchableOpacity>
-  );
-}
-
-/* ------------------------------- AUDIENCE STEP ------------------------------- */
-
-function AudienceStep({ promo }: { promo: ReturnType<typeof useCreatePromotion> }) {
-  return (
-    <View>
-      <Text style={s.sectionTitle}>Audience</Text>
-      {promo.audienceSegments.map((seg) => (
-        <AudienceRow
-          key={seg.id}
-          segment={seg}
-          checked={promo.selectedAudience[seg.id]}
-          onToggle={() => promo.toggleAudienceSegment(seg.id)}
-        />
-      ))}
-
-      <View style={s.reachBanner}>
-        <Feather name="bar-chart-2" size={16} color="#059669" />
-        <Text style={s.reachBannerText}>
-          Estimated unique reach: {promo.estimatedUniqueReach.toLocaleString()} people
-        </Text>
-      </View>
-      <Text style={s.reachFootnote}>Overlapping audiences count once here.</Text>
-
-      {/* Delivery */}
-      <Text style={[s.sectionTitle, { marginTop: 24 }]}>Delivery</Text>
-      <View style={s.deliveryRow}>
-        <TouchableOpacity
-          onPress={() => promo.setDeliveryOption('send_now')}
-          style={[s.deliveryTab, promo.deliveryOption === 'send_now' && s.deliveryTabActive]}
-        >
-          <Text style={[s.deliveryTabText, promo.deliveryOption === 'send_now' && s.deliveryTabTextActive]}>
-            Send now
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => promo.setDeliveryOption('schedule')}
-          style={[s.deliveryTab, promo.deliveryOption === 'schedule' && s.deliveryTabActive]}
-        >
-          <Text style={[s.deliveryTabText, promo.deliveryOption === 'schedule' && s.deliveryTabTextActive]}>
-            Schedule
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      {promo.deliveryOption === 'schedule' && (
-        <View style={s.scheduleRow}>
-          <Feather name="calendar" size={14} color="#9CA3AF" />
-          <Text style={s.scheduleText}>{promo.scheduledAt}</Text>
-          <Feather name="chevron-right" size={16} color="#D1D5DB" style={{ marginLeft: 'auto' }} />
-        </View>
-      )}
-      <Text style={s.scheduleFootnote}>Local time for each selected store</Text>
-    </View>
-  );
-}
-
-function AudienceRow({
-  segment,
-  checked,
-  onToggle,
-}: {
-  segment: AudienceSegment;
-  checked: boolean;
-  onToggle: () => void;
-}) {
-  return (
-    <TouchableOpacity style={s.audienceRow} onPress={onToggle} activeOpacity={0.7}>
-      <View style={[s.checkbox, checked && s.checkboxChecked]}>
-        {checked && <Feather name="check" size={13} color="#fff" />}
-      </View>
-      <View style={s.audienceIconWrap}>
-        <Feather name={segment.icon} size={15} color="#4B5563" />
-      </View>
-      <View style={{ flex: 1 }}>
-        <Text style={s.audienceLabel}>{segment.label}</Text>
-        <Text style={s.audienceDescription}>{segment.description}</Text>
-      </View>
-      <Text style={s.audienceCount}>{segment.count.toLocaleString()}</Text>
-    </TouchableOpacity>
-  );
-}
-
-/* ------------------------------- REVIEW STEP ------------------------------- */
-
-function ReviewStep({ promo }: { promo: ReturnType<typeof useCreatePromotion> }) {
-  const selectedSegments = promo.audienceSegments.filter((seg) => promo.selectedAudience[seg.id]);
-
-  return (
-    <View>
-      <Text style={s.sectionTitle}>Review your promotion</Text>
-
-      <View style={s.reviewCard}>
-        <Text style={s.reviewCardLabel}>Type</Text>
-        <Text style={s.reviewCardValue}>{promo.selectedType}</Text>
-      </View>
-
-      <View style={s.reviewCard}>
-        <Text style={s.reviewCardLabel}>Title</Text>
-        <Text style={s.reviewCardValue}>{promo.title}</Text>
-      </View>
-
-      <View style={s.reviewCard}>
-        <Text style={s.reviewCardLabel}>Discount</Text>
-        <Text style={s.reviewCardValue}>
-          {promo.discountType === '% off' ? `${promo.discountValue}% off` : promo.discountType}
-        </Text>
-        <Text style={s.reviewCardSubvalue}>
-          {promo.startsAt} → {promo.endsAt}
-        </Text>
-      </View>
-
-      <View style={s.reviewCard}>
-        <Text style={s.reviewCardLabel}>Keywords</Text>
-        <Text style={s.reviewCardValue}>{promo.keywords.join(', ') || '—'}</Text>
-      </View>
-
-      <View style={s.reviewCard}>
-        <Text style={s.reviewCardLabel}>Audience</Text>
-        {selectedSegments.map((seg) => (
-          <Text key={seg.id} style={s.reviewCardSubvalue}>
-            • {seg.label} ({seg.count.toLocaleString()})
-          </Text>
-        ))}
-        <Text style={[s.reviewCardValue, { marginTop: 6 }]}>
-          Est. reach: {promo.estimatedUniqueReach.toLocaleString()} people
-        </Text>
-      </View>
-
-      <View style={s.reviewCard}>
-        <Text style={s.reviewCardLabel}>Delivery</Text>
-        <Text style={s.reviewCardValue}>
-          {promo.deliveryOption === 'send_now' ? 'Send now' : `Scheduled · ${promo.scheduledAt}`}
-        </Text>
-      </View>
-    </View>
-  );
-}
-
-const s = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingTop: 40,
-    paddingBottom: 14,
-  },
-  headerTitle: { flex: 1, fontSize: 16, fontWeight: '800', color: '#111827', textAlign: 'center', marginRight: -40 },
-  historyBtn: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  historyText: { fontSize: 13, fontWeight: '700', color: '#10B981' },
-
-  stepperRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-  },
-  stepDotWrap: { alignItems: 'center', width: 56 },
-  stepDot: { width: 26, height: 26, borderRadius: 13, justifyContent: 'center', alignItems: 'center' },
-  stepLabel: { fontSize: 10, fontWeight: '700', marginTop: 4 },
-  stepConnector: { flex: 1, height: 1, backgroundColor: '#E5E7EB', marginTop: 13, marginHorizontal: -6 },
-
-  sectionTitle: { fontSize: 15, fontWeight: '900', color: '#111827', marginBottom: 12 },
-
-  typeRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  typeChip: {
-    width: '18.5%',
-    aspectRatio: 0.85,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: '#F3F4F6',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: 2,
-  },
-  typeChipText: { fontSize: 9, fontWeight: '700', color: '#6B7280', textAlign: 'center' },
-
-  locationsCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F9FAFB',
-    borderRadius: 16,
-    padding: 14,
-    gap: 12,
-  },
-  locationsIconWrap: {
-    width: 34,
-    height: 34,
-    borderRadius: 10,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  locationsTitle: { fontSize: 13, fontWeight: '800', color: '#111827' },
-  locationsSubtitle: { fontSize: 11, color: '#9CA3AF', marginTop: 2, fontWeight: '600' },
-
-  fieldLabel: { fontSize: 12, color: '#6B7280', fontWeight: '700', marginBottom: 8 },
-  inputBox: { backgroundColor: '#F9FAFB', borderRadius: 14, paddingHorizontal: 14, paddingVertical: 12 },
-  inputText: { fontSize: 14, color: '#111827', fontWeight: '600' },
-  charCounter: { fontSize: 10, color: '#D1D5DB', textAlign: 'right', marginTop: 4, fontWeight: '600' },
-
-  searchBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    backgroundColor: '#F9FAFB',
-    borderRadius: 14,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-  },
-  searchInput: { flex: 1, fontSize: 13, color: '#111827' },
-
-  keywordChipsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12 },
-  keywordChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    backgroundColor: '#ECFDF5',
-    paddingHorizontal: 12,
-    paddingVertical: 7,
-    borderRadius: 12,
-  },
-  keywordChipText: { fontSize: 12, fontWeight: '800', color: '#059669' },
-  addKeywordChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-    backgroundColor: '#F3F4F6',
-    paddingHorizontal: 12,
-    paddingVertical: 7,
-    borderRadius: 12,
-  },
-  addKeywordText: { fontSize: 12, fontWeight: '700', color: '#4B5563' },
-
-  categoryTagsRow: { flexDirection: 'row', gap: 8, marginTop: 14 },
-  categoryTag: { flex: 1, backgroundColor: '#F3F4F6', paddingVertical: 10, borderRadius: 12, alignItems: 'center' },
-  categoryTagActive: { backgroundColor: '#ECFDF5', borderWidth: 1, borderColor: '#10B981' },
-  categoryTagText: { fontSize: 12, fontWeight: '700', color: '#9CA3AF' },
-  categoryTagTextActive: { color: '#059669' },
-
-  matchRuleSelect: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#F9FAFB',
-    borderRadius: 14,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-  },
-  matchRuleText: { fontSize: 13, fontWeight: '700', color: '#111827' },
-
-  matchBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    backgroundColor: '#ECFDF5',
-    borderRadius: 14,
-    padding: 14,
-    marginTop: 14,
-  },
-  matchBannerText: { fontSize: 12, fontWeight: '800', color: '#059669' },
-  matchBannerLink: { fontSize: 11, fontWeight: '700', color: '#059669', marginLeft: 'auto' },
-  matchBannerFootnote: { fontSize: 11, color: '#9CA3AF', marginTop: 8, fontWeight: '600' },
-
-  discountTabsRow: { flexDirection: 'row', gap: 8 },
-  discountTab: { flex: 1, backgroundColor: '#F3F4F6', paddingVertical: 12, borderRadius: 14, alignItems: 'center' },
-  discountTabActive: { backgroundColor: '#111827' },
-  discountTabText: { fontSize: 13, fontWeight: '800', color: '#6B7280' },
-  discountTabTextActive: { color: '#fff' },
-
-  dateRow: { flexDirection: 'row', gap: 12, marginTop: 14 },
-  dateCell: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8 },
-  dateLabel: { fontSize: 10, color: '#9CA3AF', fontWeight: '600' },
-  dateValue: { fontSize: 12, fontWeight: '700', color: '#111827', marginTop: 1 },
-
-  autoApplyNote: {
-    flexDirection: 'row',
-    gap: 8,
-    backgroundColor: '#F9FAFB',
-    borderRadius: 14,
-    padding: 12,
-    marginTop: 14,
-  },
-  autoApplyNoteText: { flex: 1, fontSize: 11, color: '#6B7280', lineHeight: 16, fontWeight: '600' },
-
-  notifInputBox: { backgroundColor: '#F9FAFB', borderRadius: 16, padding: 14, minHeight: 70 },
-  notifInputText: { fontSize: 13, color: '#111827', fontWeight: '600', textAlignVertical: 'top' },
-
-  notifPreviewCard: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#F3F4F6',
-    borderRadius: 16,
-    padding: 14,
-    marginTop: 12,
-    gap: 10,
-    elevation: 1,
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 6,
-  },
-  notifPreviewIcon: {
-    width: 32,
-    height: 32,
-    borderRadius: 8,
-    backgroundColor: '#111827',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  notifPreviewIconText: { color: '#fff', fontSize: 7, fontWeight: '900' },
-  notifPreviewTitle: { fontSize: 12, fontWeight: '800', color: '#111827' },
-  notifPreviewBody: { fontSize: 12, color: '#4B5563', marginTop: 2, fontWeight: '600' },
-  notifPreviewNow: { fontSize: 10, color: '#9CA3AF', fontWeight: '600' },
-  previewFullLink: { fontSize: 12, fontWeight: '800', color: '#059669', marginTop: 10 },
-
-  reviewBtn: { backgroundColor: '#111827', height: 58, borderRadius: 18, justifyContent: 'center', alignItems: 'center' },
-  reviewBtnText: { color: '#fff', fontSize: 15, fontWeight: '900' },
-  reviewFootnote: { textAlign: 'center', fontSize: 11, color: '#9CA3AF', marginTop: 10, fontWeight: '600' },
-
-  /* Audience step */
-  audienceRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
-  },
-  checkbox: {
-    width: 20,
-    height: 20,
-    borderRadius: 6,
-    borderWidth: 1.5,
-    borderColor: '#D1D5DB',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  checkboxChecked: { backgroundColor: '#10B981', borderColor: '#10B981' },
-  audienceIconWrap: {
-    width: 32,
-    height: 32,
-    borderRadius: 10,
-    backgroundColor: '#F9FAFB',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  audienceLabel: { fontSize: 13, fontWeight: '800', color: '#111827' },
-  audienceDescription: { fontSize: 11, color: '#9CA3AF', marginTop: 2, fontWeight: '600' },
-  audienceCount: { fontSize: 13, fontWeight: '800', color: '#111827' },
-
-  reachBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    backgroundColor: '#ECFDF5',
-    borderRadius: 14,
-    padding: 14,
-    marginTop: 16,
-  },
-  reachBannerText: { fontSize: 13, fontWeight: '800', color: '#059669' },
-  reachFootnote: { fontSize: 11, color: '#9CA3AF', marginTop: 6, fontWeight: '600' },
-
-  deliveryRow: { flexDirection: 'row', gap: 8 },
-  deliveryTab: { flex: 1, backgroundColor: '#F3F4F6', paddingVertical: 14, borderRadius: 14, alignItems: 'center' },
-  deliveryTabActive: { backgroundColor: '#111827' },
-  deliveryTabText: { fontSize: 13, fontWeight: '800', color: '#6B7280' },
-  deliveryTabTextActive: { color: '#fff' },
-  scheduleRow: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: '#F9FAFB', borderRadius: 14, padding: 14, marginTop: 12 },
-  scheduleText: { fontSize: 13, fontWeight: '700', color: '#111827' },
-  scheduleFootnote: { fontSize: 11, color: '#9CA3AF', marginTop: 8, fontWeight: '600' },
-
-  /* Review step */
-  reviewCard: { backgroundColor: '#F9FAFB', borderRadius: 16, padding: 14, marginBottom: 10 },
-  reviewCardLabel: { fontSize: 11, color: '#9CA3AF', fontWeight: '700', marginBottom: 4 },
-  reviewCardValue: { fontSize: 14, fontWeight: '800', color: '#111827' },
-  reviewCardSubvalue: { fontSize: 12, color: '#6B7280', marginTop: 3, fontWeight: '600' },
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        paddingTop: 40,
+        paddingBottom: 150,
+    },
+    topSection: {
+        backgroundColor: '#fff',
+    },
 });
+
+export default OrdersScreen;
 ```
 
 ## File: app/screens/discover/offer/[id].tsx
@@ -37511,6 +31488,459 @@ const EditProfileScreen = () => {
 export default EditProfileScreen
 ```
 
+## File: app/screens/retailer/home/analytics/analyticsScreen.tsx
+```typescript
+import React from 'react';
+import { View, ScrollView, StyleSheet } from 'react-native';
+import BaseContainer from '@/components/shared/BaseContainer';
+import { useAnalytics } from '@/services/hooks/retailer/home/useAnalytics';
+import AnalyticsHeader from '@/components/retailer/home/analytics/AnalyticsHeader';
+import AnalyticsTimeFilter from '@/components/retailer/home/analytics/AnalyticsTimeFilter';
+import AnalyticsRevenueCard from '@/components/retailer/home/analytics/AnalyticsRevenueCard';
+import AnalyticsStatCards from '@/components/retailer/home/analytics/AnalyticsStatCards';
+import AnalyticsRevenueChart from '@/components/retailer/home/analytics/AnalyticsReveueChart';
+import AnalyticsTopProducts from '@/components/retailer/home/analytics/AnalyticsTopProduct';
+import AnalyticsOrderStatus from '@/components/retailer/home/analytics/AnalyticsOrderStatus';
+import AnalyticsSizes from '@/components/retailer/home/analytics/AnalyticsSizes';
+
+const AnalyticsScreen: React.FC = () => {
+    const {
+        activeFilter,
+        chartMode,
+        data,
+        barData,
+        barLabels,
+        handleFilterChange,
+        handleChartModeChange,
+    } = useAnalytics();
+
+    return (
+        <BaseContainer scrollable backgroundColor='#fff'>
+            <View className='pt-10'>
+                <AnalyticsHeader
+                    locationLabel="All Locations"
+                    brandLabel="GoSNKR Sales"
+                    onLocationPress={() => console.log('change location')}
+                    onBrandPress={() => console.log('change brand')}
+                    onCalendarPress={() => console.log('open calendar')}
+                    onExportPress={() => console.log('export')}
+                />
+
+                <AnalyticsTimeFilter
+                    active={activeFilter}
+                    onChange={handleFilterChange}
+                />
+
+                <ScrollView
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={s.body}
+                >
+                    <AnalyticsRevenueCard
+                        totalRevenue={data.totalRevenue}
+                        revenueChange={data.revenueChange}
+                        revenueChangePercent={data.revenueChangePercent}
+                        sparklineData={data.sparklineData}
+                    />
+
+                    <AnalyticsStatCards
+                        orders={data.orders}
+                        ordersChange={data.ordersChange}
+                        grossProfit={data.grossProfit}
+                        grossProfitMargin={data.grossProfitMargin}
+                        grossProfitChange={data.grossProfitChange}
+                        avgOrder={data.avgOrder}
+                        avgOrderChange={data.avgOrderChange}
+                        pickupRate={data.pickupRate}
+                        pickupRateChange={data.pickupRateChange}
+                    />
+
+                    <AnalyticsRevenueChart
+                        chartMode={chartMode}
+                        barData={barData}
+                        barLabels={barLabels}
+                        onChartModeChange={handleChartModeChange}
+                    />
+
+                    <AnalyticsTopProducts
+                        products={data.topProducts}
+                        onViewAll={() => console.log('view all products')}
+                    />
+
+                    <AnalyticsOrderStatus orderStatus={data.orderStatus} />
+
+                    <AnalyticsSizes
+                        sizes={data.sizes}
+                        onViewInventoryOpportunities={() => console.log('view inventory opportunities')}
+                    />
+                </ScrollView>
+            </View>
+        </BaseContainer>
+    );
+};
+
+const s = StyleSheet.create({
+    root: { flex: 1, backgroundColor: '#F9FAFB', paddingTop: 52 },
+    body: { paddingHorizontal: 16, paddingTop: 4 },
+});
+
+export default AnalyticsScreen;
+```
+
+## File: app/screens/retailer/home/more/businessOverViewScreen.tsx
+```typescript
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Feather } from '@expo/vector-icons';
+import { router } from 'expo-router';
+import BaseContainer from '@/components/shared/BaseContainer';
+import {
+  useBusinessOverview,
+  type Location,
+  type LocationAlert,
+} from '@/services/hooks/retailer/home/useBusinessOverview';
+
+export default function BusinessOverviewScreen() {
+  const {
+    periods,
+    period,
+    setPeriod,
+    business,
+    stats,
+    ordersNeedingAttention,
+    locations,
+  } = useBusinessOverview();
+
+  return (
+    <BaseContainer backgroundColor="#F9FAFB" scrollable>
+      <View className="flex-1 pb-10">
+        {/* Header */}
+        <View style={s.header}>
+          <TouchableOpacity onPress={() => router.back()} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+            <Feather name="arrow-left" size={24} color="#111827" />
+          </TouchableOpacity>
+          <Text style={s.headerTitle}>Business Overview</Text>
+          <TouchableOpacity onPress={() => router.push('/')}>
+            <Text style={s.addLocationText}>+ Add Location</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Business Identity */}
+        <View style={s.identityRow}>
+          <View style={s.avatar}>
+            <Text style={s.avatarText}>{business.initials}</Text>
+          </View>
+          <View style={{ marginLeft: 12, flex: 1 }}>
+            <Text style={s.businessName}>{business.name}</Text>
+            <Text style={s.businessMeta}>{business.locationCount} locations · {business.city}</Text>
+            <View style={s.pillRow}>
+              <TouchableOpacity style={s.pill}>
+                <Text style={s.pillText}>Owner</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={s.pill}>
+                <Text style={s.pillText}>Business Settings →</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+
+        {/* Period tabs */}
+        <View style={s.periodRow}>
+          <View style={s.periodTabs}>
+            {periods.map((p) => (
+              <TouchableOpacity
+                key={p}
+                onPress={() => setPeriod(p)}
+                style={[s.periodTab, period === p && s.periodTabActive]}
+              >
+                <Text style={[s.periodTabText, period === p && s.periodTabTextActive]}>{p}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+          <TouchableOpacity style={s.calendarBtn}>
+            <Feather name="calendar" size={18} color="#111827" />
+          </TouchableOpacity>
+        </View>
+
+        {/* Gross sales hero card */}
+        <View style={s.heroCard}>
+          <Text style={s.heroValue}>{stats.grossSales}</Text>
+          <View style={s.heroFooterRow}>
+            <Text style={s.heroLabel}>Gross sales</Text>
+            <View style={s.deltaRow}>
+              <Feather
+                name={stats.deltaIsPositive ? 'arrow-up-right' : 'arrow-down-right'}
+                size={12}
+                color={stats.deltaIsPositive ? '#34D399' : '#F87171'}
+              />
+              <Text style={[s.deltaText, { color: stats.deltaIsPositive ? '#34D399' : '#F87171' }]}>
+                {stats.deltaVsPrevious}
+              </Text>
+              <Text style={s.deltaSubtext}>vs yesterday</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Stats Grid */}
+        <View style={s.statsGrid}>
+          <View style={s.statCard}>
+            <Text style={s.statValue}>{stats.netSales}</Text>
+            <Text style={s.statLabel}>Net sales</Text>
+          </View>
+          <View style={s.statCard}>
+            <Text style={s.statValue}>{stats.orders}</Text>
+            <Text style={s.statLabel}>Orders</Text>
+          </View>
+          <View style={s.statCard}>
+            <Text style={s.statValue}>{stats.avgOrder}</Text>
+            <Text style={s.statLabel}>Avg order</Text>
+          </View>
+          <View style={s.statCard}>
+            <Text style={s.statValue}>{stats.activeListings}</Text>
+            <Text style={s.statLabel}>Active listings</Text>
+          </View>
+        </View>
+
+        {/* Orders need attention alert */}
+        {ordersNeedingAttention > 0 && (
+          <TouchableOpacity style={s.attentionBanner} activeOpacity={0.85}>
+            <Feather name="alert-triangle" size={16} color="#D97706" />
+            <Text style={s.attentionText}>{ordersNeedingAttention} orders need attention</Text>
+            <Text style={s.attentionLink}>Review →</Text>
+          </TouchableOpacity>
+        )}
+
+        {/* Locations */}
+        <View style={s.section}>
+          <View style={s.sectionHeader}>
+            <Text style={s.sectionTitle}>Locations</Text>
+            <TouchableOpacity onPress={() => router.push('/')}>
+              <Text style={s.compareLink}>Compare →</Text>
+            </TouchableOpacity>
+          </View>
+
+          {locations.map((loc) => (
+            <LocationCard key={loc.id} location={loc} />
+          ))}
+
+          {/* Add new location */}
+          <TouchableOpacity style={s.addNewCard} onPress={() => router.push('/')}>
+            <Text style={s.addNewText}>+ Add another location</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </BaseContainer>
+  );
+}
+
+function LocationCard({ location }: { location: Location }) {
+  return (
+    <View style={s.locationCard}>
+      <View style={s.locLeft}>
+        <View style={s.locAvatar}>
+          <Text style={s.locAvatarText}>{location.initials}</Text>
+        </View>
+        <View style={{ marginLeft: 12, flex: 1 }}>
+          <View style={s.locNameRow}>
+            <Text style={s.locName}>{location.name}</Text>
+            <Feather name="chevron-right" size={16} color="#D1D5DB" />
+          </View>
+          <Text style={s.locAddress}>{location.address}</Text>
+          <View style={s.locStatusRow}>
+            <View style={[s.statusDot, { backgroundColor: location.isOpen ? '#10B981' : '#EF4444' }]} />
+            <Text style={s.locStatus}>
+              {location.isOpen ? 'Open' : 'Closed'} · {location.hoursNote}
+            </Text>
+          </View>
+          <Text style={s.locRevenue}>{location.salesToday} sales · {location.ordersToday} orders</Text>
+        </View>
+      </View>
+
+      {/* Alert chips */}
+      {location.alerts.length > 0 && (
+        <View style={s.alertChipsRow}>
+          {location.alerts.map((alert, i) => (
+            <AlertChip key={i} alert={alert} />
+          ))}
+        </View>
+      )}
+
+      <View style={s.locActions}>
+        <TouchableOpacity style={s.manageBtn} onPress={() => router.push('/')}>
+          <Text style={s.manageBtnText}>Manage Location</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={s.viewOrdersBtn} onPress={() => router.push('/')}>
+          <Text style={s.viewOrdersText}>View Orders</Text>
+        </TouchableOpacity>
+      </View>
+
+      <Text style={s.syncedText}>{location.syncedAgo}</Text>
+    </View>
+  );
+}
+
+function AlertChip({ alert }: { alert: LocationAlert }) {
+  if (alert.type === 'ready') {
+    return (
+      <View style={[s.alertChip, s.chipGreen]}>
+        <Feather name="check-circle" size={11} color="#059669" />
+        <Text style={[s.alertChipText, { color: '#059669' }]}>{alert.count} ready</Text>
+      </View>
+    );
+  }
+  if (alert.type === 'overdue') {
+    return (
+      <View style={[s.alertChip, alert.count > 0 ? s.chipAmber : s.chipGray]}>
+        <Feather name={alert.count > 0 ? 'alert-triangle' : 'check-circle'} size={11} color={alert.count > 0 ? '#D97706' : '#9CA3AF'} />
+        <Text style={[s.alertChipText, { color: alert.count > 0 ? '#D97706' : '#9CA3AF' }]}>
+          {alert.count > 0 ? `${alert.count} overdue` : 'No overdue'}
+        </Text>
+      </View>
+    );
+  }
+  return (
+    <View style={[s.alertChip, s.chipAmber]}>
+      <Feather name="alert-triangle" size={11} color="#D97706" />
+      <Text style={[s.alertChipText, { color: '#D97706' }]}>{alert.count} low-stock alerts</Text>
+    </View>
+  );
+}
+
+const s = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 40,
+    paddingBottom: 12,
+  },
+  headerTitle: { fontSize: 17, fontWeight: '900', color: '#111827' },
+  addLocationText: { fontSize: 13, fontWeight: '800', color: '#10B981' },
+
+  identityRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, marginBottom: 18 },
+  avatar: {
+    width: 52,
+    height: 52,
+    borderRadius: 14,
+    backgroundColor: '#111827',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  avatarText: { color: '#fff', fontWeight: '900', fontSize: 18 },
+  businessName: { fontSize: 16, fontWeight: '900', color: '#111827' },
+  businessMeta: { fontSize: 12, color: '#6B7280', marginTop: 2, fontWeight: '600' },
+  pillRow: { flexDirection: 'row', gap: 8, marginTop: 8 },
+  pill: { backgroundColor: '#F3F4F6', paddingHorizontal: 10, paddingVertical: 5, borderRadius: 8 },
+  pillText: { fontSize: 11, fontWeight: '700', color: '#374151' },
+
+  periodRow: { flexDirection: 'row', gap: 10, paddingHorizontal: 16, marginBottom: 16 },
+  periodTabs: { flex: 1, flexDirection: 'row', backgroundColor: '#F3F4F6', borderRadius: 14, padding: 4 },
+  periodTab: { flex: 1, paddingVertical: 10, alignItems: 'center', borderRadius: 10 },
+  periodTabActive: { backgroundColor: '#111827' },
+  periodTabText: { fontSize: 12, fontWeight: '700', color: '#6B7280' },
+  periodTabTextActive: { color: '#fff' },
+  calendarBtn: {
+    width: 44,
+    backgroundColor: '#F3F4F6',
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  heroCard: {
+    backgroundColor: '#111827',
+    marginHorizontal: 16,
+    borderRadius: 22,
+    padding: 20,
+    marginBottom: 12,
+  },
+  heroValue: { color: '#fff', fontSize: 34, fontWeight: '900' },
+  heroFooterRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 },
+  heroLabel: { color: '#9CA3AF', fontSize: 13, fontWeight: '600' },
+  deltaRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  deltaText: { fontSize: 13, fontWeight: '800' },
+  deltaSubtext: { fontSize: 12, color: '#9CA3AF', fontWeight: '600' },
+
+  statsGrid: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 16, gap: 10, marginBottom: 16 },
+  statCard: { flex: 1, minWidth: '45%', backgroundColor: '#fff', borderRadius: 18, padding: 16 },
+  statValue: { fontSize: 20, fontWeight: '900', color: '#111827' },
+  statLabel: { color: '#9CA3AF', fontSize: 11, marginTop: 4, fontWeight: '600' },
+
+  attentionBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: '#FFF7ED',
+    marginHorizontal: 16,
+    padding: 14,
+    borderRadius: 14,
+    marginBottom: 20,
+  },
+  attentionText: { flex: 1, fontSize: 13, fontWeight: '700', color: '#9A3412' },
+  attentionLink: { fontSize: 13, fontWeight: '800', color: '#059669' },
+
+  section: { paddingHorizontal: 16 },
+  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
+  sectionTitle: { fontSize: 16, fontWeight: '900', color: '#111827' },
+  compareLink: { fontSize: 12, fontWeight: '800', color: '#10B981' },
+
+  locationCard: {
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 16,
+    marginBottom: 14,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+  },
+  locLeft: { flexDirection: 'row', marginBottom: 12 },
+  locAvatar: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    backgroundColor: '#111827',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  locAvatarText: { color: '#fff', fontWeight: '900', fontSize: 14 },
+  locNameRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  locName: { fontSize: 14, fontWeight: '800', color: '#111827', flexShrink: 1 },
+  locAddress: { fontSize: 11, color: '#6B7280', marginTop: 2, fontWeight: '600' },
+  locStatusRow: { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 4 },
+  statusDot: { width: 7, height: 7, borderRadius: 4 },
+  locStatus: { fontSize: 11, color: '#6B7280', fontWeight: '600' },
+  locRevenue: { fontSize: 12, color: '#111827', fontWeight: '700', marginTop: 4 },
+
+  alertChipsRow: { flexDirection: 'row', gap: 8, marginBottom: 14 },
+  alertChip: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 10 },
+  chipGreen: { backgroundColor: '#ECFDF5' },
+  chipAmber: { backgroundColor: '#FFFBEB' },
+  chipGray: { backgroundColor: '#F3F4F6' },
+  alertChipText: { fontSize: 11, fontWeight: '800' },
+
+  locActions: { flexDirection: 'row', gap: 10, marginBottom: 8 },
+  manageBtn: { flex: 1, backgroundColor: '#111827', height: 42, borderRadius: 13, justifyContent: 'center', alignItems: 'center' },
+  manageBtnText: { color: '#fff', fontSize: 12, fontWeight: '800' },
+  viewOrdersBtn: { flex: 1, backgroundColor: '#F3F4F6', height: 42, borderRadius: 13, justifyContent: 'center', alignItems: 'center' },
+  viewOrdersText: { color: '#374151', fontSize: 12, fontWeight: '700' },
+  syncedText: { fontSize: 10, color: '#D1D5DB', fontWeight: '600', textAlign: 'right' },
+
+  addNewCard: {
+    borderWidth: 1.5,
+    borderColor: '#E5E7EB',
+    borderStyle: 'dashed',
+    borderRadius: 20,
+    height: 52,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  addNewText: { fontSize: 13, color: '#9CA3AF', fontWeight: '700' },
+});
+```
+
 ## File: app/screens/retailer/home/more/dropManagerScreen.tsx
 ```typescript
 import React from 'react';
@@ -37606,6 +32036,2196 @@ const styles = StyleSheet.create({
     rightInfo: { alignItems: 'flex-end', justifyContent: 'space-between' },
     timeTag: { backgroundColor: '#F3F4F6', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, fontSize: 10, fontWeight: '700' }
 });
+```
+
+## File: app/screens/retailer/home/more/localDemandScreen.tsx
+```typescript
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Feather, MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
+import BaseContainer from '@/components/shared/BaseContainer';
+import {
+  useLocalDemand,
+  type OpportunityItem,
+  type SizeDemand,
+} from '@/services/hooks/retailer/home/useLocalDemand';
+
+export default function LocalDemandScreen() {
+  const {
+    store,
+    dayRanges,
+    dayRange,
+    setDayRange,
+    categoryFilters,
+    category,
+    setCategory,
+    missedSearchesCount,
+    opportunities,
+    bestOpportunity,
+  } = useLocalDemand();
+
+  return (
+    <BaseContainer backgroundColor="#F9FAFB" scrollable>
+      <View className="flex-1 pb-10">
+        {/* Header */}
+        <View style={s.header}>
+          <TouchableOpacity onPress={() => router.back()} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+            <Feather name="arrow-left" size={24} color="#111827" />
+          </TouchableOpacity>
+          <Text style={s.headerTitle}>Local Demand</Text>
+          <TouchableOpacity hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+            <Feather name="info" size={20} color="#111827" />
+          </TouchableOpacity>
+        </View>
+
+        {/* Store + Radius selectors */}
+        <View style={s.selectorsRow}>
+          <TouchableOpacity style={s.selectorPill}>
+            <Feather name="home" size={16} color="#10B981" />
+            <Text style={s.selectorText} numberOfLines={1}>{store.name}</Text>
+            <Feather name="chevron-down" size={16} color="#6B7280" />
+          </TouchableOpacity>
+          <TouchableOpacity style={s.selectorPill}>
+            <Feather name="map-pin" size={16} color="#10B981" />
+            <Text style={s.selectorText}>{store.radiusMiles} mi</Text>
+            <Feather name="chevron-down" size={16} color="#6B7280" />
+          </TouchableOpacity>
+        </View>
+
+        {/* Day range tabs */}
+        <View style={s.dayTabsRow}>
+          {dayRanges.map((d) => (
+            <TouchableOpacity
+              key={d.key}
+              onPress={() => setDayRange(d.key)}
+              style={[s.dayTab, dayRange === d.key && s.dayTabActive]}
+            >
+              <Text style={[s.dayTabText, dayRange === d.key && s.dayTabTextActive]}>{d.label}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* Category filter tabs */}
+        <View style={s.categoryTabsRow}>
+          {categoryFilters.map((c) => (
+            <TouchableOpacity
+              key={c}
+              onPress={() => setCategory(c)}
+              style={[s.categoryTab, category === c && s.categoryTabActive]}
+            >
+              <Text style={[s.categoryTabText, category === c && s.categoryTabTextActive]}>{c}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        <Text style={s.aggregatedText}>Aggregated nearby shopper activity · Updated today</Text>
+
+        {/* Missed searches banner */}
+        <TouchableOpacity style={s.missedBanner} activeOpacity={0.85}>
+          <View style={s.missedIconWrap}>
+            <Feather name="bar-chart-2" size={18} color="#10B981" />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={s.missedTitle}>{missedSearchesCount} missed searches this week</Text>
+            <Text style={s.missedSubtitle}>Products and sizes shoppers wanted but you did not have.</Text>
+          </View>
+          <Feather name="chevron-right" size={18} color="#9CA3AF" />
+        </TouchableOpacity>
+
+        {/* Section title */}
+        <View style={s.sectionHeader}>
+          <Text style={s.sectionTitle}>Top Opportunities Near You</Text>
+          <Text style={s.sectionSubtitle}>Based on search demand</Text>
+        </View>
+
+        {/* Opportunity cards */}
+        <View style={{ paddingHorizontal: 16 }}>
+          {opportunities.map((item) => (
+            <OpportunityCard key={item.id} item={item} />
+          ))}
+
+          {opportunities.length === 0 && (
+            <View style={s.emptyState}>
+              <Feather name="search" size={28} color="#D1D5DB" />
+              <Text style={s.emptyStateText}>No opportunities in this category yet.</Text>
+            </View>
+          )}
+        </View>
+
+        {/* Best opportunity callout */}
+        {bestOpportunity && (
+          <View style={s.bestOppCard}>
+            <View style={s.bestOppHeader}>
+              <View style={s.bestOppIconWrap}>
+                <Ionicons name="flash" size={16} color="#F59E0B" />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={s.bestOppTitle}>Best opportunity</Text>
+                <Text style={s.bestOppBody}>
+                  {bestOpportunity.itemName} {bestOpportunity.reason}
+                </Text>
+                <Text style={s.bestOppBuyers}>Potential demand: {bestOpportunity.potentialBuyers} buyers</Text>
+              </View>
+              <Feather name="chevron-right" size={18} color="#B45309" />
+            </View>
+            <TouchableOpacity style={s.bestOppBtn}>
+              <Feather name="plus-circle" size={16} color="#fff" />
+              <Text style={s.bestOppBtnText}>Add to Sourcing List</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </View>
+    </BaseContainer>
+  );
+}
+
+function OpportunityCard({ item }: { item: OpportunityItem }) {
+  const statusMeta = getStockStatusMeta(item.stockStatus);
+
+  return (
+    <View style={s.card}>
+      <View style={s.cardTopRow}>
+        <View style={s.rankBadge}>
+          <Text style={s.rankBadgeText}>#{item.rank}</Text>
+        </View>
+
+        <View style={s.imgPlaceholder}>
+          <MaterialCommunityIcons name="shoe-sneaker" size={26} color="#9CA3AF" />
+        </View>
+
+        <View style={{ flex: 1, marginLeft: 12 }}>
+          <View style={s.nameRow}>
+            <Text style={s.itemName} numberOfLines={1}>{item.name}</Text>
+            <View style={[s.statusDot, { backgroundColor: statusMeta.dotColor }]} />
+            <Text style={[s.statusLabel, { color: statusMeta.dotColor }]}>{statusMeta.label}</Text>
+          </View>
+          <View style={s.metaRow}>
+            <Text style={s.searchesText}>{item.searchesLabel}</Text>
+            <Feather
+              name={item.trendPct >= 0 ? 'arrow-up' : 'arrow-down'}
+              size={12}
+              color={item.trendPct >= 0 ? '#10B981' : '#EF4444'}
+            />
+            <Text style={[s.trendText, { color: item.trendPct >= 0 ? '#10B981' : '#EF4444' }]}>
+              {Math.abs(item.trendPct)}% vs last week
+            </Text>
+          </View>
+        </View>
+      </View>
+
+      <Text style={s.sizesLabel}>Most requested sizes</Text>
+      <View style={s.sizesRow}>
+        {item.sizes.map((size) => (
+          <SizeChip key={size.label} size={size} />
+        ))}
+      </View>
+
+      <View style={s.cardBottomRow}>
+        <TouchableOpacity style={s.viewDemandBtn}>
+          <Feather name="bar-chart-2" size={14} color="#111827" />
+          <Text style={s.viewDemandText}>View Demand</Text>
+        </TouchableOpacity>
+
+        <PrimaryActionButton action={item.primaryAction} />
+      </View>
+    </View>
+  );
+}
+
+function SizeChip({ size }: { size: SizeDemand }) {
+  if (size.status === 'out') {
+    return (
+      <View style={[s.sizeChip, s.sizeChipOut]}>
+        <Text style={s.sizeChipLabel}>{size.label}</Text>
+        <Text style={s.sizeChipOutText}>Out</Text>
+      </View>
+    );
+  }
+  if (size.status === 'low') {
+    return (
+      <View style={[s.sizeChip, s.sizeChipLow]}>
+        <Text style={s.sizeChipLabel}>{size.label}</Text>
+        <Text style={s.sizeChipLowText}>Low</Text>
+      </View>
+    );
+  }
+  return (
+    <View style={s.sizeChip}>
+      <Text style={s.sizeChipLabel}>{size.label}</Text>
+      <Text style={s.sizeChipSearches}>{size.searches} searches</Text>
+    </View>
+  );
+}
+
+function PrimaryActionButton({ action }: { action: OpportunityItem['primaryAction'] }) {
+  const iconName = action.icon === 'plus' ? 'plus-circle' : action.icon === 'box' ? 'package' : 'file-text';
+  const isSecondary = action.kind === 'view_details';
+
+  return (
+    <TouchableOpacity style={[s.primaryActionBtn, isSecondary && s.primaryActionBtnSecondary]}>
+      <Feather name={iconName as any} size={14} color={isSecondary ? '#111827' : '#fff'} />
+      <Text style={[s.primaryActionText, isSecondary && s.primaryActionTextSecondary]}>{action.label}</Text>
+    </TouchableOpacity>
+  );
+}
+
+function getStockStatusMeta(status: OpportunityItem['stockStatus']) {
+  switch (status) {
+    case 'not_stocked':
+      return { label: 'Not Stocked', dotColor: '#EF4444' };
+    case 'missing_sizes':
+      return { label: 'Missing Top Sizes', dotColor: '#F59E0B' };
+    case 'demand_covered':
+      return { label: 'Demand Covered', dotColor: '#10B981' };
+  }
+}
+
+const s = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 40,
+    paddingBottom: 8,
+  },
+  headerTitle: { fontSize: 18, fontWeight: '900', color: '#111827' },
+
+  selectorsRow: { flexDirection: 'row', gap: 10, paddingHorizontal: 16, marginTop: 8 },
+  selectorPill: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderRadius: 14,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  selectorText: { flex: 1, fontSize: 13, fontWeight: '700', color: '#111827' },
+
+  dayTabsRow: { flexDirection: 'row', gap: 8, paddingHorizontal: 16, marginTop: 14 },
+  dayTab: {
+    flex: 1,
+    backgroundColor: '#F3F4F6',
+    paddingVertical: 10,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  dayTabActive: { backgroundColor: '#111827' },
+  dayTabText: { fontSize: 13, fontWeight: '700', color: '#4B5563' },
+  dayTabTextActive: { color: '#fff' },
+
+  categoryTabsRow: { flexDirection: 'row', gap: 8, paddingHorizontal: 16, marginTop: 8 },
+  categoryTab: {
+    flex: 1,
+    backgroundColor: '#F3F4F6',
+    paddingVertical: 10,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  categoryTabActive: { backgroundColor: '#D1FAE5' },
+  categoryTabText: { fontSize: 13, fontWeight: '700', color: '#9CA3AF' },
+  categoryTabTextActive: { color: '#059669' },
+
+  aggregatedText: {
+    textAlign: 'center',
+    color: '#9CA3AF',
+    fontSize: 11,
+    marginTop: 10,
+    marginBottom: 14,
+  },
+
+  missedBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#ECFDF5',
+    marginHorizontal: 16,
+    padding: 14,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: '#D1FAE5',
+    marginBottom: 22,
+  },
+  missedIconWrap: {
+    width: 34,
+    height: 34,
+    borderRadius: 10,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  missedTitle: { fontSize: 14, fontWeight: '800', color: '#065F46' },
+  missedSubtitle: { fontSize: 12, color: '#047857', marginTop: 2 },
+
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'baseline',
+    paddingHorizontal: 16,
+    marginBottom: 14,
+  },
+  sectionTitle: { fontSize: 17, fontWeight: '900', color: '#111827' },
+  sectionSubtitle: { fontSize: 11, color: '#9CA3AF', fontWeight: '600' },
+
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 22,
+    padding: 16,
+    marginBottom: 14,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+  },
+  cardTopRow: { flexDirection: 'row', alignItems: 'center' },
+  rankBadge: {
+    width: 26,
+    height: 26,
+    borderRadius: 8,
+    backgroundColor: '#FEF3C7',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+  },
+  rankBadgeText: { fontSize: 11, fontWeight: '900', color: '#B45309' },
+  imgPlaceholder: {
+    width: 56,
+    height: 56,
+    backgroundColor: '#F9FAFB',
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  nameRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  itemName: { fontSize: 14, fontWeight: '800', color: '#111827', flexShrink: 1 },
+  statusDot: { width: 6, height: 6, borderRadius: 3 },
+  statusLabel: { fontSize: 10, fontWeight: '800' },
+  metaRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4 },
+  searchesText: { fontSize: 12, color: '#6B7280', fontWeight: '600' },
+  trendText: { fontSize: 11, fontWeight: '700' },
+
+  sizesLabel: { fontSize: 11, color: '#9CA3AF', fontWeight: '700', marginTop: 16, marginBottom: 8 },
+  sizesRow: { flexDirection: 'row', gap: 8 },
+  sizeChip: {
+    flex: 1,
+    backgroundColor: '#F9FAFB',
+    borderRadius: 12,
+    paddingVertical: 8,
+    alignItems: 'center',
+  },
+  sizeChipLow: { backgroundColor: '#FEF3C7' },
+  sizeChipOut: { backgroundColor: '#FEE2E2' },
+  sizeChipLabel: { fontSize: 13, fontWeight: '900', color: '#111827' },
+  sizeChipSearches: { fontSize: 9, color: '#9CA3AF', marginTop: 2, fontWeight: '600' },
+  sizeChipLowText: { fontSize: 9, color: '#B45309', marginTop: 2, fontWeight: '800' },
+  sizeChipOutText: { fontSize: 9, color: '#DC2626', marginTop: 2, fontWeight: '800' },
+
+  cardBottomRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 16,
+  },
+  viewDemandBtn: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  viewDemandText: { fontSize: 12, fontWeight: '800', color: '#111827' },
+
+  primaryActionBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: '#10B981',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 14,
+  },
+  primaryActionBtnSecondary: { backgroundColor: '#F3F4F6' },
+  primaryActionText: { fontSize: 12, fontWeight: '800', color: '#fff' },
+  primaryActionTextSecondary: { color: '#111827' },
+
+  emptyState: { alignItems: 'center', paddingVertical: 40, gap: 10 },
+  emptyStateText: { color: '#9CA3AF', fontSize: 13, fontWeight: '600' },
+
+  bestOppCard: {
+    backgroundColor: '#FFFBEB',
+    marginHorizontal: 16,
+    marginTop: 6,
+    padding: 18,
+    borderRadius: 22,
+    borderWidth: 1,
+    borderColor: '#FEF3C7',
+  },
+  bestOppHeader: { flexDirection: 'row', alignItems: 'flex-start' },
+  bestOppIconWrap: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    backgroundColor: '#FEF3C7',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  bestOppTitle: { fontSize: 13, fontWeight: '900', color: '#92400E' },
+  bestOppBody: { fontSize: 13, color: '#78350F', marginTop: 4, lineHeight: 18, fontWeight: '600' },
+  bestOppBuyers: { fontSize: 12, color: '#B45309', marginTop: 6, fontWeight: '700' },
+  bestOppBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    backgroundColor: '#D97706',
+    paddingVertical: 14,
+    borderRadius: 16,
+    marginTop: 16,
+  },
+  bestOppBtnText: { color: '#fff', fontSize: 14, fontWeight: '800' },
+});
+```
+
+## File: app/screens/retailer/home/more/makeOfferScreen.tsx
+```typescript
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native';
+import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import { router } from 'expo-router';
+import BaseContainer from '@/components/shared/BaseContainer';
+import { useMakeOffer } from '@/services/hooks/retailer/home/useMakeOffer';
+
+export default function MakeOfferScreen() {
+  const {
+    item,
+    marketContext,
+    quickOffers,
+    offerValue,
+    setOfferValue,
+    note,
+    setNote,
+    expiryOptions,
+    expiry,
+    setExpiry,
+    costBreakdown,
+    isSending,
+    handleReviewOffer,
+  } = useMakeOffer();
+
+  return (
+    <BaseContainer backgroundColor="#F9FAFB" scrollable>
+      <View style={{ flex: 1, paddingBottom: 40 }}>
+        {/* Header */}
+        <View style={s.header}>
+          <TouchableOpacity onPress={() => router.back()} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+            <Feather name="arrow-left" size={24} color="#111827" />
+          </TouchableOpacity>
+          <Text style={s.headerTitle}>Make an Offer</Text>
+          <View style={{ width: 24 }} />
+        </View>
+
+        {/* Item Card */}
+        <View style={s.itemCard}>
+          <View style={s.imgPlaceholder}>
+            <MaterialCommunityIcons name="shoe-sneaker" size={32} color="#D1D5DB" />
+          </View>
+          <View style={{ flex: 1, marginLeft: 14 }}>
+            <Text style={s.itemName} numberOfLines={1}>{item.name}</Text>
+            <Text style={s.itemMeta}>{item.subtitle}</Text>
+
+            <View style={s.sellerRow}>
+              <View style={s.sellerAvatar}>
+                <Text style={s.sellerAvatarText}>{item.seller.initials}</Text>
+              </View>
+              <Text style={s.sellerName}>{item.seller.name}</Text>
+              {item.seller.verified && <Feather name="check-circle" size={13} color="#10B981" />}
+            </View>
+            <Text style={s.sellerMeta}>
+              {item.seller.rating} ★ · {item.seller.completedSales} completed sales
+            </Text>
+          </View>
+        </View>
+
+        <View style={s.verifiedRow}>
+          <Feather name="shield" size={13} color="#10B981" />
+          <Text style={s.verifiedText}>{item.verifiedNote}</Text>
+          <View style={{ flex: 1 }} />
+          <Feather name="truck" size={13} color="#9CA3AF" />
+          <Text style={s.shipText}>{item.shipFromTo}</Text>
+          <Feather name="chevron-right" size={14} color="#9CA3AF" />
+        </View>
+
+        {/* Market Context */}
+        <View style={s.marketCard}>
+          <View style={s.marketHeaderRow}>
+            <Text style={s.sectionLabel}>Market Context · Size {marketContext.sizeLabel}</Text>
+            <View style={s.updatedRow}>
+              <Text style={s.updatedText}>Updated {marketContext.updatedAgo}</Text>
+              <Feather name="info" size={12} color="#9CA3AF" />
+            </View>
+          </View>
+
+          <View style={s.marketRow}>
+            <Text style={s.marketLabel}>Recent market sale</Text>
+            <Text style={s.marketValue}>${marketContext.recentMarketSale}</Text>
+          </View>
+          <View style={s.marketRow}>
+            <Text style={s.marketLabel}>30-day average</Text>
+            <Text style={s.marketValue}>${marketContext.thirtyDayAverage}</Text>
+          </View>
+          <View style={s.marketRow}>
+            <Text style={s.marketLabel}>GoSNKR asking average</Text>
+            <Text style={s.marketValue}>${marketContext.goSnkrAskingAverage}</Text>
+          </View>
+
+          <View style={s.suggestedBanner}>
+            <Feather name="bar-chart-2" size={14} color="#059669" />
+            <Text style={s.suggestedText}>
+              Suggested offer range: ${marketContext.suggestedRangeLow}–${marketContext.suggestedRangeHigh}
+            </Text>
+          </View>
+        </View>
+
+        {/* Offer Input Section */}
+        <View style={s.paddingContainer}>
+          <Text style={s.offerSectionLabel}>Your offer</Text>
+          <View style={s.inputContainer}>
+            <Text style={s.dollarSign}>$</Text>
+            <TextInput
+              style={s.offerInput}
+              value={offerValue}
+              onChangeText={setOfferValue}
+              keyboardType="numeric"
+              maxLength={4}
+            />
+          </View>
+
+          {/* Quick Offer Pills */}
+          <View style={s.quickOfferRow}>
+            {quickOffers.map((val) => (
+              <TouchableOpacity
+                key={val}
+                style={[s.quickPill, offerValue === val && s.quickPillActive]}
+                onPress={() => setOfferValue(val)}
+              >
+                <Text style={[s.quickPillText, offerValue === val && s.quickPillTextActive]}>${val}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          {/* Your Numbers */}
+          <View style={s.numbersCard}>
+            <View style={s.numbersHeaderRow}>
+              <Feather name="dollar-sign" size={16} color="#059669" />
+              <Text style={s.numbersTitle}>Your Numbers</Text>
+            </View>
+            <Text style={s.numbersSubtitle}>See your true cost and potential profit.</Text>
+
+            <View style={s.numberRow}>
+              <Text style={s.numberLabel}>Offer</Text>
+              <Text style={s.numberValue}>${costBreakdown.offer}</Text>
+            </View>
+            <View style={s.numberRow}>
+              <View style={s.numberLabelRow}>
+                <Text style={s.numberLabel}>Buyer protection fee</Text>
+                <Feather name="info" size={11} color="#9CA3AF" />
+              </View>
+              <Text style={s.numberValue}>${costBreakdown.buyerProtectionFee}</Text>
+            </View>
+            <View style={s.numberRow}>
+              <Text style={s.numberLabel}>Shipping (to you)</Text>
+              <Text style={s.numberValue}>${costBreakdown.shippingToYou}</Text>
+            </View>
+
+            <View style={s.divider} />
+
+            <View style={s.numberRow}>
+              <Text style={s.numberLabelStrong}>Total landed cost</Text>
+              <Text style={s.numberValueStrong}>${costBreakdown.totalLandedCost}</Text>
+            </View>
+            <View style={s.numberRow}>
+              <View style={s.numberLabelRow}>
+                <Text style={s.numberLabel}>Expected store price</Text>
+                <Feather name="info" size={11} color="#9CA3AF" />
+              </View>
+              <Text style={s.numberValue}>${costBreakdown.expectedStorePrice}</Text>
+            </View>
+            <View style={s.numberRow}>
+              <Text style={s.numberLabel}>Projected profit</Text>
+              <Text style={s.numberValue}>${costBreakdown.projectedProfit}</Text>
+            </View>
+            <View style={s.numberRow}>
+              <View style={s.numberLabelRow}>
+                <Text style={s.numberLabel}>Margin</Text>
+                <Feather name="info" size={11} color="#9CA3AF" />
+              </View>
+              <Text style={s.marginValue}>{costBreakdown.marginPct.toFixed(1)}%</Text>
+            </View>
+          </View>
+
+          {/* Note Input */}
+          <Text style={[s.offerSectionLabel, { marginTop: 22 }]}>Note to seller (optional)</Text>
+          <TextInput
+            style={s.noteInput}
+            placeholder="e.g. Looking to add this to our store. Let me know if you can do $205. Thanks!"
+            placeholderTextColor="#9CA3AF"
+            multiline
+            maxLength={500}
+            value={note}
+            onChangeText={setNote}
+          />
+          <Text style={s.noteCounter}>{note.length}/500</Text>
+
+          {/* Expiry Selection */}
+          <Text style={[s.offerSectionLabel, { marginTop: 12 }]}>Offer expires after</Text>
+          <View style={s.expiryRow}>
+            {expiryOptions.map((opt) => (
+              <TouchableOpacity
+                key={opt}
+                onPress={() => setExpiry(opt)}
+                style={[s.expiryPill, expiry === opt && s.expiryPillActive]}
+              >
+                <Text style={[s.expiryText, expiry === opt && s.expiryTextActive]}>{opt}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          {/* Notice */}
+          <View style={s.noticeRow}>
+            <Feather name="info" size={13} color="#9CA3AF" />
+            <Text style={s.noticeText}>
+              You'll only be charged if the seller accepts. Accepted offers are binding.
+            </Text>
+          </View>
+
+          {/* Submit Button */}
+          <TouchableOpacity
+            style={[s.submitBtn, isSending && { opacity: 0.8 }]}
+            onPress={handleReviewOffer}
+            disabled={isSending}
+          >
+            {isSending ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={s.submitBtnText}>
+                Review Offer · ${costBreakdown.totalLandedCost} Total →
+              </Text>
+            )}
+          </TouchableOpacity>
+
+          <View style={s.protectedFooter}>
+            <Feather name="shield" size={12} color="#9CA3AF" />
+            <Text style={s.protectedFooterText}>Protected payment through GoSNKR</Text>
+          </View>
+        </View>
+      </View>
+    </BaseContainer>
+  );
+}
+
+const s = StyleSheet.create({
+  header: { flexDirection: 'row', justifyContent: 'space-between', padding: 16, alignItems: 'center' ,paddingTop:40},
+  headerTitle: { fontSize: 18, fontWeight: '900', color: '#111827' },
+  paddingContainer: { paddingHorizontal: 16 },
+
+  itemCard: {
+    backgroundColor: '#fff',
+    marginHorizontal: 16,
+    padding: 16,
+    borderRadius: 22,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  imgPlaceholder: {
+    width: 68,
+    height: 68,
+    backgroundColor: '#F9FAFB',
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  itemName: { fontSize: 15, fontWeight: '800', color: '#111827' },
+  itemMeta: { color: '#6B7280', fontSize: 12, marginTop: 2, fontWeight: '600' },
+  sellerRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 10 },
+  sellerAvatar: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: '#111827',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  sellerAvatarText: { color: '#fff', fontSize: 8, fontWeight: '900' },
+  sellerName: { fontSize: 13, fontWeight: '800', color: '#111827' },
+  sellerMeta: { fontSize: 11, color: '#9CA3AF', marginTop: 3, fontWeight: '600' },
+
+  verifiedRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    marginHorizontal: 16,
+    marginTop: 12,
+    marginBottom: 20,
+  },
+  verifiedText: { fontSize: 11, color: '#059669', fontWeight: '700' },
+  shipText: { fontSize: 11, color: '#9CA3AF', fontWeight: '600' },
+
+  marketCard: {
+    backgroundColor: '#fff',
+    marginHorizontal: 16,
+    padding: 18,
+    borderRadius: 22,
+    marginBottom: 22,
+  },
+  marketHeaderRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 },
+  sectionLabel: { fontSize: 14, fontWeight: '800', color: '#111827' },
+  updatedRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  updatedText: { fontSize: 10, color: '#9CA3AF', fontWeight: '600' },
+  marketRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 },
+  marketLabel: { color: '#6B7280', fontSize: 13, fontWeight: '600' },
+  marketValue: { fontWeight: '800', fontSize: 13, color: '#111827' },
+  suggestedBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: '#ECFDF5',
+    borderRadius: 12,
+    padding: 12,
+    marginTop: 6,
+  },
+  suggestedText: { color: '#059669', fontSize: 13, fontWeight: '800' },
+
+  offerSectionLabel: { fontSize: 15, fontWeight: '900', color: '#111827', marginBottom: 12 },
+  inputContainer: {
+    backgroundColor: '#fff',
+    height: 80,
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: '#111827',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 24,
+  },
+  dollarSign: { fontSize: 32, fontWeight: '900', color: '#111827', marginRight: 4 },
+  offerInput: { flex: 1, fontSize: 48, fontWeight: '900', color: '#111827' },
+  quickOfferRow: { flexDirection: 'row', gap: 8, marginTop: 16, marginBottom: 22 },
+  quickPill: {
+    flex: 1,
+    backgroundColor: '#F9FAFB',
+    paddingVertical: 12,
+    borderRadius: 14,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#F3F4F6',
+  },
+  quickPillActive: { backgroundColor: '#111827', borderColor: '#111827' },
+  quickPillText: { fontSize: 14, fontWeight: '800', color: '#4B5563' },
+  quickPillTextActive: { color: '#fff' },
+
+  numbersCard: {
+    backgroundColor: '#fff',
+    borderRadius: 22,
+    padding: 18,
+    marginBottom: 4,
+  },
+  numbersHeaderRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  numbersTitle: { fontSize: 14, fontWeight: '900', color: '#111827' },
+  numbersSubtitle: { fontSize: 12, color: '#9CA3AF', marginTop: 4, marginBottom: 16, fontWeight: '600' },
+  numberRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 },
+  numberLabelRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  numberLabel: { fontSize: 13, color: '#6B7280', fontWeight: '600' },
+  numberValue: { fontSize: 13, fontWeight: '800', color: '#111827' },
+  numberLabelStrong: { fontSize: 14, fontWeight: '900', color: '#111827' },
+  numberValueStrong: { fontSize: 15, fontWeight: '900', color: '#111827' },
+  divider: { height: 1, backgroundColor: '#F3F4F6', marginVertical: 6 },
+  marginValue: { fontSize: 13, fontWeight: '900', color: '#059669' },
+
+  noteInput: {
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 16,
+    height: 90,
+    textAlignVertical: 'top',
+    borderWidth: 1,
+    borderColor: '#F3F4F6',
+    fontSize: 13,
+    color: '#111827',
+  },
+  noteCounter: { textAlign: 'right', fontSize: 10, color: '#D1D5DB', marginTop: 6, fontWeight: '600' },
+
+  expiryRow: { flexDirection: 'row', gap: 8 },
+  expiryPill: { flex: 1, backgroundColor: '#fff', paddingVertical: 14, borderRadius: 16, alignItems: 'center', borderWidth: 1, borderColor: '#F3F4F6' },
+  expiryPillActive: { backgroundColor: '#111827', borderColor: '#111827' },
+  expiryText: { fontSize: 13, fontWeight: '800', color: '#4B5563' },
+  expiryTextActive: { color: '#fff' },
+
+  noticeRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 6, marginTop: 16, marginBottom: 18 },
+  noticeText: { flex: 1, fontSize: 11, color: '#9CA3AF', lineHeight: 16, fontWeight: '600' },
+
+  submitBtn: { backgroundColor: '#111827', height: 60, borderRadius: 18, justifyContent: 'center', alignItems: 'center' },
+  submitBtnText: { color: '#fff', fontSize: 15, fontWeight: '900' },
+
+  protectedFooter: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 6, marginTop: 14 },
+  protectedFooterText: { fontSize: 11, color: '#9CA3AF', fontWeight: '600' },
+});
+```
+
+## File: app/screens/retailer/home/more/pickupSettingsScreen.tsx
+```typescript
+// app/screens/retailer/home/more/pickupSettingsScreen.tsx
+import React, { useState } from 'react'
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Switch, TextInput } from 'react-native'
+import { Feather } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
+import BaseContainer from '@/components/shared/BaseContainer'
+
+const BRANCHES = [
+  { id: '1', name: 'Main Store', address: '123 Main St, Miami, FL' },
+  { id: '2', name: 'Brickell Branch', address: '456 Brickell Ave, Miami, FL' },
+]
+
+const TIME_WINDOWS = ['9:00 AM – 1:00 PM', '1:00 PM – 5:00 PM', '5:00 PM – 8:00 PM']
+
+export default function PickupSettingsScreen() {
+  const router = useRouter()
+  const [selectedBranch, setSelectedBranch] = useState('1')
+  const [selectedWindow, setSelectedWindow] = useState(0)
+  const [notifyReady, setNotifyReady] = useState(true)
+  const [notifyReminder, setNotifyReminder] = useState(true)
+  const [prepTime, setPrepTime] = useState('30')
+  const [holdDuration, setHoldDuration] = useState('48')
+
+  return (
+    <BaseContainer backgroundColor="#fff">
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Feather name="arrow-left" size={22} color="#0a0a0a" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Pickup Settings</Text>
+        <View style={{ width: 22 }} />
+      </View>
+
+      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+        {/* Branch selection */}
+        <Text style={styles.sectionTitle}>Branch Selection</Text>
+        {BRANCHES.map(branch => (
+          <TouchableOpacity
+            key={branch.id}
+            style={[styles.branchRow, selectedBranch === branch.id && styles.branchRowActive]}
+            onPress={() => setSelectedBranch(branch.id)}
+          >
+            <View style={[styles.radio, selectedBranch === branch.id && styles.radioActive]}>
+              {selectedBranch === branch.id && <View style={styles.radioDot} />}
+            </View>
+            <View style={styles.branchInfo}>
+              <Text style={styles.branchName}>{branch.name}</Text>
+              <Text style={styles.branchAddr}>{branch.address}</Text>
+            </View>
+          </TouchableOpacity>
+        ))}
+
+        {/* Pickup window */}
+        <Text style={[styles.sectionTitle, { marginTop: 24 }]}>Pickup Time Window</Text>
+        {TIME_WINDOWS.map((w, i) => (
+          <TouchableOpacity key={w} style={[styles.windowRow, selectedWindow === i && styles.windowRowActive]} onPress={() => setSelectedWindow(i)}>
+            <View style={[styles.radio, selectedWindow === i && styles.radioActive]}>
+              {selectedWindow === i && <View style={styles.radioDot} />}
+            </View>
+            <Text style={styles.windowText}>{w}</Text>
+          </TouchableOpacity>
+        ))}
+
+        {/* Prep time */}
+        <Text style={[styles.sectionTitle, { marginTop: 24 }]}>Preparation Time (minutes)</Text>
+        <View style={styles.inputRow}>
+          <TextInput
+            value={prepTime}
+            onChangeText={setPrepTime}
+            keyboardType="numeric"
+            style={styles.numInput}
+          />
+          <Text style={styles.inputUnit}>min</Text>
+        </View>
+
+        {/* Hold duration */}
+        <Text style={[styles.sectionTitle, { marginTop: 24 }]}>Hold Duration (hours)</Text>
+        <View style={styles.holdRow}>
+          {['1', '3', '6'].map(h => (
+            <TouchableOpacity
+              key={h}
+              style={[styles.holdBtn, holdDuration === h && styles.holdBtnActive]}
+              onPress={() => setHoldDuration(h)}
+            >
+              <Text style={[styles.holdBtnText, holdDuration === h && styles.holdBtnTextActive]}>{h}h</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* Notifications */}
+        <Text style={[styles.sectionTitle, { marginTop: 24 }]}>Order Ready Notifications</Text>
+        <View style={styles.switchRow}>
+          <View style={styles.switchInfo}>
+            <Text style={styles.switchLabel}>Notify when order is ready</Text>
+            <Text style={styles.switchDesc}>Send customer notification when pickup is prepared</Text>
+          </View>
+          <Switch value={notifyReady} onValueChange={setNotifyReady} trackColor={{ true: '#0a0a0a', false: '#e5e7eb' }} thumbColor="#fff" />
+        </View>
+        <View style={styles.switchRow}>
+          <View style={styles.switchInfo}>
+            <Text style={styles.switchLabel}>Send pickup reminder</Text>
+            <Text style={styles.switchDesc}>Remind customer 2hrs before hold expires</Text>
+          </View>
+          <Switch value={notifyReminder} onValueChange={setNotifyReminder} trackColor={{ true: '#0a0a0a', false: '#e5e7eb' }} thumbColor="#fff" />
+        </View>
+
+        {/* Policies */}
+        <Text style={[styles.sectionTitle, { marginTop: 24 }]}>Pickup Instructions</Text>
+        <View style={styles.policyCard}>
+          {[
+            { icon: 'clock', text: `Hold duration: ${holdDuration} hours after notification` },
+            { icon: 'alert-circle', text: 'Late pickup: Item returned to inventory' },
+            { icon: 'x-circle', text: 'No-show: Deposit forfeited after 2nd missed pickup' },
+          ].map(p => (
+            <View key={p.text} style={styles.policyRow}>
+              <Feather name={p.icon as any} size={14} color="#6b7280" />
+              <Text style={styles.policyText}>{p.text}</Text>
+            </View>
+          ))}
+        </View>
+      </ScrollView>
+
+      <View style={styles.footer}>
+        <TouchableOpacity style={styles.saveBtn} onPress={() => router.back()}>
+          <Text style={styles.saveBtnText}>Save Settings</Text>
+        </TouchableOpacity>
+      </View>
+    </BaseContainer>
+  )
+}
+
+const styles = StyleSheet.create({
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 52, paddingBottom: 16 },
+  headerTitle: { fontSize: 18, fontWeight: '700', color: '#0a0a0a' },
+  scroll: { paddingHorizontal: 16, paddingBottom: 120 },
+  sectionTitle: { fontSize: 13, fontWeight: '700', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 12 },
+  branchRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 14, borderRadius: 14, paddingHorizontal: 8, marginHorizontal: -8, marginBottom: 4 },
+  branchRowActive: { backgroundColor: '#f9fafb' },
+  radio: { width: 20, height: 20, borderRadius: 10, borderWidth: 2, borderColor: '#d1d5db', alignItems: 'center', justifyContent: 'center' },
+  radioActive: { borderColor: '#0a0a0a' },
+  radioDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: '#0a0a0a' },
+  branchInfo: { flex: 1 },
+  branchName: { fontSize: 15, fontWeight: '600', color: '#0a0a0a' },
+  branchAddr: { fontSize: 12, color: '#6b7280', marginTop: 2 },
+  windowRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 14, borderRadius: 14, paddingHorizontal: 8, marginHorizontal: -8 },
+  windowRowActive: { backgroundColor: '#f9fafb' },
+  windowText: { fontSize: 14, color: '#374151' },
+  inputRow: { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: '#f9fafb', borderRadius: 12, paddingHorizontal: 16, paddingVertical: 12 },
+  numInput: { fontSize: 20, fontWeight: '700', color: '#0a0a0a', flex: 1 },
+  inputUnit: { fontSize: 14, color: '#6b7280' },
+  holdRow: { flexDirection: 'row', gap: 10 },
+  holdBtn: { flex: 1, paddingVertical: 12, borderRadius: 12, backgroundColor: '#f3f4f6', alignItems: 'center' },
+  holdBtnActive: { backgroundColor: '#0a0a0a' },
+  holdBtnText: { fontSize: 14, fontWeight: '600', color: '#374151' },
+  holdBtnTextActive: { color: '#fff' },
+  switchRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#f3f4f6', gap: 16 },
+  switchInfo: { flex: 1 },
+  switchLabel: { fontSize: 15, fontWeight: '600', color: '#0a0a0a', marginBottom: 2 },
+  switchDesc: { fontSize: 12, color: '#6b7280' },
+  policyCard: { backgroundColor: '#f9fafb', borderRadius: 14, padding: 14, gap: 10 },
+  policyRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
+  policyText: { fontSize: 13, color: '#374151', flex: 1, lineHeight: 19 },
+  footer: { position: 'absolute', bottom: 0, left: 0, right: 0, padding: 20, backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: '#f3f4f6' },
+  saveBtn: { backgroundColor: '#0a0a0a', paddingVertical: 16, borderRadius: 14, alignItems: 'center' },
+  saveBtnText: { fontSize: 16, fontWeight: '700', color: '#fff' },
+})
+```
+
+## File: app/screens/retailer/home/more/sizeDemandScreen.tsx
+```typescript
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Feather, Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
+import BaseContainer from '@/components/shared/BaseContainer';
+import { useSizeDemand, type StockRow } from '@/services/hooks/retailer/home/useSizeDemand';
+
+export default function SizeDemandScreen() {
+  const {
+    store,
+    dayRanges,
+    dayRange,
+    setDayRange,
+    genderCategories,
+    category,
+    setCategory,
+    categoryLabel,
+    topSize,
+    sizeBars,
+    maxSearches,
+    restockNote,
+    stockRows,
+  } = useSizeDemand();
+
+  return (
+    <BaseContainer backgroundColor="#F9FAFB" scrollable>
+      <View className="flex-1 pb-10">
+        {/* Header */}
+        <View style={s.header}>
+          <TouchableOpacity onPress={() => router.back()} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+            <Feather name="arrow-left" size={24} color="#111827" />
+          </TouchableOpacity>
+          <Text style={s.headerTitle}>Size Demand</Text>
+          <View style={{ width: 24 }} />
+        </View>
+
+        {/* Store + Radius selectors */}
+        <View style={s.selectorsRow}>
+          <TouchableOpacity style={s.selectorPill}>
+            <Feather name="home" size={16} color="#10B981" />
+            <Text style={s.selectorText} numberOfLines={1}>{store.name}</Text>
+            <Feather name="chevron-down" size={16} color="#6B7280" />
+          </TouchableOpacity>
+          <TouchableOpacity style={s.selectorPill}>
+            <Feather name="map-pin" size={16} color="#10B981" />
+            <Text style={s.selectorText}>{store.radiusMiles} mi</Text>
+            <Feather name="chevron-down" size={16} color="#6B7280" />
+          </TouchableOpacity>
+        </View>
+
+        {/* Day range tabs */}
+        <View style={s.dayTabsRow}>
+          {dayRanges.map((d) => (
+            <TouchableOpacity
+              key={d.key}
+              onPress={() => setDayRange(d.key)}
+              style={[s.dayTab, dayRange === d.key && s.dayTabActive]}
+            >
+              <Text style={[s.dayTabText, dayRange === d.key && s.dayTabTextActive]}>{d.label}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* Gender category tabs */}
+        <View style={s.categoryTabsRow}>
+          {genderCategories.map((c) => (
+            <TouchableOpacity
+              key={c}
+              onPress={() => setCategory(c)}
+              style={[s.categoryTab, category === c && s.categoryTabActive]}
+            >
+              <Text style={[s.categoryTabText, category === c && s.categoryTabTextActive]}>{c}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* Sub-category dropdown */}
+        <TouchableOpacity style={s.subCategoryPill}>
+          <Text style={s.subCategoryText}>{categoryLabel}</Text>
+          <Feather name="chevron-down" size={16} color="#6B7280" />
+        </TouchableOpacity>
+
+        <Text style={s.aggregatedText}>Aggregated nearby shopper activity · Updated today</Text>
+
+        {/* Top requested size card */}
+        <View style={s.topSizeCard}>
+          <View style={{ flex: 1 }}>
+            <Text style={s.topSizeLabel}>Top requested size</Text>
+            <Text style={s.topSizeValue}>{topSize.label}</Text>
+            <Text style={s.topSizeSub}>{topSize.searches} searches in the last {dayRange} days</Text>
+            <View style={s.topSizeTrendRow}>
+              <Feather name="arrow-up-right" size={13} color="#059669" />
+              <Text style={s.topSizeTrendText}>+{topSize.trendPct}% vs previous {dayRange} days</Text>
+            </View>
+          </View>
+          <View style={s.topSizeIconWrap}>
+            <Feather name="trending-up" size={22} color="#10B981" />
+          </View>
+        </View>
+
+        {/* Demand by size bar chart */}
+        <View style={s.section}>
+          <View style={s.sectionHeaderRow}>
+            <Text style={s.sectionTitle}>Demand by Size</Text>
+            <Text style={s.sectionSubtitle}>Shopper searches (last {dayRange} days)</Text>
+          </View>
+
+          <View style={s.chartCard}>
+            {sizeBars.map((bar) => (
+              <View key={bar.size} style={s.barRow}>
+                <Text style={s.barSizeLabel}>{bar.size}</Text>
+                <View style={s.barTrack}>
+                  <View
+                    style={[
+                      s.barFill,
+                      { width: `${Math.max((bar.searches / maxSearches) * 100, 6)}%` as any },
+                    ]}
+                  />
+                </View>
+                <Text style={s.barValueLabel}>{bar.searches}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+
+        {/* Restock recommendation */}
+        <View style={s.restockCard}>
+          <View style={s.restockIconWrap}>
+            <Ionicons name="bulb-outline" size={18} color="#059669" />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={s.restockTitle}>Restock recommendation</Text>
+            <Text style={s.restockBody}>{restockNote}</Text>
+            <Text style={s.restockFootnote}>Based on local searches and your current inventory.</Text>
+          </View>
+        </View>
+
+        {/* Stock vs Demand table */}
+        <View style={s.section}>
+          <Text style={s.sectionTitleStandalone}>Your Stock vs Demand</Text>
+          <View style={s.tableCard}>
+            <View style={s.tableHeaderRow}>
+              <Text style={[s.tableHeaderCell, s.colSize]}>Size</Text>
+              <Text style={[s.tableHeaderCell, s.colSearches]}>Searches{'\n'}(last {dayRange} days)</Text>
+              <Text style={[s.tableHeaderCell, s.colOnHand]}>On Hand{'\n'}(units)</Text>
+              <Text style={[s.tableHeaderCell, s.colSuggested]}>Suggested{'\n'}(units)</Text>
+              <Text style={[s.tableHeaderCell, s.colGap]}>Gap</Text>
+            </View>
+
+            {stockRows.map((row) => (
+              <StockTableRow key={row.size} row={row} />
+            ))}
+          </View>
+        </View>
+
+        {/* Actions */}
+        <View style={s.actionsContainer}>
+          <TouchableOpacity style={s.primaryBtn}>
+            <Text style={s.primaryBtnText}>View Products to Restock</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={s.secondaryBtn}>
+            <Text style={s.secondaryBtnText}>Add to Sourcing List</Text>
+          </TouchableOpacity>
+          <Text style={s.disclaimerText}>Suggestions are estimates, not guaranteed sales.</Text>
+        </View>
+      </View>
+    </BaseContainer>
+  );
+}
+
+function StockTableRow({ row }: { row: StockRow }) {
+  const gap = row.suggested - row.onHand;
+  const isCovered = gap <= 0;
+
+  return (
+    <View style={s.tableRow}>
+      <Text style={[s.tableCell, s.colSize, s.tableCellStrong]}>{row.size}</Text>
+      <Text style={[s.tableCell, s.colSearches]}>{row.searches}</Text>
+      <Text style={[s.tableCell, s.colOnHand]}>{row.onHand}</Text>
+      <Text style={[s.tableCell, s.colSuggested]}>{row.suggested}</Text>
+      <Text
+        style={[
+          s.tableCell,
+          s.colGap,
+          s.tableCellStrong,
+          { color: isCovered ? '#059669' : '#EA580C' },
+        ]}
+      >
+        {isCovered ? 'Covered' : `+${gap}`}
+      </Text>
+    </View>
+  );
+}
+
+const s = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 40,
+    paddingBottom: 8,
+  },
+  headerTitle: { fontSize: 18, fontWeight: '900', color: '#111827' },
+
+  selectorsRow: { flexDirection: 'row', gap: 10, paddingHorizontal: 16, marginTop: 8 },
+  selectorPill: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderRadius: 14,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  selectorText: { flex: 1, fontSize: 13, fontWeight: '700', color: '#111827' },
+
+  dayTabsRow: { flexDirection: 'row', gap: 8, paddingHorizontal: 16, marginTop: 14 },
+  dayTab: { flex: 1, backgroundColor: '#F3F4F6', paddingVertical: 10, borderRadius: 12, alignItems: 'center' },
+  dayTabActive: { backgroundColor: '#111827' },
+  dayTabText: { fontSize: 13, fontWeight: '700', color: '#4B5563' },
+  dayTabTextActive: { color: '#fff' },
+
+  categoryTabsRow: { flexDirection: 'row', gap: 8, paddingHorizontal: 16, marginTop: 8 },
+  categoryTab: { flex: 1, backgroundColor: '#F3F4F6', paddingVertical: 10, borderRadius: 12, alignItems: 'center' },
+  categoryTabActive: { backgroundColor: '#111827' },
+  categoryTabText: { fontSize: 13, fontWeight: '700', color: '#9CA3AF' },
+  categoryTabTextActive: { color: '#fff' },
+
+  subCategoryPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderRadius: 14,
+    marginHorizontal: 16,
+    marginTop: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+  },
+  subCategoryText: { fontSize: 13, fontWeight: '700', color: '#111827' },
+
+  aggregatedText: { textAlign: 'center', color: '#9CA3AF', fontSize: 11, marginTop: 10, marginBottom: 18 },
+
+  topSizeCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#ECFDF5',
+    marginHorizontal: 16,
+    padding: 18,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#D1FAE5',
+    marginBottom: 26,
+  },
+  topSizeLabel: { fontSize: 12, fontWeight: '800', color: '#059669' },
+  topSizeValue: { fontSize: 22, fontWeight: '900', color: '#111827', marginTop: 4 },
+  topSizeSub: { fontSize: 12, color: '#4B5563', marginTop: 4, fontWeight: '600' },
+  topSizeTrendRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 8 },
+  topSizeTrendText: { fontSize: 12, fontWeight: '800', color: '#059669' },
+  topSizeIconWrap: {
+    width: 48,
+    height: 48,
+    borderRadius: 14,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 12,
+  },
+
+  section: { paddingHorizontal: 16, marginBottom: 22 },
+  sectionHeaderRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 14 },
+  sectionTitle: { fontSize: 16, fontWeight: '900', color: '#111827' },
+  sectionTitleStandalone: { fontSize: 16, fontWeight: '900', color: '#111827', marginBottom: 14 },
+  sectionSubtitle: { fontSize: 10, color: '#9CA3AF', fontWeight: '600' },
+
+  chartCard: {
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 18,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+  },
+  barRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 14 },
+  barSizeLabel: { width: 34, fontSize: 13, fontWeight: '800', color: '#111827' },
+  barTrack: { flex: 1, height: 16, backgroundColor: '#F3F4F6', borderRadius: 8, overflow: 'hidden', marginHorizontal: 8 },
+  barFill: { height: '100%', backgroundColor: '#34D399', borderRadius: 8 },
+  barValueLabel: { width: 30, fontSize: 12, fontWeight: '700', color: '#6B7280', textAlign: 'right' },
+
+  restockCard: {
+    flexDirection: 'row',
+    backgroundColor: '#ECFDF5',
+    marginHorizontal: 16,
+    padding: 16,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: '#D1FAE5',
+    marginBottom: 26,
+  },
+  restockIconWrap: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  restockTitle: { fontSize: 13, fontWeight: '900', color: '#065F46' },
+  restockBody: { fontSize: 12, color: '#065F46', marginTop: 4, lineHeight: 17, fontWeight: '600' },
+  restockFootnote: { fontSize: 11, color: '#6B7280', marginTop: 6 },
+
+  tableCard: {
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+  },
+  tableHeaderRow: { flexDirection: 'row', paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },
+  tableHeaderCell: { fontSize: 10, fontWeight: '700', color: '#9CA3AF' },
+  tableRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#F9FAFB' },
+  tableCell: { fontSize: 13, color: '#374151', fontWeight: '600' },
+  tableCellStrong: { fontWeight: '800', color: '#111827' },
+  colSize: { flex: 0.9 },
+  colSearches: { flex: 1.3 },
+  colOnHand: { flex: 1.1 },
+  colSuggested: { flex: 1.2 },
+  colGap: { flex: 0.9, textAlign: 'right' },
+
+  actionsContainer: { paddingHorizontal: 16, marginTop: 4, gap: 10 },
+  primaryBtn: { backgroundColor: '#111827', paddingVertical: 16, borderRadius: 18, alignItems: 'center' },
+  primaryBtnText: { color: '#fff', fontSize: 14, fontWeight: '800' },
+  secondaryBtn: {
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    paddingVertical: 16,
+    borderRadius: 18,
+    alignItems: 'center',
+  },
+  secondaryBtnText: { color: '#111827', fontSize: 14, fontWeight: '800' },
+  disclaimerText: { textAlign: 'center', fontSize: 11, color: '#9CA3AF', marginTop: 4 },
+});
+```
+
+## File: app/screens/retailer/home/more/sourceInventoryScreen.tsx
+```typescript
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView } from 'react-native';
+import { Feather, MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
+import BaseContainer from '@/components/shared/BaseContainer';
+import { useSourceInventory, type SourceListing } from '@/services/hooks/retailer/home/useSourceInventory';
+
+export default function SourceInventoryScreen() {
+  const {
+    shipTo,
+    searchQuery,
+    setSearchQuery,
+    filters,
+    activeFilter,
+    setActiveFilter,
+    listings,
+    demandMatchCount,
+  } = useSourceInventory();
+
+  return (
+    <BaseContainer backgroundColor="#F9FAFB" scrollable>
+      <View className="flex-1 pb-10">
+        {/* Header */}
+        <View style={s.header}>
+          <Text style={s.headerTitle}>Source Inventory</Text>
+          <TouchableOpacity hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+            <Feather name="search" size={22} color="#111827" />
+          </TouchableOpacity>
+        </View>
+
+        {/* Ship to selector */}
+        <TouchableOpacity style={s.shipToPill}>
+          <Feather name="map-pin" size={14} color="#6B7280" />
+          <Text style={s.shipToText}>Ship to: {shipTo}</Text>
+          <Feather name="chevron-down" size={16} color="#6B7280" />
+        </TouchableOpacity>
+
+        {/* Search bar */}
+        <View style={s.searchBar}>
+          <Feather name="search" size={18} color="#9CA3AF" />
+          <TextInput
+            style={s.searchInput}
+            placeholder="Search product, SKU or supplier"
+            placeholderTextColor="#9CA3AF"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+        </View>
+
+        {/* Protected sourcing banner */}
+        <View style={s.protectedBanner}>
+          <View style={s.protectedIconWrap}>
+            <Feather name="shield" size={18} color="#fff" />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={s.protectedTitle}>Protected sourcing</Text>
+            <Text style={s.protectedSubtitle}>Verified suppliers · Secure payment · Order tracking</Text>
+          </View>
+        </View>
+
+        {/* Demand match alert */}
+        {demandMatchCount > 0 && (
+          <TouchableOpacity style={s.demandAlert} activeOpacity={0.85}>
+            <MaterialCommunityIcons name="chart-bar" size={18} color="#B45309" />
+            <Text style={s.demandAlertText}>
+              {demandMatchCount} listings match products your customers want
+            </Text>
+            <Text style={s.demandAlertLink}>View Matches →</Text>
+          </TouchableOpacity>
+        )}
+
+        {/* Filter chips */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={s.filterContainer}
+        >
+          {filters.map((filter) => (
+            <TouchableOpacity
+              key={filter}
+              onPress={() => setActiveFilter(filter)}
+              style={[s.filterPill, activeFilter === filter && s.filterPillActive]}
+            >
+              <Text style={[s.filterText, activeFilter === filter && s.filterTextActive]}>
+                {filter}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+
+        {/* Listings */}
+        <View style={{ paddingHorizontal: 16 }}>
+          {listings.map((listing) => (
+            <ListingCard key={listing.id} listing={listing} />
+          ))}
+
+          {listings.length === 0 && (
+            <View style={s.emptyState}>
+              <Feather name="search" size={28} color="#D1D5DB" />
+              <Text style={s.emptyStateText}>No listings match this filter yet.</Text>
+            </View>
+          )}
+        </View>
+
+        {/* Buyer protection footer */}
+        <View style={s.protectionFooter}>
+          <View style={s.protectionFooterHeader}>
+            <Feather name="shield" size={16} color="#059669" />
+            <Text style={s.protectionFooterTitle}>GoSNKR Buyer Protection</Text>
+          </View>
+          <Text style={s.protectionFooterBody}>
+            Keep payment and messages inside GoSNKR. Funds release after delivery confirmation.
+          </Text>
+          <TouchableOpacity>
+            <Text style={s.protectionFooterLink}>How protection works →</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </BaseContainer>
+  );
+}
+
+function ListingCard({ listing }: { listing: SourceListing }) {
+  return (
+    <View style={s.card}>
+      {/* Badge row */}
+      {(listing.isDemandMatch || listing.isBulkAvailable) && (
+        <View style={s.badgeRow}>
+          {listing.isDemandMatch && (
+            <View style={s.demandBadge}>
+              <Feather name="trending-up" size={11} color="#fff" />
+              <Text style={s.demandBadgeText}>Demand Match</Text>
+              <View style={s.newDot}>
+                <Text style={s.newDotText}>New</Text>
+              </View>
+            </View>
+          )}
+          {listing.isBulkAvailable && (
+            <View style={s.bulkBadge}>
+              <Feather name="package" size={11} color="#B45309" />
+              <Text style={s.bulkBadgeText}>Bulk Available</Text>
+            </View>
+          )}
+        </View>
+      )}
+
+      {/* Product row */}
+      <View style={s.productRow}>
+        <View style={s.imgPlaceholder}>
+          <MaterialCommunityIcons name="shoe-sneaker" size={30} color="#9CA3AF" />
+        </View>
+        <View style={{ flex: 1, marginLeft: 12 }}>
+          <Text style={s.productName}>{listing.productName}</Text>
+          <Text style={s.productSize}>{listing.sizeLabel}</Text>
+          <Text style={s.availabilityText}>
+            {listing.availableCount} available · Minimum {listing.minPairs} pair{listing.minPairs > 1 ? 's' : ''}
+          </Text>
+        </View>
+        <TouchableOpacity hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+          <Feather name="heart" size={20} color="#D1D5DB" />
+        </TouchableOpacity>
+      </View>
+
+      {/* Supplier row */}
+      <View style={s.supplierRow}>
+        <View style={s.avatar}>
+          <Text style={s.avatarText}>{listing.supplier.initials}</Text>
+        </View>
+        <View style={{ flex: 1, marginLeft: 10 }}>
+          <View style={s.supplierNameRow}>
+            <Text style={s.supplierName}>{listing.supplier.name}</Text>
+            <Feather name="check-circle" size={13} color="#10B981" />
+          </View>
+          <Text style={s.supplierMeta}>
+            {listing.supplier.rating} ★ · {listing.supplier.completedOrders} completed orders
+            {listing.supplier.respondsIn ? ` · Responds in ${listing.supplier.respondsIn}` : ''}
+          </Text>
+        </View>
+        <Feather name="chevron-right" size={18} color="#D1D5DB" />
+      </View>
+
+      {/* Pricing grid */}
+      <View style={s.pricingRow}>
+        <PricingCell label="Item" value={`$${listing.pricing.itemCost}`} />
+        <PricingCell label="Shipping + fees" value={`$${listing.pricing.shippingFees}`} />
+        <PricingCell label="Landed cost" value={`$${listing.pricing.landedCost}`} valueColor="#059669" />
+        <PricingCell label="Expected retail" value={`$${listing.pricing.expectedRetail}`} valueColor="#059669" />
+        <PricingCell label="Estimated margin" value={`${listing.pricing.estimatedMarginPct}%`} valueColor="#059669" />
+      </View>
+
+      {/* Fulfillment note */}
+      <View style={s.fulfillmentRow}>
+        <Feather
+          name={listing.fulfillment === 'ships' ? 'truck' : 'package'}
+          size={13}
+          color="#6B7280"
+        />
+        <Text style={s.fulfillmentText}>{listing.fulfillmentNote}</Text>
+      </View>
+
+      {/* Actions */}
+      <View style={s.cardActions}>
+        <TouchableOpacity style={s.quoteBtn}>
+          <Text style={s.quoteBtnText}>Request Quote</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={s.listingBtn} onPress={() => router.push('/')}>
+          <Text style={s.listingBtnText}>View Listing</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+}
+
+function PricingCell({
+  label,
+  value,
+  valueColor = '#111827',
+}: {
+  label: string;
+  value: string;
+  valueColor?: string;
+}) {
+  return (
+    <View style={s.pricingCell}>
+      <Text style={s.pricingLabel}>{label}</Text>
+      <Text style={[s.pricingValue, { color: valueColor }]}>{value}</Text>
+    </View>
+  );
+}
+
+const s = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 40,
+    paddingBottom: 12,
+  },
+  headerTitle: { fontSize: 20, fontWeight: '900', color: '#111827' },
+
+  shipToPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginHorizontal: 16,
+    marginBottom: 12,
+  },
+  shipToText: { fontSize: 13, color: '#4B5563', fontWeight: '600' },
+
+  searchBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    backgroundColor: '#F3F4F6',
+    marginHorizontal: 16,
+    borderRadius: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    marginBottom: 16,
+  },
+  searchInput: { flex: 1, fontSize: 14, color: '#111827' },
+
+  protectedBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#ECFDF5',
+    marginHorizontal: 16,
+    padding: 16,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: '#D1FAE5',
+    marginBottom: 12,
+  },
+  protectedIconWrap: {
+    width: 34,
+    height: 34,
+    borderRadius: 10,
+    backgroundColor: '#10B981',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  protectedTitle: { fontSize: 14, fontWeight: '900', color: '#065F46' },
+  protectedSubtitle: { fontSize: 12, color: '#047857', marginTop: 2, fontWeight: '600' },
+
+  demandAlert: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: '#FEFCE8',
+    marginHorizontal: 16,
+    padding: 14,
+    borderRadius: 14,
+    marginBottom: 16,
+  },
+  demandAlertText: { flex: 1, fontSize: 12, fontWeight: '700', color: '#854D0E' },
+  demandAlertLink: { fontSize: 12, fontWeight: '800', color: '#D97706' },
+
+  filterContainer: { paddingHorizontal: 16, gap: 8, paddingBottom: 18 },
+  filterPill: {
+    backgroundColor: '#F3F4F6',
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    borderRadius: 20,
+    marginRight: 8,
+  },
+  filterPillActive: { backgroundColor: '#111827' },
+  filterText: { fontSize: 13, fontWeight: '700', color: '#4B5563' },
+  filterTextActive: { color: '#fff' },
+
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 24,
+    padding: 18,
+    marginBottom: 16,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+  },
+  badgeRow: { flexDirection: 'row', gap: 8, marginBottom: 12 },
+  demandBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: '#10B981',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 10,
+  },
+  demandBadgeText: { color: '#fff', fontSize: 11, fontWeight: '800' },
+  newDot: { backgroundColor: 'rgba(255,255,255,0.25)', paddingHorizontal: 6, borderRadius: 6, marginLeft: 2 },
+  newDotText: { color: '#fff', fontSize: 9, fontWeight: '900' },
+  bulkBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: '#FEF3C7',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 10,
+  },
+  bulkBadgeText: { color: '#B45309', fontSize: 11, fontWeight: '800' },
+
+  productRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 16 },
+  imgPlaceholder: {
+    width: 64,
+    height: 64,
+    backgroundColor: '#F9FAFB',
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  productName: { fontSize: 15, fontWeight: '800', color: '#111827' },
+  productSize: { fontSize: 12, color: '#6B7280', marginTop: 2, fontWeight: '600' },
+  availabilityText: { fontSize: 11, color: '#9CA3AF', marginTop: 4, fontWeight: '600' },
+
+  supplierRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F9FAFB',
+    borderRadius: 16,
+    padding: 12,
+    marginBottom: 16,
+  },
+  avatar: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#111827',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  avatarText: { color: '#fff', fontWeight: '900', fontSize: 12 },
+  supplierNameRow: { flexDirection: 'row', alignItems: 'center', gap: 5 },
+  supplierName: { fontSize: 13, fontWeight: '800', color: '#111827' },
+  supplierMeta: { fontSize: 11, color: '#9CA3AF', marginTop: 2, fontWeight: '600' },
+
+  pricingRow: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: 14 },
+  pricingCell: { width: '33.33%', marginBottom: 10 },
+  pricingLabel: { fontSize: 10, color: '#9CA3AF', fontWeight: '600' },
+  pricingValue: { fontSize: 14, fontWeight: '800', marginTop: 2 },
+
+  fulfillmentRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 16 },
+  fulfillmentText: { fontSize: 12, color: '#6B7280', fontWeight: '600' },
+
+  cardActions: { flexDirection: 'row', gap: 10 },
+  quoteBtn: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#111827',
+    paddingVertical: 13,
+    borderRadius: 14,
+    alignItems: 'center',
+  },
+  quoteBtnText: { fontSize: 13, fontWeight: '800', color: '#111827' },
+  listingBtn: {
+    flex: 1,
+    backgroundColor: '#10B981',
+    paddingVertical: 13,
+    borderRadius: 14,
+    alignItems: 'center',
+  },
+  listingBtnText: { fontSize: 13, fontWeight: '800', color: '#fff' },
+
+  emptyState: { alignItems: 'center', paddingVertical: 40, gap: 10 },
+  emptyStateText: { color: '#9CA3AF', fontSize: 13, fontWeight: '600' },
+
+  protectionFooter: {
+    backgroundColor: '#ECFDF5',
+    marginHorizontal: 16,
+    padding: 16,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: '#D1FAE5',
+    marginTop: 4,
+  },
+  protectionFooterHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 6 },
+  protectionFooterTitle: { fontSize: 13, fontWeight: '900', color: '#065F46' },
+  protectionFooterBody: { fontSize: 12, color: '#047857', lineHeight: 17, fontWeight: '600' },
+  protectionFooterLink: { fontSize: 12, fontWeight: '800', color: '#059669', marginTop: 8 },
+});
+```
+
+## File: app/screens/retailer/home/notifications/notificationsScreen.tsx
+```typescript
+import React, { useCallback } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import { Feather } from '@expo/vector-icons';
+import { router } from 'expo-router';
+
+import BaseContainer from '@/components/shared/BaseContainer';
+import { NotificationCard } from '@/components/retailer/home/notifications/NotificationCard';
+import NotificationFilterChips from '@/components/retailer/home/notifications/NotificationFilterChips';
+import LocationDropdown from '@/components/retailer/home/notifications/LocationDropdown';
+import {
+  useNotifications,
+  FILTERS,
+  LOCATIONS,
+  NotificationItem,
+  NotificationAction,
+} from '@/services/hooks/retailer/home/useNotifications';
+
+export default function NotificationsScreen() {
+  const {
+    activeFilter,
+    setActiveFilter,
+    location,
+    setLocation,
+    counts,
+    sections,
+    markAsRead,
+    markAllRead,
+    resolve,
+    hasUnread,
+    isEmpty,
+  } = useNotifications();
+
+  const navigate = useCallback(
+    (route?: string, params?: Record<string, string>) => {
+      if (!route) return;
+      router.push(params ? { pathname: route as any, params } : (route as any));
+    },
+    [],
+  );
+
+  const handleCardPress = useCallback(
+    (item: NotificationItem) => {
+      markAsRead(item.id);
+      navigate(item.route, item.params);
+    },
+    [markAsRead, navigate],
+  );
+
+  const handleActionPress = useCallback(
+    (item: NotificationItem, action: NotificationAction) => {
+      markAsRead(item.id);
+
+      // Non-navigation actions (state changes on the order/hold)
+      if (action.key === 'confirm-order' || action.key === 'prepare-item') {
+        // TODO: call the real mutation here (e.g. useConfirmOrderMutation)
+        resolve(item.id);
+        return;
+      }
+
+      navigate(action.route, action.params);
+    },
+    [markAsRead, resolve, navigate],
+  );
+
+  return (
+    <BaseContainer backgroundColor="#fff">
+      <View style={styles.container}>
+        {/* ── Header ── */}
+        <View style={styles.header}>
+          <Text style={styles.title}>Notifications</Text>
+
+          <View style={styles.headerRight}>
+            <TouchableOpacity
+              onPress={markAllRead}
+              disabled={!hasUnread}
+              activeOpacity={0.6}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
+              <Text style={[styles.markRead, !hasUnread && styles.markReadDisabled]}>
+                Mark all read
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() =>
+                router.push('/screens/discover/notificationsSettingsScreen' as any)
+              }
+              activeOpacity={0.6}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
+              <Feather name="settings" size={22} color="#111" />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* ── Location dropdown ── */}
+        <View style={styles.locationWrap}>
+          <LocationDropdown value={location} options={LOCATIONS} onChange={setLocation} />
+        </View>
+
+        {/* ── Filter chips ── */}
+        <NotificationFilterChips
+          filters={FILTERS}
+          active={activeFilter}
+          counts={counts}
+          onChange={setActiveFilter}
+        />
+
+        {/* ── Sections ── */}
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          {isEmpty ? (
+            <View style={styles.empty}>
+              <View style={styles.emptyIcon}>
+                <Feather name="bell-off" size={26} color="#9CA3AF" />
+              </View>
+              <Text style={styles.emptyTitle}>You're all caught up</Text>
+              <Text style={styles.emptySub}>
+                New orders, holds, refunds and stock alerts will show up here.
+              </Text>
+            </View>
+          ) : (
+            sections.map(section => (
+              <View key={section.title}>
+                <Text style={styles.sectionTitle}>{section.title}</Text>
+                {section.data.map(item => (
+                  <NotificationCard
+                    key={item.id}
+                    item={item}
+                    onCardPress={handleCardPress}
+                    onActionPress={handleActionPress}
+                  />
+                ))}
+              </View>
+            ))
+          )}
+        </ScrollView>
+      </View>
+    </BaseContainer>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, paddingTop: 40 },
+
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 12,
+  },
+  title: { fontSize: 28, fontWeight: '900', color: '#0A0A0A', letterSpacing: -0.5 },
+  headerRight: { flexDirection: 'row', alignItems: 'center', gap: 16 },
+  markRead: { fontSize: 14, fontWeight: '700', color: '#00C853' },
+  markReadDisabled: { color: '#A7E8C3' },
+
+  locationWrap: { paddingHorizontal: 16, paddingBottom: 12 },
+
+  scroll: { flex: 1 },
+  scrollContent: { paddingTop: 14, paddingBottom: 120 },
+
+  sectionTitle: {
+    fontSize: 17,
+    fontWeight: '800',
+    color: '#0A0A0A',
+    paddingHorizontal: 16,
+    marginTop: 8,
+    marginBottom: 10,
+  },
+
+  empty: { alignItems: 'center', paddingTop: 80, paddingHorizontal: 40 },
+  emptyIcon: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: '#F3F4F6',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 14,
+  },
+  emptyTitle: { fontSize: 16, fontWeight: '800', color: '#111' },
+  emptySub: { fontSize: 13, color: '#6B7280', textAlign: 'center', marginTop: 6, lineHeight: 19 },
+});
+```
+
+## File: app/screens/retailer/home/product/AddProductScreen.tsx
+```typescript
+import React from 'react';
+import { ScrollView, View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import ProductHeader from '@/components/retailer/home/addproduct/productHeader';
+import ProductBarcodeScan from '@/components/retailer/home/addproduct/productBarcodeScan';
+import OrDivider from '@/components/retailer/home/addproduct/orDivider';
+import ProductImageUpload from '@/components/retailer/home/addproduct/productImageUpload';
+import ProductFoundCard from '@/components/retailer/home/addproduct/productFoundCard';
+import ProductSizeTable from '@/components/retailer/home/addproduct/productSizeTable';
+import { useAddProduct } from '@/services/hooks/retailer/home/useAddProduct';
+import BaseContainer from '@/components/shared/BaseContainer';
+
+interface InputFieldProps {
+    placeholder: string;
+    value: string;
+    onChangeText: (v: string) => void;
+}
+
+const InputField = ({ placeholder, value, onChangeText }: InputFieldProps) => (
+    <View style={styles.inputWrapper}>
+        <TextInput
+            style={styles.input}
+            placeholder={placeholder}
+            value={value}
+            onChangeText={onChangeText}
+            placeholderTextColor="#9CA3AF"
+            autoCorrect={false}
+            underlineColorAndroid="transparent"
+        />
+    </View>
+);
+
+const AddProductScreen = () => {
+    const {
+        form,
+        sizes,
+        scannedFound,
+        updateField,
+        updateSizeQty,
+        addSize,
+        removeSize,
+        openScanner,
+        enterBarcodeManually,
+        handleSave,
+    } = useAddProduct();
+
+    return (
+        <BaseContainer backgroundColor='#fff'>
+            <View style={styles.container}>
+                <ProductHeader />
+
+                <ScrollView
+                    showsVerticalScrollIndicator={false}
+                    keyboardShouldPersistTaps="handled"
+                    contentContainerStyle={styles.scrollContent}
+                >
+                    <ProductBarcodeScan
+                        onOpenScanner={openScanner}
+                        onEnterManually={enterBarcodeManually}
+                    />
+
+                    <OrDivider />
+
+                    <ProductImageUpload />
+
+                    {scannedFound && <ProductFoundCard productName={form.name} />}
+
+                    <Text style={styles.sectionLabel}>PRODUCT DETAILS</Text>
+
+                    <InputField
+                        placeholder="Product Name"
+                        value={form.name}
+                        onChangeText={(v) => updateField('name', v)}
+                    />
+                    <InputField
+                        placeholder="Brand"
+                        value={form.brand}
+                        onChangeText={(v) => updateField('brand', v)}
+                    />
+                    <InputField
+                        placeholder="Category"
+                        value={form.category}
+                        onChangeText={(v) => updateField('category', v)}
+                    />
+                    <InputField
+                        placeholder="Colorway"
+                        value={form.colorway}
+                        onChangeText={(v) => updateField('colorway', v)}
+                    />
+                    <InputField
+                        placeholder="SKU / Style Code"
+                        value={form.sku}
+                        onChangeText={(v) => updateField('sku', v)}
+                    />
+
+                    <Text style={styles.sectionLabel}>SIZES & PRICING</Text>
+                    <ProductSizeTable
+                        sizes={sizes}
+                        onUpdateQty={updateSizeQty}
+                        onRemove={removeSize}
+                        onAddSize={addSize}
+                    />
+
+                    <Text style={styles.sectionLabel}>AVAILABILITY</Text>
+                    <View style={styles.availabilityRow}>
+                        {(['Active', 'Coming Soon'] as const).map((status) => (
+                            <TouchableOpacity
+                                key={status}
+                                style={[
+                                    styles.availabilityItem,
+                                    form.availability === status && styles.activeItem
+                                ]}
+                                onPress={() => updateField('availability', status)}
+                            >
+                                <Text style={[
+                                    styles.availabilityText,
+                                    form.availability === status && styles.activeAvailabilityText
+                                ]}>
+                                    {status} {form.availability === status && '✓'}
+                                </Text>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+
+                    <TouchableOpacity style={styles.saveBtn} onPress={handleSave}>
+                        <Text style={styles.saveBtnText}>Save Product</Text>
+                    </TouchableOpacity>
+                </ScrollView>
+            </View>
+        </BaseContainer>
+    );
+};
+
+const styles = StyleSheet.create({
+    container: { flex: 1, paddingTop: 40 },
+    scrollContent: { paddingBottom: 100 },
+    sectionLabel: {
+        fontSize: 10,
+        fontWeight: '800',
+        color: '#9CA3AF',
+        marginLeft: 20,
+        marginTop: 24,
+        marginBottom: 8,
+        letterSpacing: 1
+    },
+    inputWrapper: {
+        backgroundColor: '#fff',
+        marginHorizontal: 16,
+        marginBottom: 8,
+        borderRadius: 16,
+        borderWidth: 1,
+        borderColor: '#F3F4F6',
+        paddingHorizontal: 16
+    },
+    input: {
+        height: 50,
+        fontSize: 15,
+        fontWeight: '500',
+        color: '#111'
+    },
+    availabilityRow: {
+        flexDirection: 'row',
+        paddingHorizontal: 16,
+        gap: 12,
+    },
+    availabilityItem: {
+        flex: 1,
+        backgroundColor: '#fff',
+        height: 50,
+        borderRadius: 14,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: '#F3F4F6'
+    },
+    activeItem: {
+        borderColor: '#22C55E',
+        backgroundColor: '#F0FDF4'
+    },
+    availabilityText: {
+        fontSize: 13,
+        fontWeight: '700',
+        color: '#4B5563'
+    },
+    activeAvailabilityText: {
+        color: '#22C55E'
+    },
+    saveBtn: {
+        backgroundColor: '#111',
+        margin: 16,
+        height: 56,
+        borderRadius: 16,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 32
+    },
+    saveBtnText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: '800'
+    },
+});
+
+export default AddProductScreen;
 ```
 
 ## File: app/screens/store/sellToStoreScreen.tsx
@@ -37823,18 +34443,26 @@ export default SellToStoreScreen
 ## File: app/tabs/mapScreen.tsx
 ```typescript
 // screens/MapScreen.tsx
-import MapSearchBar from "@/components/map/MapSearchBar";
+import MapTopBar from "@/components/map/MapTopBar";
+import {
+  LocateButton,
+  SearchThisAreaPill,
+  StoreCountPill,
+} from "@/components/map/MapFloatingControls";
 import StoreBottomSheet from "@/components/map/StoreBottomSheet";
 import StoreMarker from "@/components/map/StoreMarker";
 import FilterModal from "@/components/search/FilterModal";
-import { Store, useMap } from "@/services/hooks/map/useMap";
+import { GEOAPIFY_TILE_URL } from "@/services/hooks/map/geoapifyTiles";
+import { useMap } from "@/services/hooks/map/useMap";
+import { useRouter } from "expo-router";
 import React, { useRef } from "react";
-import { StatusBar, Text, TouchableOpacity, View } from "react-native";
-import MapView, { PROVIDER_DEFAULT } from "react-native-maps";
+import { StatusBar, View } from "react-native";
+import MapView, { UrlTile } from "react-native-maps";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const MapScreen = () => {
   const insets = useSafeAreaInsets();
+  const router = useRouter();
   const mapRef = useRef<MapView>(null);
 
   const {
@@ -37856,7 +34484,14 @@ const MapScreen = () => {
     handleCloseStore,
     handleToggleFollow,
     isFetchingLocation,
+    locationLabel,
     handleGoToCurrentLocation,
+    mySizes,
+    isOpenNow,
+    toggleOpenNow,
+    radiusLabel,
+    cycleRadius,
+    handleSearchThisArea,
   } = useMap();
 
   const handleLocationPress = async () => {
@@ -37866,166 +34501,73 @@ const MapScreen = () => {
     }
   };
 
-  const handleSelectSuggestion = (store: Store) => {
-    handleClearQuery();
-    mapRef.current?.animateToRegion(
-      {
-        latitude: store.latitude,
-        longitude: store.longitude,
-        latitudeDelta: 0.008,
-        longitudeDelta: 0.008,
-      },
-      600,
-    );
-    handleSelectStore(store);
+  const handleListView = () => {
+    router.push("/screens/discover/storeListScreen" as any);
   };
 
+  // Top bar renders as a normal (non-absolute) block, so we measure its
+  // rough height to position the floating pills relative to the map below it.
+  const TOP_BAR_HEIGHT = 168;
+
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: "#fff" }}>
       <StatusBar barStyle="dark-content" />
 
-      {/* ── Full-screen map ── */}
-      <MapView
-        ref={mapRef}
-        style={{ flex: 1 }}
-        provider={PROVIDER_DEFAULT}
-        region={region}
-        onRegionChangeComplete={setRegion}
-        showsUserLocation
-        showsMyLocationButton={false}
-        showsCompass={false}
-        onPress={handleClearQuery}
-      >
-        {filteredStores.map((store) => (
-          <StoreMarker
-            key={store.id}
-            store={store}
-            isSelected={selectedStore?.id === store.id}
-            onPress={handleSelectStore}
-          />
-        ))}
-      </MapView>
-
-      {/* ── Search bar ── */}
-      <View
-        style={{
-          position: "absolute",
-          top: insets.top + 12,
-          left: 16,
-          right: 16,
-          zIndex: 20,
-        }}
-      >
-        <MapSearchBar
-          value={query}
-          onChangeText={handleQueryChange}
+      <View style={{ paddingTop: insets.top }}>
+        <MapTopBar
+          locationLabel={locationLabel}
+          onLocationPillPress={handleLocationPress}
+          query={query}
+          onChangeQuery={handleQueryChange}
           onClear={handleClearQuery}
           onFilterPress={handleOpenFilterModal}
-          onLocationPress={handleLocationPress}
-          onSelectSuggestion={handleSelectSuggestion}
-          suggestions={filteredStores}
           activeFilterCount={activeFilterCount}
-          isFetchingLocation={isFetchingLocation}
+          mySizesLabel={mySizes}
+          isOpenNow={isOpenNow}
+          onToggleOpenNow={toggleOpenNow}
+          radiusLabel={radiusLabel}
+          onRadiusPress={cycleRadius}
         />
       </View>
 
-      {/* ── Nearby pill ── */}
-      {!selectedStore && (
-        <View
-          style={{ position: "absolute", left: 16, bottom: 110, zIndex: 5 }}
+      {/* ── Map fills the remaining space ── */}
+      <View style={{ flex: 1 }}>
+        <MapView
+          ref={mapRef}
+          style={{ flex: 1 }}
+          region={region}
+          onRegionChangeComplete={setRegion}
+          showsUserLocation
+          showsMyLocationButton={false}
+          showsCompass={false}
+          onPress={handleClearQuery}
         >
-          <View
-            style={{
-              backgroundColor: "#FFFFFF",
-              borderRadius: 12,
-              paddingHorizontal: 14,
-              paddingVertical: 10,
-              shadowColor: "#000",
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.08,
-              shadowRadius: 8,
-              elevation: 4,
-            }}
-          >
-            <Text
-              style={{
-                fontSize: 14,
-                fontWeight: "700",
-                color: "#0F0F0F",
-                textAlign: "center",
-              }}
-            >
-              {nearbyCount}
-            </Text>
-            <Text style={{ fontSize: 11, color: "#8A8A9A", marginTop: 1 }}>
-              stores{"\n"}nearby
-            </Text>
-          </View>
-        </View>
-      )}
+          {/* Geoapify base tiles — must be first child so markers render on top */}
+          <UrlTile urlTemplate={GEOAPIFY_TILE_URL} maximumZ={19} flipY={false} />
 
-      {/* ── Zoom controls ── */}
-      {!selectedStore && (
-        <View
-          style={{
-            position: "absolute",
-            right: 16,
-            bottom: 110,
-            zIndex: 5,
-            gap: 1,
-          }}
-        >
-          {["+", "−"].map((symbol) => (
-            <TouchableOpacity
-              key={symbol}
-              activeOpacity={0.8}
-              onPress={() => {
-                const delta = symbol === "+" ? 0.5 : 2;
-                mapRef.current?.animateToRegion(
-                  {
-                    ...region,
-                    latitudeDelta: region.latitudeDelta / delta,
-                    longitudeDelta: region.longitudeDelta / delta,
-                  },
-                  300,
-                );
-              }}
-              style={{
-                width: 44,
-                height: 44,
-                backgroundColor: "#FFFFFF",
-                alignItems: "center",
-                justifyContent: "center",
-                borderTopLeftRadius: symbol === "+" ? 12 : 0,
-                borderTopRightRadius: symbol === "+" ? 12 : 0,
-                borderBottomLeftRadius: symbol === "−" ? 12 : 0,
-                borderBottomRightRadius: symbol === "−" ? 12 : 0,
-                shadowColor: "#000",
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.08,
-                shadowRadius: 6,
-                elevation: 3,
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 22,
-                  color: "#0F0F0F",
-                  fontWeight: "300",
-                  lineHeight: 26,
-                }}
-              >
-                {symbol}
-              </Text>
-            </TouchableOpacity>
+          {filteredStores.map((store) => (
+            <StoreMarker
+              key={store.id}
+              store={store}
+              isSelected={selectedStore?.id === store.id}
+              onPress={handleSelectStore}
+            />
           ))}
-        </View>
-      )}
+        </MapView>
 
-      {/* ── Bottom sheet — rendered DIRECTLY in root View, no wrapper ──
-            This is critical: the old <View pointerEvents="box-none"> wrapper
-            had no height, so StoreBottomSheet's absolute children were
-            positioning against a 0-height box, breaking scroll and tap-to-close. ── */}
+        {/* ── "Search this area" pill ── */}
+        <SearchThisAreaPill onPress={handleSearchThisArea} top={12} />
+
+        {/* ── Bottom-left store count / list view pill, bottom-right locate button ── */}
+        {!selectedStore && (
+          <>
+            <StoreCountPill count={nearbyCount} onListView={handleListView} bottom={20} />
+            <LocateButton onPress={handleLocationPress} isLoading={isFetchingLocation} bottom={20} />
+          </>
+        )}
+      </View>
+
+      {/* ── Bottom sheet ── */}
       {selectedStore && (
         <StoreBottomSheet
           store={selectedStore}
@@ -38448,27 +34990,26 @@ export default RestockWatchlistPairs
 import { Store } from '@/services/hooks/map/useMap'
 import { Feather } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
-import React, { useCallback, useEffect, useMemo, useRef } from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 import {
   Animated,
   Dimensions,
   Easing,
+  Linking,
   PanResponder,
   Pressable,
-  ScrollView,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import StoreProductCard from './StoreProductCard'
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window')
 const GREEN = '#22C55E'
+const DARK = '#0F0F0F'
 const TAB_BAR_HEIGHT = 60
-const DRAG_HANDLE_HEIGHT = 28
-const BUTTON_HEIGHT = 54
-const SHEET_VISIBLE = SCREEN_HEIGHT * 0.8
+const DRAG_HANDLE_HEIGHT = 24
+const SHEET_HEIGHT = SCREEN_HEIGHT * 0.34
 
 interface StoreBottomSheetProps {
   store: Store | null
@@ -38476,24 +35017,17 @@ interface StoreBottomSheetProps {
   onToggleFollow: (storeId: string) => void
 }
 
-const StoreBottomSheet = ({
-  store,
-  onClose,
-  onToggleFollow,
-}: StoreBottomSheetProps) => {
+const StoreBottomSheet = ({ store, onClose, onToggleFollow }: StoreBottomSheetProps) => {
   const insets = useSafeAreaInsets()
   const router = useRouter()
 
   const tabBarTotal = TAB_BAR_HEIGHT + insets.bottom
-  const sheetFullHeight = SHEET_VISIBLE
-  const footerTotal = BUTTON_HEIGHT + 24 + tabBarTotal
-  const scrollHeight = SHEET_VISIBLE - DRAG_HANDLE_HEIGHT - footerTotal
-  const translateY = useRef(new Animated.Value(sheetFullHeight)).current
+  const translateY = useRef(new Animated.Value(SHEET_HEIGHT)).current
 
   const show = useCallback(() => {
     Animated.timing(translateY, {
       toValue: 0,
-      duration: 340,
+      duration: 320,
       easing: Easing.out(Easing.cubic),
       useNativeDriver: true,
     }).start()
@@ -38502,33 +35036,19 @@ const StoreBottomSheet = ({
   const hide = useCallback(
     (cb?: () => void) => {
       Animated.timing(translateY, {
-        toValue: sheetFullHeight,
-        duration: 280,
+        toValue: SHEET_HEIGHT,
+        duration: 260,
         easing: Easing.in(Easing.cubic),
         useNativeDriver: true,
       }).start(cb)
     },
-    [sheetFullHeight, translateY],
+    [translateY],
   )
 
   useEffect(() => {
-    if (store) {
-      show()
-    } else {
-      hide()
-    }
+    if (store) show()
+    else hide()
   }, [hide, show, store])
-
-  const sectionLabel = useMemo(() => {
-    if (!store) return 'Available Now'
-
-    const hasSneakers = store.products.some((product) => product.productType === 'Sneakers')
-    const hasClothing = store.products.some((product) => product.productType === 'Clothing')
-
-    if (hasSneakers && hasClothing) return 'Sneakers & Clothing Nearby'
-    if (hasClothing) return 'Clothing Nearby'
-    return 'Sneakers Nearby'
-  }, [store])
 
   const panResponder = useRef(
     PanResponder.create({
@@ -38538,17 +35058,17 @@ const StoreBottomSheet = ({
         if (dy > 0) translateY.setValue(dy)
       },
       onPanResponderRelease: (_, { dy, vy }) => {
-        if (dy > SHEET_VISIBLE * 0.3 || vy > 0.8) {
+        if (dy > SHEET_HEIGHT * 0.3 || vy > 0.8) {
           Animated.timing(translateY, {
-            toValue: sheetFullHeight,
-            duration: 240,
+            toValue: SHEET_HEIGHT,
+            duration: 220,
             easing: Easing.in(Easing.cubic),
             useNativeDriver: true,
           }).start(onClose)
         } else {
           Animated.timing(translateY, {
             toValue: 0,
-            duration: 240,
+            duration: 220,
             easing: Easing.out(Easing.cubic),
             useNativeDriver: true,
           }).start()
@@ -38559,17 +35079,25 @@ const StoreBottomSheet = ({
 
   if (!store) return null
 
+  const initials = store.name.slice(0, 1).toUpperCase()
+  // Rough "open/closed" derivation from the existing hours string, e.g. "Open until 8 PM"
+  const isOpen = store.hours.toLowerCase().startsWith('open')
+  const closesLabel = store.hours.replace(/^open until\s*/i, '')
+
+  const handleDirections = useCallback(() => {
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${store.latitude},${store.longitude}`
+    Linking.openURL(url).catch(() => {})
+  }, [store])
+
+  const handleViewInventory = useCallback(() => {
+    router.push(`/screens/discover/storeListScreen?storeId=${store.id}` as any)
+  }, [router, store])
+
   return (
     <>
       <Pressable
         onPress={() => hide(onClose)}
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-        }}
+        style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
       />
 
       <Animated.View
@@ -38578,7 +35106,6 @@ const StoreBottomSheet = ({
           bottom: 0,
           left: 0,
           right: 0,
-          height: SHEET_VISIBLE,
           backgroundColor: '#FFFFFF',
           borderTopLeftRadius: 24,
           borderTopRightRadius: 24,
@@ -38588,175 +35115,109 @@ const StoreBottomSheet = ({
           shadowRadius: 16,
           elevation: 20,
           transform: [{ translateY }],
+          paddingBottom: tabBarTotal + 20,
         }}
       >
         <View
           {...panResponder.panHandlers}
-          style={{
-            height: DRAG_HANDLE_HEIGHT,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
+          style={{ height: DRAG_HANDLE_HEIGHT, alignItems: 'center', justifyContent: 'center' }}
         >
-          <View
-            style={{
-              width: 36,
-              height: 4,
-              borderRadius: 2,
-              backgroundColor: '#E0E0EA',
-            }}
-          />
+          <View style={{ width: 36, height: 4, borderRadius: 2, backgroundColor: '#E0E0EA' }} />
         </View>
 
-        <ScrollView
-          style={{ height: scrollHeight }}
-          contentContainerStyle={{ paddingBottom: 8 }}
-          showsVerticalScrollIndicator={false}
-          scrollEnabled
-          bounces
-          keyboardShouldPersistTaps="handled"
-        >
+        <View style={{ flexDirection: 'row', alignItems: 'flex-start', paddingHorizontal: 20, gap: 14 }}>
+          {/* Store logo square */}
           <View
             style={{
-              flexDirection: 'row',
-              alignItems: 'flex-start',
-              justifyContent: 'space-between',
-              paddingHorizontal: 20,
-              paddingTop: 4,
-              paddingBottom: 12,
-            }}
-          >
-            <View style={{ flex: 1, marginRight: 12 }}>
-              <Text
-                style={{
-                  fontSize: 22,
-                  fontWeight: '800',
-                  color: '#0F0F0F',
-                  letterSpacing: -0.5,
-                }}
-              >
-                {store.name}
-              </Text>
-              <Text style={{ fontSize: 13, color: '#8A8A9A', marginTop: 3 }}>
-                {store.distance} • {store.hours}
-              </Text>
-            </View>
-
-            <TouchableOpacity
-              onPress={() => onToggleFollow(store.id)}
-              activeOpacity={0.8}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: 5,
-                paddingHorizontal: 14,
-                paddingVertical: 9,
-                borderRadius: 100,
-                backgroundColor: store.isFollowing ? '#0F0F0F' : '#F5F5F7',
-              }}
-            >
-              {store.isFollowing && (
-                <Feather name="check" size={13} color="#fff" />
-              )}
-              <Text
-                style={{
-                  fontSize: 13,
-                  fontWeight: '700',
-                  color: store.isFollowing ? '#FFFFFF' : '#0F0F0F',
-                }}
-              >
-                {store.isFollowing ? 'Following' : 'Follow'}
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          <View
-            style={{
-              height: 1,
-              backgroundColor: '#F0F0F5',
-              marginHorizontal: 20,
-            }}
-          />
-
-          <View
-            style={{
-              flexDirection: 'row',
+              width: 52,
+              height: 52,
+              borderRadius: 14,
+              backgroundColor: GREEN,
               alignItems: 'center',
-              gap: 8,
-              paddingHorizontal: 20,
-              paddingVertical: 12,
-              flexWrap: 'wrap',
+              justifyContent: 'center',
             }}
           >
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-              <Feather name="map-pin" size={12} color="#8A8A9A" />
-              <Text style={{ fontSize: 13, color: '#3A3A4A', fontWeight: '500' }}>
-                {store.tag}
-              </Text>
-            </View>
-            <Text style={{ color: '#D0D0DF' }}>•</Text>
-            <Text style={{ fontSize: 13, fontWeight: '700', color: GREEN }}>
-              {store.stock} items available
+            <Text style={{ color: '#fff', fontSize: 20, fontWeight: '800' }}>{initials}</Text>
+          </View>
+
+          <View style={{ flex: 1 }}>
+            <Text style={{ fontSize: 18, fontWeight: '800', color: DARK }}>{store.name}</Text>
+            <Text style={{ fontSize: 13, color: '#8A8A9A', marginTop: 2 }}>
+              {store.tag} · {store.distance}
             </Text>
-            <Text style={{ color: '#D0D0DF' }}>•</Text>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
-              <Text style={{ fontSize: 13 }}>★</Text>
-              <Text style={{ fontSize: 13, fontWeight: '700', color: '#0F0F0F' }}>
-                {store.rating}
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 4 }}>
+              <View
+                style={{
+                  width: 6,
+                  height: 6,
+                  borderRadius: 3,
+                  backgroundColor: isOpen ? GREEN : '#EF4444',
+                }}
+              />
+              <Text style={{ fontSize: 13, fontWeight: '700', color: isOpen ? GREEN : '#EF4444' }}>
+                {isOpen ? 'Open' : 'Closed'}
               </Text>
+              {isOpen && closesLabel ? (
+                <Text style={{ fontSize: 13, color: '#8A8A9A' }}>· Closes {closesLabel}</Text>
+              ) : null}
             </View>
           </View>
 
-          <View style={{ paddingHorizontal: 20, marginBottom: 10 }}>
-            <Text
-              style={{
-                fontSize: 11,
-                fontWeight: '700',
-                color: '#8A8A9A',
-                letterSpacing: 1,
-                textTransform: 'uppercase',
-              }}
-            >
-              {sectionLabel}
-            </Text>
-          </View>
-
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            nestedScrollEnabled
-            contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 4 }}
-          >
-            {store.products.map((product) => (
-              <StoreProductCard key={product.id} product={product} />
-            ))}
-          </ScrollView>
-        </ScrollView>
-
-        <View
-          style={{
-            paddingHorizontal: 40,
-            paddingTop: 12,
-            paddingBottom: tabBarTotal + 24,
-            backgroundColor: '#FFFFFF',
-          }}
-        >
           <TouchableOpacity
-            onPress={() => router.push('/')}
+            onPress={() => onToggleFollow(store.id)}
+            activeOpacity={0.8}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <Feather
+              name={store.isFollowing ? 'heart' : 'heart'}
+              size={20}
+              color={store.isFollowing ? GREEN : '#D1D5DB'}
+            />
+          </TouchableOpacity>
+        </View>
+
+        <View style={{ paddingHorizontal: 20, marginTop: 14 }}>
+          <Text style={{ fontSize: 14, fontWeight: '700', color: DARK }}>
+            {store.stock} products match your sizes
+          </Text>
+          <Text style={{ fontSize: 12, color: '#9CA3AF', marginTop: 2 }}>
+            Inventory updated 5 min ago
+          </Text>
+        </View>
+
+        <View style={{ flexDirection: 'row', gap: 10, paddingHorizontal: 20, marginTop: 18 }}>
+          <TouchableOpacity
+            onPress={handleViewInventory}
             activeOpacity={0.85}
             style={{
-              height: BUTTON_HEIGHT,
-              borderRadius: 100,
-              backgroundColor: '#0F0F0F',
+              flex: 1,
+              height: 50,
+              borderRadius: 14,
+              backgroundColor: GREEN,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Text style={{ fontSize: 15, fontWeight: '700', color: '#fff' }}>View inventory</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={handleDirections}
+            activeOpacity={0.85}
+            style={{
+              flex: 1,
+              height: 50,
+              borderRadius: 14,
+              borderWidth: 1.5,
+              borderColor: '#E5E7EB',
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'center',
               gap: 6,
             }}
           >
-            <Text style={{ fontSize: 16, fontWeight: '700', color: '#FFFFFF' }}>
-              View full store
-            </Text>
+            <Feather name="navigation" size={15} color={DARK} />
+            <Text style={{ fontSize: 15, fontWeight: '700', color: DARK }}>Directions</Text>
           </TouchableOpacity>
         </View>
       </Animated.View>
@@ -39093,6 +35554,7 @@ export default LockerStats
 
 ## File: components/profile/mysales/MySales.tsx
 ```typescript
+// components/profile/mysales/MySales.tsx
 import React from 'react'
 import { View, Text, TouchableOpacity, Image } from 'react-native'
 import { Feather } from '@expo/vector-icons'
@@ -39107,11 +35569,11 @@ const StatPill: React.FC<{ label: string; value: string | number; color?: string
   value,
   color = '#111827',
 }) => (
-  <View className="flex-1 bg-gray-50 rounded-2xl py-3 items-center">
-    <Text className="text-base font-extrabold" style={{ color }}>
+  <View className="flex-1 bg-gray-50 rounded-xl py-2.5 items-center">
+    <Text className="text-sm font-extrabold" style={{ color }}>
       {value}
     </Text>
-    <Text className="text-xs text-gray-400 mt-0.5">{label}</Text>
+    <Text className="text-[10px] text-gray-400 mt-0.5 font-semibold">{label}</Text>
   </View>
 )
 
@@ -39123,11 +35585,11 @@ const SaleRow: React.FC<{ item: SaleItem; isLast: boolean; onPress: () => void }
   <TouchableOpacity
     onPress={onPress}
     activeOpacity={0.8}
-    className={`flex-row items-center py-3.5 gap-3 ${
+    className={`flex-row items-center py-3 gap-3 ${
       !isLast ? 'border-b border-gray-100' : ''
     }`}
   >
-    <View className="w-14 h-14 rounded-xl bg-gray-100 overflow-hidden">
+    <View className="w-12 h-12 rounded-xl bg-gray-100 overflow-hidden">
       {item.imageUri ? (
         <Image source={{ uri: item.imageUri }} className="w-full h-full" resizeMode="cover" />
       ) : (
@@ -39136,23 +35598,22 @@ const SaleRow: React.FC<{ item: SaleItem; isLast: boolean; onPress: () => void }
     </View>
 
     <View className="flex-1">
-      <Text className="text-[10px] font-bold uppercase tracking-widest text-green-500">
-        {item.productType}
-      </Text>
       <Text className="text-sm font-bold text-gray-900" numberOfLines={1}>
         {item.name}
       </Text>
-      <Text className="text-xs text-gray-400 mt-0.5">Size {item.sizeLabel}</Text>
+      <Text className="text-xs text-gray-400 mt-0.5">
+        Size {item.sizeLabel} · {item.productType}
+      </Text>
     </View>
 
-    <View className="items-end gap-1.5">
+    <View className="items-end gap-1">
       <Text className="text-sm font-extrabold text-gray-900">${item.askingPrice}</Text>
       <View
-        className="px-2.5 py-0.5 rounded-full"
+        className="px-2 py-0.5 rounded-full"
         style={{ backgroundColor: `${STATUS_COLOR[item.status]}20` }}
       >
-        <Text className="text-[11px] font-bold" style={{ color: STATUS_COLOR[item.status] }}>
-          {item.status}
+        <Text className="text-[10px] font-bold" style={{ color: STATUS_COLOR[item.status] }}>
+          {item.status === 'Pending' ? 'Pending approval' : item.status}
         </Text>
       </View>
     </View>
@@ -39160,29 +35621,40 @@ const SaleRow: React.FC<{ item: SaleItem; isLast: boolean; onPress: () => void }
 )
 
 const MySales: React.FC<MySalesProps> = ({ onSeeAll }) => {
-  const { sales, totalEarned, activeCount, declineCount } = useMySales()
-  const preview = sales.slice(0, 3)
+  const { sales, activeCount } = useMySales()
+  const pendingCount = sales.filter((s) => s.status === 'Pending').length
+  const soldCount = sales.filter((s) => s.status === 'Sold').length
+  const preview = sales.slice(0, 2)
 
   return (
-    <View className="mt-7">
-      <View className="flex-row items-center justify-between mb-1">
-        <Text className="text-2xl font-extrabold text-gray-900">My Sales</Text>
-        <TouchableOpacity onPress={onSeeAll}>
-          <Text className="text-lg font-semibold text-green-600">See all</Text>
+    <View
+      className="bg-white rounded-2xl px-4 py-4 mb-4"
+      style={{
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.06,
+        shadowRadius: 10,
+        elevation: 3,
+      }}
+    >
+      <View className="flex-row items-center justify-between mb-3.5">
+        <Text className="text-base font-extrabold text-gray-900">My selling</Text>
+        <TouchableOpacity onPress={onSeeAll} className="flex-row items-center gap-0.5">
+          <Text className="text-xs font-bold text-green-600">View all</Text>
+          <Feather name="chevron-right" size={13} color="#16A34A" />
         </TouchableOpacity>
       </View>
-      <Text className="text-sm text-gray-400 mb-3">Your active listings and history</Text>
 
       <View className="flex-row gap-2 mb-4">
-        <StatPill label="Total Earned" value={`$${totalEarned}`} color="#22C55E" />
-        <StatPill label="Active" value={activeCount} color="#111827" />
-        <StatPill label="Expired" value={declineCount} color="#F59E0B" />
+        <StatPill label="Active" value={activeCount} color="#22C55E" />
+        <StatPill label="Pending" value={pendingCount} color="#F59E0B" />
+        <StatPill label="Sold" value={soldCount} color="#3B82F6" />
       </View>
 
-      <View className="bg-white rounded-2xl px-4 overflow-hidden shadow-sm">
+      <View>
         {preview.length === 0 ? (
-          <View className="py-10 items-center gap-2">
-            <Feather name="tag" size={28} color="#D1D5DB" />
+          <View className="py-8 items-center gap-2">
+            <Feather name="tag" size={26} color="#D1D5DB" />
             <Text className="text-sm text-gray-400 font-medium">No listings yet</Text>
           </View>
         ) : (
@@ -39200,10 +35672,10 @@ const MySales: React.FC<MySalesProps> = ({ onSeeAll }) => {
       <TouchableOpacity
         onPress={onSeeAll}
         activeOpacity={0.8}
-        className="mt-3 border border-dashed border-gray-300 rounded-2xl py-4 flex-row items-center justify-center gap-2"
+        className="mt-3 border border-green-500 rounded-full py-3 flex-row items-center justify-center gap-2"
       >
-        <Feather name="plus" size={16} color="#22C55E" />
-        <Text className="text-sm font-bold text-green-600">List a new item</Text>
+        <Feather name="plus" size={15} color="#22C55E" />
+        <Text className="text-sm font-bold text-green-600">List an item</Text>
       </TouchableOpacity>
     </View>
   )
@@ -39852,51 +36324,60 @@ import type { ProfileData } from '@/services/hooks/profile/useProfile'
 
 interface FavoriteBrandsProps {
   brands: ProfileData['favoriteBrands']
+  followedStoresCount: number
   onEdit: () => void
-  onAdd: () => void
+  onFollowedStores: () => void
 }
 
-const FavoriteBrands: React.FC<FavoriteBrandsProps> = ({ brands, onEdit, onAdd }) => (
+const FavoriteBrands: React.FC<FavoriteBrandsProps> = ({
+  brands,
+  followedStoresCount,
+  onEdit,
+  onFollowedStores,
+}) => (
   <View
-    className="bg-white rounded-3xl px-5 py-5 mb-4"
-    style={{ 
-      shadowColor: '#000', 
+    className="bg-white rounded-2xl px-4 py-4 mb-4"
+    style={{
+      shadowColor: '#000',
       shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.08, 
-      shadowRadius: 12, 
-      elevation: 4 
+      shadowOpacity: 0.06,
+      shadowRadius: 10,
+      elevation: 3,
     }}
   >
-    {/* Header Section */}
-    <View className="flex-row justify-between items-center mb-4">
-      <Text className="text-lg font-black text-gray-900 tracking-tight">Favorite Brands</Text>
-      
-      <TouchableOpacity 
-        onPress={onEdit} 
-        className="flex-row items-center gap-1 bg-gray-50 px-3 py-1.5 rounded-full"
-      >
-        <Text className="text-xs text-gray-500 font-bold">Edit</Text>
-        <Feather name="chevron-right" size={14} color="#6B7280" />
+    <View className="flex-row justify-between items-center mb-3.5">
+      <Text className="text-base font-extrabold text-gray-900">Brands & stores</Text>
+      <TouchableOpacity onPress={onEdit} className="flex-row items-center gap-0.5">
+        <Text className="text-xs font-bold text-green-600">Manage</Text>
+        <Feather name="chevron-right" size={13} color="#16A34A" />
       </TouchableOpacity>
     </View>
 
-    {/* Brands List */}
-    <View className="flex-row items-center gap-3">
+    <Text className="text-xs text-gray-400 font-semibold mb-2.5">Favorite brands</Text>
+    <View className="flex-row flex-wrap gap-2 mb-4">
       {brands.map((brand) => (
-        <View
-          key={brand.id}
-          className="w-14 h-14 rounded-full items-center justify-center shadow-sm"
-          style={{ backgroundColor: brand.color, elevation: 2 }}
-        >
-          {/* Increased text size for the brand initials/label */}
-          <Text className="text-white text-base font-black tracking-tighter">
-            {brand.label}
-          </Text>
+        <View key={brand.id} className="bg-gray-100 rounded-full px-4 py-2">
+          <Text className="text-xs font-bold text-gray-800">{brand.label}</Text>
         </View>
       ))}
-
-
     </View>
+
+    <View style={{ height: 1, backgroundColor: '#F3F4F6' }} className="mb-3.5" />
+
+    <TouchableOpacity
+      onPress={onFollowedStores}
+      activeOpacity={0.7}
+      className="flex-row items-center justify-between"
+    >
+      <View className="flex-row items-center gap-2.5">
+        <Feather name="home" size={17} color="#6B7280" />
+        <Text className="text-sm font-semibold text-gray-700">Followed stores</Text>
+      </View>
+      <View className="flex-row items-center gap-1">
+        <Text className="text-sm font-bold text-gray-400">{followedStoresCount}</Text>
+        <Feather name="chevron-right" size={16} color="#D1D5DB" />
+      </View>
+    </TouchableOpacity>
   </View>
 )
 
@@ -39909,7 +36390,7 @@ export default FavoriteBrands
 import React from 'react'
 import { View, Text, TouchableOpacity } from 'react-native'
 import { Feather } from '@expo/vector-icons'
-import { useRouter } from 'expo-router' 
+import { useRouter } from 'expo-router'
 import type { ProfileData } from '@/services/hooks/profile/useProfile'
 
 interface ProfileHeaderProps {
@@ -39917,56 +36398,39 @@ interface ProfileHeaderProps {
   tierColor: string
 }
 
-const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile, tierColor }) => {
+const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile }) => {
   const router = useRouter()
 
   return (
-    <View className="items-center pt-6 pb-6">
-      {/* Avatar - Scaled to w-24 (Medium-Large) */}
-      <View className="relative mb-4">
+    <View className="flex-row items-center justify-between mb-5">
+      <View className="flex-row items-center gap-3">
         <View
-          className="w-24 h-24 rounded-full items-center justify-center shadow-md"
-          style={{ 
-            backgroundColor: profile.avatarColor,
-            elevation: 4, 
-          }}
+          className="w-14 h-14 rounded-full items-center justify-center"
+          style={{ backgroundColor: profile.avatarColor }}
         >
-          <Text className="text-white text-3xl font-black">
+          <Text className="text-white text-lg font-black">
             {profile.avatarInitials}
           </Text>
         </View>
 
-        {/* Edit badge - Sized at w-8 with overlap and navigation */}
-        <TouchableOpacity
-          onPress={() => router.push('/screens/profilesetup/editProfileScreen' )}
-          className="absolute -bottom-1 -right-1 w-8 h-8 bg-white rounded-full border border-gray-200 items-center justify-center shadow-sm"
-          style={{ elevation: 3 }}
-        >
-          <Feather name="edit-2" size={14} color="#6B7280" />
-        </TouchableOpacity>
+        <View>
+          <Text className="text-lg font-extrabold text-gray-900 tracking-tight">
+            {profile.firstName} {profile.lastName}
+          </Text>
+          <Text className="text-sm text-gray-400 mt-0.5">
+            @{profile.username}
+          </Text>
+        </View>
       </View>
 
-      {/* Name Section - Big & Bold */}
-      <Text className="text-2xl font-extrabold text-gray-900 tracking-tight">
-        {profile.username}
-      </Text>
-      <Text className="text-sm font-medium text-gray-500 mt-0.5">
-        {profile.firstName} {profile.lastName}
-      </Text>
-
-      {/* Tier badge - Uppercase & Premium Scaling */}
-      <View
-        className="flex-row items-center gap-1.5 mt-3 px-4 py-1.5 rounded-full border"
-        style={{ 
-          borderColor: tierColor, 
-          backgroundColor: `${tierColor}12` 
-        }}
+      <TouchableOpacity
+        onPress={() => router.push('/screens/profilesetup/editProfileScreen')}
+        activeOpacity={0.7}
+        className="flex-row items-center gap-1"
       >
-        <Feather name="award" size={14} color={tierColor} />
-        <Text className="text-xs font-bold" style={{ color: tierColor }}>
-          {profile.memberTier.toUpperCase()} MEMBER
-        </Text>
-      </View>
+        <Text className="text-sm font-bold text-green-600">Edit profile</Text>
+        <Feather name="chevron-right" size={16} color="#16A34A" />
+      </TouchableOpacity>
     </View>
   )
 }
@@ -39987,38 +36451,33 @@ interface ReferralRowProps {
 }
 
 const ReferralRow: React.FC<ReferralRowProps> = ({ referralCode, onPress }) => (
-  <View className='pb-6'>
-  <TouchableOpacity
-    onPress={onPress}
-    activeOpacity={0.8}
-    className="flex-row items-center justify-between bg-white rounded-3xl px-5 py-5 mb-8"
-    style={{ 
-      shadowColor: '#000', 
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.08, 
-      shadowRadius: 15, 
-      elevation: 4 
+  <View
+    className="flex-row items-center justify-between bg-white rounded-2xl px-4 py-4 mb-3"
+    style={{
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.06,
+      shadowRadius: 10,
+      elevation: 3,
     }}
   >
-    <View className="flex-row items-center gap-4">
-      {/* Larger Icon Container */}
-      <View className="w-12 h-12 bg-orange-100 rounded-2xl items-center justify-center">
-        <Feather name="gift" size={22} color="#F97316" />
+    <View className="flex-row items-center gap-3">
+      <View className="w-10 h-10 bg-orange-50 rounded-xl items-center justify-center">
+        <Feather name="gift" size={18} color="#F97316" />
       </View>
-      
       <View>
-        <Text className="text-lg font-black text-gray-900 tracking-tight">Invite Friends</Text>
-        <View className="flex-row items-center gap-1.5 mt-0.5">
-          <Text className="text-sm font-bold text-orange-500">Code: {referralCode}</Text>
-          <Feather name="copy" size={12} color="#F97316" />
-        </View>
+        <Text className="text-sm font-bold text-gray-900">Invite friends</Text>
+        <Text className="text-xs text-gray-400 mt-0.5">Your code: {referralCode}</Text>
       </View>
     </View>
 
-    <View className="bg-gray-50 p-2 rounded-full">
-      <Feather name="chevron-right" size={20} color="#6B7280" />
-    </View>
-  </TouchableOpacity>
+    <TouchableOpacity
+      onPress={onPress}
+      activeOpacity={0.8}
+      className="border border-green-500 rounded-full px-3.5 py-1.5"
+    >
+      <Text className="text-xs font-bold text-green-600">Share invite</Text>
+    </TouchableOpacity>
   </View>
 )
 
@@ -40316,120 +36775,967 @@ const styles = StyleSheet.create({
 })
 ```
 
-## File: components/retailer/home/analytics/AnalyticsHeader.tsx
+## File: components/retailer/home/addproduct/productImageUpload.tsx
 ```typescript
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-import { router } from 'expo-router';
 
-interface AnalyticsHeaderProps {
-    locationLabel?: string;
-    brandLabel?: string;
-    onLocationPress?: () => void;
-    onBrandPress?: () => void;
-    onCalendarPress?: () => void;
-    onExportPress?: () => void;
+const ProductImageUpload = ({ onPress }: { onPress?: () => void }) => (
+  <TouchableOpacity style={styles.container} activeOpacity={0.7} onPress={onPress}>
+    <Feather name="camera" size={32} color="#9CA3AF" />
+    <Text style={styles.mainText}>Add product photos</Text>
+    <Text style={styles.subText}>Up to 8 - First photo is the cover</Text>
+  </TouchableOpacity>
+);
+
+const styles = StyleSheet.create({
+  container: { height: 160, backgroundColor: '#fff', marginHorizontal: 16, marginTop: 16, borderRadius: 20, borderWidth: 1, borderColor: '#F3F4F6', borderStyle: 'dashed', justifyContent: 'center', alignItems: 'center' },
+  mainText: { fontSize: 14, fontWeight: '700', color: '#111', marginTop: 10 },
+  subText: { fontSize: 12, color: '#9CA3AF', marginTop: 4 },
+});
+
+export default ProductImageUpload;
+```
+
+## File: components/retailer/home/addproduct/productSizeTable.tsx
+```typescript
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { Feather } from '@expo/vector-icons';
+
+const ProductSizeTable = ({ sizes, onUpdateQty, onRemove, onAddSize }: any) => (
+  <View style={styles.card}>
+    <View style={styles.headerRow}>
+      <Text style={[styles.headerText, styles.sizeCol]}>Size</Text>
+      <Text style={[styles.headerText, styles.qtyCol]}>Qty</Text>
+      <Text style={[styles.headerText, styles.priceCol]}>Price</Text>
+      <View style={styles.deleteCol} />
+    </View>
+    {sizes.map((item: any, index: number) => (
+      <View key={index} style={styles.row}>
+        <Text style={[styles.sizeText, styles.sizeCol]}>{item.size}</Text>
+
+        <View style={[styles.qtyContainer, styles.qtyCol]}>
+          <TouchableOpacity onPress={() => onUpdateQty(index, -1)} style={styles.qtyBtn}>
+            <Feather name="minus" size={14} color="#111" />
+          </TouchableOpacity>
+          <Text style={styles.qtyVal}>{item.qty}</Text>
+          <TouchableOpacity onPress={() => onUpdateQty(index, 1)} style={styles.qtyBtn}>
+            <Feather name="plus" size={14} color="#111" />
+          </TouchableOpacity>
+        </View>
+
+        <Text style={[styles.priceText, styles.priceCol]}>${item.price}</Text>
+
+        <TouchableOpacity
+          style={styles.deleteCol}
+          onPress={() => onRemove?.(index)}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
+          <Feather name="trash-2" size={16} color="#D1D5DB" />
+        </TouchableOpacity>
+      </View>
+    ))}
+    <TouchableOpacity style={styles.addBtn} onPress={onAddSize}>
+      <Feather name="plus" size={16} color="#22C55E" />
+      <Text style={styles.addText}>Add size or scan another</Text>
+    </TouchableOpacity>
+  </View>
+);
+
+const styles = StyleSheet.create({
+  card: { backgroundColor: '#fff', marginHorizontal: 16, borderRadius: 20, padding: 16, borderColor: '#F3F4F6', borderWidth: 1 },
+  headerRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 12, paddingHorizontal: 4 },
+  headerText: { fontSize: 11, color: '#9CA3AF', fontWeight: '600' },
+  row: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#F9FAFB' },
+  sizeCol: { width: 44 },
+  qtyCol: { flex: 1, alignItems: 'center' },
+  priceCol: { width: 56, textAlign: 'right' },
+  deleteCol: { width: 28, alignItems: 'flex-end' },
+  sizeText: { fontSize: 14, fontWeight: '700', color: '#111' },
+  qtyContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#F3F4F6', borderRadius: 8, padding: 4, alignSelf: 'center' },
+  qtyBtn: { padding: 4 },
+  qtyVal: { paddingHorizontal: 10, fontWeight: '700', fontSize: 13 },
+  priceText: { fontWeight: '700', fontSize: 13, color: '#111' },
+  addBtn: { flexDirection: 'row', justifyContent: 'center', marginTop: 12, alignItems: 'center' },
+  addText: { color: '#22C55E', fontSize: 13, fontWeight: '700', marginLeft: 6 },
+});
+
+export default ProductSizeTable;
+```
+
+## File: components/retailer/home/analytics/AnalyticsOrderStatus.tsx
+```typescript
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { OrderStatusItem } from '@/types/analytics';
+
+interface AnalyticsOrderStatusProps {
+  orderStatus: OrderStatusItem[];
 }
 
-const AnalyticsHeader: React.FC<AnalyticsHeaderProps> = ({
-    locationLabel = 'All Locations',
-    brandLabel = 'GoSNKR Sales',
-    onLocationPress,
-    onBrandPress,
-    onCalendarPress,
-    onExportPress,
-}) => (
-    <View style={s.wrapper}>
-        <View style={s.header}>
-            <TouchableOpacity style={s.backBtn} onPress={() => router.back()}>
-                <Feather name="arrow-left" size={20} color="#111" />
-            </TouchableOpacity>
-            <Text style={s.title}>Retailer Analytics</Text>
-            <View style={s.headerActions}>
-                <TouchableOpacity onPress={onCalendarPress} hitSlop={8}>
-                    <Feather name="calendar" size={19} color="#111" />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={onExportPress} hitSlop={8}>
-                    <Feather name="share" size={19} color="#111" />
-                </TouchableOpacity>
+const AnalyticsOrderStatus: React.FC<AnalyticsOrderStatusProps> = ({ orderStatus }) => {
+  const total = orderStatus.reduce((sum, o) => sum + Number(o.value), 0) || 1;
+
+  return (
+    <View style={s.section}>
+      <Text style={s.sectionTitle}>Order Status</Text>
+
+      <View style={s.barContainer}>
+        {orderStatus.map(o => (
+          <View
+            key={o.label}
+            style={[
+              s.segment,
+              { flex: Number(o.value) > 0 ? o.value : 0.0001, backgroundColor: o.color }
+            ]}
+          />
+        ))}
+      </View>
+
+      {/* Legend */}
+      <View style={s.legend}>
+        {orderStatus.map(o => {
+          const pct = Math.round((Number(o.value) / total) * 1000) / 10;
+          return (
+            <View key={o.label} style={s.legendItem}>
+              <View style={s.legendTopRow}>
+                <View style={[s.dot, { backgroundColor: o.color }]} />
+                <Text style={s.legendLabel}>{o.label}</Text>
+              </View>
+              <Text style={s.legendVal}>{o.value}</Text>
+              <Text style={s.legendPct}>{pct}%</Text>
             </View>
+          );
+        })}
+      </View>
+    </View>
+  );
+};
+
+const s = StyleSheet.create({
+  section: {
+    backgroundColor: '#fff', borderRadius: 14, padding: 16,
+    marginBottom: 12, borderWidth: 1, borderColor: '#F3F4F6',
+  },
+  sectionTitle: { fontSize: 14, fontWeight: '800', color: '#111' },
+  barContainer: {
+    flexDirection: 'row', height: 10, borderRadius: 5,
+    overflow: 'hidden', marginTop: 10, marginBottom: 12,
+  },
+  segment: { height: '100%' },
+  legend: { flexDirection: 'row', flexWrap: 'wrap' },
+  legendItem: { width: '25%', marginBottom: 8 },
+  legendTopRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  dot: { width: 6, height: 6, borderRadius: 3 },
+  legendLabel: { fontSize: 10, color: '#6B7280', fontWeight: '600' },
+  legendVal: { fontSize: 13, fontWeight: '800', color: '#111', marginTop: 2 },
+  legendPct: { fontSize: 10, color: '#9CA3AF', marginTop: 1 },
+});
+
+export default AnalyticsOrderStatus;
+```
+
+## File: components/retailer/home/analytics/AnalyticsRevenueCard.tsx
+```typescript
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { Feather } from '@expo/vector-icons';
+import Svg, { Polyline } from 'react-native-svg';
+
+// ── Sparkline ────────────────────────────────────────────────────────────────
+interface SparklineProps {
+  data: number[];
+  color?: string;
+}
+
+const Sparkline: React.FC<SparklineProps> = ({ data, color = '#00C853' }) => {
+  const w = 80, h = 36;
+  const max = Math.max(...data);
+  const min = Math.min(...data);
+  const pts = data
+    .map((v, i) => {
+      const x = (i / (data.length - 1)) * w;
+      const y = h - ((v - min) / (max - min || 1)) * h;
+      return `${x},${y}`;
+    })
+    .join(' ');
+  return (
+    <Svg width={w} height={h}>
+      <Polyline points={pts} fill="none" stroke={color} strokeWidth="2" strokeLinejoin="round" />
+    </Svg>
+  );
+};
+
+// ── Revenue Card ─────────────────────────────────────────────────────────────
+interface AnalyticsRevenueCardProps {
+  totalRevenue: string;
+  revenueChange: string;
+  revenueChangePercent: string;
+  sparklineData: number[];
+}
+
+const AnalyticsRevenueCard: React.FC<AnalyticsRevenueCardProps> = ({
+  totalRevenue,
+  revenueChange,
+  revenueChangePercent,
+  sparklineData,
+}) => (
+  <View style={s.card}>
+    <View style={s.left}>
+      <View style={s.labelRow}>
+        <Text style={s.label}>NET SALES</Text>
+        <View style={s.percentBadge}>
+          <Feather name="arrow-up-right" size={10} color="#00C853" />
+          <Text style={s.percentText}>{revenueChangePercent}</Text>
+        </View>
+      </View>
+      <Text style={s.amount}>{totalRevenue}</Text>
+      <View style={s.changeRow}>
+        <Feather name="arrow-up-right" size={12} color="#00C853" />
+        <Text style={s.changeText}>{revenueChange}</Text>
+      </View>
+    </View>
+    <Sparkline data={sparklineData} color="#00C853" />
+  </View>
+);
+
+const s = StyleSheet.create({
+  card: {
+    backgroundColor: '#111',
+    borderRadius: 16,
+    padding: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  left: { flex: 1 },
+  labelRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  label: {
+    fontSize: 10, fontWeight: '700',
+    color: 'rgba(255,255,255,0.5)', letterSpacing: 1,
+  },
+  percentBadge: { flexDirection: 'row', alignItems: 'center', gap: 2 },
+  percentText: { fontSize: 11, fontWeight: '700', color: '#00C853' },
+  amount: { fontSize: 32, fontWeight: '900', color: '#fff', marginTop: 2 },
+  changeRow: { flexDirection: 'row', alignItems: 'center', marginTop: 4 },
+  changeText: { fontSize: 11, color: '#00C853', marginLeft: 2 },
+});
+
+export default AnalyticsRevenueCard;
+```
+
+## File: components/retailer/home/analytics/AnalyticsReveueChart.tsx
+```typescript
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import Svg, { Rect, Text as SvgText, G } from 'react-native-svg';
+import { ChartMode } from '@/types/analytics';
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+
+// ── Bar Chart ─────────────────────────────────────────────────────────────────
+interface BarChartProps {
+  data: number[];
+  labels: string[];
+  valuePrefix?: string;
+}
+
+const BarChart: React.FC<BarChartProps> = ({ data, labels, valuePrefix = '$' }) => {
+  const chartW = SCREEN_WIDTH - 64;
+  const chartH = 110;
+
+  if (!data || data.length === 0) return null;
+
+  const gap = chartW / data.length;
+  const barW = gap * 0.55;
+  const max = Math.max(...data) || 1;
+
+  return (
+    <Svg width={chartW} height={chartH + 46}>
+      {data.map((v, i) => {
+        const barH = (v / max) * chartH;
+        const x = i * gap + (gap - barW) / 2;
+        const y = chartH - barH + 20;
+
+        return (
+          <G key={`bar-${i}`}>
+            <SvgText
+              x={x + barW / 2}
+              y={y - 6}
+              fontSize="11"
+              fontWeight="700"
+              fill="#111"
+              textAnchor="middle"
+            >
+              {valuePrefix}{v}
+            </SvgText>
+            <Rect
+              x={x}
+              y={y}
+              width={barW}
+              height={barH}
+              rx={6}
+              fill="#00C853"
+            />
+            <SvgText
+              x={x + barW / 2}
+              y={chartH + 40}
+              fontSize="11"
+              fontWeight="600"
+              fill="#9CA3AF"
+              textAnchor="middle"
+            >
+              {labels[i]}
+            </SvgText>
+          </G>
+        );
+      })}
+    </Svg>
+  );
+};
+
+// ── Sales by Day Section ───────────────────────────────────────────────────────
+interface AnalyticsRevenueChartProps {
+  chartMode: ChartMode;
+  barData: number[];
+  barLabels: string[];
+  onChartModeChange: (mode: ChartMode) => void;
+}
+
+const CHART_MODES: ChartMode[] = ['Sales', 'Orders'];
+
+const AnalyticsRevenueChart: React.FC<AnalyticsRevenueChartProps> = ({
+  chartMode,
+  barData,
+  barLabels,
+  onChartModeChange,
+}) => (
+  <View style={s.section}>
+    <View style={s.sectionHeader}>
+      <Text style={s.sectionTitle}>Sales by Day</Text>
+      <View style={s.toggleRow}>
+        {CHART_MODES.map(m => (
+          <TouchableOpacity
+            key={m}
+            onPress={() => onChartModeChange(m)}
+            style={[s.toggleBtn, chartMode === m && s.toggleBtnActive]}
+          >
+            <Text style={[s.toggleText, chartMode === m && s.toggleTextActive]}>{m}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    </View>
+    <View style={{ marginTop: 8 }}>
+      <BarChart
+        data={barData}
+        labels={barLabels}
+        valuePrefix={chartMode === 'Sales' ? '$' : ''}
+      />
+    </View>
+  </View>
+);
+
+const s = StyleSheet.create({
+  section: {
+    backgroundColor: '#fff', borderRadius: 14, padding: 16,
+    marginBottom: 12, borderWidth: 1, borderColor: '#F3F4F6',
+  },
+  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  sectionTitle: { fontSize: 14, fontWeight: '800', color: '#111' },
+  toggleRow: {
+    flexDirection: 'row', backgroundColor: '#111',
+    borderRadius: 8, padding: 2,
+  },
+  toggleBtn: { paddingHorizontal: 12, paddingVertical: 5, borderRadius: 6 },
+  toggleBtnActive: { backgroundColor: '#fff' },
+  toggleText: { fontSize: 11, fontWeight: '600', color: 'rgba(255,255,255,0.6)' },
+  toggleTextActive: { color: '#111' },
+});
+
+export default AnalyticsRevenueChart;
+```
+
+## File: components/retailer/home/analytics/AnalyticsSizes.tsx
+```typescript
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { Feather } from '@expo/vector-icons';
+import { SizeItem } from '@/types/analytics';
+import { DimensionValue } from 'react-native';
+
+interface SizeBarProps {
+    label: string;
+    value: number;
+    max: number;
+    color: string;
+}
+
+const SizeBar: React.FC<SizeBarProps> = ({ label, value, max, color }) => {
+  const percentage = Math.min(100, (value / (max || 1)) * 100);
+  const barWidth = `${percentage}%` as DimensionValue;
+
+  return (
+    <View style={s.row}>
+      <Text style={s.label}>{label}</Text>
+      <View style={s.track}>
+        <View
+          style={[
+            s.fill,
+            {
+              width: barWidth,
+              backgroundColor: color
+            }
+          ]}
+        />
+      </View>
+      <Text style={s.val}>{value} searches</Text>
+    </View>
+  );
+};
+
+interface AnalyticsSizesProps {
+    sizes: SizeItem[];
+    onViewInventoryOpportunities?: () => void;
+}
+
+const MAX_SIZE_VALUE = 40;
+
+const AnalyticsSizes: React.FC<AnalyticsSizesProps> = ({ sizes, onViewInventoryOpportunities }) => (
+    <View style={[s.section, { marginBottom: 32 }]}>
+        <Text style={s.sectionTitle}>Missed Demand by Size</Text>
+        <Text style={s.sectionSubtitle}>Searches with no matching inventory</Text>
+
+        <View style={{ marginTop: 12 }}>
+            {sizes.map(sz => (
+                <SizeBar
+                    key={sz.label}
+                    label={sz.label}
+                    value={sz.value}
+                    max={MAX_SIZE_VALUE}
+                    color={sz.color}
+                />
+            ))}
         </View>
 
-        <View style={s.dropdownRow}>
-            <TouchableOpacity style={s.dropdown} onPress={onLocationPress} activeOpacity={0.7}>
-                <Feather name="home" size={13} color="#6B7280" />
-                <Text style={s.dropdownText} numberOfLines={1}>{locationLabel}</Text>
-                <Feather name="chevron-down" size={14} color="#9CA3AF" />
-            </TouchableOpacity>
-
-            <TouchableOpacity style={s.dropdown} onPress={onBrandPress} activeOpacity={0.7}>
-                <Text style={s.dropdownText} numberOfLines={1}>{brandLabel}</Text>
-                <Feather name="chevron-down" size={14} color="#9CA3AF" />
-            </TouchableOpacity>
-        </View>
+        <TouchableOpacity style={s.opportunitiesBtn} onPress={onViewInventoryOpportunities} activeOpacity={0.8}>
+            <Text style={s.opportunitiesText}>View Inventory Opportunities</Text>
+            <Feather name="chevron-right" size={14} color="#00C853" />
+        </TouchableOpacity>
     </View>
 );
 
 const s = StyleSheet.create({
-    wrapper: {
-        backgroundColor: '#fff',
-        paddingBottom: 8,
+    section: {
+        backgroundColor: '#fff', borderRadius: 14, padding: 16,
+        marginBottom: 12, borderWidth: 1, borderColor: '#F3F4F6',
     },
-    header: {
+    sectionTitle: { fontSize: 14, fontWeight: '800', color: '#111' },
+    sectionSubtitle: { fontSize: 11, color: '#9CA3AF', marginTop: 2 },
+    row: { flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
+    label: { width: 44, fontSize: 12, fontWeight: '700', color: '#111' },
+    track: {
+        flex: 1, height: 8, backgroundColor: '#F3F4F6',
+        borderRadius: 4, marginHorizontal: 8,
+    },
+    fill: { height: 8, borderRadius: 4 },
+    val: { fontSize: 11, color: '#6B7280', width: 72, textAlign: 'right' },
+    opportunitiesBtn: {
         flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: 16,
-        paddingBottom: 12,
-        backgroundColor: '#fff',
-    },
-    backBtn: {
-        width: 32,
-        height: 32,
-        borderRadius: 16,
-        backgroundColor: '#F3F4F6',
         alignItems: 'center',
         justifyContent: 'center',
-    },
-    title: {
-        fontSize: 16,
-        fontWeight: '800',
-        color: '#111',
-    },
-    headerActions: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 16,
-        width: 60,
-        justifyContent: 'flex-end',
-    },
-    dropdownRow: {
-        flexDirection: 'row',
-        gap: 8,
-        paddingHorizontal: 16,
-    },
-    dropdown: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
         gap: 6,
-        backgroundColor: '#F9FAFB',
+        marginTop: 8,
+        height: 46,
+        borderRadius: 12,
         borderWidth: 1,
-        borderColor: '#F3F4F6',
-        borderRadius: 10,
-        paddingHorizontal: 10,
-        height: 38,
+        borderColor: '#DCFCE7',
+        backgroundColor: '#F0FDF4',
     },
-    dropdownText: {
+    opportunitiesText: { fontSize: 13, fontWeight: '700', color: '#00C853' },
+});
+
+export default AnalyticsSizes;
+```
+
+## File: components/retailer/home/analytics/AnalyticsStatCards.tsx
+```typescript
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { Feather } from '@expo/vector-icons';
+
+interface AnalyticsStatCardsProps {
+  orders: number;
+  ordersChange: string;
+  grossProfit: string;
+  grossProfitMargin: string;
+  grossProfitChange: string;
+  avgOrder: string;
+  avgOrderChange: string;
+  pickupRate: string;
+  pickupRateChange: string;
+}
+
+const AnalyticsStatCards: React.FC<AnalyticsStatCardsProps> = ({
+  orders,
+  ordersChange,
+  grossProfit,
+  grossProfitMargin,
+  grossProfitChange,
+  avgOrder,
+  avgOrderChange,
+  pickupRate,
+  pickupRateChange,
+}) => {
+
+  const StatCard = ({ icon, label, value, change, isPositive = true, subValue, isLast = false }: any) => (
+    <View style={[s.card, !isLast && { marginRight: 8 }]}>
+      <View style={s.labelRow}>
+        <Feather name={icon} size={13} color="#9CA3AF" />
+        <Text style={s.label}>{label}</Text>
+      </View>
+      <Text style={s.value}>{value}</Text>
+      {subValue ? <Text style={s.subValue}>{subValue}</Text> : null}
+      <View style={s.changeRow}>
+        {isPositive ? (
+          <Feather name="arrow-up-right" size={10} color="#00C853" />
+        ) : null}
+        <Text style={[s.changeText, { color: isPositive ? '#00C853' : '#9CA3AF' }]}>
+          {change}
+        </Text>
+      </View>
+    </View>
+  );
+
+  return (
+    <View style={s.container}>
+      <View style={s.row}>
+        <StatCard
+          icon="box"
+          label="ORDERS"
+          value={orders}
+          change={ordersChange}
+        />
+        <StatCard
+          icon="dollar-sign"
+          label="GROSS PROFIT"
+          value={grossProfit}
+          subValue={`${grossProfitMargin} margin`}
+          change={grossProfitChange}
+          isLast
+        />
+      </View>
+
+      <View style={s.row}>
+        <StatCard
+          icon="tag"
+          label="AVG. ORDER"
+          value={avgOrder}
+          change={avgOrderChange}
+        />
+        <StatCard
+          icon="users"
+          label="PICKUP RATE"
+          value={pickupRate}
+          change={pickupRateChange}
+          isPositive={pickupRateChange !== 'No change'}
+          isLast
+        />
+      </View>
+    </View>
+  );
+};
+
+const s = StyleSheet.create({
+  container: { marginBottom: 12 },
+  row: { flexDirection: 'row', marginBottom: 8 },
+  card: {
+    flex: 1,
+    backgroundColor: '#fff',
+    borderRadius: 14,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#F3F4F6',
+  },
+  labelRow: { flexDirection: 'row', alignItems: 'center', gap: 5 },
+  label: { fontSize: 10, color: '#9CA3AF', fontWeight: '700', letterSpacing: 0.5 },
+  value: { fontSize: 18, fontWeight: '900', color: '#111', marginTop: 6 },
+  subValue: { fontSize: 10, color: '#00C853', fontWeight: '600', marginTop: 1 },
+  changeRow: { flexDirection: 'row', alignItems: 'center', marginTop: 4, gap: 2 },
+  changeText: { fontSize: 10, fontWeight: '600' },
+});
+
+export default AnalyticsStatCards;
+```
+
+## File: components/retailer/home/analytics/AnalyticsTimeFilter.tsx
+```typescript
+import React from 'react';
+import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { TimeFilter } from '@/types/analytics';
+
+const TIME_FILTERS: TimeFilter[] = ['Today', 'Week', 'Month', 'Custom'];
+
+interface AnalyticsTimeFilterProps {
+    active: TimeFilter;
+    onChange: (filter: TimeFilter) => void;
+}
+
+const AnalyticsTimeFilter: React.FC<AnalyticsTimeFilterProps> = ({ active, onChange }) => (
+    <View style={s.row}>
+        {TIME_FILTERS.map(f => (
+            <TouchableOpacity
+                key={f}
+                onPress={() => onChange(f)}
+                style={[s.pill, active === f && s.pillActive]}
+                activeOpacity={0.8}
+            >
+                <Text style={[s.text, active === f && s.textActive]}>{f}</Text>
+            </TouchableOpacity>
+        ))}
+    </View>
+);
+
+const s = StyleSheet.create({
+    row: {
+        flexDirection: 'row',
+        paddingHorizontal: 16,
+        paddingVertical: 10,
+        gap: 8,
+        backgroundColor: '#fff',
+    },
+    pill: {
         flex: 1,
-        fontSize: 12,
-        fontWeight: '600',
-        color: '#374151',
+        height: 38,
+        borderRadius: 19,
+        backgroundColor: '#F3F4F6',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    pillActive: {
+        backgroundColor: '#111',
+    },
+    text: {
+        fontSize: 13,
+        fontWeight: '700',
+        color: '#6B7280',
+    },
+    textActive: {
+        color: '#fff',
     },
 });
 
-export default AnalyticsHeader;
+export default AnalyticsTimeFilter;
+```
+
+## File: components/retailer/home/analytics/AnalyticsTopProduct.tsx
+```typescript
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { TopProduct } from '@/types/analytics';
+
+interface AnalyticsTopProductsProps {
+  products: TopProduct[];
+  onViewAll?: () => void;
+}
+
+const AnalyticsTopProducts: React.FC<AnalyticsTopProductsProps> = ({ products, onViewAll }) => (
+  <View style={s.section}>
+    <View style={s.headerRow}>
+      <Text style={s.sectionTitle}>Top Products</Text>
+      <TouchableOpacity onPress={onViewAll} hitSlop={8}>
+        <Text style={s.viewAll}>View All</Text>
+      </TouchableOpacity>
+    </View>
+    {products.map((p, index) => (
+      <View
+        key={p.rank}
+        style={[s.row, index === products.length - 1 && { borderBottomWidth: 0 }]}
+      >
+        <Text style={s.rank}>{p.rank}</Text>
+        <View style={s.info}>
+          <Text style={s.name}>{p.name}</Text>
+          <Text style={s.sub}>{p.sub}</Text>
+        </View>
+        <Text style={s.price}>{p.price}</Text>
+      </View>
+    ))}
+  </View>
+);
+
+const s = StyleSheet.create({
+  section: {
+    backgroundColor: '#fff', borderRadius: 14, padding: 16,
+    marginBottom: 12, borderWidth: 1, borderColor: '#F3F4F6',
+  },
+  headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 },
+  sectionTitle: { fontSize: 14, fontWeight: '800', color: '#111' },
+  viewAll: { fontSize: 12, fontWeight: '700', color: '#00C853' },
+  row: {
+    flexDirection: 'row', alignItems: 'center',
+    paddingVertical: 10,
+    borderBottomWidth: 1, borderColor: '#F3F4F6',
+  },
+  rank: { fontSize: 13, fontWeight: '800', color: '#111', width: 20 },
+  info: { flex: 1, marginLeft: 8 },
+  name: { fontSize: 13, fontWeight: '700', color: '#111' },
+  sub: { fontSize: 11, color: '#9CA3AF', marginTop: 1 },
+  price: { fontSize: 13, fontWeight: '800', color: '#111' },
+});
+
+export default AnalyticsTopProducts;
+```
+
+## File: components/retailer/home/notifications/NotificationCard.tsx
+```typescript
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { Feather } from '@expo/vector-icons';
+import { useCountdown } from '@/services/hooks/retailer/refund/useClaims';
+import type {
+  NotificationItem,
+  NotificationType,
+  NotificationAction,
+} from '@/services/hooks/retailer/home/useNotifications';
+
+// ─── Per-type theme ───────────────────────────────────────────────────────────
+
+interface Theme {
+  icon: React.ComponentProps<typeof Feather>['name'];
+  iconColor: string;
+  iconBg: string;
+  cardBg: string;
+  cardBorder: string;
+}
+
+const NEUTRAL = { cardBg: '#FFFFFF', cardBorder: '#E5E7EB' };
+
+const THEMES: Record<NotificationType, Theme> = {
+  refund: {
+    icon: 'corner-up-left',
+    iconColor: '#DC2626',
+    iconBg: '#FECACA',
+    cardBg: '#FEF2F2',
+    cardBorder: '#FCA5A5',
+  },
+  stock: {
+    icon: 'alert-triangle',
+    iconColor: '#D97706',
+    iconBg: '#FDE68A',
+    cardBg: '#FFFBEB',
+    cardBorder: '#FCD34D',
+  },
+  order: { icon: 'shopping-bag', iconColor: '#16A34A', iconBg: '#DCFCE7', ...NEUTRAL },
+  hold: { icon: 'lock', iconColor: '#16A34A', iconBg: '#DCFCE7', ...NEUTRAL },
+  pickup: { icon: 'package', iconColor: '#374151', iconBg: '#F3F4F6', ...NEUTRAL },
+  sync: { icon: 'refresh-cw', iconColor: '#374151', iconBg: '#F3F4F6', ...NEUTRAL },
+};
+
+// ─── Countdown pill ───────────────────────────────────────────────────────────
+
+const CountdownPill: React.FC<{ deadlineIso: string }> = ({ deadlineIso }) => {
+  const { h, m, expired } = useCountdown(deadlineIso);
+  if (expired) return null;
+
+  return (
+    <View style={styles.countdown}>
+      <Feather name="clock" size={12} color="#DC2626" />
+      <Text style={styles.countdownText}>
+        {parseInt(h, 10)}h {m}m left
+      </Text>
+    </View>
+  );
+};
+
+// ─── Card ─────────────────────────────────────────────────────────────────────
+
+interface Props {
+  item: NotificationItem;
+  onCardPress: (item: NotificationItem) => void;
+  onActionPress: (item: NotificationItem, action: NotificationAction) => void;
+}
+
+export const NotificationCard: React.FC<Props> = ({ item, onCardPress, onActionPress }) => {
+  const theme = THEMES[item.type];
+  const hasActions = !!item.primary;
+  const isOutline = item.primary?.variant === 'outline';
+  // Standalone location row is an urgent-card affordance only (see design).
+  const showLocation = item.section === 'Needs attention' && !!item.location && !item.meta;
+
+  return (
+    <View style={styles.wrapper}>
+      {/* Left gutter keeps every card aligned whether or not it has a dot */}
+      <View style={styles.dotGutter} />
+
+      <TouchableOpacity
+        activeOpacity={0.85}
+        onPress={() => onCardPress(item)}
+        style={[styles.card, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}
+      >
+        {/* Unread dot — pinned to the card's top-left edge, as in the design */}
+        {item.unread && <View style={styles.dot} />}
+
+        <View style={styles.row}>
+          <View style={[styles.iconBox, { backgroundColor: theme.iconBg }]}>
+            <Feather name={theme.icon} size={20} color={theme.iconColor} />
+          </View>
+
+          <View style={styles.body}>
+            {/* Title + time */}
+            <View style={styles.titleRow}>
+              <Text style={styles.title} numberOfLines={1}>
+                {item.title}
+              </Text>
+              <Text style={styles.time}>{item.time}</Text>
+            </View>
+
+            <Text style={styles.subtitle} numberOfLines={2}>
+              {item.subtitle}
+            </Text>
+
+            {/* Meta line (customer · pickup · store) */}
+            {!!item.meta && (
+              <View style={styles.metaRow}>
+                <Feather name="user" size={12} color="#6B7280" />
+                <Text style={styles.metaText} numberOfLines={1}>
+                  {item.meta}
+                </Text>
+              </View>
+            )}
+
+            {/* Location + countdown row */}
+            {showLocation || !!item.deadlineIso ? (
+              <View style={styles.metaRow}>
+                {showLocation && (
+                  <>
+                    <Feather name="map-pin" size={12} color="#6B7280" />
+                    <Text style={styles.metaText}>{item.location}</Text>
+                  </>
+                )}
+                {!!item.deadlineIso && <CountdownPill deadlineIso={item.deadlineIso} />}
+              </View>
+            ) : null}
+          </View>
+
+        </View>
+
+        {/* Chevron — vertically centred on the card, does not consume row width */}
+        <Feather name="chevron-right" size={20} color="#6B7280" style={styles.chevron} />
+
+        {/* Actions */}
+        {hasActions && (
+          <View style={styles.actions}>
+            <TouchableOpacity
+              activeOpacity={0.85}
+              onPress={() => onActionPress(item, item.primary!)}
+              style={isOutline ? styles.btnOutline : styles.btnPrimary}
+            >
+              <Text style={isOutline ? styles.btnOutlineText : styles.btnPrimaryText}>
+                {item.primary!.label}
+              </Text>
+            </TouchableOpacity>
+
+            {!!item.secondary && (
+              <TouchableOpacity
+                activeOpacity={0.6}
+                onPress={() => onActionPress(item, item.secondary!)}
+                style={styles.btnGhost}
+              >
+                <Text style={styles.btnGhostText}>{item.secondary.label}</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+export default NotificationCard;
+
+// ─── Styles ───────────────────────────────────────────────────────────────────
+
+const styles = StyleSheet.create({
+  wrapper: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 12 },
+  dotGutter: { width: 16 },
+  dot: {
+    position: 'absolute',
+    top: 12,
+    left: -13,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#00C853',
+  },
+
+  card: {
+    flex: 1,
+    borderRadius: 16,
+    borderWidth: 1,
+    paddingHorizontal: 12,
+    paddingTop: 12,
+    paddingBottom: 12,
+    marginRight: 16,
+  },
+  row: { flexDirection: 'row', alignItems: 'flex-start' },
+  iconBox: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  body: { flex: 1, marginLeft: 12, paddingRight: 18 },
+  titleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
+  title: { flexShrink: 1, fontSize: 13.5, fontWeight: '800', color: '#0A0A0A' },
+  time: { fontSize: 11.5, color: '#9CA3AF', marginRight: -18 },
+  subtitle: { fontSize: 12.5, color: '#4B5563', marginTop: 3, lineHeight: 17 },
+
+  metaRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 6 },
+  metaText: { fontSize: 12, color: '#6B7280', flexShrink: 1 },
+
+  countdown: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginLeft: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#FCA5A5',
+    backgroundColor: '#FEE2E2',
+  },
+  countdownText: { fontSize: 11.5, fontWeight: '700', color: '#DC2626' },
+
+  chevron: { position: 'absolute', right: 10, top: '38%' },
+
+  actions: { flexDirection: 'row', alignItems: 'center', marginTop: 12, gap: 14 },
+  btnPrimary: {
+    backgroundColor: '#0A0A0A',
+    paddingHorizontal: 16,
+    height: 34,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  btnPrimaryText: { color: '#fff', fontSize: 13, fontWeight: '700' },
+  btnOutline: {
+    backgroundColor: '#fff',
+    paddingHorizontal: 16,
+    height: 34,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#D1D5DB',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  btnOutlineText: { color: '#111', fontSize: 13, fontWeight: '700' },
+  btnGhost: { paddingVertical: 6, paddingHorizontal: 2 },
+  btnGhostText: { color: '#111', fontSize: 13, fontWeight: '600' },
+});
 ```
 
 ## File: components/retailer/home/HomeAlert.tsx
@@ -40953,211 +38259,964 @@ const HomeStoreInfo: React.FC<HomeStoreInfoProps> = ({ store, onVerifiedPress, o
 export default HomeStoreInfo;
 ```
 
-## File: components/retailer/inventory/InventoryCard.tsx
+## File: components/retailer/inventory/InventoryFilter.tsx
 ```typescript
-import React from 'react'
-import { View, Text, TouchableOpacity, Image } from 'react-native'
-import { Feather } from '@expo/vector-icons'
-import {
-  InventoryProduct,
-  StockStatus,
-} from '@/services/hooks/retailer/inventory/useInventory'
+import React from 'react';
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { FilterTab } from '@/services/hooks/retailer/inventory/useInventory';
 
-interface InventoryCardProps {
-  product: InventoryProduct
-  onPress?: (product: InventoryProduct) => void
-  onEditPress?: (product: InventoryProduct) => void
+interface InventoryFilterProps {
+  tabs: FilterTab[];
+  active: FilterTab;
+  counts: Record<FilterTab, number>;
+  onChange: (tab: FilterTab) => void;
 }
 
-const statusBadge: Record<StockStatus, { bg: string; text: string }> = {
-  'In Stock': { bg: '#00C853', text: '#fff' },
-  'Low Stock': { bg: '#F97316', text: '#fff' },
-  'Out of Stock': { bg: '#EF4444', text: '#fff' },
-  'On Hold': { bg: '#374151', text: '#fff' },
-}
-
-const productTypeBadge = {
-  Sneakers: { bg: '#ECFDF5', text: '#047857' },
-  Clothing: { bg: '#EFF6FF', text: '#1D4ED8' },
-}
-
-const SIZES_VISIBLE = 4
-
-const InventoryCard: React.FC<InventoryCardProps> = ({
-  product,
-  onPress,
-  onEditPress,
+const InventoryFilter: React.FC<InventoryFilterProps> = ({
+  tabs, active, counts, onChange,
 }) => {
-  const badge = statusBadge[product.status]
-  const typeBadge = productTypeBadge[product.productType]
-  const badgeLabel =
-    product.status === 'Low Stock' && product.lowCount != null
-      ? `Low: ${product.lowCount}`
-      : product.status
-
-  const visibleSizes = product.sizes.slice(0, SIZES_VISIBLE)
-  const hiddenCount = product.sizes.length - SIZES_VISIBLE
-
   return (
-    <TouchableOpacity
-      onPress={() => onPress?.(product)}
-      activeOpacity={0.85}
-      style={{
-        backgroundColor: '#fff',
-        borderWidth: 1,
-        borderColor: '#F3F4F6',
-        borderRadius: 18,
-        padding: 12,
-        flexDirection: 'row',
-        gap: 12,
-        alignItems: 'flex-start',
-        marginBottom: 10,
-      }}
-    >
-      <View style={{ position: 'relative', flexShrink: 0 }}>
-        {product.imageUri ? (
-          <Image
-            source={{ uri: product.imageUri }}
-            style={{ width: 76, height: 76, borderRadius: 12 }}
-            resizeMode="cover"
-          />
-        ) : (
-          <View
-            style={{
-              width: 76,
-              height: 76,
-              borderRadius: 12,
-              backgroundColor: product.imageBg,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <Feather name="package" size={28} color="#9CA3AF" />
-          </View>
-        )}
-
-        <View
-          style={{
-            position: 'absolute',
-            bottom: 5,
-            left: 5,
-            backgroundColor: badge.bg,
-            borderRadius: 6,
-            paddingHorizontal: 6,
-            paddingVertical: 2,
-          }}
-        >
-          <Text style={{ color: badge.text, fontSize: 9, fontWeight: '700' }}>
-            {badgeLabel}
-          </Text>
-        </View>
-      </View>
-
-      <View style={{ flex: 1, minWidth: 0 }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexShrink: 1 }}>
-            <Text
+    <View style={{
+      backgroundColor: '#fff',
+      borderBottomWidth: 1, borderBottomColor: '#F3F4F6',
+    }}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingHorizontal: 16, paddingVertical: 10, gap: 8,
+        }}
+      >
+        {tabs.map(tab => {
+          const isActive = tab === active;
+          return (
+            <TouchableOpacity
+              key={tab}
+              onPress={() => onChange(tab)}
+              activeOpacity={0.7}
               style={{
-                fontSize: 10,
+                backgroundColor: isActive ? '#00C853' : '#F3F4F6',
+                borderRadius: 20,
+                paddingHorizontal: 16, paddingVertical: 8,
+              }}
+            >
+              <Text style={{
+                fontSize: 13,
                 fontWeight: '700',
-                color: '#9CA3AF',
-                letterSpacing: 0.5,
-                textTransform: 'uppercase',
-              }}
-            >
-              {product.brand}
-            </Text>
-            <View
-              style={{
-                backgroundColor: typeBadge.bg,
-                borderRadius: 999,
-                paddingHorizontal: 8,
-                paddingVertical: 2,
-              }}
-            >
-              <Text style={{ fontSize: 10, fontWeight: '700', color: typeBadge.text }}>
-                {product.productType}
+                color: isActive ? '#fff' : '#374151',
+              }}>
+                {tab} ({counts[tab]})
               </Text>
-            </View>
-          </View>
+            </TouchableOpacity>
+          );
+        })}
+      </ScrollView>
+    </View>
+  );
+};
 
-          <TouchableOpacity onPress={() => onEditPress?.(product)} hitSlop={8}>
-            <Feather name="edit-2" size={15} color="#9CA3AF" />
+export default InventoryFilter;
+```
+
+## File: components/retailer/inventory/InventoryHeader.tsx
+```typescript
+import React from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { Feather } from '@expo/vector-icons';
+
+interface InventoryHeaderProps {
+  locationLabel: string;
+  onLocationPress?: () => void;
+  onSearchPress?: () => void;
+  onFilterPress?: () => void;
+}
+
+const InventoryHeader: React.FC<InventoryHeaderProps> = ({
+  locationLabel,
+  onLocationPress,
+  onSearchPress,
+  onFilterPress,
+}) => {
+  return (
+    <View style={{
+      backgroundColor: '#fff',
+      paddingHorizontal: 16, paddingTop: 16, paddingBottom: 12,
+    }}>
+      <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontSize: 24, fontWeight: '800', color: '#111' }}>
+            Inventory
+          </Text>
+
+          <TouchableOpacity
+            onPress={onLocationPress}
+            activeOpacity={0.7}
+            style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4, gap: 4 }}
+          >
+            <Feather name="map-pin" size={13} color="#9CA3AF" />
+            <Text style={{ fontSize: 13, color: '#6B7280', fontWeight: '500' }}>
+              {locationLabel}
+            </Text>
+            <Feather name="chevron-down" size={14} color="#9CA3AF" />
           </TouchableOpacity>
         </View>
 
-        <Text
-          style={{ fontSize: 14, fontWeight: '800', color: '#111', marginTop: 3 }}
-          numberOfLines={1}
-        >
-          {product.name}
-        </Text>
-
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 6 }}>
-          {visibleSizes.map(({ size, qty }) => {
-            const available = qty > 0
-
-            return (
-              <View
-                key={size}
-                style={{
-                  backgroundColor: available ? '#DCFCE7' : '#F3F4F6',
-                  borderRadius: 8,
-                  paddingHorizontal: 7,
-                  paddingVertical: 3,
-                  marginRight: 4,
-                  marginBottom: 4,
-                }}
-              >
-                <Text
-                  style={{
-                    fontSize: 10,
-                    fontWeight: '700',
-                    color: available ? '#15803D' : '#9CA3AF',
-                  }}
-                >
-                  {size} · {qty}
-                </Text>
-              </View>
-            )
-          })}
-
-          {hiddenCount > 0 && (
-            <View
-              style={{
-                backgroundColor: '#F3F4F6',
-                borderRadius: 8,
-                paddingHorizontal: 7,
-                paddingVertical: 3,
-                marginRight: 4,
-                marginBottom: 4,
-              }}
-            >
-              <Text style={{ fontSize: 10, fontWeight: '700', color: '#9CA3AF' }}>
-                +{hiddenCount}
-              </Text>
-            </View>
-          )}
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 18, marginTop: 4 }}>
+          <TouchableOpacity onPress={onSearchPress} hitSlop={8}>
+            <Feather name="search" size={22} color="#111" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={onFilterPress} hitSlop={8}>
+            <Feather name="sliders" size={22} color="#111" />
+          </TouchableOpacity>
         </View>
-
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4 }}>
-          <Text style={{ fontSize: 15, fontWeight: '800', color: '#111' }}>
-            ${product.price}
-          </Text>
-          <Text style={{ fontSize: 11, color: '#9CA3AF' }}>
-            | Cost: ${product.cost}
-          </Text>
-        </View>
-
-        <Text style={{ fontSize: 10, color: '#D1D5DB', marginTop: 2 }}>
-          {product.sku}
-        </Text>
       </View>
-    </TouchableOpacity>
-  )
+    </View>
+  );
+};
+
+export default InventoryHeader;
+```
+
+## File: components/retailer/inventory/InventoryStats.tsx
+```typescript
+import React from 'react';
+import { View, Text } from 'react-native';
+import { InventorySummary, SyncInfo } from '@/services/hooks/retailer/inventory/useInventory';
+
+interface InventoryStatsProps {
+  summary: InventorySummary;
+  syncInfo: SyncInfo;
 }
 
-export default InventoryCard
+const STAT_ITEMS = (summary: InventorySummary) => [
+  { label: 'Active', value: summary.active, color: '#00C853', bg: '#ECFDF3' },
+  { label: 'Low Stock', value: summary.lowStock, color: '#F59E0B', bg: '#FFFBEB' },
+  { label: 'Out of Stock', value: summary.outOfStock, color: '#EF4444', bg: '#FEF2F2' },
+  { label: 'On Hold', value: summary.onHold, color: '#6B7280', bg: '#F9FAFB' },
+];
+
+const InventoryStats: React.FC<InventoryStatsProps> = ({ summary, syncInfo }) => {
+  const stats = STAT_ITEMS(summary);
+
+  return (
+    <View style={{ backgroundColor: '#fff' }}>
+      {/* Stat cards row */}
+      <View style={{
+        flexDirection: 'row',
+        paddingHorizontal: 16,
+        paddingBottom: 10,
+        gap: 8,
+      }}>
+        {stats.map((stat) => (
+          <View
+            key={stat.label}
+            style={{
+              flex: 1,
+              backgroundColor: stat.bg,
+              borderRadius: 14,
+              paddingVertical: 10,
+              alignItems: 'center',
+            }}
+          >
+            <Text style={{ fontSize: 18, fontWeight: '800', color: stat.color }}>
+              {stat.value}
+            </Text>
+            <Text style={{ fontSize: 10, fontWeight: '600', color: '#6B7280', marginTop: 2 }}>
+              {stat.label}
+            </Text>
+          </View>
+        ))}
+      </View>
+
+      {/* Sync row */}
+      <View style={{
+        flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+        paddingHorizontal: 16, paddingVertical: 8,
+        borderBottomWidth: 1, borderBottomColor: '#F3F4F6',
+      }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+          <View style={{
+            width: 7, height: 7, borderRadius: 4,
+            backgroundColor: syncInfo.isSynced ? '#00C853' : '#EF4444',
+          }} />
+          <Text style={{
+            fontSize: 11, fontWeight: '500',
+            color: syncInfo.isSynced ? '#00C853' : '#EF4444',
+          }}>
+            {syncInfo.lastSyncedLabel}
+          </Text>
+        </View>
+
+        {syncInfo.isPosConnected && (
+          <Text style={{ fontSize: 11, color: '#9CA3AF', fontWeight: '500' }}>
+            POS Connected
+          </Text>
+        )}
+      </View>
+    </View>
+  );
+};
+
+export default InventoryStats;
+```
+
+## File: components/retailer/orders/OrderCard.tsx
+```typescript
+import React from 'react';
+import {
+    View,
+    Text,
+    Image,
+    TouchableOpacity,
+    StyleSheet,
+} from 'react-native';
+import { Feather } from '@expo/vector-icons';
+import { Order, OrderStatus } from '@/types/Orders';
+
+interface OrderCardProps {
+    order: Order;
+    onConfirmOrder: (orderId: string) => void;
+    onMarkReady: (orderId: string) => void;
+    onMarkPickedUp: (orderId: string) => void;
+    onViewDetails: (orderId: string) => void;
+    onViewHoldDetails: (orderId: string) => void;
+}
+
+const TAG_STYLE: Record<string, { bg: string; color: string }> = {
+    'BUY NOW': { bg: '#EDE7F6', color: '#4A148C' },
+    'DETAILS': { bg: '#EDE7F6', color: '#4A148C' },
+    'PICKUP':  { bg: '#EDE7F6', color: '#4A148C' },
+};
+
+const STATUS_CONFIG: Record<OrderStatus, { label: string; bg: string; color: string }> = {
+    new:       { label: 'Paid',          bg: '#E8F5E9', color: '#2E7D32' },
+    holding:   { label: 'Hold',          bg: '#FFF3E0', color: '#E65100' },
+    ready:     { label: 'Pickup Ready',  bg: '#E3F2FD', color: '#1565C0' },
+    completed: { label: 'Completed',     bg: '#F3F3F3', color: '#555555' },
+    cancelled: { label: 'Cancelled',     bg: '#FFEBEE', color: '#B71C1C' },
+};
+
+type ActionConfig = {
+    label: string;
+    bg: string;
+    icon?: keyof typeof Feather.glyphMap;
+    onPress: () => void;
+};
+
+const getPrimaryAction = (
+    status: OrderStatus,
+    id: string,
+    onConfirm: (id: string) => void,
+    onReady: (id: string) => void,
+    onPickup: (id: string) => void,
+): ActionConfig | null => {
+    switch (status) {
+        case 'new':     return { label: 'Accept & Prepare', bg: '#1B5E20', onPress: () => onConfirm(id) };
+        case 'holding': return { label: 'Mark Ready',        bg: '#111111', onPress: () => onReady(id)   };
+        case 'ready':   return { label: 'Verify Pickup',     bg: '#1565C0', icon: 'grid', onPress: () => onPickup(id) };
+        default:        return null;
+    }
+};
+
+const getSecondaryLabel = (status: OrderStatus): string => {
+    if (status === 'holding') return 'Hold Details';
+    if (status === 'ready') return 'Details';
+    return 'Order Details';
+};
+
+const OrderCard: React.FC<OrderCardProps> = ({
+    order,
+    onConfirmOrder,
+    onMarkReady,
+    onMarkPickedUp,
+    onViewDetails,
+    onViewHoldDetails,
+}) => {
+    const tagCfg         = TAG_STYLE[order.tag] ?? TAG_STYLE['BUY NOW'];
+    const statusCfg      = STATUS_CONFIG[order.status];
+    const primary        = getPrimaryAction(order.status, order.id, onConfirmOrder, onMarkReady, onMarkPickedUp);
+    const secondaryLabel = getSecondaryLabel(order.status);
+    const isCompleted    = order.status === 'completed';
+    const isCancelled    = order.status === 'cancelled';
+    const showActions    = !isCompleted && !isCancelled;
+
+    const onSecondaryPress = order.status === 'holding'
+        ? () => onViewHoldDetails(order.id)
+        : () => onViewDetails(order.id);
+
+    return (
+        <View style={styles.card}>
+
+            {/* ── Row 1: tag + status pill + urgency/time ── */}
+            <View style={styles.topRow}>
+                <View style={styles.topLeft}>
+                    <View style={[styles.tagBadge, { backgroundColor: tagCfg.bg }]}>
+                        <Text style={[styles.tagText, { color: tagCfg.color }]}>{order.tag}</Text>
+                    </View>
+                    <View style={[styles.statusPill, { backgroundColor: statusCfg.bg }]}>
+                        <Text style={[styles.statusText, { color: statusCfg.color }]}>
+                            {statusCfg.label}
+                        </Text>
+                    </View>
+                </View>
+
+                {order.status === 'new' && order.confirmWithinMinutes != null ? (
+                    <View style={styles.urgencyPill}>
+                        <Feather name="clock" size={10} color="#EA580C" />
+                        <Text style={styles.urgencyText}>Confirm in {order.confirmWithinMinutes} min</Text>
+                    </View>
+                ) : (
+                    <Text style={styles.timeText}>{order.timeAgo}</Text>
+                )}
+            </View>
+
+            {/* ── Row 2: image + product info ── */}
+            <View style={styles.productRow}>
+                <View style={styles.imgWrapper}>
+                    {order.imageUrl ? (
+                        <Image
+                            source={{ uri: order.imageUrl }}
+                            style={styles.productImg}
+                            resizeMode="cover"
+                        />
+                    ) : (
+                        <View style={styles.imgPlaceholder} />
+                    )}
+                </View>
+                <View style={styles.productInfo}>
+                    <Text style={styles.productName} numberOfLines={1}>{order.productName}</Text>
+                    <Text style={styles.productMeta}>Size {order.size} · {order.gender}</Text>
+                    <Text style={styles.customerName}>{order.customerName} · Order #{order.orderNumber}</Text>
+                </View>
+            </View>
+
+            {/* ── Inventory reserved (new only) ── */}
+            {order.status === 'new' && order.inventoryReserved ? (
+                <Text style={styles.reservedText}>Inventory reserved</Text>
+            ) : null}
+
+            {/* ── Expiry row (holding only) ── */}
+            {order.status === 'holding' && order.expiresIn ? (
+                <View style={styles.expiryRow}>
+                    <View style={[styles.expiryDot, { backgroundColor: '#FF9800' }]} />
+                    <Text style={[styles.expiryText, { color: '#FF9800' }]}>
+                        Expires in {order.expiresIn}
+                    </Text>
+                </View>
+            ) : null}
+
+            {/* ── Ready-since row (ready only) ── */}
+            {order.status === 'ready' && order.readySince ? (
+                <View style={styles.expiryRow}>
+                    <View style={[styles.expiryDot, { backgroundColor: '#00C853' }]} />
+                    <Text style={[styles.expiryText, { color: '#00C853' }]}>
+                        Ready since {order.readySince}
+                    </Text>
+                </View>
+            ) : null}
+
+            {/* ── Customer notified + waiting (ready only) ── */}
+            {order.status === 'ready' && order.customerNotified ? (
+                <Text style={styles.customerNotif}>
+                    Customer notified{order.waitingSince ? ` · Waiting ${order.waitingSince}` : ''}
+                </Text>
+            ) : null}
+
+            {/* ── Price row (deposit-aware for holds) ── */}
+            {order.status === 'holding' && order.depositPaid ? (
+                <Text style={styles.price}>
+                    ${order.price} total <Text style={styles.priceSub}>· ${order.depositAmount} deposit</Text>
+                </Text>
+            ) : (
+                <Text style={styles.price}>${order.price}</Text>
+            )}
+
+            {/* ── Completed footer ── */}
+            {isCompleted && order.completedDate ? (
+                <View style={styles.footerRow}>
+                    <View style={styles.checkCircle}>
+                        <Text style={styles.checkMark}>✓</Text>
+                    </View>
+                    <Text style={styles.completedText}>
+                        Completed {order.completedDate} · ${order.price}
+                    </Text>
+                </View>
+            ) : null}
+
+            {/* ── Cancelled footer ── */}
+            {isCancelled && order.cancelledDate ? (
+                <View style={styles.footerRow}>
+                    <Text style={styles.cancelledText}>
+                        Cancelled by {order.cancelledBy ?? 'customer'} · {order.cancelledDate}
+                    </Text>
+                </View>
+            ) : null}
+
+            {/* ── Action buttons (new / holding / ready only) ── */}
+            {showActions ? (
+                <>
+                    <View style={styles.divider} />
+                    <View style={styles.actionRow}>
+                        {primary ? (
+                            <TouchableOpacity
+                                style={[styles.primaryBtn, { backgroundColor: primary.bg }]}
+                                onPress={primary.onPress}
+                                activeOpacity={0.85}
+                            >
+                                {primary.icon ? (
+                                    <Feather name={primary.icon} size={14} color="#fff" style={{ marginRight: 6 }} />
+                                ) : null}
+                                <Text style={styles.primaryBtnText}>{primary.label}</Text>
+                            </TouchableOpacity>
+                        ) : null}
+                        <TouchableOpacity
+                            style={styles.secondaryBtn}
+                            onPress={onSecondaryPress}
+                            activeOpacity={0.7}
+                        >
+                            <Text style={styles.secondaryBtnText}>{secondaryLabel}</Text>
+                        </TouchableOpacity>
+                    </View>
+                </>
+            ) : null}
+
+        </View>
+    );
+};
+
+const styles = StyleSheet.create({
+    card: {
+        backgroundColor: '#FFFFFF',
+        borderRadius: 12,
+        paddingHorizontal: 14,
+        paddingTop: 12,
+        paddingBottom: 14,
+    },
+    topRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 10,
+    },
+    topLeft: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 6,
+    },
+    tagBadge: {
+        paddingHorizontal: 8,
+        paddingVertical: 3,
+        borderRadius: 20,
+    },
+    tagText: {
+        fontSize: 10,
+        fontWeight: '700',
+        letterSpacing: 0.3,
+    },
+    statusPill: {
+        paddingHorizontal: 9,
+        paddingVertical: 3,
+        borderRadius: 20,
+    },
+    statusText: {
+        fontSize: 11,
+        fontWeight: '600',
+    },
+    timeText: {
+        fontSize: 11,
+        color: '#999999',
+    },
+    urgencyPill: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 4,
+        backgroundColor: '#FFF7ED',
+        borderRadius: 20,
+        paddingHorizontal: 8,
+        paddingVertical: 3,
+    },
+    urgencyText: {
+        fontSize: 10,
+        fontWeight: '700',
+        color: '#EA580C',
+    },
+    productRow: {
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        gap: 10,
+        marginBottom: 8,
+    },
+    imgWrapper: {
+        width: 56,
+        height: 56,
+        borderRadius: 8,
+        overflow: 'hidden',
+        backgroundColor: '#F0F0F0',
+        flexShrink: 0,
+    },
+    productImg: {
+        width: 56,
+        height: 56,
+    },
+    imgPlaceholder: {
+        width: 56,
+        height: 56,
+        backgroundColor: '#E8E8E8',
+    },
+    productInfo: {
+        flex: 1,
+    },
+    productName: {
+        fontSize: 14,
+        fontWeight: '700',
+        color: '#111111',
+        lineHeight: 18,
+        marginBottom: 2,
+    },
+    productMeta: {
+        fontSize: 11,
+        color: '#888888',
+        lineHeight: 15,
+        marginBottom: 2,
+    },
+    customerName: {
+        fontSize: 12,
+        color: '#666666',
+    },
+    reservedText: {
+        fontSize: 11,
+        color: '#00C853',
+        fontWeight: '500',
+        marginBottom: 4,
+    },
+    expiryRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 5,
+        marginBottom: 4,
+    },
+    expiryDot: {
+        width: 6,
+        height: 6,
+        borderRadius: 3,
+    },
+    expiryText: {
+        fontSize: 11,
+        fontWeight: '500',
+    },
+    customerNotif: {
+        fontSize: 11,
+        color: '#888888',
+        marginBottom: 4,
+    },
+    price: {
+        fontSize: 18,
+        fontWeight: '700',
+        color: '#111111',
+        marginTop: 4,
+        marginBottom: 6,
+    },
+    priceSub: {
+        fontSize: 12,
+        fontWeight: '500',
+        color: '#888888',
+    },
+    footerRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 5,
+        marginTop: 2,
+    },
+    checkCircle: {
+        width: 14,
+        height: 14,
+        borderRadius: 7,
+        backgroundColor: '#E8F5E9',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    checkMark: {
+        fontSize: 9,
+        color: '#2E7D32',
+        fontWeight: '700',
+        lineHeight: 14,
+    },
+    completedText: {
+        fontSize: 11,
+        color: '#888888',
+    },
+    cancelledText: {
+        fontSize: 11,
+        color: '#D32F2F',
+    },
+    divider: {
+        height: 1,
+        backgroundColor: '#F0F0F0',
+        marginVertical: 10,
+    },
+    actionRow: {
+        flexDirection: 'row',
+        gap: 8,
+    },
+    primaryBtn: {
+        flex: 1,
+        flexDirection: 'row',
+        paddingVertical: 9,
+        borderRadius: 8,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    primaryBtnText: {
+        fontSize: 12,
+        fontWeight: '600',
+        color: '#FFFFFF',
+    },
+    secondaryBtn: {
+        flex: 1,
+        paddingVertical: 9,
+        borderRadius: 8,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderWidth: 1.5,
+        borderColor: '#DDDDDD',
+        backgroundColor: '#FFFFFF',
+    },
+    secondaryBtnText: {
+        fontSize: 12,
+        fontWeight: '500',
+        color: '#333333',
+    },
+});
+
+export default OrderCard;
+```
+
+## File: components/retailer/orders/OrdersHeader.tsx
+```typescript
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { Feather, Ionicons } from '@expo/vector-icons';
+
+interface OrdersHeaderProps {
+    storeLabel: string;
+    onLocationPress?: () => void;
+    onSearchPress: () => void;
+    onFilterPress: () => void;
+}
+
+const OrdersHeader: React.FC<OrdersHeaderProps> = ({
+    storeLabel,
+    onLocationPress,
+    onSearchPress,
+    onFilterPress,
+}) => {
+    return (
+        <View style={styles.container}>
+            <View style={styles.topRow}>
+                <Text style={styles.title}>Order Management</Text>
+                <View style={styles.actions}>
+                    <TouchableOpacity onPress={onFilterPress} style={styles.iconBtn}>
+                        <Ionicons name="filter-outline" size={22} color="#222" />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={onSearchPress} style={styles.iconBtn}>
+                        <Ionicons name="search-outline" size={22} color="#222" />
+                    </TouchableOpacity>
+                </View>
+            </View>
+
+            <TouchableOpacity
+                onPress={onLocationPress}
+                activeOpacity={0.7}
+                style={styles.locationRow}
+            >
+                <Feather name="map-pin" size={13} color="#9CA3AF" />
+                <Text style={styles.locationText}>{storeLabel}</Text>
+                <Feather name="chevron-down" size={14} color="#9CA3AF" />
+            </TouchableOpacity>
+
+            <View style={styles.retailerPill}>
+                <Feather name="briefcase" size={12} color="#6B7280" />
+                <Text style={styles.retailerPillText}>Retailer view</Text>
+            </View>
+        </View>
+    );
+};
+
+const styles = StyleSheet.create({
+    container: {
+        paddingHorizontal: 16,
+        paddingTop: 12,
+        paddingBottom: 10,
+        backgroundColor: '#fff',
+    },
+    topRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
+    title: {
+        fontSize: 22,
+        fontWeight: '800',
+        color: '#111',
+    },
+    actions: {
+        flexDirection: 'row',
+        gap: 8,
+    },
+    iconBtn: {
+        padding: 6,
+    },
+    locationRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 4,
+        marginTop: 2,
+    },
+    locationText: {
+        fontSize: 13,
+        color: '#6B7280',
+        fontWeight: '500',
+    },
+    retailerPill: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        alignSelf: 'flex-start',
+        gap: 5,
+        backgroundColor: '#F3F4F6',
+        borderRadius: 8,
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        marginTop: 8,
+    },
+    retailerPillText: {
+        fontSize: 11,
+        fontWeight: '600',
+        color: '#6B7280',
+    },
+});
+
+export default OrdersHeader;
+```
+
+## File: components/retailer/orders/OrdersList.tsx
+```typescript
+import React from 'react';
+import { ScrollView, RefreshControl, StyleSheet, View, Text } from 'react-native';
+import OrderCard from './OrderCard';
+import RecentActivity from './RecentActivity';
+import { Order } from '@/types/Orders';
+
+interface OrdersListProps {
+    orders: Order[];
+    recentActivity?: Order[];
+    isRefreshing: boolean;
+    onRefresh: () => void;
+    onConfirmOrder: (orderId: string) => void;
+    onMarkReady: (orderId: string) => void;
+    onMarkPickedUp: (orderId: string) => void;
+    onViewDetails: (orderId: string) => void;
+    onViewHoldDetails: (orderId: string) => void;
+    onViewAllActivity?: () => void;
+}
+
+const OrdersList: React.FC<OrdersListProps> = ({
+    orders,
+    recentActivity = [],
+    isRefreshing,
+    onRefresh,
+    onConfirmOrder,
+    onMarkReady,
+    onMarkPickedUp,
+    onViewDetails,
+    onViewHoldDetails,
+    onViewAllActivity,
+}) => {
+    if (orders.length === 0 && recentActivity.length === 0) {
+        return (
+            <View style={styles.emptyContainer}>
+                <Text style={styles.emptyText}>No orders found</Text>
+            </View>
+        );
+    }
+
+    return (
+        <ScrollView
+            style={styles.scroll}
+            contentContainerStyle={styles.content}
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+                <RefreshControl
+                    refreshing={isRefreshing}
+                    onRefresh={onRefresh}
+                    tintColor="#00C853"
+                    colors={['#00C853']}
+                />
+            }
+        >
+            {orders.map(order => (
+                <OrderCard
+                    key={order.id}
+                    order={order}
+                    onConfirmOrder={onConfirmOrder}
+                    onMarkReady={onMarkReady}
+                    onMarkPickedUp={onMarkPickedUp}
+                    onViewDetails={onViewDetails}
+                    onViewHoldDetails={onViewHoldDetails}
+                />
+            ))}
+
+            {recentActivity.length > 0 && (
+                <RecentActivity
+                    orders={recentActivity}
+                    onViewAll={() => onViewAllActivity?.()}
+                    onOrderPress={onViewDetails}
+                />
+            )}
+        </ScrollView>
+    );
+};
+
+const styles = StyleSheet.create({
+    scroll: {
+        flex: 1,
+        backgroundColor: '#F5F5F5',
+    },
+    content: {
+        padding: 12,
+        gap: 10,
+        paddingBottom: 24,
+    },
+    emptyContainer: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingTop: 60,
+    },
+    emptyText: {
+        fontSize: 15,
+        color: '#999',
+    },
+});
+
+export default OrdersList;
+```
+
+## File: components/retailer/orders/OrdersTabs.tsx
+```typescript
+import React from 'react';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+
+export type OrderTab = 'Needs Action' | 'Holds' | 'Ready' | 'History';
+
+export interface TabCounts {
+    'Needs Action': number;
+    Holds: number;
+    Ready: number;
+    History: number;
+}
+
+interface OrdersTabsProps {
+    activeTab: OrderTab;
+    tabCounts: TabCounts;
+    onTabChange: (tab: OrderTab) => void;
+}
+
+const TABS: OrderTab[] = ['Needs Action', 'Holds', 'Ready', 'History'];
+
+const OrdersTabs: React.FC<OrdersTabsProps> = ({ activeTab, tabCounts, onTabChange }) => {
+    return (
+        <View style={styles.wrapper}>
+            <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.container}
+            >
+                {TABS.map((tab) => {
+                    const isActive = activeTab === tab;
+                    const count = tabCounts[tab];
+                    return (
+                        <TouchableOpacity
+                            key={tab}
+                            onPress={() => onTabChange(tab)}
+                            style={[styles.tab, isActive && styles.activeTab]}
+                            activeOpacity={0.7}
+                        >
+                            <Text style={[styles.tabText, isActive && styles.activeTabText]}>
+                                {tab}
+                            </Text>
+                            {count > 0 && (
+                                <View style={[styles.badge, isActive && styles.activeBadge]}>
+                                    <Text style={[styles.badgeText, isActive && styles.activeBadgeText]}>
+                                        {count}
+                                    </Text>
+                                </View>
+                            )}
+                        </TouchableOpacity>
+                    );
+                })}
+            </ScrollView>
+            <View style={styles.divider} />
+        </View>
+    );
+};
+
+const styles = StyleSheet.create({
+    wrapper: {
+        backgroundColor: '#fff',
+    },
+    container: {
+        flexDirection: 'row',
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        gap: 6,
+    },
+    tab: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 14,
+        paddingVertical: 8,
+        borderRadius: 20,
+        gap: 6,
+        backgroundColor: '#F3F4F6',
+    },
+    activeTab: {
+        backgroundColor: '#111',
+    },
+    tabText: {
+        fontSize: 13,
+        fontWeight: '600',
+        color: '#6B7280',
+    },
+    activeTabText: {
+        color: '#fff',
+    },
+    badge: {
+        backgroundColor: '#E5E7EB',
+        borderRadius: 10,
+        minWidth: 18,
+        height: 18,
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingHorizontal: 5,
+    },
+    activeBadge: {
+        backgroundColor: '#00C853',
+    },
+    badgeText: {
+        fontSize: 11,
+        fontWeight: '700',
+        color: '#6B7280',
+    },
+    activeBadgeText: {
+        color: '#fff',
+    },
+    divider: {
+        height: 1,
+        backgroundColor: '#F0F0F0',
+    },
+});
+
+export default OrdersTabs;
 ```
 
 ## File: components/retailer/profile/StoreProfileBrand.tsx
@@ -43382,90 +41441,103 @@ export const useCart = () => {
 
 ## File: services/hooks/discover/useNotifications.ts
 ```typescript
-// hooks/notifications/useNotifications.ts
+// services/hooks/discover/useNotifications.ts
 import { useState, useCallback, useMemo } from 'react'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-export type NotificationCategory = 'All' | 'Restocks' | 'Orders' | 'Drops' | 'Stores'
-export type NotificationGroup = 'NOW' | 'TODAY' | 'YESTERDAY' | 'THIS WEEK'
+export type NotificationCategory =
+  | 'All'
+  | 'Unread'
+  | 'Orders'
+  | 'Restocks'
+  | 'Drops'
+  | 'PriceDrops'
+  | 'Offers'
+
+export type NotificationGroup = 'Today' | 'Yesterday'
+
+export interface NotificationAction {
+  label: string
+  variant: 'filled' | 'outline'
+}
 
 export interface Notification {
   id: string
-  category: Exclude<NotificationCategory, 'All'>
+  category: Exclude<NotificationCategory, 'All' | 'Unread'>
   group: NotificationGroup
   title: string
   subtitle: string
   time: string
   read: boolean
-  // ✅ ADD THESE
   brand?: string
   imageUri?: string
   icon: 'restock' | 'order' | 'drop' | 'store' | 'system'
+  price?: number
+  originalPrice?: number
+  action?: NotificationAction
+  ended?: boolean
 }
 
-// ─── Mock Data ────────────────────────────────────────────────────────────────
+// ─── Mock Data (matches mockup exactly) ────────────────────────────────────────
 
 const MOCK_NOTIFICATIONS: Notification[] = [
   {
     id: '1',
     category: 'Restocks',
-    group: 'NOW',
-    title: "Air Jordan 4 'Black Cat' is back! 🔥",
-    subtitle: "Size 10.5 now in stock at Sonny's Kicks · 1.1 mi",
+    group: 'Today',
+    title: 'Back in your size',
+    subtitle: 'Air Jordan 4 Black Cat\nUS Men 10.5 · Sonnys · 1.1 mi',
     time: 'Just now',
     read: false,
     icon: 'restock',
+    action: { label: 'View item', variant: 'outline' },
   },
   {
     id: '2',
     category: 'Orders',
-    group: 'NOW',
-    title: 'Your order is ready for pickup',
-    subtitle: 'GS-2024-7843 · Kicks City · Ready now',
+    group: 'Today',
+    title: 'Ready for pickup',
+    subtitle: 'Order GS-7843 · Kicks City',
     time: '15 min ago',
     read: false,
     icon: 'order',
+    action: { label: 'View pickup details', variant: 'outline' },
   },
   {
     id: '3',
     category: 'Drops',
-    group: 'TODAY',
-    title: "Nike Dunk Low 'Panda' dropping Saturday",
-    subtitle: "3 followed stores are stocking this. Set reminder →",
-    time: '2 hrs ago',
+    group: 'Today',
+    title: 'Upcoming drop',
+    subtitle: 'Nike Dunk Low Panda\nOct 3 · 10 AM ET · 3 followed stores',
+    time: '2 hr ago',
     read: true,
     icon: 'drop',
+    action: { label: 'Set reminder', variant: 'outline' },
   },
   {
     id: '4',
-    category: 'Restocks',
-    group: 'YESTERDAY',
-    title: "Price drop: Yeezy Boost 350 'Carbon'",
-    subtitle: 'Now $320, down from $350 · Available in your size',
-    time: 'Yesterday',
+    category: 'PriceDrops',
+    group: 'Yesterday',
+    title: 'Price dropped by $30',
+    subtitle: 'Yeezy Boost 350 Carbon · US Men 10.5',
+    time: 'Yesterday · 4:20 PM',
     read: true,
     icon: 'restock',
+    price: 320,
+    originalPrice: 350,
+    action: { label: 'View item', variant: 'outline' },
   },
   {
     id: '5',
-    category: 'Stores',
-    group: 'YESTERDAY',
-    title: "Flash Sale at Sonny's Kicks — 20% off today!",
-    subtitle: "Today only · Tap to see what's on sale",
-    time: 'Yesterday',
+    category: 'Offers',
+    group: 'Yesterday',
+    title: 'Sonnys flash sale',
+    subtitle: '20% off selected items',
+    time: 'Yesterday · 10:00 AM',
     read: true,
     icon: 'store',
-  },
-  {
-    id: '6',
-    category: 'Stores',
-    group: 'THIS WEEK',
-    title: 'Profile updated successfully',
-    subtitle: "Size preferences saved · Size 10.5 Men's",
-    time: '3 days ago',
-    read: true,
-    icon: 'system',
+    ended: true,
   },
 ]
 
@@ -43476,30 +41548,30 @@ export const useNotifications = () => {
   const [activeCategory, setActiveCategory] = useState<NotificationCategory>('All')
 
   const unreadCount = useMemo(
-    () => notifications.filter(n => !n.read).length,
-    [notifications]
+    () => notifications.filter((n) => !n.read).length,
+    [notifications],
   )
 
   const filtered = useMemo(() => {
     if (activeCategory === 'All') return notifications
-    return notifications.filter(n => n.category === activeCategory)
+    if (activeCategory === 'Unread') return notifications.filter((n) => !n.read)
+    return notifications.filter((n) => n.category === activeCategory)
   }, [notifications, activeCategory])
 
-  // Group filtered notifications by their group label
   const grouped = useMemo(() => {
-    const order: NotificationGroup[] = ['NOW', 'TODAY', 'YESTERDAY', 'THIS WEEK']
+    const order: NotificationGroup[] = ['Today', 'Yesterday']
     const map: Partial<Record<NotificationGroup, Notification[]>> = {}
-    filtered.forEach(n => {
+    filtered.forEach((n) => {
       if (!map[n.group]) map[n.group] = []
       map[n.group]!.push(n)
     })
     return order
-      .filter(g => map[g] && map[g]!.length > 0)
-      .map(g => ({ group: g, items: map[g]! }))
+      .filter((g) => map[g] && map[g]!.length > 0)
+      .map((g) => ({ group: g, items: map[g]! }))
   }, [filtered])
 
   const markAllRead = useCallback(() => {
-    setNotifications(prev => prev.map(n => ({ ...n, read: true })))
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })))
   }, [])
 
   const clearAll = useCallback(() => {
@@ -43507,13 +41579,11 @@ export const useNotifications = () => {
   }, [])
 
   const markRead = useCallback((id: string) => {
-    setNotifications(prev =>
-      prev.map(n => (n.id === id ? { ...n, read: true } : n))
-    )
+    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)))
   }, [])
 
   const dismiss = useCallback((id: string) => {
-    setNotifications(prev => prev.filter(n => n.id !== id))
+    setNotifications((prev) => prev.filter((n) => n.id !== id))
   }, [])
 
   return {
@@ -43901,6 +41971,8 @@ const DEFAULT_REGION: MapRegion = {
   longitudeDelta: 0.018,
 }
 
+const RADIUS_OPTIONS = ['1 mi', '5 mi', '10 mi', '25 mi']
+
 export function useMap() {
   const [query, setQuery] = useState('')
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -43911,9 +41983,21 @@ export function useMap() {
 
   const [isFetchingLocation, setIsFetchingLocation] = useState(false)
   const [locationError, setLocationError] = useState<string | null>(null)
+  const [locationLabel, setLocationLabel] = useState('Novi, MI')
 
   const [filters, setFilters] = useState<SearchFilters>(DEFAULT_FILTERS)
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false)
+
+  // ── New: top-bar chip state (my sizes / open now / radius) ──
+  const [mySizes] = useState('US 10, M') // TODO: wire to real profile sizes
+  const [isOpenNow, setIsOpenNow] = useState(false)
+  const [radiusIndex, setRadiusIndex] = useState(2) // default "10 mi"
+  const radiusLabel = RADIUS_OPTIONS[radiusIndex]
+
+  const toggleOpenNow = useCallback(() => setIsOpenNow((v) => !v), [])
+  const cycleRadius = useCallback(() => {
+    setRadiusIndex((i) => (i + 1) % RADIUS_OPTIONS.length)
+  }, [])
 
   const activeFilterCount =
     filters.productTypes.length +
@@ -43960,6 +42044,11 @@ export function useMap() {
           return false
         }
 
+        // Open-now chip filter
+        if (isOpenNow && !store.hours.toLowerCase().startsWith('open')) {
+          return false
+        }
+
         if (!normalizedQuery) return true
 
         const haystacks = [
@@ -43981,7 +42070,7 @@ export function useMap() {
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current)
     }
-  }, [query, stores, filters])
+  }, [query, stores, filters, isOpenNow])
 
   const handleQueryChange = useCallback((text: string) => setQuery(text), [])
   const handleClearQuery = useCallback(() => setQuery(''), [])
@@ -44015,6 +42104,19 @@ export function useMap() {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
       }))
+
+      // Reverse-geocode to update the "Novi, MI" style pill label
+      try {
+        const [place] = await Location.reverseGeocodeAsync({
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+        })
+        if (place?.city) {
+          setLocationLabel(`${place.city}, ${place.region ?? ''}`.trim().replace(/,$/, ''))
+        }
+      } catch {
+        // Non-fatal — keep previous label
+      }
     } catch {
       setLocationError('Could not get your location.')
     } finally {
@@ -44031,6 +42133,13 @@ export function useMap() {
   }, [])
 
   const handleResetFilters = useCallback(() => setFilters(DEFAULT_FILTERS), [])
+
+  // ── "Search this area" — re-runs the filter pass against the current
+  // region. Since MOCK_STORES is static this just re-triggers the effect;
+  // wire this to a real API call keyed off `region` once you have one. ──
+  const handleSearchThisArea = useCallback(() => {
+    setQuery((q) => q) // no-op trigger; replace with real refetch-by-region
+  }, [])
 
   return {
     query,
@@ -44053,7 +42162,14 @@ export function useMap() {
     handleToggleFollow,
     isFetchingLocation,
     locationError,
+    locationLabel,
     handleGoToCurrentLocation,
+    mySizes,
+    isOpenNow,
+    toggleOpenNow,
+    radiusLabel,
+    cycleRadius,
+    handleSearchThisArea,
   }
 }
 ```
@@ -45807,54 +43923,112 @@ import { useState } from 'react'
 import type { ProductType } from '@/types/catalog'
 
 export const useMessages = () => {
-  const [chats] = useState([
+  const [chats, setChats] = useState([
     {
       id: '1',
       storeName: 'Kicks City',
-      lastMessage: 'What is the best you can do on the AJ4 and hoodie bundle?',
+      lastMessage: 'What is the best you can do on the AJ4?',
       time: '5m',
       unreadCount: 2,
       isOnline: true,
+      role: 'Selling' as const,
       itemContext: {
         name: "Air Jordan 4 'Black Cat'",
+        size: '10',
         offer: '$220 offer',
         productType: 'Sneakers' as ProductType,
         image: 'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=100',
+        status: 'Offer Sent',
       },
     },
     {
       id: '2',
       storeName: 'Union Archive',
-      lastMessage: 'Deal confirmed. When can we pick up the varsity jacket?',
+      lastMessage: 'Deal confirmed. When can we pick up...',
       time: '1h',
       unreadCount: 0,
       isOnline: false,
+      role: 'Selling' as const,
       itemContext: {
         name: 'Stussy Varsity Jacket',
+        size: 'L',
         offer: '$225 offer',
         productType: 'Clothing' as ProductType,
         image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=100',
+        status: 'Deal Accepted',
       },
     },
     {
       id: '3',
       storeName: 'Archive Room',
-      lastMessage: 'Can you send more photos of the wash tag on the tee?',
+      lastMessage: 'Can you send more photos of the wash tag...',
       time: '2h',
       unreadCount: 1,
       isOnline: true,
+      role: 'Selling' as const,
       itemContext: {
         name: 'Nike Sportswear Club Tee',
+        size: 'M',
         offer: '$32 offer',
         productType: 'Clothing' as ProductType,
         image: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=100',
+        status: 'Negotiating',
+      },
+    },
+    {
+      id: '4',
+      storeName: 'Detroit Threads',
+      lastMessage: 'Are these still available?',
+      time: '4h',
+      unreadCount: 0,
+      isOnline: false,
+      role: 'Buying' as const,
+      itemContext: {
+        name: 'Yeezy Slide - Onyx',
+        size: '10',
+        offer: '$50 offer',
+        productType: 'Sneakers' as ProductType,
+        image: 'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=100',
+        status: 'Offer Sent',
+      },
+    },
+    {
+      id: '5',
+      storeName: 'Sole Traders',
+      lastMessage: 'Can you do $180?',
+      time: '6h',
+      unreadCount: 0,
+      isOnline: false,
+      role: 'Buying' as const,
+      itemContext: {
+        name: 'Essentials Hoodie',
+        size: 'L',
+        offer: '$180 offer',
+        productType: 'Clothing' as ProductType,
+        image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=100',
+        status: 'Negotiating',
       },
     },
   ])
 
   const unreadTotal = chats.filter((chat) => chat.unreadCount > 0).length
 
-  return { chats, unreadTotal }
+  const toggleRead = (chatId: string) => {
+    setChats((prev) =>
+      prev.map((c) => (c.id === chatId ? { ...c, unreadCount: c.unreadCount > 0 ? 0 : 1 } : c))
+    )
+  }
+
+  const archiveChat = (chatId: string) => {
+    setChats((prev) => prev.filter((c) => c.id !== chatId))
+  }
+
+  const muteChat = (chatId: string) => {
+    // Placeholder — wire up to a real "muted" flag once backend support exists
+    setChats((prev) => [...prev])
+  }
+
+  return { chats, unreadTotal, toggleRead, archiveChat, muteChat }
 }
 ```
 
@@ -45868,6 +44042,7 @@ export const useProfile = () => {
     company: 'Marcus Reseller Co.',
     location: 'Miami, FL',
     isTrusted: true,
+    avatar: 'https://i.pravatar.cc/150?u=marcus',
     stats: {
       dealsDone: 47,
       responseRate: 96,
@@ -45879,12 +44054,60 @@ export const useProfile = () => {
   })
 
   const items = [
-    { id: '1', image: 'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=200' },
-    { id: '2', image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=200' },
-    { id: '3', image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=200' },
+    {
+      id: '1',
+      image: 'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=200',
+      name: 'Nike Air Max 1',
+      size: '10',
+      price: 120,
+    },
+    {
+      id: '2',
+      image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=200',
+      name: 'Nike Club Tee',
+      size: 'L',
+      price: 32,
+    },
+    {
+      id: '3',
+      image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=200',
+      name: 'Stussy Varsity Jacket',
+      size: 'L',
+      price: 225,
+    },
   ]
 
-  return { user, items }
+  const deals = [
+    {
+      id: '1',
+      image: 'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=200',
+      name: 'Air Jordan 1 Retro High',
+      size: '10',
+      price: 180,
+      status: 'Completed',
+      date: 'Sep 22',
+    },
+    {
+      id: '2',
+      image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=200',
+      name: 'Essentials Hoodie',
+      size: 'L',
+      price: 65,
+      status: 'Completed',
+      date: 'Sep 20',
+    },
+    {
+      id: '3',
+      image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=200',
+      name: 'Yeezy Slide - Onyx',
+      size: '10',
+      price: 50,
+      status: 'Completed',
+      date: 'Sep 18',
+    },
+  ]
+
+  return { user, items, deals }
 }
 ```
 
@@ -46142,236 +44365,1885 @@ export const useAddBranch = () => {
 };
 ```
 
-## File: services/hooks/retailer/inventory/useInventory.ts
+## File: services/hooks/retailer/home/useAddProduct.ts
 ```typescript
-import { useState, useCallback, useMemo } from 'react'
-import type { ProductType } from '@/types/catalog'
+import { useState } from 'react';
+import Toast from 'react-native-toast-message';
+import { router } from 'expo-router';
 
-export type StockStatus = 'In Stock' | 'Low Stock' | 'Out of Stock' | 'On Hold'
-export type FilterTab = 'All' | ProductType | 'In Stock' | 'Low Stock' | 'Out of Stock'
-
-export interface SizeEntry {
-  size: string
-  qty: number
+export interface ProductSize {
+    size: string;
+    qty: number;
+    price: string;
+    status: 'Active' | 'Inactive';
 }
 
-export interface InventoryProduct {
-  id: string
-  brand: string
-  name: string
-  sku: string
-  price: number
-  cost: number
-  status: StockStatus
-  productType: ProductType
-  lowCount?: number
-  sizes: SizeEntry[]
-  imageUri?: string
-  imageBg: string
-}
+export const useAddProduct = () => {
+    const [form, setForm] = useState({
+        name: '',
+        brand: '',
+        category: '',
+        colorway: '',
+        sku: '',
+        availability: 'Active' as 'Active' | 'Coming Soon',
+    });
 
-export interface InventorySummary {
-  active: number
-  lowStock: number
-  outOfStock: number
-  onHold: number
-}
+    const [sizes, setSizes] = useState<ProductSize[]>([]);
+    const [scannedFound, setScannedFound] = useState(false);
+    const [isScanning, setIsScanning] = useState(false);
 
-export interface SyncInfo {
-  isSynced: boolean
-  lastSyncedLabel: string
-  isPosConnected: boolean
-}
+    const updateField = (field: string, value: string) => {
+        setForm(prev => ({ ...prev, [field]: value }));
+    };
 
-const INVENTORY_PRODUCTS: InventoryProduct[] = [
-  {
-    id: 'prod-1',
-    brand: 'NIKE',
-    name: 'Air Jordan 1 Retro High OG',
-    sku: 'DJ1237-010',
-    price: 220,
-    cost: 140,
-    status: 'In Stock',
-    productType: 'Sneakers',
-    imageBg: '#E8F5E9',
+    const updateSizeQty = (index: number, delta: number) => {
+        setSizes(prev => {
+            const next = [...prev];
+            next[index] = { ...next[index], qty: Math.max(0, next[index].qty + delta) };
+            return next;
+        });
+    };
+
+    const addSize = () => {
+        setSizes(prev => [...prev, { size: '', qty: 1, price: form.category ? '' : '', status: 'Active' }]);
+    };
+
+    const removeSize = (index: number) => {
+        setSizes(prev => prev.filter((_, i) => i !== index));
+    };
+
+    // Simulates a barcode scan result filling the form automatically.
+    const openScanner = () => {
+        setIsScanning(true);
+        setTimeout(() => {
+            setForm({
+                name: 'Air Jordan 1 Retro High OG "Black White"',
+                brand: 'Jordan',
+                category: 'Sneakers',
+                colorway: 'Black/White',
+                sku: 'DZ5485-010',
+                availability: 'Active',
+            });
+            setSizes([{ size: '10.5', qty: 1, price: '220', status: 'Active' }]);
+            setScannedFound(true);
+            setIsScanning(false);
+
+            Toast.show({
+                type: 'success',
+                text1: 'Barcode scanned',
+                text2: 'Product details filled in automatically.',
+                position: 'top',
+            });
+        }, 900);
+    };
+
+    const enterBarcodeManually = () => {
+        // Hand off to a manual barcode-entry input/modal
+        console.log('Enter barcode manually');
+    };
+
+    const handleSave = () => {
+        if (!form.name) {
+            Toast.show({
+                type: 'error',
+                text1: 'Missing Information',
+                text2: 'Please enter a product name. ⚠️',
+                position: 'top',
+            });
+            return;
+        }
+
+        // Logic to save to your database would go here
+        console.log('Saving Product:', { ...form, sizes });
+
+        Toast.show({
+            type: 'success',
+            text1: 'Product Saved!',
+            text2: `${form.name} added successfully.`,
+            position: 'top',
+        });
+
+        setTimeout(() => {
+            router.back();
+        }, 600);
+    };
+
+    return {
+        form,
+        sizes,
+        scannedFound,
+        isScanning,
+        updateField,
+        updateSizeQty,
+        addSize,
+        removeSize,
+        setForm,
+        openScanner,
+        enterBarcodeManually,
+        handleSave,
+    };
+};
+```
+
+## File: services/hooks/retailer/home/useAnalytics.ts
+```typescript
+import { useState, useCallback } from 'react';
+import { TimeFilter, ChartMode, AnalyticsData } from '@/types/analytics';
+
+// ── Mock data per filter (swap with real API calls) ────────────────────────
+const MOCK_DATA: Record<TimeFilter, AnalyticsData> = {
+  Today: {
+    totalRevenue: '$340',
+    revenueChange: '+$40 vs yesterday',
+    revenueChangePercent: '+13.3%',
+    sparklineData: [120, 180, 150, 200, 220, 310, 340],
+    orders: 2,
+    ordersChange: '+1 vs yesterday',
+    grossProfit: '$140',
+    grossProfitMargin: '41.2%',
+    grossProfitChange: '+$20 vs yesterday',
+    avgOrder: '$170',
+    avgOrderChange: '+$5 vs yesterday',
+    pickupRate: '100%',
+    pickupRateChange: 'No change',
+    dailySalesBarData: [40, 80, 60, 120, 100, 180, 160],
+    dailyOrdersBarData: [1, 2, 1, 3, 2, 4, 3],
+    barLabelsDaily: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    topProducts: [
+      { rank: 1, name: 'Air Jordan 1 Retro High', sub: '2 colorways · 12 viewed', price: '$1100' },
+      { rank: 2, name: 'Nike Dunk Low', sub: '1 colorway · 8 viewed', price: '$450' },
+    ],
+    orderStatus: [
+      { label: 'Completed', color: '#00C853', value: 1 },
+      { label: 'Pending', color: '#F59E0B', value: 1 },
+    ],
     sizes: [
-      { size: '9', qty: 1 },
-      { size: '9.5', qty: 1 },
-      { size: '10', qty: 3 },
-      { size: '10.5', qty: 2 },
-      { size: '11', qty: 4 },
-      { size: '11.5', qty: 1 },
-      { size: '12', qty: 1 },
+      { label: 'US 9', value: 12, color: '#111' },
+      { label: 'US 10', value: 9, color: '#6B7280' },
     ],
   },
-  {
-    id: 'prod-2',
-    brand: 'ESSENTIALS',
-    name: 'Pullover Hoodie',
-    sku: 'ESS-HOODIE-CRM',
-    price: 120,
-    cost: 68,
-    status: 'Low Stock',
-    productType: 'Clothing',
-    lowCount: 3,
-    imageBg: '#FEF3C7',
+  Week: {
+    totalRevenue: '$980',
+    revenueChange: '+$120 vs last week',
+    revenueChangePercent: '+13.9%',
+    sparklineData: [200, 350, 300, 500, 450, 700, 980],
+    orders: 4,
+    ordersChange: '+2 vs last week',
+    grossProfit: '$390',
+    grossProfitMargin: '39.8%',
+    grossProfitChange: '+$60 vs last week',
+    avgOrder: '$245',
+    avgOrderChange: '+$12 vs last week',
+    pickupRate: '96%',
+    pickupRateChange: '+2% vs last week',
+    dailySalesBarData: [120, 180, 140, 260, 200, 340, 300],
+    dailyOrdersBarData: [1, 2, 1, 3, 2, 4, 3],
+    barLabelsDaily: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    topProducts: [
+      { rank: 1, name: 'Air Jordan 1 Retro High', sub: '2 colorways · 25 viewed', price: '$1100' },
+      { rank: 2, name: 'Yeezy Boost 350 V2', sub: '3 colorways · 18 viewed', price: '$1120' },
+    ],
+    orderStatus: [
+      { label: 'Completed', color: '#00C853', value: 3 },
+      { label: 'Pending', color: '#F59E0B', value: 1 },
+    ],
     sizes: [
-      { size: 'S', qty: 2 },
-      { size: 'M', qty: 1 },
-      { size: 'L', qty: 0 },
-      { size: 'XL', qty: 0 },
+      { label: 'US 9', value: 22, color: '#111' },
+      { label: 'US 10', value: 18, color: '#6B7280' },
+      { label: 'US 8', value: 12, color: '#9CA3AF' },
     ],
   },
-  {
-    id: 'prod-3',
-    brand: 'NIKE',
-    name: 'Nike Dunk Low Retro',
-    sku: 'DD1391-100',
-    price: 150,
-    cost: 90,
-    status: 'In Stock',
-    productType: 'Sneakers',
-    imageBg: '#E8F0FE',
+  Month: {
+    totalRevenue: '$2,840',
+    revenueChange: '+$237 vs last month (+9.1%)',
+    revenueChangePercent: '+9.1%',
+    sparklineData: [820, 932, 701, 1050, 980, 1120, 1400, 1280, 1600, 2840],
+    orders: 8,
+    ordersChange: '+1 vs last month',
+    grossProfit: '$1,120',
+    grossProfitMargin: '39.4%',
+    grossProfitChange: '+12.6% vs last month',
+    avgOrder: '$355',
+    avgOrderChange: '+$18 vs last month',
+    pickupRate: '94%',
+    pickupRateChange: 'No change',
+    dailySalesBarData: [280, 360, 240, 420, 380, 610, 550],
+    dailyOrdersBarData: [1, 2, 1, 2, 1, 3, 2],
+    barLabelsDaily: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    topProducts: [
+      { rank: 1, name: 'Yeezy Boost 350 V2', sub: '4 sold · 4 colorways', price: '$1,120' },
+      { rank: 2, name: 'Air Jordan 1 Retro High', sub: '5 sold · 2 colorways', price: '$1,100' },
+      { rank: 3, name: 'Nike Dunk Low', sub: '3 sold · 3 colorways', price: '$450' },
+    ],
+    orderStatus: [
+      { label: 'Completed', color: '#00C853', value: 5 },
+      { label: 'Pending', color: '#F59E0B', value: 1 },
+      { label: 'Not Confirmed', color: '#3B82F6', value: 1 },
+      { label: 'Cancelled', color: '#EF4444', value: 1 },
+    ],
     sizes: [
-      { size: '8', qty: 1 },
-      { size: '10', qty: 2 },
-      { size: '11', qty: 1 },
-      { size: '12', qty: 1 },
+      { label: 'US 9', value: 37, color: '#065F46' },
+      { label: 'US 10', value: 32, color: '#065F46' },
+      { label: 'US 8', value: 28, color: '#065F46' },
+      { label: 'US 11', value: 18, color: '#065F46' },
     ],
   },
-  {
-    id: 'prod-4',
-    brand: 'STUSSY',
-    name: 'Varsity Jacket',
-    sku: 'STU-VARSITY-BLK',
-    price: 320,
-    cost: 210,
-    status: 'On Hold',
-    productType: 'Clothing',
-    imageBg: '#FDE8E8',
+  Custom: {
+    totalRevenue: '$14,200',
+    revenueChange: '+$2,840 vs previous period',
+    revenueChangePercent: '+25%',
+    sparklineData: [1000, 2000, 1800, 3200, 2900, 4100, 5800, 7200, 9400, 14200],
+    orders: 52,
+    ordersChange: '+8 vs previous period',
+    grossProfit: '$5,680',
+    grossProfitMargin: '40%',
+    grossProfitChange: '+$820 vs previous period',
+    avgOrder: '$273',
+    avgOrderChange: '+$14 vs previous period',
+    pickupRate: '95%',
+    pickupRateChange: '+1% vs previous period',
+    dailySalesBarData: [1200, 1800, 1400, 2600, 2000, 3400, 3000],
+    dailyOrdersBarData: [4, 6, 5, 9, 7, 12, 10],
+    barLabelsDaily: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    topProducts: [
+      { rank: 1, name: 'Air Jordan 1 Retro High', sub: '5 colorways · 210 sold', price: '$1100' },
+      { rank: 2, name: 'Yeezy Boost 350 V2', sub: '7 colorways · 184 sold', price: '$1120' },
+      { rank: 3, name: 'Nike Dunk Low', sub: '6 colorways · 152 sold', price: '$450' },
+    ],
+    orderStatus: [
+      { label: 'Completed', color: '#00C853', value: 42 },
+      { label: 'Pending', color: '#F59E0B', value: 4 },
+      { label: 'Not Confirmed', color: '#3B82F6', value: 3 },
+      { label: 'Cancelled', color: '#EF4444', value: 3 },
+    ],
     sizes: [
-      { size: 'M', qty: 1 },
-      { size: 'L', qty: 1 },
-      { size: 'XL', qty: 1 },
+      { label: 'US 9', value: 38, color: '#065F46' },
+      { label: 'US 10', value: 34, color: '#065F46' },
+      { label: 'US 8', value: 30, color: '#065F46' },
+      { label: 'US 11', value: 22, color: '#065F46' },
     ],
   },
-  {
-    id: 'prod-5',
-    brand: 'ADIDAS',
-    name: 'Yeezy Boost 350 V2',
-    sku: 'FZ5246',
-    price: 220,
-    cost: 180,
-    status: 'Out of Stock',
-    productType: 'Sneakers',
-    imageBg: '#F3F4F6',
-    sizes: [
-      { size: '8', qty: 0 },
-      { size: '9', qty: 0 },
-      { size: '9.5', qty: 0 },
-      { size: '10', qty: 0 },
-    ],
-  },
-  {
-    id: 'prod-6',
-    brand: 'ADIDAS',
-    name: 'Firebird Track Pants',
-    sku: 'ADI-FB-TRK-BLU',
-    price: 95,
-    cost: 54,
-    status: 'Out of Stock',
-    productType: 'Clothing',
-    imageBg: '#DBEAFE',
-    sizes: [
-      { size: 'S', qty: 0 },
-      { size: 'M', qty: 0 },
-      { size: 'L', qty: 0 },
-    ],
-  },
-]
+};
 
-export const useInventory = () => {
-  const [activeFilter, setActiveFilter] = useState<FilterTab>('All')
-  const [isRefreshing, setIsRefreshing] = useState(false)
+export const useAnalytics = () => {
+  const [activeFilter, setActiveFilter] = useState<TimeFilter>('Month');
+  const [chartMode, setChartMode] = useState<ChartMode>('Sales');
 
-  // Matches the tabs shown in the design: All, Sneakers, Clothing, Low Stock
-  const filterTabs: FilterTab[] = [
-    'All',
-    'Sneakers',
-    'Clothing',
-    'Low Stock',
-  ]
+  const data = MOCK_DATA[activeFilter];
 
-  const summary: InventorySummary = useMemo(
-    () => ({
-      active: INVENTORY_PRODUCTS.filter((product) => product.status !== 'Out of Stock').length,
-      lowStock: INVENTORY_PRODUCTS.filter((product) => product.status === 'Low Stock').length,
-      outOfStock: INVENTORY_PRODUCTS.filter((product) => product.status === 'Out of Stock').length,
-      onHold: INVENTORY_PRODUCTS.filter((product) => product.status === 'On Hold').length,
-    }),
-    [],
-  )
+  const barData = chartMode === 'Sales' ? data.dailySalesBarData : data.dailyOrdersBarData;
+  const barLabels = data.barLabelsDaily;
 
-  const syncInfo: SyncInfo = {
-    isSynced: true,
-    lastSyncedLabel: 'Synced 2 min ago',
-    isPosConnected: true,
-  }
+  const handleFilterChange = useCallback((filter: TimeFilter) => {
+    setActiveFilter(filter);
+  }, []);
 
-  const filterCounts: Record<FilterTab, number> = useMemo(
-    () => ({
-      All: INVENTORY_PRODUCTS.length,
-      Sneakers: INVENTORY_PRODUCTS.filter((product) => product.productType === 'Sneakers').length,
-      Clothing: INVENTORY_PRODUCTS.filter((product) => product.productType === 'Clothing').length,
-      'In Stock': INVENTORY_PRODUCTS.filter((product) => product.status === 'In Stock').length,
-      'Low Stock': INVENTORY_PRODUCTS.filter((product) => product.status === 'Low Stock').length,
-      'Out of Stock': INVENTORY_PRODUCTS.filter((product) => product.status === 'Out of Stock').length,
-    }),
-    [],
-  )
-
-  const filteredProducts = useMemo(() => {
-    if (activeFilter === 'All') return INVENTORY_PRODUCTS
-
-    if (activeFilter === 'Sneakers' || activeFilter === 'Clothing') {
-      return INVENTORY_PRODUCTS.filter((product) => product.productType === activeFilter)
-    }
-
-    return INVENTORY_PRODUCTS.filter((product) => product.status === activeFilter)
-  }, [activeFilter])
-
-  const handleFilterChange = useCallback((tab: FilterTab) => {
-    setActiveFilter(tab)
-  }, [])
-
-  const handleRefresh = useCallback(async () => {
-    setIsRefreshing(true)
-    await new Promise((resolve) => setTimeout(resolve, 1200))
-    setIsRefreshing(false)
-  }, [])
-
-  const handleEditProduct = useCallback((product: InventoryProduct) => {
-    console.log('edit product', product.id)
-  }, [])
-
-  const handleProductPress = useCallback((product: InventoryProduct) => {
-    console.log('product pressed', product.id)
-  }, [])
+  const handleChartModeChange = useCallback((mode: ChartMode) => {
+    setChartMode(mode);
+  }, []);
 
   return {
     activeFilter,
-    filterTabs,
-    filterCounts,
-    summary,
-    syncInfo,
-    filteredProducts,
-    isRefreshing,
+    chartMode,
+    data,
+    barData,
+    barLabels,
     handleFilterChange,
-    handleRefresh,
-    handleEditProduct,
-    handleProductPress,
-  }
+    handleChartModeChange,
+  };
+};
+```
+
+## File: services/hooks/retailer/home/useBusinessOverview.ts
+```typescript
+import { useMemo, useState } from 'react';
+
+export type OverviewPeriod = 'Today' | 'Yesterday' | 'This Week';
+
+export interface LocationAlert {
+  type: 'ready' | 'overdue' | 'low_stock';
+  count: number;
 }
+
+export interface Location {
+  id: string;
+  initials: string;
+  name: string;
+  address: string;
+  isOpen: boolean;
+  hoursNote: string; // "Closes 9 PM" or "Opens 10 AM"
+  salesToday: string;
+  ordersToday: number;
+  alerts: LocationAlert[];
+  syncedAgo: string;
+}
+
+export interface BusinessSummary {
+  initials: string;
+  name: string;
+  locationCount: number;
+  city: string;
+}
+
+interface PeriodStats {
+  grossSales: string;
+  deltaVsPrevious: string;
+  deltaIsPositive: boolean;
+  netSales: string;
+  orders: number;
+  avgOrder: string;
+  activeListings: number;
+}
+
+const STATS_BY_PERIOD: Record<OverviewPeriod, PeriodStats> = {
+  Today: {
+    grossSales: '$12,480',
+    deltaVsPrevious: '+$1,240',
+    deltaIsPositive: true,
+    netSales: '$11,860',
+    orders: 47,
+    avgOrder: '$266',
+    activeListings: 312,
+  },
+  Yesterday: {
+    grossSales: '$11,240',
+    deltaVsPrevious: '-$680',
+    deltaIsPositive: false,
+    netSales: '$10,690',
+    orders: 41,
+    avgOrder: '$274',
+    activeListings: 308,
+  },
+  'This Week': {
+    grossSales: '$68,910',
+    deltaVsPrevious: '+$5,320',
+    deltaIsPositive: true,
+    netSales: '$65,120',
+    orders: 261,
+    avgOrder: '$264',
+    activeListings: 312,
+  },
+};
+
+export const useBusinessOverview = () => {
+  const [period, setPeriod] = useState<OverviewPeriod>('Today');
+
+  const [business] = useState<BusinessSummary>({
+    initials: 'KE',
+    name: 'Kicks Empire LLC',
+    locationCount: 3,
+    city: 'Miami, FL',
+  });
+
+  const [locations] = useState<Location[]>([
+    {
+      id: '1',
+      initials: 'SK',
+      name: "Sonny's Kicks — Main St",
+      address: '123 Ocean Drive, Miami, FL',
+      isOpen: true,
+      hoursNote: 'Closes 9 PM',
+      salesToday: '$5,200',
+      ordersToday: 18,
+      alerts: [
+        { type: 'ready', count: 2 },
+        { type: 'overdue', count: 1 },
+      ],
+      syncedAgo: 'Synced 2 min ago',
+    },
+    {
+      id: '2',
+      initials: 'SK',
+      name: "Sonny's Kicks — Downtown",
+      address: '456 Bay Street, Miami, FL',
+      isOpen: true,
+      hoursNote: 'Closes 9 PM',
+      salesToday: '$4,180',
+      ordersToday: 15,
+      alerts: [
+        { type: 'ready', count: 3 },
+        { type: 'overdue', count: 0 },
+      ],
+      syncedAgo: 'Synced 1 min ago',
+    },
+    {
+      id: '3',
+      initials: 'SK',
+      name: "Sonny's Kicks — Beach",
+      address: '789 Sunset Blvd, Miami Beach, FL',
+      isOpen: false,
+      hoursNote: 'Opens 10 AM',
+      salesToday: '$3,100',
+      ordersToday: 14,
+      alerts: [{ type: 'low_stock', count: 2 }],
+      syncedAgo: 'Synced 4 min ago',
+    },
+  ]);
+
+  const stats = useMemo(() => STATS_BY_PERIOD[period], [period]);
+
+  const [ordersNeedingAttention] = useState(5);
+
+  return {
+    periods: ['Today', 'Yesterday', 'This Week'] as OverviewPeriod[],
+    period,
+    setPeriod,
+    business,
+    stats,
+    ordersNeedingAttention,
+    locations,
+  };
+};
+```
+
+## File: services/hooks/retailer/home/useLocalDemand.ts
+```typescript
+import { useMemo, useState } from 'react';
+
+export type DayRange = '7' | '30' | '90';
+export type CategoryFilter = 'All' | 'Sneakers' | 'Clothing';
+
+export interface SizeDemand {
+  label: string;
+  searches: number;
+  status: 'searches' | 'low' | 'out';
+}
+
+export interface OpportunityItem {
+  id: string;
+  rank: number;
+  name: string;
+  searchesLabel: string;
+  trendPct: number; // positive = up, negative = down
+  stockStatus: 'not_stocked' | 'missing_sizes' | 'demand_covered';
+  stockNote: string; // e.g. "Not Stocked", "In stock: 3 pairs", "In stock: 12 pairs"
+  sizes: SizeDemand[];
+  primaryAction: {
+    label: string;
+    icon: 'plus' | 'box' | 'file';
+    kind: 'add_to_sourcing' | 'review_inventory' | 'view_details';
+  };
+}
+
+export interface BestOpportunity {
+  itemName: string;
+  reason: string;
+  potentialBuyers: number;
+}
+
+interface StoreOption {
+  id: string;
+  name: string;
+  radiusMiles: number;
+}
+
+const DAY_RANGES: { key: DayRange; label: string }[] = [
+  { key: '7', label: '7 Days' },
+  { key: '30', label: '30 Days' },
+  { key: '90', label: '90 Days' },
+];
+
+const CATEGORY_FILTERS: CategoryFilter[] = ['All', 'Sneakers', 'Clothing'];
+
+const OPPORTUNITIES_BY_RANGE: Record<DayRange, OpportunityItem[]> = {
+  '7': [
+    {
+      id: 'panda',
+      rank: 1,
+      name: "Nike Dunk Low 'Panda'",
+      searchesLabel: '2,104 searches',
+      trendPct: 18,
+      stockStatus: 'not_stocked',
+      stockNote: 'Not Stocked',
+      sizes: [
+        { label: '9', searches: 24, status: 'searches' },
+        { label: '10', searches: 18, status: 'searches' },
+        { label: '10.5', searches: 16, status: 'searches' },
+      ],
+      primaryAction: { label: 'Add to Sourcing List', icon: 'plus', kind: 'add_to_sourcing' },
+    },
+    {
+      id: 'chicago',
+      rank: 2,
+      name: "Air Jordan 1 'Chicago'",
+      searchesLabel: '2,847 searches',
+      trendPct: 9,
+      stockStatus: 'missing_sizes',
+      stockNote: 'In stock: 3 pairs',
+      sizes: [
+        { label: '9', searches: 0, status: 'low' },
+        { label: '10', searches: 0, status: 'out' },
+        { label: '10.5', searches: 0, status: 'out' },
+      ],
+      primaryAction: { label: 'Review Inventory', icon: 'box', kind: 'review_inventory' },
+    },
+    {
+      id: 'cream',
+      rank: 3,
+      name: "Yeezy 350 'Cream'",
+      searchesLabel: '1,892 searches',
+      trendPct: -4,
+      stockStatus: 'demand_covered',
+      stockNote: 'In stock: 12 pairs',
+      sizes: [
+        { label: '9', searches: 14, status: 'searches' },
+        { label: '10', searches: 12, status: 'searches' },
+        { label: '11', searches: 11, status: 'searches' },
+      ],
+      primaryAction: { label: 'View Details', icon: 'file', kind: 'view_details' },
+    },
+  ],
+  '30': [
+    {
+      id: 'panda-30',
+      rank: 1,
+      name: "Nike Dunk Low 'Panda'",
+      searchesLabel: '7,910 searches',
+      trendPct: 22,
+      stockStatus: 'not_stocked',
+      stockNote: 'Not Stocked',
+      sizes: [
+        { label: '9', searches: 88, status: 'searches' },
+        { label: '10', searches: 71, status: 'searches' },
+        { label: '10.5', searches: 60, status: 'searches' },
+      ],
+      primaryAction: { label: 'Add to Sourcing List', icon: 'plus', kind: 'add_to_sourcing' },
+    },
+    {
+      id: 'chicago-30',
+      rank: 2,
+      name: "Air Jordan 1 'Chicago'",
+      searchesLabel: '9,532 searches',
+      trendPct: 5,
+      stockStatus: 'missing_sizes',
+      stockNote: 'In stock: 3 pairs',
+      sizes: [
+        { label: '9', searches: 0, status: 'low' },
+        { label: '10', searches: 0, status: 'out' },
+        { label: '10.5', searches: 0, status: 'out' },
+      ],
+      primaryAction: { label: 'Review Inventory', icon: 'box', kind: 'review_inventory' },
+    },
+    {
+      id: 'cream-30',
+      rank: 3,
+      name: "Yeezy 350 'Cream'",
+      searchesLabel: '6,203 searches',
+      trendPct: 2,
+      stockStatus: 'demand_covered',
+      stockNote: 'In stock: 12 pairs',
+      sizes: [
+        { label: '9', searches: 49, status: 'searches' },
+        { label: '10', searches: 41, status: 'searches' },
+        { label: '11', searches: 37, status: 'searches' },
+      ],
+      primaryAction: { label: 'View Details', icon: 'file', kind: 'view_details' },
+    },
+  ],
+  '90': [
+    {
+      id: 'panda-90',
+      rank: 1,
+      name: "Nike Dunk Low 'Panda'",
+      searchesLabel: '21,340 searches',
+      trendPct: 31,
+      stockStatus: 'not_stocked',
+      stockNote: 'Not Stocked',
+      sizes: [
+        { label: '9', searches: 240, status: 'searches' },
+        { label: '10', searches: 198, status: 'searches' },
+        { label: '10.5', searches: 172, status: 'searches' },
+      ],
+      primaryAction: { label: 'Add to Sourcing List', icon: 'plus', kind: 'add_to_sourcing' },
+    },
+    {
+      id: 'chicago-90',
+      rank: 2,
+      name: "Air Jordan 1 'Chicago'",
+      searchesLabel: '25,110 searches',
+      trendPct: -3,
+      stockStatus: 'missing_sizes',
+      stockNote: 'In stock: 3 pairs',
+      sizes: [
+        { label: '9', searches: 0, status: 'low' },
+        { label: '10', searches: 0, status: 'out' },
+        { label: '10.5', searches: 0, status: 'out' },
+      ],
+      primaryAction: { label: 'Review Inventory', icon: 'box', kind: 'review_inventory' },
+    },
+    {
+      id: 'cream-90',
+      rank: 3,
+      name: "Yeezy 350 'Cream'",
+      searchesLabel: '17,880 searches',
+      trendPct: -8,
+      stockStatus: 'demand_covered',
+      stockNote: 'In stock: 12 pairs',
+      sizes: [
+        { label: '9', searches: 130, status: 'searches' },
+        { label: '10', searches: 111, status: 'searches' },
+        { label: '11', searches: 98, status: 'searches' },
+      ],
+      primaryAction: { label: 'View Details', icon: 'file', kind: 'view_details' },
+    },
+  ],
+};
+
+export const useLocalDemand = () => {
+  const [dayRange, setDayRange] = useState<DayRange>('7');
+  const [category, setCategory] = useState<CategoryFilter>('All');
+  const [store] = useState<StoreOption>({ id: 'novi', name: "Sonny's Kicks · Novi", radiusMiles: 10 });
+
+  const missedSearchesCount = useMemo(() => {
+    return dayRange === '7' ? 42 : dayRange === '30' ? 168 : 512;
+  }, [dayRange]);
+
+  const opportunities = useMemo(() => {
+    const list = OPPORTUNITIES_BY_RANGE[dayRange];
+    // "Sneakers"/"All" show everything in this mock dataset; "Clothing" has none yet.
+    if (category === 'Clothing') return [];
+    return list;
+  }, [dayRange, category]);
+
+  const bestOpportunity: BestOpportunity | null = useMemo(() => {
+    if (opportunities.length === 0) return null;
+    const top = opportunities.find((o) => o.stockStatus === 'not_stocked') ?? opportunities[0];
+    return {
+      itemName: top.name,
+      reason: 'has high local demand and no inventory.',
+      potentialBuyers: 24,
+    };
+  }, [opportunities]);
+
+  return {
+    store,
+    dayRanges: DAY_RANGES,
+    dayRange,
+    setDayRange,
+    categoryFilters: CATEGORY_FILTERS,
+    category,
+    setCategory,
+    missedSearchesCount,
+    opportunities,
+    bestOpportunity,
+  };
+};
+```
+
+## File: services/hooks/retailer/home/useMakeOffer.ts
+```typescript
+import { useMemo, useState } from 'react';
+import { router } from 'expo-router';
+
+const QUICK_OFFERS = ['185', '195', '200', '210', '215'];
+const EXPIRY_OPTIONS = ['24 hours', '48 hours', '72 hours'];
+
+export const useMakeOffer = () => {
+  const [offerValue, setOfferValue] = useState('205');
+  const [note, setNote] = useState('');
+  const [expiry, setExpiry] = useState('24 hours');
+  const [isSending, setIsSending] = useState(false);
+
+  const item = {
+    name: "Air Jordan 4 'Black Cat'",
+    subtitle: "Men's US 10.5 · New / Deadstock",
+    seller: {
+      initials: 'SL',
+      name: "Sonny's Locker",
+      verified: true,
+      rating: '4.9',
+      completedSales: 126,
+    },
+    verifiedNote: 'Listing verified today',
+    shipFromTo: 'Ship to Sonny\'s Kicks · Miami',
+  };
+
+  const marketContext = {
+    sizeLabel: '10.5',
+    updatedAgo: '5 min ago',
+    recentMarketSale: 240,
+    thirtyDayAverage: 235,
+    goSnkrAskingAverage: 220,
+    suggestedRangeLow: 195,
+    suggestedRangeHigh: 215,
+  };
+
+  const costBreakdown = useMemo(() => {
+    const offer = Number(offerValue) || 0;
+    const buyerProtectionFee = 8;
+    const shippingToYou = 12;
+    const totalLandedCost = offer + buyerProtectionFee + shippingToYou;
+    const expectedStorePrice = 260;
+    const projectedProfit = expectedStorePrice - totalLandedCost;
+    const marginPct = expectedStorePrice > 0 ? (projectedProfit / expectedStorePrice) * 100 : 0;
+
+    return {
+      offer,
+      buyerProtectionFee,
+      shippingToYou,
+      totalLandedCost,
+      expectedStorePrice,
+      projectedProfit,
+      marginPct,
+    };
+  }, [offerValue]);
+
+  const handleReviewOffer = () => {
+    setIsSending(true);
+    setTimeout(() => {
+      setIsSending(false);
+      router.push('/screens/retailer/home/more/offerSuccessScreen');
+    }, 600);
+  };
+
+  return {
+    item,
+    marketContext,
+    quickOffers: QUICK_OFFERS,
+    offerValue,
+    setOfferValue,
+    note,
+    setNote,
+    expiryOptions: EXPIRY_OPTIONS,
+    expiry,
+    setExpiry,
+    costBreakdown,
+    isSending,
+    handleReviewOffer,
+  };
+};
+```
+
+## File: services/hooks/retailer/home/useNotifications.ts
+```typescript
+import { useState, useMemo, useCallback } from 'react';
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+export type NotificationType =
+  | 'refund'
+  | 'stock'
+  | 'order'
+  | 'hold'
+  | 'pickup'
+  | 'sync';
+
+export type NotificationSection = 'Needs attention' | 'Today' | 'Earlier';
+
+export type NotificationFilter = 'All' | 'Orders' | 'Holds' | 'Refunds' | 'Inventory';
+
+export interface NotificationAction {
+  label: string;
+  /** 'solid' (black, default) or 'outline' (white with border). */
+  variant?: 'solid' | 'outline';
+  /** Route to push when the button is pressed. */
+  route?: string;
+  params?: Record<string, string>;
+  /** Optional non-navigation action key handled in the screen. */
+  key?: string;
+}
+
+export interface NotificationItem {
+  id: string;
+  type: NotificationType;
+  section: NotificationSection;
+  title: string;
+  subtitle: string;
+  /** Second meta line, e.g. "Marcus L. · Pickup · Main St". */
+  meta?: string;
+  location?: string;
+  time: string;
+  unread: boolean;
+  /** ISO deadline → renders the red "23h 18m left" pill. */
+  deadlineIso?: string;
+  primary?: NotificationAction;
+  secondary?: NotificationAction;
+  /** Where tapping the whole card / chevron goes. */
+  route?: string;
+  params?: Record<string, string>;
+}
+
+// ─── Filter → type mapping ────────────────────────────────────────────────────
+
+export const FILTERS: NotificationFilter[] = [
+  'All',
+  'Orders',
+  'Holds',
+  'Refunds',
+  'Inventory',
+];
+
+const FILTER_TYPES: Record<Exclude<NotificationFilter, 'All'>, NotificationType[]> = {
+  Orders: ['order', 'pickup'],
+  Holds: ['hold'],
+  Refunds: ['refund'],
+  Inventory: ['stock', 'sync'],
+};
+
+export const LOCATIONS = ['All locations', 'Main St', 'Downtown'] as const;
+export type LocationOption = (typeof LOCATIONS)[number];
+
+// ─── Mock data (replace with RTK Query when the endpoint is ready) ────────────
+
+const hoursFromNow = (h: number, m = 0) =>
+  new Date(Date.now() + h * 3600 * 1000 + m * 60 * 1000).toISOString();
+
+const INITIAL: NotificationItem[] = [
+  {
+    id: 'n-refund-1',
+    type: 'refund',
+    section: 'Needs attention',
+    title: 'Refund claim requires response',
+    subtitle: 'Order #20948 · $44 deposit · Sonny Garcia',
+    location: 'Main St',
+    time: 'Just now',
+    unread: true,
+    deadlineIso: hoursFromNow(23, 18),
+    primary: {
+      label: 'Review Claim',
+      route: '/screens/retailer/refund/reviewClaimScreen',
+      params: { claimId: 'claim-1' },
+    },
+    secondary: {
+      label: 'View Order',
+      route: '/screens/retailer/refund/refundClaimsScreen',
+    },
+    route: '/screens/retailer/refund/refundClaimsScreen',
+  },
+  {
+    id: 'n-stock-1',
+    type: 'stock',
+    section: 'Needs attention',
+    title: 'Low stock in Size 10.5',
+    subtitle: 'Jordan 4, Dunk Low, and Air Max 90',
+    location: 'Downtown',
+    time: 'Today',
+    unread: false,
+    primary: { label: 'View Inventory', route: '/retailerTabs/inventory' },
+    secondary: { label: 'Restock', route: '/screens/retailer/home/more/sourceInventoryScreen' },
+    route: '/retailerTabs/inventory',
+  },
+  {
+    id: 'n-order-1',
+    type: 'order',
+    section: 'Today',
+    title: 'New order received',
+    subtitle: 'Air Jordan 1 Retro High · Size 10.5 · $220',
+    meta: 'Marcus L. · Pickup · Main St',
+    time: '8 min ago',
+    unread: true,
+    location: 'Main St',
+    primary: { label: 'Confirm Order', key: 'confirm-order' },
+    secondary: { label: 'View Details', route: '/retailerTabs/orders' },
+    route: '/retailerTabs/orders',
+  },
+  {
+    id: 'n-hold-1',
+    type: 'hold',
+    section: 'Today',
+    title: 'Hold confirmed',
+    subtitle: 'Yeezy Boost 350 V2 · Size 9 · $280',
+    meta: 'Sarah K. · Deposit paid · Downtown',
+    time: '15 min ago',
+    unread: true,
+    location: 'Downtown',
+    primary: { label: 'Prepare Item', key: 'prepare-item' },
+    secondary: { label: 'View Hold', route: '/retailerTabs/orders' },
+    route: '/retailerTabs/orders',
+  },
+  {
+    id: 'n-pickup-1',
+    type: 'pickup',
+    section: 'Today',
+    title: 'Pickup ready reminder',
+    subtitle: 'Order #20881 has been ready for 2 hours',
+    time: '2 hr ago',
+    unread: false,
+    location: 'Main St',
+    primary: { label: 'View Order', variant: 'outline', route: '/retailerTabs/orders' },
+    route: '/retailerTabs/orders',
+  },
+  {
+    id: 'n-sync-1',
+    type: 'sync',
+    section: 'Earlier',
+    title: 'Inventory sync completed',
+    subtitle: '83 active items · No sync errors',
+    time: 'Yesterday',
+    unread: false,
+    location: 'Downtown',
+    route: '/screens/retailer/home/more/syncLogsScreen',
+  },
+  {
+    id: 'n-order-2',
+    type: 'order',
+    section: 'Earlier',
+    title: 'Order picked up',
+    subtitle: 'Nike Dunk Low · Size 10 · $135',
+    meta: 'Priya S. · Pickup · Main St',
+    time: 'Yesterday',
+    unread: false,
+    location: 'Main St',
+    route: '/retailerTabs/orders',
+  },
+];
+
+const SECTION_ORDER: NotificationSection[] = ['Needs attention', 'Today', 'Earlier'];
+
+// ─── Hook ─────────────────────────────────────────────────────────────────────
+
+export const useNotifications = () => {
+  const [items, setItems] = useState<NotificationItem[]>(INITIAL);
+  const [activeFilter, setActiveFilter] = useState<NotificationFilter>('All');
+  const [location, setLocation] = useState<LocationOption>('All locations');
+
+  // Items after the location dropdown is applied (counts respect location).
+  const locationScoped = useMemo(
+    () =>
+      location === 'All locations'
+        ? items
+        : items.filter(n => !n.location || n.location === location),
+    [items, location],
+  );
+
+  // Count badges — total items per chip (respects the location dropdown).
+  const counts = useMemo(() => {
+    const result = { All: locationScoped.length } as Record<NotificationFilter, number>;
+    (Object.keys(FILTER_TYPES) as Exclude<NotificationFilter, 'All'>[]).forEach(f => {
+      result[f] = locationScoped.filter(n => FILTER_TYPES[f].includes(n.type)).length;
+    });
+    return result;
+  }, [locationScoped]);
+
+  const unreadCount = useMemo(
+    () => locationScoped.filter(n => n.unread).length,
+    [locationScoped],
+  );
+
+  const filtered = useMemo(() => {
+    if (activeFilter === 'All') return locationScoped;
+    const types = FILTER_TYPES[activeFilter];
+    return locationScoped.filter(n => types.includes(n.type));
+  }, [locationScoped, activeFilter]);
+
+  const sections = useMemo(
+    () =>
+      SECTION_ORDER.map(title => ({
+        title,
+        data: filtered.filter(n => n.section === title),
+      })).filter(s => s.data.length > 0),
+    [filtered],
+  );
+
+  const markAsRead = useCallback((id: string) => {
+    setItems(prev => prev.map(n => (n.id === id ? { ...n, unread: false } : n)));
+  }, []);
+
+  const markAllRead = useCallback(() => {
+    setItems(prev => prev.map(n => ({ ...n, unread: false })));
+  }, []);
+
+  /** Removes an actioned notification (e.g. after "Confirm Order"). */
+  const resolve = useCallback((id: string) => {
+    setItems(prev => prev.filter(n => n.id !== id));
+  }, []);
+
+  return {
+    activeFilter,
+    setActiveFilter,
+    location,
+    setLocation,
+    counts,
+    sections,
+    markAsRead,
+    markAllRead,
+    resolve,
+    hasUnread: unreadCount > 0,
+    isEmpty: filtered.length === 0,
+  };
+};
+```
+
+## File: services/hooks/retailer/home/usePickUpRules.ts
+```typescript
+import { useState } from 'react';
+import { router } from 'expo-router';
+import Toast from 'react-native-toast-message';
+
+export interface PickupRules {
+  pickupWindowHours: number;
+  autoRefundDeposit: boolean;
+  sendReminder: boolean;
+  autoRestock: boolean;
+  blackoutDays: string[];
+  instructions: string;
+}
+
+export const windowOptions = [
+  { label: '1 hrs', value: 1 },
+  { label: '3 hrs', value: 3 },
+  { label: '6 hrs', value: 6 },
+];
+
+export const usePickupRules = () => {
+  const [rules, setRules] = useState<PickupRules>({
+    pickupWindowHours: 48,
+    autoRefundDeposit: true,
+    sendReminder: true,
+    autoRestock: true,
+    blackoutDays: [],
+    instructions: '',
+  });
+
+  const setField = <K extends keyof PickupRules>(key: K, value: PickupRules[K]) => {
+    setRules((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handleSave = () => {
+    // TODO: persist to API / store
+    Toast.show({ type: 'success', text1: 'Pickup rules saved!' });
+    router.back();
+  };
+
+  return { rules, setField, windowOptions, handleSave };
+};
+```
+
+## File: services/hooks/retailer/home/useSizeDemand.ts
+```typescript
+import { useMemo, useState } from 'react';
+
+export type DayRange = '7' | '30' | '90';
+export type GenderCategory = "Men's" | "Women's" | "Kids'";
+
+export interface SizeBar {
+  size: string;
+  searches: number;
+}
+
+export interface StockRow {
+  size: string;
+  searches: number;
+  onHand: number;
+  suggested: number;
+}
+
+interface StoreOption {
+  id: string;
+  name: string;
+  radiusMiles: number;
+}
+
+const DAY_RANGES: { key: DayRange; label: string }[] = [
+  { key: '7', label: '7 Days' },
+  { key: '30', label: '30 Days' },
+  { key: '90', label: '90 Days' },
+];
+
+const GENDER_CATEGORIES: GenderCategory[] = ["Men's", "Women's", "Kids'"];
+
+const SIZE_BARS_BY_GENDER: Record<GenderCategory, SizeBar[]> = {
+  "Men's": [
+    { size: '10.5', searches: 128 },
+    { size: '10', searches: 114 },
+    { size: '11', searches: 98 },
+    { size: '9.5', searches: 90 },
+    { size: '9', searches: 72 },
+    { size: '12', searches: 45 },
+  ],
+  "Women's": [
+    { size: '8', searches: 96 },
+    { size: '7.5', searches: 84 },
+    { size: '8.5', searches: 70 },
+    { size: '9', searches: 58 },
+    { size: '7', searches: 41 },
+    { size: '6.5', searches: 22 },
+  ],
+  "Kids'": [
+    { size: '5Y', searches: 40 },
+    { size: '4Y', searches: 33 },
+    { size: '6Y', searches: 27 },
+    { size: '3Y', searches: 19 },
+    { size: '2Y', searches: 12 },
+    { size: '7Y', searches: 8 },
+  ],
+};
+
+const STOCK_ROWS_BY_GENDER: Record<GenderCategory, StockRow[]> = {
+  "Men's": [
+    { size: '10', searches: 114, onHand: 4, suggested: 10 },
+    { size: '10.5', searches: 128, onHand: 3, suggested: 12 },
+    { size: '11', searches: 98, onHand: 9, suggested: 9 },
+  ],
+  "Women's": [
+    { size: '8', searches: 96, onHand: 5, suggested: 9 },
+    { size: '7.5', searches: 84, onHand: 6, suggested: 8 },
+    { size: '8.5', searches: 70, onHand: 7, suggested: 7 },
+  ],
+  "Kids'": [
+    { size: '5Y', searches: 40, onHand: 3, suggested: 4 },
+    { size: '4Y', searches: 33, onHand: 3, suggested: 3 },
+    { size: '6Y', searches: 27, onHand: 2, suggested: 3 },
+  ],
+};
+
+export const useSizeDemand = () => {
+  const [dayRange, setDayRange] = useState<DayRange>('7');
+  const [category, setCategory] = useState<GenderCategory>("Men's");
+  const [categoryLabel] = useState('All Sneakers');
+  const [store] = useState<StoreOption>({ id: 'novi', name: "Sonny's Kicks · Novi", radiusMiles: 10 });
+
+  const sizeBars = useMemo(() => SIZE_BARS_BY_GENDER[category], [category]);
+  const stockRows = useMemo(() => STOCK_ROWS_BY_GENDER[category], [category]);
+
+  const topSize = useMemo(() => {
+    const top = sizeBars[0];
+    return {
+      label: `${category} US ${top.size}`,
+      searches: top.searches,
+      trendPct: 14,
+    };
+  }, [sizeBars, category]);
+
+  const maxSearches = useMemo(() => Math.max(...sizeBars.map((b) => b.searches)), [sizeBars]);
+
+  const restockNote = useMemo(() => {
+    const [first, second] = sizeBars;
+    return `Prioritize ${category} US ${first.size} and ${second.size} for Jordan and Nike styles.`;
+  }, [sizeBars, category]);
+
+  return {
+    store,
+    dayRanges: DAY_RANGES,
+    dayRange,
+    setDayRange,
+    genderCategories: GENDER_CATEGORIES,
+    category,
+    setCategory,
+    categoryLabel,
+    topSize,
+    sizeBars,
+    maxSearches,
+    restockNote,
+    stockRows,
+  };
+};
+```
+
+## File: services/hooks/retailer/home/useSourceInventory.ts
+```typescript
+import { useMemo, useState } from 'react';
+
+export type SourceFilter = 'All' | 'Local Pickup' | 'Ships' | 'Dropship' | 'Bulk Lots';
+
+export interface SourceListing {
+  id: string;
+  isDemandMatch: boolean;
+  isBulkAvailable: boolean;
+  productName: string;
+  sizeLabel: string;
+  availableCount: number;
+  minPairs: number;
+  imageIcon: 'sneaker';
+  supplier: {
+    initials: string;
+    name: string;
+    verified: boolean;
+    rating: string;
+    completedOrders: number;
+    respondsIn?: string;
+  };
+  pricing: {
+    itemCost: number;
+    shippingFees: number;
+    landedCost: number;
+    expectedRetail: number;
+    estimatedMarginPct: number;
+  };
+  fulfillment: 'ships' | 'pickup_or_ships' | 'pickup';
+  fulfillmentNote: string;
+  filterTags: SourceFilter[];
+}
+
+const FILTERS: SourceFilter[] = ['All', 'Local Pickup', 'Ships', 'Dropship', 'Bulk Lots'];
+
+const ALL_LISTINGS: SourceListing[] = [
+  {
+    id: 'panda-dks',
+    isDemandMatch: true,
+    isBulkAvailable: false,
+    productName: "Nike Dunk Low 'Panda'",
+    sizeLabel: "Men's US 10.5",
+    availableCount: 6,
+    minPairs: 1,
+    imageIcon: 'sneaker',
+    supplier: {
+      initials: 'DKS',
+      name: 'Detroit Kicks Supply',
+      verified: true,
+      rating: '4.9',
+      completedOrders: 247,
+      respondsIn: '12 min',
+    },
+    pricing: { itemCost: 155, shippingFees: 10, landedCost: 165, expectedRetail: 220, estimatedMarginPct: 25 },
+    fulfillment: 'ships',
+    fulfillmentNote: 'Ships in 1–2 days',
+    filterTags: ['All', 'Ships'],
+  },
+  {
+    id: 'chicago-glw',
+    isDemandMatch: false,
+    isBulkAvailable: true,
+    productName: "Air Jordan 1 'Chicago'",
+    sizeLabel: "Men's US 10",
+    availableCount: 12,
+    minPairs: 3,
+    imageIcon: 'sneaker',
+    supplier: {
+      initials: 'GLW',
+      name: 'Great Lakes Wholesale',
+      verified: true,
+      rating: '4.8',
+      completedOrders: 184,
+    },
+    pricing: { itemCost: 245, shippingFees: 13, landedCost: 258, expectedRetail: 340, estimatedMarginPct: 24 },
+    fulfillment: 'pickup_or_ships',
+    fulfillmentNote: 'Pickup or ships',
+    filterTags: ['All', 'Bulk Lots', 'Local Pickup', 'Ships'],
+  },
+];
+
+export const useSourceInventory = () => {
+  const [activeFilter, setActiveFilter] = useState<SourceFilter>('All');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [shipTo] = useState("Sonny's Kicks · Novi");
+
+  const listings = useMemo(() => {
+    return ALL_LISTINGS.filter((listing) => {
+      const matchesFilter = activeFilter === 'All' || listing.filterTags.includes(activeFilter);
+      const q = searchQuery.trim().toLowerCase();
+      const matchesSearch =
+        q.length === 0 ||
+        listing.productName.toLowerCase().includes(q) ||
+        listing.supplier.name.toLowerCase().includes(q);
+      return matchesFilter && matchesSearch;
+    });
+  }, [activeFilter, searchQuery]);
+
+  const demandMatchCount = useMemo(
+    () => ALL_LISTINGS.filter((l) => l.isDemandMatch).length,
+    []
+  );
+
+  return {
+    shipTo,
+    searchQuery,
+    setSearchQuery,
+    filters: FILTERS,
+    activeFilter,
+    setActiveFilter,
+    listings,
+    demandMatchCount,
+  };
+};
+```
+
+## File: services/hooks/retailer/orders/useOrders.ts
+```typescript
+import { useState, useMemo, useCallback } from 'react';
+import { Order, OrderStatus } from '@/types/Orders';
+import { OrderTab, TabCounts } from '@/components/retailer/orders/OrdersTabs';
+
+// ── Mock data — pixel-exact match to screenshot ──────────────────────────────
+const MOCK_ORDERS: Order[] = [
+    {
+        id: '1',
+        orderNumber: 'GS-1048',
+        status: 'new',
+        tag: 'BUY NOW',
+        productName: "Air Jordan 4 'Black Cat'",
+        size: '10.5',
+        gender: "Men's",
+        customerName: 'Azafar P.',
+        price: 220,
+        timeAgo: '12 min ago',
+        confirmWithinMinutes: 18,
+        inventoryReserved: true,
+    },
+    {
+        id: '2',
+        orderNumber: 'GS-1047',
+        status: 'holding',
+        tag: 'DETAILS',
+        productName: "Nike Dunk Low 'Panda'",
+        size: '9.5',
+        gender: "Men's",
+        customerName: 'Melten',
+        price: 130,
+        timeAgo: '1 hour ago',
+        expiresIn: '3h 5m',
+        depositPaid: true,
+        depositAmount: 30,
+    },
+    {
+        id: '3',
+        orderNumber: 'GS-1046',
+        status: 'ready',
+        tag: 'PICKUP',
+        productName: "Adidas Yeezy 350 V2 'Zebra'",
+        size: '11',
+        gender: "Men's",
+        customerName: 'Rafiq H.',
+        price: 340,
+        timeAgo: '2 hours ago',
+        readySince: '5:16 PM',
+        customerNotified: true,
+        waitingSince: '2h',
+    },
+    {
+        id: '4',
+        orderNumber: 'GS-1045',
+        status: 'completed',
+        tag: 'BUY NOW',
+        productName: "New Balance 550 'White Green'",
+        size: '9',
+        gender: "Men's",
+        customerName: 'Sadia K.',
+        price: 160,
+        timeAgo: 'Mar 26',
+        completedDate: 'Mar 26',
+    },
+    {
+        id: '5',
+        orderNumber: 'GS-1044',
+        status: 'cancelled',
+        tag: 'DETAILS',
+        productName: "Converse Chuck 70 'Black'",
+        size: '7',
+        gender: "Men's",
+        customerName: 'Tarvin M.',
+        price: 95,
+        timeAgo: 'Mar 31',
+        cancelledDate: 'Mar 23',
+        cancelledBy: 'customer',
+    },
+];
+
+// ── Tab → statuses map ────────────────────────────────────────────────────────
+const TAB_STATUS_MAP: Record<OrderTab, OrderStatus[] | null> = {
+    'Needs Action': ['new'],
+    Holds:          ['holding'],
+    Ready:          ['ready'],
+    History:        ['completed', 'cancelled'],
+};
+
+// ── Hook ─────────────────────────────────────────────────────────────────────
+export const useOrders = () => {
+    const [activeTab, setActiveTab]   = useState<OrderTab>('Needs Action');
+    const [orders, setOrders]         = useState<Order[]>(MOCK_ORDERS);
+    const [isRefreshing, setIsRefreshing] = useState(false);
+
+    // ── Computed tab counts ──────────────────────────────────────────────────
+    const tabCounts = useMemo<TabCounts>(() => ({
+        'Needs Action': orders.filter(o => o.status === 'new').length,
+        Holds:          orders.filter(o => o.status === 'holding').length,
+        Ready:          orders.filter(o => o.status === 'ready').length,
+        History:        orders.filter(o => o.status === 'completed' || o.status === 'cancelled').length,
+    }), [orders]);
+
+    // ── Filtered list ────────────────────────────────────────────────────────
+    const filteredOrders = useMemo(() => {
+        const statuses = TAB_STATUS_MAP[activeTab];
+        if (!statuses) return orders;
+        return orders.filter(o => statuses.includes(o.status));
+    }, [activeTab, orders]);
+
+    // ── Recent activity (completed/cancelled, most recent first) ────────────
+    const recentActivity = useMemo(() => {
+        if (activeTab === 'History') return [];
+        return orders.filter(o => o.status === 'completed' || o.status === 'cancelled');
+    }, [orders, activeTab]);
+
+    // ── Today summary ────────────────────────────────────────────────────────
+    const ordersToday = orders.length;
+    const avgPrepMinutes = 8;
+
+    // ── Handlers ─────────────────────────────────────────────────────────────
+    const handleRefresh = useCallback(async () => {
+        setIsRefreshing(true);
+        // TODO: replace with real API call
+        await new Promise(r => setTimeout(r, 1200));
+        setIsRefreshing(false);
+    }, []);
+
+    const handleTabChange = useCallback((tab: OrderTab) => {
+        setActiveTab(tab);
+    }, []);
+
+    const handleConfirmOrder = useCallback((orderId: string) => {
+        // TODO: call API then update local state
+        setOrders(prev =>
+            prev.map(o => o.id === orderId ? { ...o, status: 'holding' as OrderStatus } : o)
+        );
+    }, []);
+
+    const handleMarkReady = useCallback((orderId: string) => {
+        // TODO: call API then update local state
+        setOrders(prev =>
+            prev.map(o => o.id === orderId ? { ...o, status: 'ready' as OrderStatus } : o)
+        );
+    }, []);
+
+    const handleMarkPickedUp = useCallback((orderId: string) => {
+        // TODO: call API then update local state
+        setOrders(prev =>
+            prev.map(o => o.id === orderId ? { ...o, status: 'completed' as OrderStatus } : o)
+        );
+    }, []);
+
+    const handleViewDetails = useCallback((orderId: string) => {
+        // TODO: navigate to order detail screen
+        console.log('View details', orderId);
+    }, []);
+
+    const handleViewHoldDetails = useCallback((orderId: string) => {
+        // TODO: navigate to hold detail screen
+        console.log('View hold details', orderId);
+    }, []);
+
+    const handleSearch = useCallback(() => {
+        // TODO: open search modal
+        console.log('Search');
+    }, []);
+
+    const handleFilter = useCallback(() => {
+        // TODO: open filter bottom sheet
+        console.log('Filter');
+    }, []);
+
+    const handleViewAllActivity = useCallback(() => {
+        setActiveTab('History');
+    }, []);
+
+    return {
+        activeTab,
+        tabCounts,
+        filteredOrders,
+        recentActivity,
+        ordersToday,
+        avgPrepMinutes,
+        isRefreshing,
+        handleTabChange,
+        handleRefresh,
+        handleConfirmOrder,
+        handleMarkReady,
+        handleMarkPickedUp,
+        handleViewDetails,
+        handleViewHoldDetails,
+        handleSearch,
+        handleFilter,
+        handleViewAllActivity,
+    };
+};
+```
+
+## File: services/hooks/retailer/profile/useStoreProfile.ts
+```typescript
+import { useCallback, useMemo, useState } from 'react';
+
+export interface OperatingHour {
+  day: string;
+  shortDay: string;
+  open: string;
+  close: string;
+  isEnabled: boolean;
+}
+
+export interface SocialLink {
+  id: string;
+  platform: 'instagram' | 'tiktok' | 'twitter' | 'facebook';
+  handle: string;
+}
+
+export interface StoreProfileData {
+  name: string;
+  description: string;
+  location: string;
+  address: string;
+  phone: string;
+  website: string;
+  coverImageUri?: string;
+  avatarLabel: string;
+  isVerified: boolean;
+  isPublic: boolean;
+  operatingHours: OperatingHour[];
+  socialLinks: SocialLink[];
+}
+
+const DEFAULT_HOURS: OperatingHour[] = [
+  { day: 'Monday', shortDay: 'Mon', open: '10:00 AM', close: '9:00 PM', isEnabled: true },
+  { day: 'Tuesday', shortDay: 'Tue', open: '10:00 AM', close: '9:00 PM', isEnabled: true },
+  { day: 'Wednesday', shortDay: 'Wed', open: '10:00 AM', close: '9:00 PM', isEnabled: true },
+  { day: 'Thursday', shortDay: 'Thu', open: '10:00 AM', close: '9:00 PM', isEnabled: true },
+  { day: 'Friday', shortDay: 'Fri', open: '10:00 AM', close: '10:00 PM', isEnabled: true },
+  { day: 'Saturday', shortDay: 'Sat', open: '10:00 AM', close: '8:00 PM', isEnabled: true },
+  { day: 'Sunday', shortDay: 'Sun', open: '12:00 PM', close: '8:00 PM', isEnabled: true },
+];
+
+const DEFAULT_PROFILE: StoreProfileData = {
+  name: "Sonny's Kicks",
+  description:
+    "Miami's destination for sneakers, apparel, new releases, and everyday essentials.",
+  location: 'Miami, FL',
+  address: '123 Ocean Drive, Miami, FL 33139',
+  phone: '+1 (305) 555-0138',
+  website: 'sonnykicks.com',
+  avatarLabel: 'SK',
+  isVerified: true,
+  isPublic: true,
+  operatingHours: DEFAULT_HOURS,
+  socialLinks: [{ id: 'ig', platform: 'instagram', handle: '@SonnyKicks' }],
+};
+
+/** Groups consecutive days that share identical open/close/enabled state, e.g. "Mon – Thu". */
+export function groupOperatingHours(hours: OperatingHour[]) {
+  const groups: { label: string; open: string; close: string; isEnabled: boolean }[] = [];
+
+  hours.forEach((h) => {
+    const last = groups[groups.length - 1];
+    if (last && last.open === h.open && last.close === h.close && last.isEnabled === h.isEnabled) {
+      // Extend the label range, e.g. "Mon" -> "Mon – Thu"
+      const [start] = last.label.split(' – ');
+      last.label = `${start} – ${h.shortDay}`;
+    } else {
+      groups.push({ label: h.shortDay, open: h.open, close: h.close, isEnabled: h.isEnabled });
+    }
+  });
+
+  return groups;
+}
+
+export const useStoreProfile = () => {
+  const [profile, setProfile] = useState<StoreProfileData>(DEFAULT_PROFILE);
+  const [isSaving, setIsSaving] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+
+  const markDirty = useCallback(() => setHasUnsavedChanges(true), []);
+
+  const updateField = useCallback(
+    <K extends keyof StoreProfileData>(key: K, value: StoreProfileData[K]) => {
+      setProfile((prev) => ({ ...prev, [key]: value }));
+      markDirty();
+    },
+    [markDirty]
+  );
+
+  const toggleDay = useCallback(
+    (day: string) => {
+      setProfile((prev) => ({
+        ...prev,
+        operatingHours: prev.operatingHours.map((h) =>
+          h.day === day ? { ...h, isEnabled: !h.isEnabled } : h
+        ),
+      }));
+      markDirty();
+    },
+    [markDirty]
+  );
+
+  const updateHour = useCallback(
+    (day: string, field: 'open' | 'close', value: string) => {
+      setProfile((prev) => ({
+        ...prev,
+        operatingHours: prev.operatingHours.map((h) =>
+          h.day === day ? { ...h, [field]: value } : h
+        ),
+      }));
+      markDirty();
+    },
+    [markDirty]
+  );
+
+  const copyHoursToAllDays = useCallback(() => {
+    setProfile((prev) => {
+      const source = prev.operatingHours.find((h) => h.isEnabled);
+      if (!source) return prev;
+      return {
+        ...prev,
+        operatingHours: prev.operatingHours.map((h) => ({
+          ...h,
+          open: source.open,
+          close: source.close,
+        })),
+      };
+    });
+    markDirty();
+  }, [markDirty]);
+
+  const addSocialLink = useCallback(() => {
+    setProfile((prev) => ({
+      ...prev,
+      socialLinks: [
+        ...prev.socialLinks,
+        { id: `link-${Date.now()}`, platform: 'tiktok', handle: '' },
+      ],
+    }));
+    markDirty();
+  }, [markDirty]);
+
+  const updateSocialLink = useCallback(
+    (id: string, handle: string) => {
+      setProfile((prev) => ({
+        ...prev,
+        socialLinks: prev.socialLinks.map((link) =>
+          link.id === id ? { ...link, handle } : link
+        ),
+      }));
+      markDirty();
+    },
+    [markDirty]
+  );
+
+  const handleSave = useCallback(async () => {
+    setIsSaving(true);
+    try {
+      await new Promise((res) => setTimeout(res, 900));
+      setHasUnsavedChanges(false);
+    } finally {
+      setIsSaving(false);
+    }
+  }, []);
+
+  const handlePickCoverImage = useCallback(() => {
+    // Replace with real image picker integration
+  }, []);
+
+  const groupedHours = useMemo(() => groupOperatingHours(profile.operatingHours), [
+    profile.operatingHours,
+  ]);
+
+  return {
+    profile,
+    groupedHours,
+    isSaving,
+    hasUnsavedChanges,
+    updateField,
+    toggleDay,
+    updateHour,
+    copyHoursToAllDays,
+    addSocialLink,
+    updateSocialLink,
+    handleSave,
+    handlePickCoverImage,
+  };
+};
+```
+
+## File: services/hooks/retailer/promote/useCreatePromotion.ts
+```typescript
+import { useCallback, useMemo, useState } from 'react';
+
+export type PromotionStep = 'details' | 'audience' | 'review';
+
+export type PromotionType = 'Flash Sale' | 'New Arrivals' | 'Restock' | 'Exclusive Drop' | 'Announcement';
+
+export interface PromotionTypeOption {
+  id: PromotionType;
+  label: string;
+  icon: 'zap' | 'box' | 'bell' | 'circle' | 'megaphone';
+  color: string;
+  bgColor: string;
+}
+
+export type CategoryTag = 'Sneakers' | 'Clothing' | 'Accessories';
+
+export type MatchRule = 'Match any keyword' | 'Match all keywords';
+
+export type DiscountType = '% off' | '$ off' | 'Custom';
+
+export interface AudienceSegment {
+  id: 'store_followers' | 'nearby_opted_in' | 'size_match';
+  label: string;
+  description: string;
+  count: number;
+  icon: 'users' | 'map-pin' | 'bar-chart-2';
+}
+
+export type DeliveryOption = 'send_now' | 'schedule';
+
+const PROMOTION_TYPES: PromotionTypeOption[] = [
+  { id: 'Flash Sale', label: 'Flash Sale', icon: 'zap', color: '#059669', bgColor: '#ECFDF5' },
+  { id: 'New Arrivals', label: 'New Arrivals', icon: 'box', color: '#4B5563', bgColor: '#F9FAFB' },
+  { id: 'Restock', label: 'Restock', icon: 'bell', color: '#4B5563', bgColor: '#F9FAFB' },
+  { id: 'Exclusive Drop', label: 'Exclusive Drop', icon: 'circle', color: '#EF4444', bgColor: '#F9FAFB' },
+  { id: 'Announcement', label: 'Announcement', icon: 'megaphone', color: '#4B5563', bgColor: '#F9FAFB' },
+];
+
+const CATEGORY_TAGS: CategoryTag[] = ['Sneakers', 'Clothing', 'Accessories'];
+
+const AUDIENCE_SEGMENTS: AudienceSegment[] = [
+  {
+    id: 'store_followers',
+    label: 'Store followers',
+    description: 'People who follow your store',
+    count: 156,
+    icon: 'users',
+  },
+  {
+    id: 'nearby_opted_in',
+    label: 'Nearby opted-in customers',
+    description: 'Users within 5 miles who have push notifications enabled',
+    count: 1249,
+    icon: 'map-pin',
+  },
+  {
+    id: 'size_match',
+    label: 'Size-match customers',
+    description: 'Customers who saved sizes that match promotion',
+    count: 820,
+    icon: 'bar-chart-2',
+  },
+];
+
+export const useCreatePromotion = () => {
+  const [step, setStep] = useState<PromotionStep>('details');
+
+  // Promotion type
+  const [selectedType, setSelectedType] = useState<PromotionType>('Flash Sale');
+
+  // Promotion details
+  const [title, setTitle] = useState('Weekend Flash Sale — 20% Off Jordans');
+
+  // Product targeting
+  const [keywords, setKeywords] = useState<string[]>(['Jordan', 'Retro']);
+  const [keywordInput, setKeywordInput] = useState('');
+  const [categoryTags, setCategoryTags] = useState<CategoryTag[]>(['Sneakers']);
+  const [matchRule, setMatchRule] = useState<MatchRule>('Match any keyword');
+  const activeListingsMatched = 48;
+
+  // Discount
+  const [discountType, setDiscountType] = useState<DiscountType>('% off');
+  const [discountValue, setDiscountValue] = useState('20');
+  const [startsAt] = useState('Fri, Jun 7, 6:00 PM');
+  const [endsAt] = useState('Sun, Jun 9, 9:00 PM');
+
+  // Push notification
+  const [notificationMessage, setNotificationMessage] = useState(
+    'This weekend only: Save 20% on selected Jordans while supplies last.'
+  );
+  const notificationCharLimit = 200;
+
+  // Audience
+  const [selectedAudience, setSelectedAudience] = useState<Record<AudienceSegment['id'], boolean>>({
+    store_followers: true,
+    nearby_opted_in: true,
+    size_match: true,
+  });
+
+  // Delivery
+  const [deliveryOption, setDeliveryOption] = useState<DeliveryOption>('schedule');
+  const [scheduledAt] = useState('Friday, Jun 7, 6:00 PM');
+
+  const toggleKeyword = useCallback((kw: string) => {
+    setKeywords((prev) => prev.filter((k) => k !== kw));
+  }, []);
+
+  const addKeyword = useCallback(() => {
+    const trimmed = keywordInput.trim();
+    if (trimmed.length === 0) return;
+    setKeywords((prev) => (prev.includes(trimmed) ? prev : [...prev, trimmed]));
+    setKeywordInput('');
+  }, [keywordInput]);
+
+  const toggleCategoryTag = useCallback((tag: CategoryTag) => {
+    setCategoryTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+    );
+  }, []);
+
+  const toggleAudienceSegment = useCallback((id: AudienceSegment['id']) => {
+    setSelectedAudience((prev) => ({ ...prev, [id]: !prev[id] }));
+  }, []);
+
+  const estimatedUniqueReach = useMemo(() => {
+    // Rough de-duplicated estimate across selected segments, matching the mock's ~1,842 figure.
+    const selectedCounts = AUDIENCE_SEGMENTS.filter((seg) => selectedAudience[seg.id]).map(
+      (seg) => seg.count
+    );
+    if (selectedCounts.length === 0) return 0;
+    const raw = selectedCounts.reduce((sum, c) => sum + c, 0);
+    // Apply an overlap discount so combined reach isn't a naive sum.
+    return Math.round(raw * 0.735);
+  }, [selectedAudience]);
+
+  const canGoToAudience = title.trim().length > 0 && keywords.length > 0;
+  const canGoToReview = Object.values(selectedAudience).some(Boolean);
+  const canSubmit = canGoToAudience && canGoToReview;
+
+  const goToStep = useCallback((next: PromotionStep) => {
+    setStep(next);
+  }, []);
+
+  const goNext = useCallback(() => {
+    if (step === 'details' && canGoToAudience) setStep('audience');
+    else if (step === 'audience' && canGoToReview) setStep('review');
+  }, [step, canGoToAudience, canGoToReview]);
+
+  const goBack = useCallback(() => {
+    if (step === 'audience') setStep('details');
+    else if (step === 'review') setStep('audience');
+  }, [step]);
+
+  return {
+    step,
+    goToStep,
+    goNext,
+    goBack,
+
+    promotionTypes: PROMOTION_TYPES,
+    selectedType,
+    setSelectedType,
+
+    title,
+    setTitle,
+
+    keywords,
+    keywordInput,
+    setKeywordInput,
+    addKeyword,
+    toggleKeyword,
+    categoryTags,
+    availableCategoryTags: CATEGORY_TAGS,
+    toggleCategoryTag,
+    matchRule,
+    setMatchRule,
+    activeListingsMatched,
+
+    discountType,
+    setDiscountType,
+    discountValue,
+    setDiscountValue,
+    startsAt,
+    endsAt,
+
+    notificationMessage,
+    setNotificationMessage,
+    notificationCharLimit,
+
+    audienceSegments: AUDIENCE_SEGMENTS,
+    selectedAudience,
+    toggleAudienceSegment,
+    estimatedUniqueReach,
+
+    deliveryOption,
+    setDeliveryOption,
+    scheduledAt,
+
+    canGoToAudience,
+    canGoToReview,
+    canSubmit,
+  };
+};
 ```
 
 ## File: services/hooks/search/useSearch.ts
@@ -46840,6 +46712,90 @@ export function useSellToStore() {
 }
 ```
 
+## File: types/analytics.ts
+```typescript
+export type TimeFilter = 'Today' | 'Week' | 'Month' | 'Custom';
+export type ChartMode = 'Sales' | 'Orders';
+
+export interface TopProduct {
+  rank: number;
+  name: string;
+  sub: string;
+  price: string;
+  imageUri?: string;
+}
+
+export interface OrderStatusItem {
+  label: string;
+  color: string;
+  value: number;
+}
+
+export interface SizeItem {
+  label: string;
+  value: number;
+  color: string;
+}
+
+export interface AnalyticsData {
+  totalRevenue: string;
+  revenueChange: string;
+  revenueChangePercent: string;
+  sparklineData: number[];
+  orders: number;
+  ordersChange: string;
+  grossProfit: string;
+  grossProfitMargin: string;
+  grossProfitChange: string;
+  avgOrder: string;
+  avgOrderChange: string;
+  pickupRate: string;
+  pickupRateChange: string;
+  dailySalesBarData: number[];
+  dailyOrdersBarData: number[];
+  barLabelsDaily: string[];
+  topProducts: TopProduct[];
+  orderStatus: OrderStatusItem[];
+  sizes: SizeItem[];
+}
+```
+
+## File: types/Orders.ts
+```typescript
+export type OrderStatus = 'new' | 'holding' | 'ready' | 'completed' | 'cancelled';
+
+export type OrderTag = 'BUY NOW' | 'DETAILS' | 'PICKUP';
+
+export interface Order {
+    id: string;
+    orderNumber: string;
+    status: OrderStatus;
+    tag: OrderTag;
+    productName: string;
+    size: string;
+    gender: string;
+    customerName: string;
+    price: number;
+    timeAgo: string;
+    imageUrl?: string;
+    // New order — urgency to confirm
+    confirmWithinMinutes?: number;
+    inventoryReserved?: boolean;
+    // Holding — deposit + expiry
+    expiresIn?: string;
+    depositPaid?: boolean;
+    depositAmount?: number;
+    // Ready — pickup wait tracking
+    readySince?: string;
+    customerNotified?: boolean;
+    waitingSince?: string;
+    // Completed / cancelled
+    completedDate?: string;
+    cancelledDate?: string;
+    cancelledBy?: string;
+}
+```
+
 ## File: tsconfig.json
 ```json
 {
@@ -47150,148 +47106,179 @@ const styles = StyleSheet.create({
 ```typescript
 import React from 'react'
 import {
-  ActivityIndicator,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native'
-import {
-  AntDesign,
-  Ionicons,
-  MaterialCommunityIcons,
-  MaterialIcons,
-} from '@expo/vector-icons'
+import { AntDesign, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
 import { router } from 'expo-router'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import BaseContainer from '@/components/shared/BaseContainer'
 import { useDashboard } from '@/services/hooks/reseller/dashboard/useDashboard'
 
 const Dashboard = () => {
-  const { stats, requests, activities, loading } = useDashboard()
+  const { stats, requests, activities } = useDashboard()
+  const insets = useSafeAreaInsets()
 
   return (
-    <BaseContainer backgroundColor="#fff">
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-        <View className="pt-10 pb-20">
-          <View style={styles.header}>
+    <BaseContainer backgroundColor="#F9FAFB">
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={[styles.scrollContent, { paddingTop: insets.top + 12 }]}
+      >
+        {/* ── Header ─────────────────────────────────────────── */}
+        <View style={styles.header}>
+          <View>
             <Text style={styles.logo}>
-              GO<Text style={{ color: '#4ADE80' }}>SNKR</Text>
+              GO<Text style={{ color: '#22C55E' }}>SNKR</Text>
             </Text>
-            <TouchableOpacity onPress={() => router.push('/screens/reseller/notifications')}>
-              <Ionicons name="notifications-outline" size={24} color="#333" />
-              <View style={styles.notifBadge} />
-            </TouchableOpacity>
+            <Text style={styles.subHeading}>Hi Marcus</Text>
+            <Text style={styles.subLabel}>Reseller dashboard</Text>
           </View>
-
-          <View style={styles.welcomeBanner}>
-            <Text style={styles.welcomeText}>Good morning, Marcus</Text>
-            <View style={styles.trustedBadge}>
-              <Text style={styles.trustedText}>Trusted Reseller</Text>
-            </View>
-          </View>
-
-          <View style={styles.statsGrid}>
-            <StatCard label="Active Listings" value={stats.activeListings} color="#4ADE80" />
-            <StatCard label="Store Requests" value={stats.storeRequests} color="#FB923C" />
-            <StatCard label="Deals Active" value={stats.dealsActive} color="#60A5FA" />
-            <StatCard label="This Month" value={`$${stats.revenue.toLocaleString()}`} color="#4ADE80" />
-          </View>
-
-          <View style={styles.actionRow}>
-            <ActionButton
-              icon={<AntDesign name="plus" size={24} color="#10B981" />}
-              label="Add Item"
-              bgColor="#ECFDF5"
-            />
-            <ActionButton
-              icon={<MaterialCommunityIcons name="inbox-outline" size={24} color="#D97706" />}
-              label="Requests"
-              bgColor="#FFFBEB"
-              badge={stats.storeRequests}
-            />
-            <ActionButton
-              icon={<Ionicons name="list-outline" size={24} color="#2563EB" />}
-              label="My Listings"
-              bgColor="#EFF6FF"
-            />
-            <ActionButton
-              icon={<AntDesign name="line-chart" size={24} color="#4B5563" />}
-              label="Analytics"
-              bgColor="#F3F4F6"
-            />
-          </View>
-
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Store Requests</Text>
-            <TouchableOpacity>
-              <Text style={styles.viewAll}>View all</Text>
-            </TouchableOpacity>
-          </View>
-
-          {loading ? (
-            <View style={styles.loadingState}>
-              <ActivityIndicator size="small" color="#22C55E" />
-              <Text style={styles.loadingText}>Loading reseller activity</Text>
-            </View>
-          ) : (
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.requestCarousel}>
-              {requests.map((request) => (
-                <View key={request.id} style={styles.requestCard}>
-                  <View style={styles.storeInfo}>
-                    <View style={styles.avatarPlaceholder} />
-                    <View>
-                      <Text style={styles.storeName}>{request.storeName}</Text>
-                      <Text style={styles.rating}>{request.rating} star rating</Text>
-                    </View>
-                  </View>
-
-                  <View style={styles.productTypeBadge}>
-                    <Text style={styles.productTypeText}>{request.productType}</Text>
-                  </View>
-
-                  <Text style={styles.itemName}>{request.item}</Text>
-                  <Text style={styles.itemMeta}>
-                    Size {request.size} · {request.condition}
-                  </Text>
-                  <Text style={styles.price}>${request.price}</Text>
-                  <Text style={styles.timeText}>{request.time}</Text>
-
-                  <View style={styles.newBadge}>
-                    <Text style={styles.newBadgeText}>New Request</Text>
-                  </View>
-                </View>
-              ))}
-            </ScrollView>
-          )}
-
-          <Text style={styles.sectionTitle}>Recent Activity</Text>
-          <View style={styles.activityContainer}>
-            {activities.map((activity) => (
-              <View key={activity.id} style={styles.activityItem}>
-                <View style={[styles.activityDot, { backgroundColor: `${activity.color}20` }]}>
-                  <View style={[styles.dotInner, { backgroundColor: activity.color }]} />
-                </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.activityMessage}>{activity.message}</Text>
-                </View>
-                <Text style={styles.activityTime}>{activity.time}</Text>
-              </View>
-            ))}
-          </View>
-
-          <View style={styles.trustCard}>
-            <View style={styles.trustHeader}>
-              <MaterialIcons name="verified-user" size={20} color="#4ADE80" />
-              <Text style={styles.trustTitle}>Trust Score</Text>
-              <Text style={styles.trustValue}>98/100</Text>
-            </View>
-            <View style={styles.progressBarBg}>
-              <View style={[styles.progressBarFill, { width: '98%' }]} />
-            </View>
-            <Text style={styles.trustFooter}>Response rate: 96% · 47 deals completed</Text>
-          </View>
+          <TouchableOpacity onPress={() => router.push('/screens/reseller/notifications')}>
+            <Ionicons name="notifications-outline" size={24} color="#111827" />
+            <View style={styles.notifBadge} />
+          </TouchableOpacity>
         </View>
+
+        <View style={styles.trustedBadge}>
+          <Ionicons name="checkmark-circle" size={14} color="#FFF" />
+          <Text style={styles.trustedText}>Trusted reseller</Text>
+        </View>
+
+        {/* ── Stats grid ─────────────────────────────────────── */}
+        <View style={styles.statsGrid}>
+          <StatCard label="Active listings" value={stats.activeListings} color="#22C55E" />
+          <StatCard label="Awaiting your reply" value={stats.storeRequests} color="#FB923C" />
+          <StatCard label="Deals in progress" value={stats.dealsActive} color="#60A5FA" />
+          <StatCard label="Completed sales · This month" value={`$${stats.revenue.toLocaleString()}`} color="#22C55E" />
+        </View>
+
+        {/* ── Action row ─────────────────────────────────────── */}
+        <View style={styles.actionRow}>
+          <TouchableOpacity style={styles.addItemBtn}>
+            <AntDesign name="plus" size={16} color="#FFF" />
+            <Text style={styles.addItemText}>Add item</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.scanBtn}>
+            <MaterialCommunityIcons name="barcode-scan" size={16} color="#111827" />
+            <Text style={styles.scanText}>Scan barcode</Text>
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Text style={styles.analyticsText}>View analytics ›</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* ── Needs your response ────────────────────────────── */}
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Needs your response</Text>
+          <TouchableOpacity>
+            <Text style={styles.viewAll}>View all ({requests.length})</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.requestList}>
+          {requests.slice(0, 2).map((request) => (
+            <View key={request.id} style={styles.requestRow}>
+              <View style={styles.avatarPlaceholder}>
+                <Text style={styles.avatarInitials}>
+                  {request.storeName
+                    .split(' ')
+                    .map((w) => w[0])
+                    .join('')
+                    .slice(0, 2)}
+                </Text>
+              </View>
+
+              <View style={{ flex: 1 }}>
+                <View style={styles.requestTopRow}>
+                  <Text style={styles.storeName}>{request.storeName}</Text>
+                  <View style={styles.newOfferBadge}>
+                    <Text style={styles.newOfferText}>New offer</Text>
+                  </View>
+                </View>
+                <Text style={styles.timeText}>{request.time}</Text>
+                <Text style={styles.itemName}>{request.item}</Text>
+                <Text style={styles.itemMeta}>
+                  Size {request.size} · {request.condition}
+                </Text>
+
+                <View style={styles.offerRow}>
+                  <View>
+                    <Text style={styles.offerLabel}>Store offer</Text>
+                    <Text style={styles.price}>${request.price}</Text>
+                  </View>
+                  <TouchableOpacity style={styles.reviewBtn}>
+                    <Text style={styles.reviewBtnText}>Review offer</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          ))}
+        </View>
+
+        {/* ── Recent activity ────────────────────────────────── */}
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Recent activity</Text>
+        </View>
+
+        <View style={styles.activityContainer}>
+          {activities.map((activity, idx) => (
+            <View
+              key={activity.id}
+              style={[
+                styles.activityItem,
+                idx === activities.length - 1 && { borderBottomWidth: 0 },
+              ]}
+            >
+              <View style={[styles.activityDot, { backgroundColor: activity.color }]} />
+              <Text style={styles.activityMessage}>{activity.message}</Text>
+              <Text style={styles.activityTime}>{activity.time}</Text>
+            </View>
+          ))}
+        </View>
+
+        {/* ── Seller reputation ──────────────────────────────── */}
+        <View style={styles.trustCard}>
+          <View style={styles.trustHeader}>
+            <Ionicons name="checkmark-circle" size={18} color="#22C55E" />
+            <Text style={styles.trustTitle}>Trust score</Text>
+            <Text style={styles.trustValue}>98/100</Text>
+          </View>
+          <View style={styles.progressBarBg}>
+            <View style={[styles.progressBarFill, { width: '98%' }]} />
+          </View>
+          <View style={styles.trustStatsRow}>
+            <View>
+              <Text style={styles.trustStatValue}>96%</Text>
+              <Text style={styles.trustStatLabel}>Response rate</Text>
+            </View>
+            <View>
+              <Text style={styles.trustStatValue}>47</Text>
+              <Text style={styles.trustStatLabel}>Completed deals</Text>
+            </View>
+          </View>
+          <TouchableOpacity>
+            <Text style={styles.trustFooterLink}>How this is calculated ›</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* ── Manage listings ────────────────────────────────── */}
+        <TouchableOpacity
+          style={styles.manageListingsCard}
+          onPress={() => router.push('/resellerTabs/listing')}
+        >
+          <View style={styles.manageListingsIcon}>
+            <Ionicons name="list-outline" size={20} color="#111827" />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.manageListingsTitle}>Manage listings</Text>
+            <Text style={styles.manageListingsSubtitle}>Update sizes, prices and availability</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+        </TouchableOpacity>
       </ScrollView>
     </BaseContainer>
   )
@@ -47307,41 +47294,21 @@ const StatCard = ({
   color: string
 }) => (
   <View style={[styles.statCard, { borderLeftColor: color, borderLeftWidth: 4 }]}>
-    <Text style={styles.statValue}>{value}</Text>
-    <Text style={styles.statLabel}>{label}</Text>
+    <Text style={[styles.statValue, { color: '#111827' }]}>{value}</Text>
+    <Text style={[styles.statLabel, { color }]}>{label}</Text>
   </View>
 )
 
-const ActionButton = ({
-  icon,
-  label,
-  bgColor,
-  badge,
-}: {
-  icon: React.ReactNode
-  label: string
-  bgColor: string
-  badge?: number
-}) => (
-  <TouchableOpacity style={[styles.actionBtn, { backgroundColor: bgColor }]}>
-    {badge ? (
-      <View style={styles.btnBadge}>
-        <Text style={styles.btnBadgeText}>{badge}</Text>
-      </View>
-    ) : null}
-    {icon}
-    <Text style={styles.actionLabel}>{label}</Text>
-  </TouchableOpacity>
-)
-
 const styles = StyleSheet.create({
-  scrollContent: { padding: 16 },
-  header: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 },
-  logo: { fontSize: 20, fontWeight: '900', letterSpacing: -1 },
+  scrollContent: { paddingHorizontal: 16, paddingBottom: 40 },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 },
+  logo: { fontSize: 20, fontWeight: '900', letterSpacing: -0.5, color: '#111827' },
+  subHeading: { fontSize: 22, fontWeight: '700', color: '#111827', marginTop: 8 },
+  subLabel: { fontSize: 13, color: '#9CA3AF', marginTop: 2 },
   notifBadge: {
     position: 'absolute',
-    top: 2,
-    right: 2,
+    top: 0,
+    right: 0,
     width: 8,
     height: 8,
     backgroundColor: '#EF4444',
@@ -47349,134 +47316,174 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#FFF',
   },
-  welcomeBanner: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#F0FDF4',
-    padding: 12,
-    borderRadius: 12,
-    marginBottom: 20,
-  },
-  welcomeText: { color: '#166534', fontWeight: '600' },
+
   trustedBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-end',
     backgroundColor: '#22C55E',
     paddingHorizontal: 10,
-    paddingVertical: 4,
+    paddingVertical: 5,
     borderRadius: 20,
+    gap: 4,
+    marginBottom: 16,
+    marginTop: -36,
   },
-  trustedText: { color: '#FFF', fontSize: 11, fontWeight: 'bold' },
-  statsGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
+  trustedText: { color: '#FFF', fontSize: 11, fontWeight: '700' },
+
+  statsGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', marginBottom: 4 },
   statCard: {
     width: '48%',
     backgroundColor: '#FFF',
     padding: 16,
     borderRadius: 16,
     marginBottom: 12,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
+    borderWidth: 1,
+    borderColor: '#F3F4F6',
   },
-  statValue: { fontSize: 24, fontWeight: 'bold', color: '#111827' },
-  statLabel: { fontSize: 12, color: '#6B7280', marginTop: 4 },
-  actionRow: { flexDirection: 'row', justifyContent: 'space-between', marginVertical: 10 },
-  actionBtn: {
-    width: '23%',
-    aspectRatio: 1,
-    borderRadius: 16,
-    justifyContent: 'center',
+  statValue: { fontSize: 24, fontWeight: '800' },
+  statLabel: { fontSize: 12, fontWeight: '600', marginTop: 4 },
+
+  actionRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 6, marginBottom: 24 },
+  addItemBtn: {
+    flexDirection: 'row',
     alignItems: 'center',
-    padding: 8,
+    gap: 6,
+    backgroundColor: '#22C55E',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 12,
   },
-  actionLabel: { fontSize: 10, fontWeight: '600', marginTop: 8, textAlign: 'center' },
-  btnBadge: {
-    position: 'absolute',
-    top: 5,
-    right: 5,
-    backgroundColor: '#F59E0B',
-    borderRadius: 10,
-    width: 18,
-    height: 18,
-    justifyContent: 'center',
+  addItemText: { color: '#FFF', fontWeight: '700', fontSize: 13 },
+  scanBtn: {
+    flexDirection: 'row',
     alignItems: 'center',
-    zIndex: 1,
+    gap: 6,
+    backgroundColor: '#FFF',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    borderRadius: 12,
   },
-  btnBadgeText: { color: '#FFF', fontSize: 10, fontWeight: 'bold' },
+  scanText: { color: '#111827', fontWeight: '600', fontSize: 13 },
+  analyticsText: { color: '#22C55E', fontWeight: '600', fontSize: 13, marginLeft: 'auto' },
+
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 20,
-    marginBottom: 15,
+    marginBottom: 12,
   },
-  sectionTitle: { fontSize: 18, fontWeight: 'bold', color: '#111827' },
+  sectionTitle: { fontSize: 17, fontWeight: '700', color: '#111827' },
   viewAll: { color: '#22C55E', fontWeight: '600', fontSize: 13 },
-  loadingState: {
+
+  requestList: { gap: 12, marginBottom: 24 },
+  requestRow: {
+    flexDirection: 'row',
     backgroundColor: '#FFF',
-    borderRadius: 20,
-    paddingVertical: 28,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-  },
-  loadingText: { fontSize: 12, color: '#6B7280', marginTop: 8 },
-  requestCarousel: { marginBottom: 20 },
-  requestCard: {
-    width: 240,
-    backgroundColor: '#FFF',
-    padding: 16,
-    borderRadius: 20,
-    marginRight: 15,
+    borderRadius: 16,
+    padding: 14,
     borderWidth: 1,
     borderColor: '#F3F4F6',
+    gap: 12,
   },
-  storeInfo: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
-  avatarPlaceholder: { width: 32, height: 32, borderRadius: 16, backgroundColor: '#111827', marginRight: 10 },
-  storeName: { fontWeight: 'bold', fontSize: 14 },
-  rating: { fontSize: 12, color: '#F59E0B' },
-  productTypeBadge: {
-    alignSelf: 'flex-start',
-    backgroundColor: '#ECFDF5',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 999,
-    marginBottom: 8,
+  avatarPlaceholder: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#111827',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  productTypeText: { color: '#047857', fontSize: 10, fontWeight: '700' },
-  itemName: { fontWeight: '600', fontSize: 14, marginBottom: 2 },
-  itemMeta: { fontSize: 12, color: '#6B7280', marginBottom: 8 },
-  price: { fontSize: 18, fontWeight: 'bold' },
-  timeText: { fontSize: 11, color: '#9CA3AF', marginTop: 6 },
-  newBadge: {
-    position: 'absolute',
-    bottom: 16,
-    right: 16,
+  avatarInitials: { color: '#FFF', fontSize: 12, fontWeight: '700' },
+  requestTopRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  storeName: { fontWeight: '700', fontSize: 14, color: '#111827' },
+  newOfferBadge: {
     backgroundColor: '#FEF3C7',
     paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
+    paddingVertical: 3,
+    borderRadius: 10,
   },
-  newBadgeText: { color: '#D97706', fontSize: 10, fontWeight: 'bold' },
-  activityContainer: { backgroundColor: '#FFF', borderRadius: 20, padding: 8, marginVertical: 15 },
+  newOfferText: { color: '#D97706', fontSize: 10, fontWeight: '700' },
+  timeText: { fontSize: 11, color: '#9CA3AF', marginTop: 2 },
+  itemName: { fontWeight: '600', fontSize: 14, color: '#111827', marginTop: 8 },
+  itemMeta: { fontSize: 12, color: '#6B7280', marginTop: 2 },
+  offerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  offerLabel: { fontSize: 11, color: '#9CA3AF' },
+  price: { fontSize: 18, fontWeight: '800', color: '#111827' },
+  reviewBtn: {
+    backgroundColor: '#22C55E',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 10,
+  },
+  reviewBtnText: { color: '#FFF', fontWeight: '700', fontSize: 13 },
+
+  activityContainer: {
+    backgroundColor: '#FFF',
+    borderRadius: 16,
+    paddingHorizontal: 14,
+    borderWidth: 1,
+    borderColor: '#F3F4F6',
+    marginBottom: 24,
+  },
   activityItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 12,
+    paddingVertical: 14,
     borderBottomWidth: 1,
     borderBottomColor: '#F3F4F6',
+    gap: 10,
   },
-  activityDot: { width: 36, height: 36, borderRadius: 18, justifyContent: 'center', alignItems: 'center', marginRight: 12 },
-  dotInner: { width: 10, height: 10, borderRadius: 5 },
-  activityMessage: { fontSize: 13, color: '#374151', lineHeight: 18 },
+  activityDot: { width: 8, height: 8, borderRadius: 4 },
+  activityMessage: { flex: 1, fontSize: 13, color: '#374151', lineHeight: 18 },
   activityTime: { fontSize: 11, color: '#9CA3AF' },
-  trustCard: { backgroundColor: '#FFF', borderRadius: 20, padding: 16, marginTop: 10, marginBottom: 30 },
-  trustHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 15 },
-  trustTitle: { flex: 1, marginLeft: 10, fontSize: 15, fontWeight: '600' },
-  trustValue: { fontSize: 18, fontWeight: 'bold', color: '#10B981' },
-  progressBarBg: { height: 6, backgroundColor: '#F3F4F6', borderRadius: 3, marginBottom: 10 },
-  progressBarFill: { height: 6, backgroundColor: '#10B981', borderRadius: 3 },
-  trustFooter: { fontSize: 11, color: '#9CA3AF', textAlign: 'center' },
+
+  trustCard: {
+    backgroundColor: '#FFF',
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#F3F4F6',
+  },
+  trustHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 12, gap: 8 },
+  trustTitle: { flex: 1, fontSize: 15, fontWeight: '700', color: '#111827' },
+  trustValue: { fontSize: 16, fontWeight: '800', color: '#22C55E' },
+  progressBarBg: { height: 6, backgroundColor: '#F3F4F6', borderRadius: 3, marginBottom: 14, overflow: 'hidden' },
+  progressBarFill: { height: 6, backgroundColor: '#22C55E', borderRadius: 3 },
+  trustStatsRow: { flexDirection: 'row', gap: 32, marginBottom: 12 },
+  trustStatValue: { fontSize: 16, fontWeight: '800', color: '#111827' },
+  trustStatLabel: { fontSize: 11, color: '#9CA3AF', marginTop: 2 },
+  trustFooterLink: { fontSize: 12, color: '#22C55E', fontWeight: '600' },
+
+  manageListingsCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFF',
+    borderRadius: 16,
+    padding: 14,
+    marginBottom:15,
+    gap: 12,
+    borderWidth: 1,
+    borderColor: '#F3F4F6',
+  },
+  manageListingsIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: '#F3F4F6',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  manageListingsTitle: { fontSize: 14, fontWeight: '700', color: '#111827' },
+  manageListingsSubtitle: { fontSize: 12, color: '#9CA3AF', marginTop: 2 },
 })
 
 export default Dashboard
@@ -47484,8 +47491,9 @@ export default Dashboard
 
 ## File: app/resellerTabs/messages.tsx
 ```typescript
-import React from 'react'
+import React, { useState, useRef } from 'react'
 import {
+  Alert,
   Image,
   ScrollView,
   StyleSheet,
@@ -47495,91 +47503,196 @@ import {
 } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
+import { Swipeable, GestureHandlerRootView } from 'react-native-gesture-handler'
 import BaseContainer from '@/components/shared/BaseContainer'
 import { useMessages } from '@/services/hooks/reseller/messages/useMessages'
 
+const FILTERS = ['All', 'Unread', 'Buying', 'Selling'] as const
+type Filter = (typeof FILTERS)[number]
+
+const STATUS_STYLES: Record<string, { bg: string; color: string; icon?: any }> = {
+  'Deal Accepted': { bg: '#F0FDF4', color: '#22C55E', icon: 'checkmark-circle' },
+  'Offer Sent': { bg: '#EFF6FF', color: '#3B82F6' },
+  Negotiating: { bg: '#FFFBEB', color: '#F59E0B' },
+  Paid: { bg: '#F0FDF4', color: '#22C55E', icon: 'checkmark-circle' },
+  Shipped: { bg: '#F5F3FF', color: '#8B5CF6' },
+}
+
 const Messages = () => {
-  const { chats, unreadTotal } = useMessages()
+  const { chats, unreadTotal, toggleRead, archiveChat, muteChat } = useMessages()
   const router = useRouter()
+  const [activeFilter, setActiveFilter] = useState<Filter>('All')
+  const swipeRefs = useRef<Record<string, Swipeable | null>>({})
+
+  const filteredChats = chats.filter((chat) => {
+    if (activeFilter === 'All') return true
+    if (activeFilter === 'Unread') return chat.unreadCount > 0
+    if (activeFilter === 'Buying') return chat.role === 'Buying'
+    if (activeFilter === 'Selling') return chat.role === 'Selling'
+    return true
+  })
+
+  const closeOthers = (exceptId: string) => {
+    Object.entries(swipeRefs.current).forEach(([id, ref]) => {
+      if (id !== exceptId) ref?.close()
+    })
+  }
+
+  const handleLongPress = (chatId: string, storeName: string) => {
+    Alert.alert(storeName, undefined, [
+      { text: 'Mute', onPress: () => muteChat(chatId) },
+      { text: 'Archive', onPress: () => archiveChat(chatId) },
+      { text: 'Delete', style: 'destructive', onPress: () => archiveChat(chatId) },
+      { text: 'Cancel', style: 'cancel' },
+    ])
+  }
+
+  const renderRightActions = (chatId: string) => (
+    <TouchableOpacity
+      style={styles.swipeArchiveBtn}
+      onPress={() => {
+        archiveChat(chatId)
+        swipeRefs.current[chatId]?.close()
+      }}
+    >
+      <Ionicons name="archive-outline" size={20} color="#FFF" />
+      <Text style={styles.swipeActionText}>Archive</Text>
+    </TouchableOpacity>
+  )
+
+  const renderLeftActions = (chatId: string, isUnread: boolean) => (
+    <TouchableOpacity
+      style={styles.swipeUnreadBtn}
+      onPress={() => {
+        toggleRead(chatId)
+        swipeRefs.current[chatId]?.close()
+      }}
+    >
+      <Ionicons name={isUnread ? 'mail-open-outline' : 'mail-unread-outline'} size={20} color="#FFF" />
+      <Text style={styles.swipeActionText}>{isUnread ? 'Read' : 'Unread'}</Text>
+    </TouchableOpacity>
+  )
 
   return (
-    <BaseContainer backgroundColor="#fff">
-      <View className="pt-10">
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>Messages</Text>
-          <TouchableOpacity>
-            <Ionicons name="search-outline" size={24} color="black" />
-          </TouchableOpacity>
-        </View>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <BaseContainer backgroundColor="#fff">
+        <View className="pt-10 flex-1">
+          {/* Header */}
+          <View style={styles.header}>
+            <Text style={styles.headerTitle}>Messages</Text>
+            <TouchableOpacity>
+              <Ionicons name="search-outline" size={22} color="#111827" />
+            </TouchableOpacity>
+          </View>
 
-        <View style={styles.unreadBanner}>
-          <Text style={styles.unreadBannerText}>{unreadTotal} unread conversations</Text>
-        </View>
-
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={styles.listContainer}>
-            {chats.map((chat) => (
-              <TouchableOpacity key={chat.id} style={styles.chatItem} onPress={() => router.push('/screens/messages/chatScreen')}>
-                <View style={styles.avatarContainer}>
-                  <View style={styles.avatarPlaceholder}>
-                    <Ionicons name="business" size={20} color="#fff" />
-                  </View>
-                  {chat.isOnline ? <View style={styles.onlineDot} /> : null}
-                </View>
-
-                <View style={styles.messageDetails}>
-                  <View style={styles.nameRow}>
-                    <Text style={styles.storeName}>{chat.storeName}</Text>
-                    <Text style={styles.timeText}>{chat.time}</Text>
-                  </View>
-
-                  <Text style={styles.lastMessage} numberOfLines={1}>
-                    {chat.lastMessage}
-                  </Text>
-
-                  <View style={styles.itemContext}>
-                    <Image source={{ uri: chat.itemContext.image }} style={styles.contextImage} />
-                    <View style={{ flex: 1 }}>
-                      <View
-                        style={[
-                          styles.productTypeBadge,
-                          {
-                            backgroundColor:
-                              chat.itemContext.productType === 'Clothing' ? '#EFF6FF' : '#F0FDF4',
-                          },
-                        ]}
-                      >
-                        <Text
-                          style={[
-                            styles.productTypeText,
-                            {
-                              color:
-                                chat.itemContext.productType === 'Clothing' ? '#1D4ED8' : '#22C55E',
-                            },
-                          ]}
-                        >
-                          {chat.itemContext.productType}
-                        </Text>
-                      </View>
-                      <Text style={styles.contextText}>
-                        {chat.itemContext.name} ·{' '}
-                        <Text style={styles.contextOffer}>{chat.itemContext.offer}</Text>
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-
-                {chat.unreadCount > 0 ? (
-                  <View style={styles.unreadBadge}>
-                    <Text style={styles.unreadBadgeText}>{chat.unreadCount}</Text>
+          {/* Small filter chips, no large banner */}
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.filterScroll}
+          >
+            {FILTERS.map((filter) => (
+              <TouchableOpacity
+                key={filter}
+                onPress={() => setActiveFilter(filter)}
+                style={[styles.filterChip, activeFilter === filter && styles.filterChipActive]}
+              >
+                <Text style={[styles.filterText, activeFilter === filter && styles.filterTextActive]}>
+                  {filter}
+                </Text>
+                {filter === 'Unread' && unreadTotal > 0 ? (
+                  <View style={styles.filterCountBadge}>
+                    <Text style={styles.filterCountText}>{unreadTotal}</Text>
                   </View>
                 ) : null}
               </TouchableOpacity>
             ))}
-          </View>
-        </ScrollView>
-      </View>
-    </BaseContainer>
+          </ScrollView>
+
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <View style={styles.listContainer}>
+              {filteredChats.map((chat) => {
+                const status = STATUS_STYLES[chat.itemContext.status] || STATUS_STYLES['Offer Sent']
+                return (
+                  <Swipeable
+                    key={chat.id}
+                    ref={(ref) => { swipeRefs.current[chat.id] = ref }}
+                    onSwipeableWillOpen={() => closeOthers(chat.id)}
+                    renderRightActions={() => renderRightActions(chat.id)}
+                    renderLeftActions={() => renderLeftActions(chat.id, chat.unreadCount > 0)}
+                    overshootRight={false}
+                    overshootLeft={false}
+                  >
+                    <TouchableOpacity
+                      style={styles.chatItem}
+                      onPress={() => router.push('/screens/messages/chatScreen')}
+                      onLongPress={() => handleLongPress(chat.id, chat.storeName)}
+                      activeOpacity={0.7}
+                      delayLongPress={350}
+                    >
+                      <View style={styles.avatarContainer}>
+                        <View style={styles.avatarPlaceholder}>
+                          <Ionicons name="business" size={18} color="#fff" />
+                        </View>
+                        {chat.isOnline ? <View style={styles.onlineDot} /> : null}
+                      </View>
+
+                      <View style={styles.messageDetails}>
+                        <View style={styles.nameRow}>
+                          <Text style={styles.storeName} numberOfLines={1}>{chat.storeName}</Text>
+                          <Text style={styles.timeText}>{chat.time}</Text>
+                        </View>
+
+                        <Text style={styles.lastMessage} numberOfLines={1}>
+                          {chat.lastMessage}
+                        </Text>
+
+                        {status.icon ? (
+                          <View style={styles.dealAcceptedRow}>
+                            <Ionicons name={status.icon} size={13} color={status.color} />
+                            <Text style={[styles.dealAcceptedText, { color: status.color }]}>
+                              {chat.itemContext.status}
+                            </Text>
+                          </View>
+                        ) : null}
+
+                        {/* Product preview card — tappable, opens the listing */}
+                        <TouchableOpacity
+                          style={styles.productPreview}
+                          onPress={() => router.push('/screens/product/productScreen')}
+                          activeOpacity={0.7}
+                        >
+                          <Image source={{ uri: chat.itemContext.image }} style={styles.contextImage} />
+                          <View style={styles.productInfo}>
+                            <Text style={styles.productName} numberOfLines={1}>{chat.itemContext.name}</Text>
+                            <Text style={styles.productMeta}>
+                              Size {chat.itemContext.size} · {chat.itemContext.offer}
+                            </Text>
+                          </View>
+                          {!status.icon ? (
+                            <View style={[styles.statusBadge, { backgroundColor: status.bg }]}>
+                              <Text style={[styles.statusText, { color: status.color }]}>
+                                {chat.itemContext.status}
+                              </Text>
+                            </View>
+                          ) : null}
+                        </TouchableOpacity>
+                      </View>
+
+                      {chat.unreadCount > 0 ? (
+                        <View style={styles.unreadBadge}>
+                          <Text style={styles.unreadBadgeText}>{chat.unreadCount}</Text>
+                        </View>
+                      ) : null}
+                    </TouchableOpacity>
+                  </Swipeable>
+                )
+              })}
+            </View>
+          </ScrollView>
+        </View>
+      </BaseContainer>
+    </GestureHandlerRootView>
   )
 }
 
@@ -47589,80 +47702,116 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingVertical: 15,
+    paddingVertical: 12,
   },
-  headerTitle: { fontSize: 24, fontWeight: 'bold' },
-  unreadBanner: {
-    backgroundColor: '#F0FDF4',
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#DCFCE7',
+  headerTitle: { fontSize: 22, fontWeight: 'bold', color: '#111827' },
+  filterScroll: { paddingHorizontal: 16, paddingBottom: 10, gap: 8 },
+  filterChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    borderRadius: 20,
+    backgroundColor: '#F3F4F6',
+    marginRight: 8,
+    gap: 6,
   },
-  unreadBannerText: { color: '#22C55E', fontSize: 13, fontWeight: '600' },
+  filterChipActive: { backgroundColor: '#111827' },
+  filterText: { fontSize: 13, fontWeight: '600', color: '#4B5563' },
+  filterTextActive: { color: '#FFF' },
+  filterCountBadge: {
+    backgroundColor: '#22C55E',
+    borderRadius: 999,
+    minWidth: 16,
+    height: 16,
+    paddingHorizontal: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  filterCountText: { color: '#FFF', fontSize: 10, fontWeight: '700' },
   listContainer: { paddingBottom: 100 },
   chatItem: {
     flexDirection: 'row',
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: '#F3F4F6',
     alignItems: 'flex-start',
+    backgroundColor: '#fff',
   },
   avatarContainer: { position: 'relative' },
   avatarPlaceholder: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 42,
+    height: 42,
+    borderRadius: 21,
     backgroundColor: '#064E3B',
     justifyContent: 'center',
     alignItems: 'center',
   },
   onlineDot: {
     position: 'absolute',
-    top: 2,
-    right: 0,
-    width: 12,
-    height: 12,
-    borderRadius: 6,
+    top: 1,
+    right: -1,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
     backgroundColor: '#22C55E',
     borderWidth: 2,
     borderColor: '#FFF',
   },
   messageDetails: { flex: 1, marginLeft: 12 },
-  nameRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 },
-  storeName: { fontSize: 16, fontWeight: 'bold', color: '#111827' },
-  timeText: { fontSize: 12, color: '#9CA3AF' },
-  lastMessage: { fontSize: 14, color: '#6B7280', marginBottom: 8 },
-  itemContext: {
+  nameRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 2 },
+  storeName: { fontSize: 15, fontWeight: 'bold', color: '#111827', flex: 1, marginRight: 8 },
+  timeText: { fontSize: 11, color: '#9CA3AF' },
+  lastMessage: { fontSize: 13, color: '#6B7280', marginBottom: 6 },
+  dealAcceptedRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: 6 },
+  dealAcceptedText: { fontSize: 12, fontWeight: '700' },
+  // Stacked product preview card, below the message text
+  productPreview: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#F9FAFB',
+    borderRadius: 10,
     padding: 6,
-    borderRadius: 8,
-    alignSelf: 'flex-start',
     gap: 8,
   },
-  contextImage: { width: 24, height: 24, borderRadius: 4 },
-  productTypeBadge: {
-    alignSelf: 'flex-start',
+  contextImage: { width: 32, height: 32, borderRadius: 6, backgroundColor: '#E5E7EB' },
+  productInfo: { flex: 1 },
+  productName: { fontSize: 12, fontWeight: '600', color: '#111827' },
+  productMeta: { fontSize: 11, color: '#9CA3AF', marginTop: 1 },
+  statusBadge: {
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 999,
-    marginBottom: 4,
   },
-  productTypeText: { fontSize: 10, fontWeight: '700' },
-  contextText: { fontSize: 11, color: '#9CA3AF' },
-  contextOffer: { color: '#6B7280' },
+  statusText: { fontSize: 10, fontWeight: '700' },
   unreadBadge: {
     backgroundColor: '#22C55E',
-    width: 20,
-    height: 20,
-    borderRadius: 10,
+    width: 18,
+    height: 18,
+    borderRadius: 9,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 15,
+    marginTop: 12,
+    marginLeft: 6,
   },
-  unreadBadgeText: { color: '#FFF', fontSize: 11, fontWeight: 'bold' },
+  unreadBadgeText: { color: '#FFF', fontSize: 10, fontWeight: 'bold' },
+  // Swipe actions
+  swipeArchiveBtn: {
+    backgroundColor: '#111827',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 84,
+    gap: 4,
+  },
+  swipeUnreadBtn: {
+    backgroundColor: '#22C55E',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 84,
+    gap: 4,
+  },
+  swipeActionText: { color: '#FFF', fontSize: 11, fontWeight: '700' },
 })
 
 export default Messages
@@ -47686,104 +47835,159 @@ import BaseContainer from '@/components/shared/BaseContainer'
 import { useProfile } from '@/services/hooks/reseller/profile/useProfile'
 
 const Profile = () => {
-  const { user, items } = useProfile()
+  const { user, items, deals } = useProfile()
   const router = useRouter()
 
   return (
     <BaseContainer backgroundColor="#fff">
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View className="pt-10 pb-20 mb-20">
+        <View className="pb-10 mt-10">
+          {/* 1. Simplified header */}
           <View style={styles.navBar}>
-            <View style={{ flex: 1 }} />
-            <View style={styles.navIcons}>
-              <TouchableOpacity style={styles.iconBtn} onPress={() => router.push('/screens/reseller/visibilityControlsScreen')}>
-                <Ionicons name="settings-outline" size={22} color="#333" />
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.iconBtn}>
-                <Ionicons name="share-outline" size={22} color="#333" />
-              </TouchableOpacity>
-            </View>
+            <Text style={styles.navTitle}>Profile</Text>
+            <TouchableOpacity style={styles.settingsBtn} onPress={() => router.push('/screens/reseller/visibilityControlsScreen')}>
+              <Ionicons name="settings-outline" size={20} color="#333" />
+            </TouchableOpacity>
           </View>
 
           <View style={styles.profileHeader}>
             <View style={styles.avatarContainer}>
-              <Image source={{ uri: 'https://i.pravatar.cc/150?u=marcus' }} style={styles.avatar} />
+              <Image source={{ uri: user.avatar }} style={styles.avatar} />
               <TouchableOpacity style={styles.editAvatarBtn}>
-                <Feather name="edit-2" size={14} color="#666" />
+                <Feather name="edit-2" size={12} color="#666" />
               </TouchableOpacity>
             </View>
 
             <Text style={styles.username}>{user.username}</Text>
-            <Text style={styles.company}>{user.company}</Text>
 
-            <View style={styles.locationRow}>
-              <Ionicons name="location-outline" size={14} color="#9CA3AF" />
+            <View style={styles.metaRow}>
+              <Text style={styles.company}>{user.company}</Text>
+              <Text style={styles.metaDot}>·</Text>
+              <Ionicons name="location-outline" size={12} color="#9CA3AF" />
               <Text style={styles.locationText}>{user.location}</Text>
             </View>
 
-            <View style={styles.trustedBadge}>
-              <Text style={styles.trustedText}>Trusted Reseller</Text>
+            <View style={styles.trustedBadgeRow}>
+              <View style={styles.trustedBadge}>
+                <Ionicons name="shield-checkmark" size={13} color="#22C55E" />
+                <Text style={styles.trustedText}>Trusted Reseller</Text>
+              </View>
             </View>
+
+            <TouchableOpacity style={styles.editProfileBtn}>
+              <Text style={styles.editProfileText}>Edit Profile</Text>
+            </TouchableOpacity>
           </View>
 
+          {/* 2. Key stats — tappable */}
           <View style={styles.statsRow}>
-            <StatItem label="Deals Done" value={user.stats.dealsDone} />
-            <StatItem label="Response Rate" value={`${user.stats.responseRate}%`} color="#22C55E" hasBorder />
-            <StatItem label="Volume Sold" value={`$${user.stats.volumeSold}`} hasBorder />
-            <StatItem label="Rating" value={user.stats.rating} color="#F59E0B" icon="star" />
+            <StatItem
+              label="Deals Done"
+              value={user.stats.dealsDone}
+              onPress={() => router.push('/screens/reseller/submittedRequestsScreen')}
+            />
+            <StatItem
+              label="Response Rate"
+              value={`${user.stats.responseRate}%`}
+              color="#22C55E"
+              hasBorder
+              onPress={() => router.push('/screens/reseller/submittedRequestsScreen')}
+            />
+            <StatItem
+              label="Volume Sold"
+              value={`$${user.stats.volumeSold}`}
+              hasBorder
+              onPress={() => router.push('/screens/reseller/submittedRequestsScreen')}
+            />
+            <StatItem
+              label="Rating"
+              value={user.stats.rating}
+              color="#F59E0B"
+              icon="star"
+              onPress={() => router.push('/screens/reseller/resellerProfileScreen')}
+            />
           </View>
 
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.badgeScroll}>
-            <View style={[styles.badge, { backgroundColor: '#F0FDF4' }]}>
-              <Ionicons name="checkmark-circle" size={14} color="#22C55E" />
-              <Text style={[styles.badgeText, { color: '#22C55E' }]}>Verified Identity</Text>
-            </View>
-            <View style={[styles.badge, { backgroundColor: '#EFF6FF' }]}>
-              <FontAwesome5 name="box-open" size={12} color="#3B82F6" />
-              <Text style={[styles.badgeText, { color: '#3B82F6' }]}>Sneakers & Clothing</Text>
-            </View>
-          </ScrollView>
-
-          <SectionCard title="About" actionText="Edit bio">
-            <Text style={styles.cardContent}>{user.bio}</Text>
-          </SectionCard>
-
+          {/* 3. Inventory moved higher, with product image/name/size/price */}
           <SectionCard
             title="My Inventory"
+            subTitle={`View All (${user.inventoryCount})`}
             actionText="View All"
-            subTitle={`• ${user.inventoryCount} items visible to stores`}
           >
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.imageScroll}>
               {items.map((item) => (
-                <Image key={item.id} source={{ uri: item.image }} style={styles.itemImage} />
+                <View key={item.id} style={styles.inventoryItem}>
+                  <Image source={{ uri: item.image }} style={styles.itemImage} />
+                  <Text style={styles.inventoryName} numberOfLines={1}>{item.name}</Text>
+                  <Text style={styles.inventoryMeta}>Size {item.size} · ${item.price}</Text>
+                </View>
               ))}
             </ScrollView>
           </SectionCard>
 
+          {/* 4. Deal history with product image, name, size, price, status, date */}
           <SectionCard
-            title="My Deal History"
+            title="Recent Deals"
             actionText="View All"
             onAction={() => router.push('/screens/reseller/submittedRequestsScreen')}
           >
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.imageScroll}>
-              {items.map((item) => (
-                <Image key={`history-${item.id}`} source={{ uri: item.image }} style={styles.itemImage} />
+            <View>
+              {deals.map((deal) => (
+                <View key={deal.id} style={styles.dealRow}>
+                  <Image source={{ uri: deal.image }} style={styles.dealImage} />
+                  <View style={styles.dealInfo}>
+                    <Text style={styles.dealName} numberOfLines={1}>{deal.name}</Text>
+                    <Text style={styles.dealMeta}>Size {deal.size} · ${deal.price}</Text>
+                  </View>
+                  <View style={styles.dealRight}>
+                    <View style={styles.dealStatusBadge}>
+                      <Text style={styles.dealStatusText}>{deal.status}</Text>
+                    </View>
+                    <Text style={styles.dealDate}>{deal.date}</Text>
+                  </View>
+                </View>
               ))}
-            </ScrollView>
+            </View>
           </SectionCard>
 
-          {/* ── Sign Out ── */}
+          {/* 5. Seller Information with verified check */}
+          <SectionCard title="Seller Information" actionText="">
+            <View style={styles.sellerInfoRow}>
+              <Ionicons name="checkmark-circle" size={18} color="#22C55E" />
+              <Text style={styles.sellerInfoText}>Verified Identity</Text>
+              <View style={{ flex: 1 }} />
+              <Feather name="chevron-right" size={16} color="#9CA3AF" />
+            </View>
+            <View style={styles.sellerInfoRow}>
+              <FontAwesome5 name="box-open" size={14} color="#3B82F6" />
+              <Text style={styles.sellerInfoText}>Sneakers & Clothing</Text>
+              <View style={{ flex: 1 }} />
+              <Feather name="chevron-right" size={16} color="#9CA3AF" />
+            </View>
+            <Text style={styles.aboutText}>{user.bio}</Text>
+          </SectionCard>
+
+          {/* 6. Account section */}
+          <SectionCard title="Account" actionText="">
+            <AccountRow icon="person-outline" label="Edit Profile" onPress={() => {}} />
+            <AccountRow icon="storefront-outline" label="Store Information" onPress={() => {}} />
+            <AccountRow icon="notifications-outline" label="Notifications" onPress={() => router.push('/screens/reseller/notifications')} />
+            <AccountRow icon="card-outline" label="Payment / Payout Settings" onPress={() => {}} />
+            <AccountRow icon="lock-closed-outline" label="Security" onPress={() => {}} />
+            <AccountRow icon="help-circle-outline" label="Help & Support" onPress={() => {}} last />
+          </SectionCard>
+
+          {/* 7. Sign out moved inside Account/Settings, larger button */}
           <View style={styles.signOutWrapper}>
             <TouchableOpacity
               onPress={() => router.replace('/auth/signInScreen')}
               activeOpacity={0.7}
               style={styles.signOutBtn}
             >
-              <Feather name="log-out" size={18} color="#EF4444" />
+              <Feather name="log-out" size={20} color="#EF4444" />
               <Text style={styles.signOutText}>Sign Out</Text>
             </TouchableOpacity>
           </View>
-
         </View>
       </ScrollView>
     </BaseContainer>
@@ -47796,20 +48000,45 @@ const StatItem = ({
   color = '#111827',
   hasBorder,
   icon,
+  onPress,
 }: {
   label: string
   value: string | number
   color?: string
   hasBorder?: boolean
   icon?: 'star'
+  onPress?: () => void
 }) => (
-  <View style={[styles.statItem, hasBorder && styles.statBorder]}>
+  <TouchableOpacity style={[styles.statItem, hasBorder && styles.statBorder]} onPress={onPress} activeOpacity={0.6}>
     <View style={styles.valueContainer}>
       <Text style={[styles.statValue, { color }]}>{value}</Text>
-      {icon ? <Ionicons name={icon} size={16} color={color} style={{ marginLeft: 4 }} /> : null}
+      {icon ? <Ionicons name={icon} size={14} color={color} style={{ marginLeft: 4 }} /> : null}
     </View>
     <Text style={styles.statLabel}>{label}</Text>
-  </View>
+  </TouchableOpacity>
+)
+
+const AccountRow = ({
+  icon,
+  label,
+  onPress,
+  last,
+}: {
+  icon: any
+  label: string
+  onPress?: () => void
+  last?: boolean
+}) => (
+  <TouchableOpacity
+    style={[styles.accountRow, !last && styles.accountRowBorder]}
+    onPress={onPress}
+    activeOpacity={0.6}
+  >
+    <Ionicons name={icon} size={18} color="#4B5563" />
+    <Text style={styles.accountRowLabel}>{label}</Text>
+    <View style={{ flex: 1 }} />
+    <Feather name="chevron-right" size={16} color="#9CA3AF" />
+  </TouchableOpacity>
 )
 
 const SectionCard = ({
@@ -47827,26 +48056,32 @@ const SectionCard = ({
 }) => (
   <View style={styles.card}>
     <View style={styles.cardHeader}>
-      <View>
-        <Text style={styles.cardTitle}>{title}</Text>
-        {subTitle ? <Text style={styles.subTitle}>{subTitle}</Text> : null}
-      </View>
-      <TouchableOpacity style={styles.actionRow} onPress={onAction}>
-        <Text style={styles.actionText}>{actionText}</Text>
-        <Ionicons name="arrow-forward" size={14} color="#22C55E" />
-      </TouchableOpacity>
+      <Text style={styles.cardTitle}>{title}</Text>
+      {actionText ? (
+        <TouchableOpacity style={styles.actionRow} onPress={onAction}>
+          <Text style={styles.actionText}>{actionText}</Text>
+          <Ionicons name="arrow-forward" size={13} color="#22C55E" />
+        </TouchableOpacity>
+      ) : null}
     </View>
     {children}
   </View>
 )
 
 const styles = StyleSheet.create({
-  navBar: { flexDirection: 'row', paddingHorizontal: 16, height: 40, alignItems: 'center' },
-  navIcons: { flexDirection: 'row' },
-  iconBtn: { marginLeft: 20 },
-  profileHeader: { alignItems: 'center', backgroundColor: '#F9FAFB', paddingVertical: 30, marginTop: 10 },
-  avatarContainer: { marginBottom: 15 },
-  avatar: { width: 100, height: 100, borderRadius: 50, borderWidth: 3, borderColor: '#22C55E' },
+  navBar: {
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  navTitle: { fontSize: 18, fontWeight: '700', color: '#111827' },
+  settingsBtn: { padding: 4 },
+  profileHeader: { alignItems: 'center', backgroundColor: '#F9FAFB', paddingVertical: 24, paddingHorizontal: 16 },
+  avatarContainer: { marginBottom: 12 },
+  avatar: { width: 88, height: 88, borderRadius: 44, borderWidth: 3, borderColor: '#22C55E' },
   editAvatarBtn: {
     position: 'absolute',
     bottom: 0,
@@ -47859,21 +48094,35 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
   },
-  username: { fontSize: 22, fontWeight: 'bold', color: '#111827' },
-  company: { fontSize: 14, color: '#6B7280', marginTop: 4 },
-  locationRow: { flexDirection: 'row', alignItems: 'center', marginTop: 8 },
-  locationText: { fontSize: 12, color: '#9CA3AF', marginLeft: 4 },
+  username: { fontSize: 20, fontWeight: 'bold', color: '#111827' },
+  metaRow: { flexDirection: 'row', alignItems: 'center', marginTop: 6, gap: 4 },
+  company: { fontSize: 13, color: '#6B7280' },
+  metaDot: { fontSize: 13, color: '#D1D5DB' },
+  locationText: { fontSize: 12, color: '#9CA3AF' },
+  trustedBadgeRow: { marginTop: 14 },
   trustedBadge: {
-    backgroundColor: '#22C55E',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 25,
-    marginTop: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: '#F0FDF4',
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 20,
   },
-  trustedText: { color: '#FFF', fontWeight: 'bold', fontSize: 14 },
+  trustedText: { color: '#22C55E', fontWeight: '700', fontSize: 13 },
+  editProfileBtn: {
+    marginTop: 14,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderRadius: 12,
+    paddingHorizontal: 24,
+    paddingVertical: 10,
+    backgroundColor: '#fff',
+  },
+  editProfileText: { fontSize: 13, fontWeight: '600', color: '#374151' },
   statsRow: {
     flexDirection: 'row',
-    paddingVertical: 20,
+    paddingVertical: 18,
     borderBottomWidth: 1,
     borderBottomColor: '#F3F4F6',
     marginHorizontal: 16,
@@ -47881,33 +48130,41 @@ const styles = StyleSheet.create({
   statItem: { flex: 1, alignItems: 'center' },
   statBorder: { borderLeftWidth: 1, borderRightWidth: 1, borderColor: '#F3F4F6' },
   valueContainer: { flexDirection: 'row', alignItems: 'center' },
-  statValue: { fontSize: 18, fontWeight: 'bold' },
+  statValue: { fontSize: 17, fontWeight: 'bold' },
   statLabel: { fontSize: 10, color: '#9CA3AF', marginTop: 4, textAlign: 'center' },
-  badgeScroll: { paddingLeft: 16, marginVertical: 20 },
-  badge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 10,
-    marginRight: 10,
-  },
-  badgeText: { fontSize: 12, fontWeight: '600', marginLeft: 6 },
   card: { padding: 20, borderBottomWidth: 8, borderBottomColor: '#F9FAFB' },
-  cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 15 },
+  cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 },
   cardTitle: { fontSize: 16, fontWeight: 'bold', color: '#111827' },
   subTitle: { fontSize: 12, color: '#22C55E', marginTop: 2 },
   actionRow: { flexDirection: 'row', alignItems: 'center' },
   actionText: { color: '#22C55E', fontSize: 13, fontWeight: '600', marginRight: 4 },
-  cardContent: { fontSize: 14, color: '#4B5563', lineHeight: 22 },
   imageScroll: { flexDirection: 'row' },
-  itemImage: { width: 90, height: 90, borderRadius: 15, marginRight: 12, backgroundColor: '#F3F4F6' },
-  // ── Sign Out ──
-  signOutWrapper: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 8,
+  inventoryItem: { marginRight: 12, width: 100 },
+  itemImage: { width: 100, height: 100, borderRadius: 14, backgroundColor: '#F3F4F6', marginBottom: 6 },
+  inventoryName: { fontSize: 12, fontWeight: '600', color: '#111827' },
+  inventoryMeta: { fontSize: 11, color: '#9CA3AF', marginTop: 1 },
+  dealRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F3F4F6',
   },
+  dealImage: { width: 48, height: 48, borderRadius: 10, backgroundColor: '#F3F4F6' },
+  dealInfo: { flex: 1, marginLeft: 12 },
+  dealName: { fontSize: 13, fontWeight: '600', color: '#111827' },
+  dealMeta: { fontSize: 12, color: '#9CA3AF', marginTop: 2 },
+  dealRight: { alignItems: 'flex-end' },
+  dealStatusBadge: { backgroundColor: '#F0FDF4', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 999 },
+  dealStatusText: { fontSize: 11, fontWeight: '700', color: '#22C55E' },
+  dealDate: { fontSize: 11, color: '#9CA3AF', marginTop: 4 },
+  sellerInfoRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 10, gap: 10 },
+  sellerInfoText: { fontSize: 14, color: '#374151', fontWeight: '500' },
+  aboutText: { fontSize: 13, color: '#6B7280', lineHeight: 20, marginTop: 8 },
+  accountRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 14, gap: 12 },
+  accountRowBorder: { borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },
+  accountRowLabel: { fontSize: 14, color: '#111827', fontWeight: '500' },
+  signOutWrapper: { paddingHorizontal: 16, paddingTop: 16,paddingBottom:30 },
   signOutBtn: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -47917,12 +48174,13 @@ const styles = StyleSheet.create({
     borderColor: '#FEE2E2',
     backgroundColor: '#FFF5F5',
     borderRadius: 16,
-    paddingVertical: 14,
+    paddingVertical: 16,
   },
   signOutText: {
     color: '#EF4444',
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '700',
+
   },
 })
 
@@ -47936,151 +48194,181 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native'
-import { Ionicons } from '@expo/vector-icons'
+import { Feather, Ionicons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import BaseContainer from '@/components/shared/BaseContainer'
 import { useRequests } from '@/services/hooks/reseller/requests/useRequests'
 
 const Requests = () => {
-  const { requests, activeTab, setActiveTab, summary, tabs, tabCounts } = useRequests()
+  const { requests, summary } = useRequests()
   const router = useRouter()
+  const insets = useSafeAreaInsets()
+
+  const [segment, setSegment] = React.useState<'Open' | 'Unread' | 'History'>('Open')
+  const openCount = requests.filter((r) => r.state === 'New' || r.state === 'Pending Response').length
+  const unreadCount = summary.newToday
+
+  const visibleRequests =
+    segment === 'Unread' ? requests.filter((r) => r.isNew) : segment === 'History' ? [] : requests
 
   return (
     <BaseContainer backgroundColor="#fff">
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View className="mt-10 pt-10 pb-20 mb-20">
-          <Text style={styles.screenTitle}>Store Requests</Text>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: insets.top + 12, paddingBottom: 100 }}>
+        <Text style={styles.screenTitle}>Store Requests</Text>
 
-          <View style={styles.summaryAlert}>
-            <View style={styles.alertIconRow}>
-              <Ionicons name="notifications-outline" size={16} color="#B45309" />
-              <Text style={styles.alertText}>
-                <Text style={{ fontWeight: 'bold' }}>{summary.total} requests</Text> ·{' '}
-                {summary.newToday} new today ·
-                <Text style={{ color: '#B45309', fontWeight: 'bold' }}>
-                  {' '}
-                  {summary.expiringSoon} expiring soon
-                </Text>
-              </Text>
-            </View>
-            <TouchableOpacity>
-              <Text style={styles.markReadText}>Mark all read</Text>
-            </TouchableOpacity>
+        {/* ── Summary alert ──────────────────────────────────── */}
+        <View style={styles.summaryAlert}>
+          <Ionicons name="notifications" size={16} color="#D97706" />
+          <Text style={styles.alertText}>
+            <Text style={styles.alertBold}>{openCount} open</Text>
+            {'  ·  '}
+            <Text style={styles.alertBold}>{unreadCount} unread</Text>
+            {'  ·  '}
+            <Text style={[styles.alertBold, { color: '#D97706' }]}>
+              {summary.expiringSoon} expiring soon
+            </Text>
+          </Text>
+          <Ionicons name="chevron-forward" size={16} color="#D97706" />
+        </View>
+
+        {/* ── Search bar ─────────────────────────────────────── */}
+        <View style={styles.searchRow}>
+          <View style={styles.searchBar}>
+            <Ionicons name="search-outline" size={18} color="#9CA3AF" />
+            <TextInput
+              placeholder="Search stores or products"
+              placeholderTextColor="#9CA3AF"
+              style={styles.searchInput}
+            />
           </View>
+          <TouchableOpacity style={styles.filterBtn}>
+            <Feather name="sliders" size={16} color="#111827" />
+            <Text style={styles.filterBtnText}>Filter</Text>
+          </TouchableOpacity>
+        </View>
 
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabScroll}>
-            {tabs.map((tab) => (
+        {/* ── Segmented control ──────────────────────────────── */}
+        <View style={styles.segmentRow}>
+          {(['Open', 'Unread', 'History'] as const).map((seg) => {
+            const isActive = segment === seg
+            const count = seg === 'Open' ? openCount : seg === 'Unread' ? unreadCount : null
+            return (
               <TouchableOpacity
-                key={tab}
-                onPress={() => setActiveTab(tab)}
-                style={[styles.tabChip, activeTab === tab && styles.tabChipActive]}
+                key={seg}
+                onPress={() => setSegment(seg)}
+                style={[styles.segmentChip, isActive && styles.segmentChipActive]}
               >
-                <Text style={[styles.tabText, activeTab === tab && styles.tabTextActive]}>
-                  {tab} ({tabCounts[tab]})
+                <Text style={[styles.segmentText, isActive && styles.segmentTextActive]}>
+                  {seg}
+                  {count !== null ? ` (${count})` : ''}
                 </Text>
               </TouchableOpacity>
-            ))}
-          </ScrollView>
+            )
+          })}
+        </View>
 
-          <View style={styles.listContainer}>
-            {requests.map((item) => (
-              <TouchableOpacity key={item.id} style={[styles.cardContainer, item.isExpiring && styles.expiringBorder]} onPress={() => router.push('/screens/reseller/requestDetailsScreen' as any)}>
-                {item.isExpiring && item.expiryText ? (
-                  <View style={styles.expiryHeader}>
-                    <Ionicons name="warning-outline" size={14} color="#EF4444" />
-                    <Text style={styles.expiryText}>{item.expiryText}</Text>
+        {/* ── Sort row ───────────────────────────────────────── */}
+        <View style={styles.sortRow}>
+          <Text style={styles.sortText}>Sort: Expiring first</Text>
+          <Ionicons name="chevron-down" size={14} color="#6B7280" />
+        </View>
+
+        {/* ── Request cards ──────────────────────────────────── */}
+        <View style={styles.listContainer}>
+          {visibleRequests.map((item) => (
+            <TouchableOpacity
+              key={item.id}
+              style={styles.card}
+              onPress={() => router.push('/screens/reseller/requestDetailsScreen' as any)}
+            >
+              <View style={styles.storeRow}>
+                <View style={styles.storeAvatar}>
+                  <Text style={styles.storeAvatarText}>
+                    {item.storeName.split(' ').map((w) => w[0]).join('').slice(0, 2)}
+                  </Text>
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.storeName}>{item.storeName}</Text>
+                  <Text style={styles.storeSubText}>
+                    {item.rating} ★ · {item.distance}
+                  </Text>
+                </View>
+                {item.isExpiring ? (
+                  <View style={styles.expiryPill}>
+                    <Text style={styles.expiryPillText}>Expires in 2 hours</Text>
                   </View>
-                ) : null}
-
-                <View style={styles.cardContent}>
-                  <View style={styles.storeRow}>
-                    <View style={styles.storeAvatar} />
-                    <View style={{ flex: 1 }}>
-                      <View style={styles.nameBadgeRow}>
-                        <Text style={styles.storeName}>{item.storeName}</Text>
-                        {item.isNew ? (
-                          <View style={styles.newTag}>
-                            <Text style={styles.newTagText}>NEW</Text>
-                          </View>
-                        ) : null}
-                      </View>
-                      <Text style={styles.storeSubText}>
-                        {item.rating} star store · {item.location} · {item.distance}
-                      </Text>
-                    </View>
-                  </View>
-
-                  <View style={styles.itemRow}>
-                    <View style={styles.itemImagePlaceholder} />
-                    <View style={{ flex: 1 }}>
-                      <View
-                        style={[
-                          styles.productTypeBadge,
-                          {
-                            backgroundColor:
-                              item.productType === 'Clothing' ? '#EFF6FF' : '#F0FDF4',
-                          },
-                        ]}
-                      >
-                        <Text
-                          style={[
-                            styles.productTypeText,
-                            {
-                              color: item.productType === 'Clothing' ? '#1D4ED8' : '#22C55E',
-                            },
-                          ]}
-                        >
-                          {item.productType}
-                        </Text>
-                      </View>
-                      <Text style={styles.itemName}>{item.itemName}</Text>
-                      <Text style={styles.itemMeta}>
-                        {item.condition} · Size {item.size}
-                      </Text>
-                      <Text style={styles.itemPrice}>${item.offerPrice}</Text>
-                    </View>
-                  </View>
-
-                  {item.message ? <Text style={styles.messageText}>{item.message}</Text> : null}
-
-                  <View
-                    style={[
-                      styles.typeTag,
-                      { backgroundColor: item.tag === 'Price Check' ? '#FFFBEB' : '#F0FDF4' },
-                    ]}
-                  >
-                    <Text
-                      style={[
-                        styles.typeTagText,
-                        { color: item.tag === 'Price Check' ? '#D97706' : '#22C55E' },
-                      ]}
-                    >
-                      {item.tag}
+                ) : (
+                  <View style={styles.buyPill}>
+                    <Text style={styles.buyPillText}>
+                      {item.tag === 'Buy Request' ? 'Purchase offer' : item.tag}
                     </Text>
                   </View>
+                )}
+              </View>
 
-                  <View style={styles.actionRow}>
-                    <TouchableOpacity style={[styles.btn, styles.acceptBtn]}>
-                      <Text style={styles.acceptBtnText}>Accept</Text>
+              <View style={styles.itemRow}>
+                <View style={styles.itemImagePlaceholder} />
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.itemName}>{item.itemName}</Text>
+                  <Text style={styles.itemMeta}>
+                    Size {item.size} · {item.condition}
+                  </Text>
+                  <View style={styles.priceCompareRow}>
+                    <Text style={styles.priceLabel}>Your asking price:</Text>
+                    <Text style={styles.priceValue}>
+                      ${Math.round(item.offerPrice * (item.tag === 'Interest Ping' ? 1.27 : 1.19))}
+                    </Text>
+                  </View>
+                  <View style={styles.priceCompareRow}>
+                    <Text style={styles.priceLabel}>
+                      {item.tag === 'Interest Ping' ? 'Store target:' : 'Store offer:'}
+                    </Text>
+                    <Text style={styles.offerValue}>${item.offerPrice}</Text>
+                  </View>
+                </View>
+              </View>
+
+              {item.message ? <Text style={styles.messageText}>{item.message}</Text> : null}
+
+              <Text style={styles.footerText}>
+                {item.isExpiring ? 'Requests pickup today' : `Requested ${item.time}`}
+                <Text style={styles.footerTime}>  {item.time}</Text>
+              </Text>
+
+              <View style={styles.actionRow}>
+                {item.state === 'New' && item.tag === 'Interest Ping' ? (
+                  <>
+                    <TouchableOpacity style={[styles.btn, styles.replyBtn]}>
+                      <Ionicons name="chatbubble-outline" size={14} color="#22C55E" />
+                      <Text style={styles.replyBtnText}>Reply</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[styles.btn, styles.sendOfferBtn]} onPress={(e) => { e.stopPropagation?.(); router.push('/screens/reseller/sendOfferScreen'); }}>
+                      <Text style={styles.sendOfferBtnText}>Send offer</Text>
+                    </TouchableOpacity>
+                  </>
+                ) : (
+                  <>
+                    <TouchableOpacity style={[styles.btn, styles.reviewBtn]}>
+                      <Ionicons name="checkmark-circle-outline" size={14} color="#FFF" />
+                      <Text style={styles.reviewBtnText}>Review offer</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={[styles.btn, styles.counterBtn]} onPress={(e) => { e.stopPropagation?.(); router.push('/screens/reseller/sendOfferScreen'); }}>
+                      <Ionicons name="swap-horizontal" size={14} color="#111827" />
                       <Text style={styles.counterBtnText}>Counter</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={[styles.btn, styles.declineBtn]}>
                       <Text style={styles.declineBtnText}>Decline</Text>
                     </TouchableOpacity>
-                  </View>
-
-                  <Text style={styles.footerText}>
-                    Requested {item.time} via {item.source}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            ))}
-          </View>
+                  </>
+                )}
+              </View>
+            </TouchableOpacity>
+          ))}
         </View>
       </ScrollView>
     </BaseContainer>
@@ -48088,58 +48376,137 @@ const Requests = () => {
 }
 
 const styles = StyleSheet.create({
-  screenTitle: { fontSize: 24, fontWeight: 'bold', paddingHorizontal: 16, marginBottom: 20 },
+  screenTitle: { fontSize: 24, fontWeight: '800', paddingHorizontal: 16, marginBottom: 14, color: '#111827' },
+
   summaryAlert: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
+    gap: 8,
     backgroundColor: '#FFFBEB',
     marginHorizontal: 16,
-    padding: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
     borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#FEF3C7',
+    marginBottom: 16,
   },
-  alertIconRow: { flexDirection: 'row', alignItems: 'center', flex: 1 },
-  alertText: { fontSize: 12, color: '#92400E', marginLeft: 8 },
-  markReadText: { fontSize: 11, color: '#6B7280', textDecorationLine: 'underline' },
-  tabScroll: { paddingHorizontal: 16, marginVertical: 20 },
-  tabChip: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, backgroundColor: '#F3F4F6', marginRight: 10 },
-  tabChipActive: { backgroundColor: '#000' },
-  tabText: { fontSize: 13, color: '#6B7280', fontWeight: '600' },
-  tabTextActive: { color: '#FFF' },
-  listContainer: { paddingHorizontal: 16 },
-  cardContainer: { backgroundColor: '#FFF', borderRadius: 20, marginBottom: 15, overflow: 'hidden', borderWidth: 1, borderColor: '#F3F4F6' },
-  expiringBorder: { borderColor: '#FECACA', borderWidth: 2 },
-  expiryHeader: { flexDirection: 'row', backgroundColor: '#FEF2F2', padding: 10, alignItems: 'center' },
-  expiryText: { color: '#EF4444', fontSize: 11, fontWeight: '600', marginLeft: 6 },
-  cardContent: { padding: 16 },
-  storeRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 15 },
-  storeAvatar: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#111827' },
-  nameBadgeRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  storeName: { fontWeight: 'bold', fontSize: 15 },
-  storeSubText: { fontSize: 11, color: '#9CA3AF', marginTop: 2 },
-  newTag: { backgroundColor: '#FEF3C7', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6 },
-  newTagText: { color: '#D97706', fontSize: 10, fontWeight: 'bold' },
-  itemRow: { flexDirection: 'row', marginBottom: 15 },
-  itemImagePlaceholder: { width: 60, height: 60, borderRadius: 12, backgroundColor: '#F3F4F6', marginRight: 12 },
-  productTypeBadge: { alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 999, marginBottom: 8 },
-  productTypeText: { fontSize: 10, fontWeight: '700' },
-  itemName: { fontWeight: 'bold', fontSize: 14 },
-  itemMeta: { fontSize: 12, color: '#6B7280', marginVertical: 2 },
-  itemPrice: { fontSize: 16, fontWeight: '900' },
-  messageText: { fontSize: 13, color: '#4B5563', fontStyle: 'italic', marginBottom: 12, lineHeight: 18 },
-  typeTag: { alignSelf: 'flex-start', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8, marginBottom: 15 },
-  typeTagText: { fontSize: 11, fontWeight: 'bold' },
-  actionRow: { flexDirection: 'row', justifyContent: 'space-between' },
-  btn: { flex: 1, height: 42, borderRadius: 12, justifyContent: 'center', alignItems: 'center' },
-  acceptBtn: { backgroundColor: '#22C55E', marginRight: 8 },
-  acceptBtnText: { color: '#FFF', fontWeight: 'bold' },
-  counterBtn: { backgroundColor: '#111827', marginRight: 8 },
-  counterBtnText: { color: '#FFF', fontWeight: 'bold' },
-  declineBtn: { backgroundColor: '#F3F4F6' },
-  declineBtnText: { color: '#6B7280', fontWeight: 'bold' },
-  footerText: { textAlign: 'center', fontSize: 11, color: '#9CA3AF', marginTop: 15 },
+  alertText: { flex: 1, fontSize: 12, color: '#92400E' },
+  alertBold: { fontWeight: '700', color: '#92400E' },
+
+  searchRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 16, marginBottom: 16 },
+  searchBar: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: '#F3F4F6',
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+  },
+  searchInput: { flex: 1, fontSize: 14, color: '#111827' },
+  filterBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: '#F3F4F6',
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+  },
+  filterBtnText: { fontSize: 13, fontWeight: '600', color: '#111827' },
+
+  segmentRow: { flexDirection: 'row', gap: 10, paddingHorizontal: 16, marginBottom: 14 },
+  segmentChip: {
+    paddingHorizontal: 16,
+    paddingVertical: 9,
+    borderRadius: 20,
+    backgroundColor: '#F3F4F6',
+  },
+  segmentChipActive: { backgroundColor: '#111827' },
+  segmentText: { fontSize: 13, color: '#6B7280', fontWeight: '600' },
+  segmentTextActive: { color: '#FFF' },
+
+  sortRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    justifyContent: 'flex-end',
+    paddingHorizontal: 16,
+    marginBottom: 16,
+  },
+  sortText: { fontSize: 12, fontWeight: '600', color: '#6B7280' },
+
+  listContainer: { paddingHorizontal: 16, gap: 14 },
+  card: {
+    backgroundColor: '#FFF',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#F3F4F6',
+    padding: 14,
+  },
+
+  storeRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 12 },
+  storeAvatar: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#111827',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  storeAvatarText: { color: '#FFF', fontSize: 12, fontWeight: '700' },
+  storeName: { fontWeight: '700', fontSize: 14, color: '#111827' },
+  storeSubText: { fontSize: 11, color: '#9CA3AF', marginTop: 1 },
+  expiryPill: {
+    backgroundColor: '#FEF3C7',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 10,
+  },
+  expiryPillText: { fontSize: 10, fontWeight: '700', color: '#D97706' },
+  buyPill: {
+    backgroundColor: '#F0FDF4',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 10,
+  },
+  buyPillText: { fontSize: 10, fontWeight: '700', color: '#22C55E' },
+
+  itemRow: { flexDirection: 'row', gap: 12, marginBottom: 10 },
+  itemImagePlaceholder: { width: 56, height: 56, borderRadius: 12, backgroundColor: '#F3F4F6' },
+  itemName: { fontWeight: '700', fontSize: 14, color: '#111827' },
+  itemMeta: { fontSize: 12, color: '#6B7280', marginTop: 2, marginBottom: 6 },
+  priceCompareRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 2 },
+  priceLabel: { fontSize: 11, color: '#9CA3AF' },
+  priceValue: { fontSize: 12, fontWeight: '700', color: '#111827' },
+  offerValue: { fontSize: 12, fontWeight: '800', color: '#22C55E' },
+
+  messageText: { fontSize: 12, color: '#4B5563', fontStyle: 'italic', marginBottom: 8, lineHeight: 17 },
+
+  footerText: { fontSize: 11, color: '#9CA3AF', marginBottom: 10 },
+  footerTime: { color: '#D1D5DB' },
+
+  actionRow: { flexDirection: 'row', gap: 8 },
+  btn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    height: 40,
+    borderRadius: 10,
+  },
+  replyBtn: { backgroundColor: '#F0FDF4', borderWidth: 1, borderColor: '#BBF7D0' },
+  replyBtnText: { color: '#22C55E', fontWeight: '700', fontSize: 13 },
+  sendOfferBtn: { backgroundColor: '#22C55E' },
+  sendOfferBtnText: { color: '#FFF', fontWeight: '700', fontSize: 13 },
+
+  reviewBtn: { backgroundColor: '#22C55E' },
+  reviewBtnText: { color: '#FFF', fontWeight: '700', fontSize: 13 },
+  counterBtn: { backgroundColor: '#F3F4F6' },
+  counterBtnText: { color: '#111827', fontWeight: '700', fontSize: 13 },
+  declineBtn: { backgroundColor: '#F3F4F6', flex: 0.7 },
+  declineBtnText: { color: '#6B7280', fontWeight: '700', fontSize: 13 },
 })
 
 export default Requests
@@ -48164,9 +48531,8 @@ import Animated, {
   useSharedValue,
 } from 'react-native-reanimated';
 
-const ACTIVE_COLOR = '#000000';
+const ACTIVE_COLOR = '#22C55E';
 const INACTIVE_COLOR = '#94a3b8';
-const DOT_COLOR = '#22C55E';
 const BAR_BG = '#FFFFFF';
 
 /**
@@ -48255,35 +48621,10 @@ const AnimatedTabItem = ({
 const CustomTabBar = ({ state, navigation }: any) => {
   const { width } = useWindowDimensions();
   const TAB_BAR_WIDTH = width;
-  const TAB_WIDTH = TAB_BAR_WIDTH / state.routes.length;
-
-  const translateX = useSharedValue(0);
-
-  useEffect(() => {
-    translateX.value = withSpring(state.index * TAB_WIDTH, {
-      damping: 20,
-      stiffness: 150,
-    });
-  }, [state.index]);
-
-  const dotStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: translateX.value }],
-  }));
 
   return (
     <View style={styles.tabBarContainer}>
       <View style={[styles.tabBarInner, { width: TAB_BAR_WIDTH }]}>
-        {/* Sliding Dot */}
-        <Animated.View
-          style={[
-            styles.slidingDotContainer,
-            { width: TAB_WIDTH },
-            dotStyle,
-          ]}
-        >
-          <View style={styles.activeDot} />
-        </Animated.View>
-
         {state.routes.map((route: any, index: number) => {
           const isFocused = state.index === index;
 
@@ -48336,20 +48677,6 @@ const styles = StyleSheet.create({
     height: 28,
     justifyContent: 'center',
   },
-  slidingDotContainer: {
-    position: 'absolute',
-    height: 75,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 1,
-  },
-  activeDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: DOT_COLOR,
-    marginTop: 10,
-  },
   label: {
     fontSize: 14,
     marginTop: 4,
@@ -48375,404 +48702,668 @@ export default function TabLayout() {
 }
 ```
 
-## File: app/retailerTabs/profile.tsx
+## File: app/retailerTabs/inventory.tsx
 ```typescript
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ImageBackground } from 'react-native';
-import { useRouter } from 'expo-router';
-import { Feather, Ionicons } from '@expo/vector-icons';
-import BaseContainer from '@/components/shared/BaseContainer';
-import { useStoreProfile } from '@/services/hooks/retailer/profile/useStoreProfile';
+import React from 'react'
+import {
+  View,
+  FlatList,
+  RefreshControl,
+  StyleSheet,
+} from 'react-native'
+import { router } from 'expo-router'
+import BaseContainer from '@/components/shared/BaseContainer'
+import InventoryCard from '@/components/retailer/inventory/InventoryCard'
+import InventoryFilter from '@/components/retailer/inventory/InventoryFilter'
+import InventoryHeader from '@/components/retailer/inventory/InventoryHeader'
+import InventoryActions from '@/components/retailer/inventory/InventoryActions'
+import InventoryStats from '@/components/retailer/inventory/InventoryStats'
+import {
+  useInventory,
+  InventoryProduct,
+} from '@/services/hooks/retailer/inventory/useInventory'
 
-const COVER_IMAGE_URL =
-  'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&q=80';
-
-export const StoreProfileScreen: React.FC = () => {
-  const router = useRouter();
+export const InventoryScreen: React.FC = () => {
   const {
-    profile,
-    groupedHours,
-    isSaving,
-    hasUnsavedChanges,
-    updateField,
-    toggleDay,
-    updateHour,
-    copyHoursToAllDays,
-    addSocialLink,
-    updateSocialLink,
-    handleSave,
-    handlePickCoverImage,
-  } = useStoreProfile();
+    activeFilter,
+    filterTabs,
+    filterCounts,
+    summary,
+    syncInfo,
+    filteredProducts,
+    isRefreshing,
+    handleFilterChange,
+    handleRefresh,
+    handleEditProduct,
+    handleProductPress,
+  } = useInventory()
+
+  const renderItem = ({ item }: { item: InventoryProduct }) => (
+    <InventoryCard
+      product={item}
+      onPress={handleProductPress}
+      onEditPress={handleEditProduct}
+    />
+  )
 
   return (
-    <BaseContainer backgroundColor="#F9FAFB" scrollable>
-      <View style={{ flex: 1, paddingBottom: 120 }}>
+    <BaseContainer backgroundColor="#fff">
+      <View style={styles.container}>
+        <View>
+          <InventoryHeader
+            locationLabel="Novi · Twelve Oaks"
+            onLocationPress={() => console.log('switch location')}
+            onSearchPress={() => console.log('search')}
+            onFilterPress={() => console.log('filter')}
+          />
+          <InventoryActions
+            onAddProduct={() => router.push('/screens/retailer/home/product/AddProductScreen')}
+            onScan={() => router.push('/screens/retailer/home/product/AddProductScreen')}
+          />
+          <InventoryStats summary={summary} syncInfo={syncInfo} />
+          <InventoryFilter
+            tabs={filterTabs}
+            active={activeFilter}
+            counts={filterCounts}
+            onChange={handleFilterChange}
+          />
+        </View>
+
+        <FlatList
+          data={filteredProducts}
+          keyExtractor={(item) => item.id}
+          renderItem={renderItem}
+          contentContainerStyle={styles.listContent}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefreshing}
+              onRefresh={handleRefresh}
+              tintColor="#00C853"
+              colors={['#00C853']}
+            />
+          }
+        />
+      </View>
+    </BaseContainer>
+  )
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingTop: 40,
+  },
+  listContent: {
+    padding: 12,
+    paddingBottom: 32,
+  },
+})
+
+export default InventoryScreen
+```
+
+## File: app/retailerTabs/promote.tsx
+```typescript
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import BaseContainer from '@/components/shared/BaseContainer';
+import {
+  useCreatePromotion,
+  type PromotionTypeOption,
+  type CategoryTag,
+  type AudienceSegment,
+  type PromotionStep,
+} from '@/services/hooks/retailer/promote/useCreatePromotion';
+
+const STEPS: { key: PromotionStep; label: string }[] = [
+  { key: 'details', label: 'Details' },
+  { key: 'audience', label: 'Audience' },
+  { key: 'review', label: 'Review' },
+];
+
+export default function CreatePromotionScreen() {
+  const router = useRouter();
+  const promo = useCreatePromotion();
+
+  return (
+    <BaseContainer scrollable backgroundColor="#fff">
+      <View style={{ paddingBottom: 120 }}>
         {/* Header */}
         <View style={s.header}>
           <TouchableOpacity onPress={() => router.back()} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
             <Feather name="arrow-left" size={22} color="#111827" />
           </TouchableOpacity>
-          <Text style={s.headerTitle}>Store Profile</Text>
-          <TouchableOpacity>
-            <Text style={s.previewLink}>Preview</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Location selector */}
-        <TouchableOpacity style={s.locationSelector}>
-          <Feather name="map-pin" size={14} color="#6B7280" />
-          <Text style={s.locationSelectorText}>Sonny's Kicks — Main St</Text>
-          <Feather name="chevron-down" size={16} color="#6B7280" />
-        </TouchableOpacity>
-
-        {/* Public profile note */}
-        <View style={s.publicNoteRow}>
-          <View style={s.publicDot} />
-          <View style={{ flex: 1 }}>
-            <Text style={s.publicNoteTitle}>Public profile</Text>
-            <Text style={s.publicNoteSubtitle}>This is how your store appears to customers on GoSNKR.</Text>
-          </View>
-        </View>
-
-        {/* Cover image */}
-        <View style={s.coverWrap}>
-          <ImageBackground
-            source={{ uri: profile.coverImageUri ?? COVER_IMAGE_URL }}
-            style={s.coverImage}
-            imageStyle={{ borderRadius: 22 }}
+          <Text style={s.headerTitle}>Create Promotion</Text>
+          <TouchableOpacity
+            onPress={() => router.push('/screens/retailer/promote/promotionHistoryScreen')}
+            style={s.historyBtn}
           >
-            <TouchableOpacity style={s.editCoverBtn} onPress={handlePickCoverImage}>
-              <Feather name="edit-2" size={12} color="#111827" />
-              <Text style={s.editCoverText}>Edit cover</Text>
-            </TouchableOpacity>
-          </ImageBackground>
-
-          {/* Avatar overlapping cover */}
-          <View style={s.avatarWrap}>
-            <View style={s.avatar}>
-              <Text style={s.avatarText}>{profile.avatarLabel}</Text>
-            </View>
-            <TouchableOpacity style={s.avatarEditBadge} onPress={handlePickCoverImage}>
-              <Feather name="edit-2" size={10} color="#fff" />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Name + verified + location */}
-        <View style={s.nameSection}>
-          <View style={s.nameRow}>
-            <Text style={s.storeName}>{profile.name}</Text>
-            {profile.isVerified && <Feather name="check-circle" size={17} color="#10B981" />}
-          </View>
-          <Text style={s.storeLocation}>{profile.location}</Text>
-        </View>
-
-        {/* Basic information */}
-        <View style={s.card}>
-          <Text style={s.cardTitle}>Basic information</Text>
-
-          <Text style={s.fieldLabel}>Store name</Text>
-          <View style={s.inputBox}>
-            <TextInput
-              value={profile.name}
-              onChangeText={(v) => updateField('name', v)}
-              style={s.inputText}
-            />
-          </View>
-
-          <Text style={[s.fieldLabel, { marginTop: 14 }]}>Store description</Text>
-          <View style={s.textareaBox}>
-            <TextInput
-              value={profile.description}
-              onChangeText={(v) => updateField('description', v)}
-              multiline
-              maxLength={300}
-              style={s.textareaText}
-            />
-          </View>
-          <Text style={s.charCounter}>{profile.description.length}/300</Text>
-
-          <Text style={[s.fieldLabel, { marginTop: 14 }]}>Address</Text>
-          <View style={s.addressRow}>
-            <Feather name="map-pin" size={14} color="#9CA3AF" />
-            <Text style={s.addressText}>{profile.address}</Text>
-          </View>
-          <TouchableOpacity>
-            <Text style={s.verifyLink}>Verify on map</Text>
+            <Feather name="clock" size={15} color="#10B981" />
+            <Text style={s.historyText}>History</Text>
           </TouchableOpacity>
-
-          <View style={s.contactRow}>
-            <View style={{ flex: 1 }}>
-              <Text style={s.fieldLabel}>Phone</Text>
-              <View style={s.inputBox}>
-                <TextInput
-                  value={profile.phone}
-                  onChangeText={(v) => updateField('phone', v)}
-                  keyboardType="phone-pad"
-                  style={s.inputText}
-                />
-              </View>
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={s.fieldLabel}>Website</Text>
-              <View style={s.inputBox}>
-                <TextInput
-                  value={profile.website}
-                  onChangeText={(v) => updateField('website', v)}
-                  autoCapitalize="none"
-                  style={s.inputText}
-                />
-              </View>
-            </View>
-          </View>
         </View>
 
-        {/* Business hours */}
-        <View style={s.card}>
-          <View style={s.cardHeaderRow}>
-            <Text style={s.cardTitle}>Business hours</Text>
-            <TouchableOpacity onPress={copyHoursToAllDays}>
-              <Text style={s.editMultipleLink}>Edit multiple days</Text>
-            </TouchableOpacity>
-          </View>
-
-          {groupedHours.map((group, i) => (
-            <View key={i} style={s.hourRow}>
-              <Text style={s.hourDayLabel}>{group.label}</Text>
-              <Text style={s.hourTimeLabel}>
-                {group.isEnabled ? `${group.open} - ${group.close}` : 'Closed'}
-              </Text>
-              <View style={[s.hourStatusPill, group.isEnabled ? s.hourStatusOpen : s.hourStatusClosed]}>
-                <Text style={[s.hourStatusText, { color: group.isEnabled ? '#059669' : '#9CA3AF' }]}>
-                  {group.isEnabled ? 'Open' : 'Closed'}
-                </Text>
-              </View>
-              <Feather name="chevron-right" size={16} color="#D1D5DB" />
-            </View>
+        {/* Stepper */}
+        <View style={s.stepperRow}>
+          {STEPS.map((st, i) => (
+            <React.Fragment key={st.key}>
+              <StepDot
+                index={i + 1}
+                label={st.label}
+                state={getStepState(st.key, promo.step)}
+                onPress={() => promo.goToStep(st.key)}
+              />
+              {i < STEPS.length - 1 && <View style={s.stepConnector} />}
+            </React.Fragment>
           ))}
+        </View>
 
-          <TouchableOpacity style={s.addHoursBtn}>
-            <Feather name="plus" size={14} color="#4B5563" />
-            <Text style={s.addHoursText}>Add special or holiday hours</Text>
+        <View style={{ paddingHorizontal: 16, paddingTop: 20 }}>
+          {promo.step === 'details' && <DetailsStep promo={promo} />}
+          {promo.step === 'audience' && <AudienceStep promo={promo} />}
+          {promo.step === 'review' && <ReviewStep promo={promo} />}
+        </View>
+
+        {/* Footer button */}
+        <View style={{ paddingHorizontal: 16, marginTop: 24 }}>
+          <TouchableOpacity
+            style={[
+              s.reviewBtn,
+              promo.step === 'review'
+                ? { opacity: promo.canSubmit ? 1 : 0.5 }
+                : { opacity: promo.step === 'details' ? (promo.canGoToAudience ? 1 : 0.5) : promo.canGoToReview ? 1 : 0.5 },
+            ]}
+            disabled={promo.step === 'review' ? !promo.canSubmit : promo.step === 'details' ? !promo.canGoToAudience : !promo.canGoToReview}
+            onPress={promo.step === 'review' ? undefined : promo.goNext}
+          >
+            <Text style={s.reviewBtnText}>
+              {promo.step === 'review' ? 'Review Promotion' : promo.step === 'details' ? 'Continue to Audience' : 'Continue to Review'}
+            </Text>
           </TouchableOpacity>
-          <Text style={s.hoursFootnote}>Hours are shown in the store's local time.</Text>
+          {promo.step === 'review' && (
+            <Text style={s.reviewFootnote}>Nothing will be sent until you confirm on the next screen.</Text>
+          )}
         </View>
-
-        {/* Social links */}
-        <View style={s.card}>
-          <Text style={s.cardTitle}>Social links</Text>
-
-          {profile.socialLinks.map((link) => (
-            <View key={link.id} style={{ marginBottom: 12 }}>
-              <Text style={s.fieldLabel}>{capitalize(link.platform)}</Text>
-              <View style={s.socialInputBox}>
-                <Ionicons name={getSocialIcon(link.platform)} size={16} color="#9CA3AF" />
-                <TextInput
-                  value={link.handle}
-                  onChangeText={(v) => updateSocialLink(link.id, v)}
-                  placeholder="@yourstore"
-                  placeholderTextColor="#9CA3AF"
-                  autoCapitalize="none"
-                  style={s.socialInputText}
-                />
-              </View>
-            </View>
-          ))}
-
-          <TouchableOpacity style={s.addSocialBtn} onPress={addSocialLink}>
-            <Feather name="plus" size={14} color="#4B5563" />
-            <Text style={s.addSocialText}>Add another social link</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Account */}
-        <View style={s.card}>
-          <View style={s.accountRow}>
-            <View style={{ flex: 1 }}>
-              <Text style={s.cardTitle}>Account</Text>
-              <Text style={s.accountSubtitle}>Manage your account, security, and sign out</Text>
-            </View>
-            <TouchableOpacity style={s.accountLinkBtn}>
-              <Text style={s.accountLinkText}>Account & security</Text>
-              <Feather name="chevron-right" size={15} color="#9CA3AF" />
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-
-      {/* Sticky save bar */}
-      <View style={s.saveBar}>
-        {hasUnsavedChanges && (
-          <View style={s.unsavedRow}>
-            <View style={s.unsavedDot} />
-            <Text style={s.unsavedText}>Unsaved changes</Text>
-          </View>
-        )}
-        <TouchableOpacity
-          onPress={handleSave}
-          disabled={isSaving}
-          style={[s.saveBtn, isSaving && { opacity: 0.7 }]}
-        >
-          <Text style={s.saveBtnText}>{isSaving ? 'Saving…' : 'Save Changes'}</Text>
-        </TouchableOpacity>
       </View>
     </BaseContainer>
   );
-};
-
-function capitalize(str: string) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-function getSocialIcon(platform: string): any {
-  switch (platform) {
-    case 'instagram':
-      return 'logo-instagram';
-    case 'tiktok':
-      return 'logo-tiktok';
-    case 'twitter':
-      return 'logo-twitter';
-    case 'facebook':
-      return 'logo-facebook';
-    default:
-      return 'link';
-  }
+function getStepState(key: PromotionStep, current: PromotionStep): 'done' | 'active' | 'upcoming' {
+  const order: PromotionStep[] = ['details', 'audience', 'review'];
+  const curIdx = order.indexOf(current);
+  const idx = order.indexOf(key);
+  if (idx < curIdx) return 'done';
+  if (idx === curIdx) return 'active';
+  return 'upcoming';
+}
+
+function StepDot({
+  index,
+  label,
+  state,
+  onPress,
+}: {
+  index: number;
+  label: string;
+  state: 'done' | 'active' | 'upcoming';
+  onPress: () => void;
+}) {
+  const bg = state === 'upcoming' ? '#F3F4F6' : '#10B981';
+  const textColor = state === 'upcoming' ? '#9CA3AF' : '#fff';
+  const labelColor = state === 'upcoming' ? '#9CA3AF' : '#111827';
+
+  return (
+    <TouchableOpacity onPress={onPress} style={s.stepDotWrap} disabled={state === 'upcoming'}>
+      <View style={[s.stepDot, { backgroundColor: bg }]}>
+        {state === 'done' ? (
+          <Feather name="check" size={13} color="#fff" />
+        ) : (
+          <Text style={{ color: textColor, fontSize: 12, fontWeight: '800' }}>{index}</Text>
+        )}
+      </View>
+      <Text style={[s.stepLabel, { color: labelColor }]}>{label}</Text>
+    </TouchableOpacity>
+  );
+}
+
+/* ------------------------------- DETAILS STEP ------------------------------- */
+
+function DetailsStep({ promo }: { promo: ReturnType<typeof useCreatePromotion> }) {
+  return (
+    <View>
+      {/* Promotion type */}
+      <Text style={s.sectionTitle}>Promotion type</Text>
+      <View style={s.typeRow}>
+        {promo.promotionTypes.map((opt) => (
+          <PromotionTypeChip
+            key={opt.id}
+            option={opt}
+            selected={promo.selectedType === opt.id}
+            onSelect={() => promo.setSelectedType(opt.id)}
+          />
+        ))}
+      </View>
+
+      {/* Locations */}
+      <Text style={[s.sectionTitle, { marginTop: 24 }]}>Locations</Text>
+      <TouchableOpacity style={s.locationsCard}>
+        <View style={s.locationsIconWrap}>
+          <Feather name="home" size={16} color="#4B5563" />
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text style={s.locationsTitle}>All 3 locations</Text>
+          <Text style={s.locationsSubtitle}>Customers will see availability for their nearest store</Text>
+        </View>
+        <Feather name="chevron-right" size={18} color="#D1D5DB" />
+      </TouchableOpacity>
+
+      {/* Promotion details */}
+      <Text style={[s.sectionTitle, { marginTop: 24 }]}>Promotion details</Text>
+      <Text style={s.fieldLabel}>Promotion title</Text>
+      <View style={s.inputBox}>
+        <TextInput
+          value={promo.title}
+          onChangeText={promo.setTitle}
+          maxLength={80}
+          placeholder="e.g. Weekend Flash Sale — 20% Off Jordans"
+          placeholderTextColor="#9CA3AF"
+          style={s.inputText}
+        />
+      </View>
+      <Text style={s.charCounter}>{promo.title.length}/80</Text>
+
+      {/* Product targeting */}
+      <Text style={[s.sectionTitle, { marginTop: 20 }]}>Product targeting</Text>
+      <Text style={s.fieldLabel}>Keywords or product names</Text>
+      <View style={s.searchBox}>
+        <Feather name="search" size={16} color="#9CA3AF" />
+        <TextInput
+          value={promo.keywordInput}
+          onChangeText={promo.setKeywordInput}
+          onSubmitEditing={promo.addKeyword}
+          placeholder="Add keywords or product names (e.g. Jordan, Air Max, Dunk)"
+          placeholderTextColor="#9CA3AF"
+          style={s.searchInput}
+          returnKeyType="done"
+        />
+      </View>
+
+      <View style={s.keywordChipsRow}>
+        {promo.keywords.map((kw) => (
+          <View key={kw} style={s.keywordChip}>
+            <Text style={s.keywordChipText}>{kw}</Text>
+            <TouchableOpacity onPress={() => promo.toggleKeyword(kw)} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
+              <Feather name="x" size={12} color="#059669" />
+            </TouchableOpacity>
+          </View>
+        ))}
+        <TouchableOpacity style={s.addKeywordChip} onPress={promo.addKeyword}>
+          <Feather name="plus" size={12} color="#4B5563" />
+          <Text style={s.addKeywordText}>Add keyword</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Category tags */}
+      <View style={s.categoryTagsRow}>
+        {promo.availableCategoryTags.map((tag) => (
+          <TouchableOpacity
+            key={tag}
+            onPress={() => promo.toggleCategoryTag(tag)}
+            style={[s.categoryTag, promo.categoryTags.includes(tag) && s.categoryTagActive]}
+          >
+            <Text
+              style={[
+                s.categoryTagText,
+                promo.categoryTags.includes(tag) && s.categoryTagTextActive,
+              ]}
+            >
+              {tag}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      {/* Match rule */}
+      <Text style={[s.fieldLabel, { marginTop: 18 }]}>Match rule</Text>
+      <TouchableOpacity style={s.matchRuleSelect}>
+        <Text style={s.matchRuleText}>{promo.matchRule}</Text>
+        <Feather name="chevron-down" size={16} color="#6B7280" />
+      </TouchableOpacity>
+
+      {/* Matching listings banner */}
+      <View style={s.matchBanner}>
+        <Feather name="bar-chart-2" size={16} color="#059669" />
+        <Text style={s.matchBannerText}>{promo.activeListingsMatched} active listings match</Text>
+        <Text style={s.matchBannerLink}>Preview matching products →</Text>
+      </View>
+      <Text style={s.matchBannerFootnote}>
+        All matching active listings will be included automatically.
+      </Text>
+
+      {/* Discount */}
+      <Text style={[s.sectionTitle, { marginTop: 20 }]}>Discount</Text>
+      <View style={s.discountTabsRow}>
+        {(['% off', '$ off', 'Custom'] as const).map((dt) => (
+          <TouchableOpacity
+            key={dt}
+            onPress={() => promo.setDiscountType(dt)}
+            style={[s.discountTab, promo.discountType === dt && s.discountTabActive]}
+          >
+            <Text style={[s.discountTabText, promo.discountType === dt && s.discountTabTextActive]}>
+              {dt === '% off' ? `${promo.discountValue}% off` : dt}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      <View style={s.dateRow}>
+        <View style={s.dateCell}>
+          <Feather name="calendar" size={13} color="#9CA3AF" />
+          <View>
+            <Text style={s.dateLabel}>Starts</Text>
+            <Text style={s.dateValue}>{promo.startsAt}</Text>
+          </View>
+        </View>
+        <View style={s.dateCell}>
+          <Feather name="calendar" size={13} color="#9CA3AF" />
+          <View>
+            <Text style={s.dateLabel}>Ends</Text>
+            <Text style={s.dateValue}>{promo.endsAt}</Text>
+          </View>
+        </View>
+      </View>
+
+      <View style={s.autoApplyNote}>
+        <Feather name="info" size={13} color="#6B7280" />
+        <Text style={s.autoApplyNoteText}>
+          This discount will automatically apply to all active inventory matching selected keywords or categories at the chosen locations.
+        </Text>
+      </View>
+
+      {/* Push notification */}
+      <Text style={[s.sectionTitle, { marginTop: 20 }]}>Push notification</Text>
+      <View style={s.notifInputBox}>
+        <TextInput
+          value={promo.notificationMessage}
+          onChangeText={promo.setNotificationMessage}
+          maxLength={promo.notificationCharLimit}
+          multiline
+          style={s.notifInputText}
+        />
+      </View>
+      <Text style={s.charCounter}>
+        {promo.notificationMessage.length}/{promo.notificationCharLimit}
+      </Text>
+
+      {/* Notification preview */}
+      <View style={s.notifPreviewCard}>
+        <View style={s.notifPreviewIcon}>
+          <Text style={s.notifPreviewIconText}>SNKR</Text>
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text style={s.notifPreviewTitle}>GoSNKR</Text>
+          <Text style={s.notifPreviewBody} numberOfLines={2}>
+            {promo.notificationMessage}
+          </Text>
+        </View>
+        <Text style={s.notifPreviewNow}>now</Text>
+      </View>
+      <TouchableOpacity>
+        <Text style={s.previewFullLink}>Preview full customer view →</Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+function PromotionTypeChip({
+  option,
+  selected,
+  onSelect,
+}: {
+  option: PromotionTypeOption;
+  selected: boolean;
+  onSelect: () => void;
+}) {
+  const iconName =
+    option.icon === 'zap'
+      ? 'zap'
+      : option.icon === 'box'
+      ? 'package'
+      : option.icon === 'bell'
+      ? 'bell'
+      : option.icon === 'circle'
+      ? 'circle'
+      : 'megaphone';
+
+  return (
+    <TouchableOpacity
+      onPress={onSelect}
+      style={[
+        s.typeChip,
+        { backgroundColor: selected ? option.bgColor : '#F9FAFB' },
+        selected && { borderColor: option.color, borderWidth: 1.5 },
+      ]}
+    >
+      {option.icon === 'circle' ? (
+        <Feather name="circle" size={20} color={option.color} />
+      ) : option.icon === 'megaphone' ? (
+        <MaterialCommunityIcons name="bullhorn-outline" size={20} color={selected ? option.color : '#9CA3AF'} />
+      ) : (
+        <Feather name={iconName as any} size={20} color={selected ? option.color : '#9CA3AF'} />
+      )}
+      <Text style={[s.typeChipText, selected && { color: option.color, fontWeight: '800' }]}>
+        {option.label}
+      </Text>
+    </TouchableOpacity>
+  );
+}
+
+/* ------------------------------- AUDIENCE STEP ------------------------------- */
+
+function AudienceStep({ promo }: { promo: ReturnType<typeof useCreatePromotion> }) {
+  return (
+    <View>
+      <Text style={s.sectionTitle}>Audience</Text>
+      {promo.audienceSegments.map((seg) => (
+        <AudienceRow
+          key={seg.id}
+          segment={seg}
+          checked={promo.selectedAudience[seg.id]}
+          onToggle={() => promo.toggleAudienceSegment(seg.id)}
+        />
+      ))}
+
+      <View style={s.reachBanner}>
+        <Feather name="bar-chart-2" size={16} color="#059669" />
+        <Text style={s.reachBannerText}>
+          Estimated unique reach: {promo.estimatedUniqueReach.toLocaleString()} people
+        </Text>
+      </View>
+      <Text style={s.reachFootnote}>Overlapping audiences count once here.</Text>
+
+      {/* Delivery */}
+      <Text style={[s.sectionTitle, { marginTop: 24 }]}>Delivery</Text>
+      <View style={s.deliveryRow}>
+        <TouchableOpacity
+          onPress={() => promo.setDeliveryOption('send_now')}
+          style={[s.deliveryTab, promo.deliveryOption === 'send_now' && s.deliveryTabActive]}
+        >
+          <Text style={[s.deliveryTabText, promo.deliveryOption === 'send_now' && s.deliveryTabTextActive]}>
+            Send now
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => promo.setDeliveryOption('schedule')}
+          style={[s.deliveryTab, promo.deliveryOption === 'schedule' && s.deliveryTabActive]}
+        >
+          <Text style={[s.deliveryTabText, promo.deliveryOption === 'schedule' && s.deliveryTabTextActive]}>
+            Schedule
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      {promo.deliveryOption === 'schedule' && (
+        <View style={s.scheduleRow}>
+          <Feather name="calendar" size={14} color="#9CA3AF" />
+          <Text style={s.scheduleText}>{promo.scheduledAt}</Text>
+          <Feather name="chevron-right" size={16} color="#D1D5DB" style={{ marginLeft: 'auto' }} />
+        </View>
+      )}
+      <Text style={s.scheduleFootnote}>Local time for each selected store</Text>
+    </View>
+  );
+}
+
+function AudienceRow({
+  segment,
+  checked,
+  onToggle,
+}: {
+  segment: AudienceSegment;
+  checked: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <TouchableOpacity style={s.audienceRow} onPress={onToggle} activeOpacity={0.7}>
+      <View style={[s.checkbox, checked && s.checkboxChecked]}>
+        {checked && <Feather name="check" size={13} color="#fff" />}
+      </View>
+      <View style={s.audienceIconWrap}>
+        <Feather name={segment.icon} size={15} color="#4B5563" />
+      </View>
+      <View style={{ flex: 1 }}>
+        <Text style={s.audienceLabel}>{segment.label}</Text>
+        <Text style={s.audienceDescription}>{segment.description}</Text>
+      </View>
+      <Text style={s.audienceCount}>{segment.count.toLocaleString()}</Text>
+    </TouchableOpacity>
+  );
+}
+
+/* ------------------------------- REVIEW STEP ------------------------------- */
+
+function ReviewStep({ promo }: { promo: ReturnType<typeof useCreatePromotion> }) {
+  const selectedSegments = promo.audienceSegments.filter((seg) => promo.selectedAudience[seg.id]);
+
+  return (
+    <View>
+      <Text style={s.sectionTitle}>Review your promotion</Text>
+
+      <View style={s.reviewCard}>
+        <Text style={s.reviewCardLabel}>Type</Text>
+        <Text style={s.reviewCardValue}>{promo.selectedType}</Text>
+      </View>
+
+      <View style={s.reviewCard}>
+        <Text style={s.reviewCardLabel}>Title</Text>
+        <Text style={s.reviewCardValue}>{promo.title}</Text>
+      </View>
+
+      <View style={s.reviewCard}>
+        <Text style={s.reviewCardLabel}>Discount</Text>
+        <Text style={s.reviewCardValue}>
+          {promo.discountType === '% off' ? `${promo.discountValue}% off` : promo.discountType}
+        </Text>
+        <Text style={s.reviewCardSubvalue}>
+          {promo.startsAt} → {promo.endsAt}
+        </Text>
+      </View>
+
+      <View style={s.reviewCard}>
+        <Text style={s.reviewCardLabel}>Keywords</Text>
+        <Text style={s.reviewCardValue}>{promo.keywords.join(', ') || '—'}</Text>
+      </View>
+
+      <View style={s.reviewCard}>
+        <Text style={s.reviewCardLabel}>Audience</Text>
+        {selectedSegments.map((seg) => (
+          <Text key={seg.id} style={s.reviewCardSubvalue}>
+            • {seg.label} ({seg.count.toLocaleString()})
+          </Text>
+        ))}
+        <Text style={[s.reviewCardValue, { marginTop: 6 }]}>
+          Est. reach: {promo.estimatedUniqueReach.toLocaleString()} people
+        </Text>
+      </View>
+
+      <View style={s.reviewCard}>
+        <Text style={s.reviewCardLabel}>Delivery</Text>
+        <Text style={s.reviewCardValue}>
+          {promo.deliveryOption === 'send_now' ? 'Send now' : `Scheduled · ${promo.scheduledAt}`}
+        </Text>
+      </View>
+    </View>
+  );
 }
 
 const s = StyleSheet.create({
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 12,
+    paddingTop: 40,
+    paddingBottom: 14,
   },
-  headerTitle: { fontSize: 17, fontWeight: '800', color: '#111827' },
-  previewLink: { fontSize: 13, fontWeight: '800', color: '#10B981' },
+  headerTitle: { flex: 1, fontSize: 16, fontWeight: '800', color: '#111827', textAlign: 'center', marginRight: -40 },
+  historyBtn: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  historyText: { fontSize: 13, fontWeight: '700', color: '#10B981' },
 
-  locationSelector: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginHorizontal: 16,
-    marginBottom: 10,
-  },
-  locationSelectorText: { fontSize: 13, fontWeight: '700', color: '#111827' },
-
-  publicNoteRow: {
+  stepperRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: 8,
-    marginHorizontal: 16,
-    marginBottom: 14,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
   },
-  publicDot: { width: 7, height: 7, borderRadius: 4, backgroundColor: '#10B981', marginTop: 5 },
-  publicNoteTitle: { fontSize: 12, fontWeight: '800', color: '#111827' },
-  publicNoteSubtitle: { fontSize: 11, color: '#9CA3AF', marginTop: 2, fontWeight: '600' },
+  stepDotWrap: { alignItems: 'center', width: 56 },
+  stepDot: { width: 26, height: 26, borderRadius: 13, justifyContent: 'center', alignItems: 'center' },
+  stepLabel: { fontSize: 10, fontWeight: '700', marginTop: 4 },
+  stepConnector: { flex: 1, height: 1, backgroundColor: '#E5E7EB', marginTop: 13, marginHorizontal: -6 },
 
-  coverWrap: { marginHorizontal: 16, marginBottom: 44 },
-  coverImage: { height: 150, borderRadius: 22, overflow: 'hidden', justifyContent: 'flex-start', alignItems: 'flex-end' },
-  editCoverBtn: {
+  sectionTitle: { fontSize: 15, fontWeight: '900', color: '#111827', marginBottom: 12 },
+
+  typeRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  typeChip: {
+    width: '18.5%',
+    aspectRatio: 0.85,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#F3F4F6',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 2,
+  },
+  typeChipText: { fontSize: 9, fontWeight: '700', color: '#6B7280', textAlign: 'center' },
+
+  locationsCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
-    backgroundColor: 'rgba(255,255,255,0.92)',
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+    backgroundColor: '#F9FAFB',
+    borderRadius: 16,
+    padding: 14,
+    gap: 12,
+  },
+  locationsIconWrap: {
+    width: 34,
+    height: 34,
     borderRadius: 10,
-    margin: 10,
-  },
-  editCoverText: { fontSize: 11, fontWeight: '800', color: '#111827' },
-  avatarWrap: { position: 'absolute', left: 16, bottom: -30 },
-  avatar: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: '#111827',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 3,
-    borderColor: '#F9FAFB',
-  },
-  avatarText: { color: '#fff', fontSize: 20, fontWeight: '900' },
-  avatarEditBadge: {
-    position: 'absolute',
-    right: -2,
-    bottom: -2,
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    backgroundColor: '#10B981',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#F9FAFB',
-  },
-
-  nameSection: { paddingHorizontal: 16, marginBottom: 18 },
-  nameRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  storeName: { fontSize: 19, fontWeight: '900', color: '#111827' },
-  storeLocation: { fontSize: 12, color: '#9CA3AF', marginTop: 2, fontWeight: '600' },
-
-  card: {
     backgroundColor: '#fff',
-    marginHorizontal: 16,
-    borderRadius: 20,
-    padding: 18,
-    marginBottom: 14,
-    elevation: 1,
-    shadowColor: '#000',
-    shadowOpacity: 0.04,
-    shadowRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  cardHeaderRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 },
-  cardTitle: { fontSize: 15, fontWeight: '900', color: '#111827', marginBottom: 14 },
-  editMultipleLink: { fontSize: 12, fontWeight: '800', color: '#10B981' },
+  locationsTitle: { fontSize: 13, fontWeight: '800', color: '#111827' },
+  locationsSubtitle: { fontSize: 11, color: '#9CA3AF', marginTop: 2, fontWeight: '600' },
 
   fieldLabel: { fontSize: 12, color: '#6B7280', fontWeight: '700', marginBottom: 8 },
   inputBox: { backgroundColor: '#F9FAFB', borderRadius: 14, paddingHorizontal: 14, paddingVertical: 12 },
   inputText: { fontSize: 14, color: '#111827', fontWeight: '600' },
-  textareaBox: { backgroundColor: '#F9FAFB', borderRadius: 14, padding: 14, minHeight: 70 },
-  textareaText: { fontSize: 13, color: '#111827', fontWeight: '600', textAlignVertical: 'top' },
   charCounter: { fontSize: 10, color: '#D1D5DB', textAlign: 'right', marginTop: 4, fontWeight: '600' },
 
-  addressRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 2 },
-  addressText: { fontSize: 13, color: '#111827', fontWeight: '600', flexShrink: 1 },
-  verifyLink: { fontSize: 12, fontWeight: '800', color: '#10B981', marginTop: 6, alignSelf: 'flex-end' },
-
-  contactRow: { flexDirection: 'row', gap: 12, marginTop: 16 },
-
-  hourRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    paddingVertical: 11,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
-  },
-  hourDayLabel: { width: 60, fontSize: 13, fontWeight: '800', color: '#111827' },
-  hourTimeLabel: { flex: 1, fontSize: 12, color: '#6B7280', fontWeight: '600' },
-  hourStatusPill: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10 },
-  hourStatusOpen: { backgroundColor: '#ECFDF5' },
-  hourStatusClosed: { backgroundColor: '#F3F4F6' },
-  hourStatusText: { fontSize: 11, fontWeight: '800' },
-
-  addHoursBtn: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 6,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    borderRadius: 14,
-    paddingVertical: 12,
-    marginTop: 14,
-  },
-  addHoursText: { fontSize: 12, fontWeight: '700', color: '#4B5563' },
-  hoursFootnote: { fontSize: 11, color: '#9CA3AF', marginTop: 10, fontWeight: '600' },
-
-  socialInputBox: {
+  searchBox: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
@@ -48781,45 +49372,175 @@ const s = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 12,
   },
-  socialInputText: { flex: 1, fontSize: 13, color: '#111827', fontWeight: '600' },
-  addSocialBtn: {
+  searchInput: { flex: 1, fontSize: 13, color: '#111827' },
+
+  keywordChipsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12 },
+  keywordChip: {
     flexDirection: 'row',
-    justifyContent: 'center',
     alignItems: 'center',
     gap: 6,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
+    backgroundColor: '#ECFDF5',
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: 12,
+  },
+  keywordChipText: { fontSize: 12, fontWeight: '800', color: '#059669' },
+  addKeywordChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: '#F3F4F6',
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: 12,
+  },
+  addKeywordText: { fontSize: 12, fontWeight: '700', color: '#4B5563' },
+
+  categoryTagsRow: { flexDirection: 'row', gap: 8, marginTop: 14 },
+  categoryTag: { flex: 1, backgroundColor: '#F3F4F6', paddingVertical: 10, borderRadius: 12, alignItems: 'center' },
+  categoryTagActive: { backgroundColor: '#ECFDF5', borderWidth: 1, borderColor: '#10B981' },
+  categoryTagText: { fontSize: 12, fontWeight: '700', color: '#9CA3AF' },
+  categoryTagTextActive: { color: '#059669' },
+
+  matchRuleSelect: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#F9FAFB',
     borderRadius: 14,
+    paddingHorizontal: 14,
     paddingVertical: 12,
-    marginTop: 4,
   },
-  addSocialText: { fontSize: 12, fontWeight: '700', color: '#4B5563' },
+  matchRuleText: { fontSize: 13, fontWeight: '700', color: '#111827' },
 
-  accountRow: { flexDirection: 'row', alignItems: 'center' },
-  accountSubtitle: { fontSize: 11, color: '#9CA3AF', marginTop: -8, fontWeight: '600' },
-  accountLinkBtn: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  accountLinkText: { fontSize: 12, fontWeight: '700', color: '#6B7280' },
+  matchBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: '#ECFDF5',
+    borderRadius: 14,
+    padding: 14,
+    marginTop: 14,
+  },
+  matchBannerText: { fontSize: 12, fontWeight: '800', color: '#059669' },
+  matchBannerLink: { fontSize: 11, fontWeight: '700', color: '#059669', marginLeft: 'auto' },
+  matchBannerFootnote: { fontSize: 11, color: '#9CA3AF', marginTop: 8, fontWeight: '600' },
 
-  saveBar: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
+  discountTabsRow: { flexDirection: 'row', gap: 8 },
+  discountTab: { flex: 1, backgroundColor: '#F3F4F6', paddingVertical: 12, borderRadius: 14, alignItems: 'center' },
+  discountTabActive: { backgroundColor: '#111827' },
+  discountTabText: { fontSize: 13, fontWeight: '800', color: '#6B7280' },
+  discountTabTextActive: { color: '#fff' },
+
+  dateRow: { flexDirection: 'row', gap: 12, marginTop: 14 },
+  dateCell: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8 },
+  dateLabel: { fontSize: 10, color: '#9CA3AF', fontWeight: '600' },
+  dateValue: { fontSize: 12, fontWeight: '700', color: '#111827', marginTop: 1 },
+
+  autoApplyNote: {
+    flexDirection: 'row',
+    gap: 8,
+    backgroundColor: '#F9FAFB',
+    borderRadius: 14,
+    padding: 12,
+    marginTop: 14,
+  },
+  autoApplyNoteText: { flex: 1, fontSize: 11, color: '#6B7280', lineHeight: 16, fontWeight: '600' },
+
+  notifInputBox: { backgroundColor: '#F9FAFB', borderRadius: 16, padding: 14, minHeight: 70 },
+  notifInputText: { fontSize: 13, color: '#111827', fontWeight: '600', textAlignVertical: 'top' },
+
+  notifPreviewCard: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
     backgroundColor: '#fff',
-    paddingHorizontal: 16,
-    paddingTop: 10,
-    paddingBottom: 16,
-    borderTopWidth: 1,
-    borderTopColor: '#F3F4F6',
+    borderWidth: 1,
+    borderColor: '#F3F4F6',
+    borderRadius: 16,
+    padding: 14,
+    marginTop: 12,
+    gap: 10,
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
   },
-  unsavedRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 8 },
-  unsavedDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#F59E0B' },
-  unsavedText: { fontSize: 11, color: '#D97706', fontWeight: '700' },
-  saveBtn: { backgroundColor: '#111827', height: 52, borderRadius: 16, justifyContent: 'center', alignItems: 'center' },
-  saveBtnText: { color: '#fff', fontSize: 14, fontWeight: '800' },
-});
+  notifPreviewIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    backgroundColor: '#111827',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  notifPreviewIconText: { color: '#fff', fontSize: 7, fontWeight: '900' },
+  notifPreviewTitle: { fontSize: 12, fontWeight: '800', color: '#111827' },
+  notifPreviewBody: { fontSize: 12, color: '#4B5563', marginTop: 2, fontWeight: '600' },
+  notifPreviewNow: { fontSize: 10, color: '#9CA3AF', fontWeight: '600' },
+  previewFullLink: { fontSize: 12, fontWeight: '800', color: '#059669', marginTop: 10 },
 
-export default StoreProfileScreen;
+  reviewBtn: { backgroundColor: '#111827', height: 58, borderRadius: 18, justifyContent: 'center', alignItems: 'center' },
+  reviewBtnText: { color: '#fff', fontSize: 15, fontWeight: '900' },
+  reviewFootnote: { textAlign: 'center', fontSize: 11, color: '#9CA3AF', marginTop: 10, fontWeight: '600' },
+
+  /* Audience step */
+  audienceRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F3F4F6',
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderRadius: 6,
+    borderWidth: 1.5,
+    borderColor: '#D1D5DB',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  checkboxChecked: { backgroundColor: '#10B981', borderColor: '#10B981' },
+  audienceIconWrap: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    backgroundColor: '#F9FAFB',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  audienceLabel: { fontSize: 13, fontWeight: '800', color: '#111827' },
+  audienceDescription: { fontSize: 11, color: '#9CA3AF', marginTop: 2, fontWeight: '600' },
+  audienceCount: { fontSize: 13, fontWeight: '800', color: '#111827' },
+
+  reachBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: '#ECFDF5',
+    borderRadius: 14,
+    padding: 14,
+    marginTop: 16,
+  },
+  reachBannerText: { fontSize: 13, fontWeight: '800', color: '#059669' },
+  reachFootnote: { fontSize: 11, color: '#9CA3AF', marginTop: 6, fontWeight: '600' },
+
+  deliveryRow: { flexDirection: 'row', gap: 8 },
+  deliveryTab: { flex: 1, backgroundColor: '#F3F4F6', paddingVertical: 14, borderRadius: 14, alignItems: 'center' },
+  deliveryTabActive: { backgroundColor: '#111827' },
+  deliveryTabText: { fontSize: 13, fontWeight: '800', color: '#6B7280' },
+  deliveryTabTextActive: { color: '#fff' },
+  scheduleRow: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: '#F9FAFB', borderRadius: 14, padding: 14, marginTop: 12 },
+  scheduleText: { fontSize: 13, fontWeight: '700', color: '#111827' },
+  scheduleFootnote: { fontSize: 11, color: '#9CA3AF', marginTop: 8, fontWeight: '600' },
+
+  /* Review step */
+  reviewCard: { backgroundColor: '#F9FAFB', borderRadius: 16, padding: 14, marginBottom: 10 },
+  reviewCardLabel: { fontSize: 11, color: '#9CA3AF', fontWeight: '700', marginBottom: 4 },
+  reviewCardValue: { fontSize: 14, fontWeight: '800', color: '#111827' },
+  reviewCardSubvalue: { fontSize: 12, color: '#6B7280', marginTop: 3, fontWeight: '600' },
+});
 ```
 
 ## File: app/screens/discover/reStockAlertScreen.tsx
@@ -49534,7 +50255,7 @@ export default CartScreen
 ```typescript
 // components/discover/notifications/NotificationItem.tsx
 import React from 'react'
-import { View, Text, TouchableOpacity } from 'react-native'
+import { View, Text, TouchableOpacity, Image } from 'react-native'
 import { Feather, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
 import type { Notification } from '@/services/hooks/discover/useNotifications'
@@ -49544,41 +50265,38 @@ interface NotificationItemProps {
   onPress?: (id: string) => void
 }
 
-// ─── Icon by type ─────────────────────────────────────────────────────────────
-
 const NotifIcon: React.FC<{ icon: Notification['icon']; read: boolean }> = ({ icon, read }) => {
-  const bg = read ? 'bg-gray-100' : 'bg-green-50'
+  const bg = read ? 'bg-gray-100' : 'bg-white'
 
   const renderIcon = () => {
     switch (icon) {
       case 'restock':
         return <Feather name="bell" size={18} color={read ? '#9CA3AF' : '#22C55E'} />
       case 'order':
-        return <Ionicons name="bag-outline" size={18} color={read ? '#9CA3AF' : '#3B82F6'} />
+        return <Ionicons name="bag-handle-outline" size={18} color={read ? '#9CA3AF' : '#22C55E'} />
       case 'drop':
-        return <MaterialCommunityIcons name="fire" size={18} color={read ? '#9CA3AF' : '#F97316'} />
+        return <MaterialCommunityIcons name="water-outline" size={18} color={read ? '#9CA3AF' : '#3B82F6'} />
       case 'store':
         return <Feather name="tag" size={18} color={read ? '#9CA3AF' : '#A855F7'} />
       case 'system':
-        return <Feather name="settings" size={18} color={read ? '#9CA3AF' : '#6B7280'} />
+        return <Feather name="settings" size={18} color="#9CA3AF" />
     }
   }
 
   return (
-    <View className={`w-10 h-10 rounded-full ${bg} items-center justify-center`}>
+    <View
+      className={`w-12 h-12 rounded-xl ${bg} items-center justify-center overflow-hidden`}
+      style={{ borderWidth: read ? 0 : 1, borderColor: '#E5E7EB' }}
+    >
       {renderIcon()}
     </View>
   )
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
 const NotificationItem: React.FC<NotificationItemProps> = ({ item, onPress }) => {
   const router = useRouter()
 
   const handlePress = () => {
-    // ✅ FIX: Pass the actual item.id — NOT a literal string "[id]"
-    // This was the root cause of the blank screen flash.
     switch (item.icon) {
       case 'restock':
         router.push(`/screens/discover/reStockAlertScreen?id=${item.id}`)
@@ -49586,19 +50304,20 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ item, onPress }) =>
       case 'store':
         router.push(`/screens/discover/offerFromStoreScreen?id=${item.id}`)
         break
-      // In NotificationItem.tsx — add this case inside handlePress switch:
-
       case 'drop':
-  router.push({
-  pathname: '/screens/discover/setDropReminderScreen',
-  params: {
-    id: item.id,
-    brand: item.brand ?? '',
-    name: item.title,
-    dropTime: item.subtitle ?? '',
-    imageUri: item.imageUri ?? '',
-  },
-})
+        router.push({
+          pathname: '/screens/discover/setDropReminderScreen',
+          params: {
+            id: item.id,
+            brand: item.brand ?? '',
+            name: item.title,
+            dropTime: item.subtitle ?? '',
+            imageUri: item.imageUri ?? '',
+          },
+        })
+        break
+      case 'order':
+        router.push('/screens/order/orderStatusScreen')
         break
       default:
         break
@@ -49609,34 +50328,55 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ item, onPress }) =>
   return (
     <TouchableOpacity
       onPress={handlePress}
-      activeOpacity={0.7}
-      className="flex-row items-center px-4 py-3.5 gap-3"
+      activeOpacity={0.8}
+      className={`flex-row px-4 py-3.5 gap-3 ${!item.read ? 'bg-green-50' : 'bg-white'}`}
     >
-      {/* Unread dot */}
-      <View className="w-2 items-center">
-        {!item.read && <View className="w-2 h-2 rounded-full bg-green-500" />}
+      {!item.read && (
+        <View className="absolute left-2 top-5 w-2 h-2 rounded-full bg-green-500" />
+      )}
+
+      <View className="ml-2">
+        {item.imageUri ? (
+          <View className="w-12 h-12 rounded-xl bg-gray-100 overflow-hidden">
+            <Image source={{ uri: item.imageUri }} className="w-full h-full" resizeMode="cover" />
+          </View>
+        ) : (
+          <NotifIcon icon={item.icon} read={item.read} />
+        )}
       </View>
 
-      {/* Icon */}
-      <NotifIcon icon={item.icon} read={item.read} />
-
-      {/* Text block */}
       <View className="flex-1">
-        <Text
-          className={`text-sm leading-snug ${item.read ? 'font-medium text-gray-700' : 'font-bold text-gray-900'
-            }`}
-          numberOfLines={2}
-        >
-          {item.title}
-        </Text>
-        <Text className="text-xs text-gray-400 mt-0.5 leading-snug" numberOfLines={2}>
-          {item.subtitle}
-        </Text>
+        <Text className="text-sm font-extrabold text-gray-900">{item.title}</Text>
+        <Text className="text-xs text-gray-500 mt-0.5 leading-snug">{item.subtitle}</Text>
+
+        {item.price != null && (
+          <View className="flex-row items-center gap-1.5 mt-1">
+            <Text className="text-sm font-extrabold text-gray-900">${item.price}</Text>
+            {item.originalPrice != null && (
+              <Text className="text-xs text-gray-400 line-through">${item.originalPrice}</Text>
+            )}
+          </View>
+        )}
+
         <Text className="text-[11px] text-gray-400 mt-1">{item.time}</Text>
       </View>
 
-      {/* Chevron — Expo vector icon */}
-      <Feather name="chevron-right" size={16} color="#D1D5DB" />
+      <View className="items-end justify-center">
+        {item.action && (
+          <TouchableOpacity
+            onPress={handlePress}
+            activeOpacity={0.8}
+            className="border border-gray-300 rounded-full px-3 py-1.5"
+          >
+            <Text className="text-xs font-bold text-gray-800">{item.action.label}</Text>
+          </TouchableOpacity>
+        )}
+        {item.ended && (
+          <View className="bg-gray-100 rounded-full px-3 py-1.5">
+            <Text className="text-xs font-bold text-gray-500">Offer ended</Text>
+          </View>
+        )}
+      </View>
     </TouchableOpacity>
   )
 }
@@ -50041,11 +50781,12 @@ import {
     TextInput,
     Animated,
     Keyboard,
-    ActivityIndicator,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
 const GREEN = '#22C55E';
+
+export type FeedTab = 'For You' | 'Following';
 
 interface DiscoverFilterProps<FilterCategory extends string> {
     filters: FilterCategory[];
@@ -50053,7 +50794,11 @@ interface DiscoverFilterProps<FilterCategory extends string> {
     onChange: (filter: FilterCategory) => void;
     greeting: string;
     userName: string;
+    feedTab: FeedTab;
+    onFeedTabChange: (tab: FeedTab) => void;
+    mySizes?: string;
     onCustomSize?: (size: string) => void;
+    onFiltersPress?: () => void;
     searchValue?: string;
     onSearchChange?: (text: string) => void;
     onSearchSubmit?: () => void;
@@ -50065,7 +50810,11 @@ const DiscoverFilter = <FilterCategory extends string>({
     onChange,
     greeting,
     userName,
+    feedTab,
+    onFeedTabChange,
+    mySizes = 'US 10, M',
     onCustomSize,
+    onFiltersPress,
     searchValue = '',
     onSearchChange,
     onSearchSubmit,
@@ -50079,19 +50828,12 @@ const DiscoverFilter = <FilterCategory extends string>({
     const openCustomInput = () => {
         setCustomExpanded(true);
         setCustomError('');
-        Animated.spring(expandAnim, {
-            toValue: 1,
-            useNativeDriver: false,
-        }).start(() => inputRef.current?.focus());
+        Animated.spring(expandAnim, { toValue: 1, useNativeDriver: false }).start(() => inputRef.current?.focus());
     };
 
     const closeCustomInput = () => {
         Keyboard.dismiss();
-        Animated.timing(expandAnim, {
-            toValue: 0,
-            duration: 180,
-            useNativeDriver: false,
-        }).start(() => {
+        Animated.timing(expandAnim, { toValue: 0, duration: 180, useNativeDriver: false }).start(() => {
             setCustomExpanded(false);
             setCustomValue('');
             setCustomError('');
@@ -50118,31 +50860,61 @@ const DiscoverFilter = <FilterCategory extends string>({
         onChange(f);
     };
 
-    const inputHeight = expandAnim.interpolate({
-        inputRange: [0, 1],
-        outputRange: [0, 80],
-    });
-
-    const inputOpacity = expandAnim.interpolate({
-        inputRange: [0, 0.5, 1],
-        outputRange: [0, 0, 1],
-    });
+    const inputHeight = expandAnim.interpolate({ inputRange: [0, 1], outputRange: [0, 80] });
+    const inputOpacity = expandAnim.interpolate({ inputRange: [0, 0.5, 1], outputRange: [0, 0, 1] });
 
     return (
-        <View>
-
+        <View style={{ backgroundColor: '#fff' }}>
             {/* Greeting */}
-            <View className=" px-5 pb-3">
-                <Text className="text-base text-gray-500">
-                    {greeting},{' '}
-                    <Text className="text-gray-900 font-bold text-base">
-                        {userName} 👋
-                    </Text>
+            <View style={{ paddingHorizontal: 20, paddingTop: 4, paddingBottom: 10 }}>
+                <Text style={{ fontSize: 17, color: '#111827' }}>
+                    Hey <Text style={{ fontWeight: '700', color: '#111827' }}>{userName}</Text>
+                    {' 👋'}
                 </Text>
             </View>
 
-            {/* Search bar — same style as Search tab, no filter button */}
-            <View className="px-4 pb-3 bg-white">
+            {/* For You / Following pill toggle */}
+            <View style={{ paddingHorizontal: 20, marginBottom: 12 }}>
+                <View
+                    style={{
+                        flexDirection: 'row',
+                        backgroundColor: '#F3F4F6',
+                        borderRadius: 24,
+                        padding: 4,
+                    }}
+                >
+                    {(['For You', 'Following'] as FeedTab[]).map((tab) => {
+                        const isActive = tab === feedTab;
+                        return (
+                            <TouchableOpacity
+                                key={tab}
+                                onPress={() => onFeedTabChange(tab)}
+                                activeOpacity={0.8}
+                                style={{
+                                    flex: 1,
+                                    paddingVertical: 10,
+                                    borderRadius: 20,
+                                    alignItems: 'center',
+                                    backgroundColor: isActive ? '#111827' : 'transparent',
+                                }}
+                            >
+                                <Text
+                                    style={{
+                                        fontSize: 14,
+                                        fontWeight: '700',
+                                        color: isActive ? '#fff' : '#6B7280',
+                                    }}
+                                >
+                                    {tab}
+                                </Text>
+                            </TouchableOpacity>
+                        );
+                    })}
+                </View>
+            </View>
+
+            {/* Search bar */}
+            <View style={{ paddingHorizontal: 20, marginBottom: 12 }}>
                 <View
                     style={{
                         flexDirection: 'row',
@@ -50150,26 +50922,15 @@ const DiscoverFilter = <FilterCategory extends string>({
                         backgroundColor: '#F5F5F7',
                         borderRadius: 14,
                         paddingHorizontal: 14,
-                        height: 52,
+                        height: 46,
                         borderWidth: 1.5,
                         borderColor: searchValue.length > 0 ? GREEN : 'transparent',
                     }}
                 >
-                    <Feather
-                        name="search"
-                        size={20}
-                        color="#8A8A9A"
-                        style={{ marginRight: 10 }}
-                    />
+                    <Feather name="search" size={18} color="#8A8A9A" style={{ marginRight: 10 }} />
                     <TextInput
-                        style={{
-                            flex: 1,
-                            color: '#0F0F0F',
-                            fontSize: 16,
-                            fontWeight: '400',
-                            height: '100%',
-                        }}
-                        placeholder="Sneakers, clothing, brands, SKU..."
+                        style={{ flex: 1, color: '#0F0F0F', fontSize: 15, fontWeight: '400', height: '100%' }}
+                        placeholder="Search sneakers, clothing, stores"
                         placeholderTextColor="#AFAFBF"
                         value={searchValue}
                         onChangeText={onSearchChange}
@@ -50180,39 +50941,31 @@ const DiscoverFilter = <FilterCategory extends string>({
                         autoCorrect={false}
                     />
                     {searchValue.length > 0 && (
-                        <TouchableOpacity
-                            onPress={() => onSearchChange?.('')}
-                            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                        >
+                        <TouchableOpacity onPress={() => onSearchChange?.('')} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
                             <View
                                 style={{
-                                    width: 22,
-                                    height: 22,
-                                    borderRadius: 11,
+                                    width: 20,
+                                    height: 20,
+                                    borderRadius: 10,
                                     backgroundColor: '#C8C8D8',
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                 }}
                             >
-                                <Feather name="x" size={14} color="#fff" />
+                                <Feather name="x" size={12} color="#fff" />
                             </View>
                         </TouchableOpacity>
                     )}
                 </View>
             </View>
 
-            {/* Pills */}
-            <View className="flex-row items-center bg-white">
+            {/* Category pills: All / Sneakers / Clothing / Men / Women */}
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
-                    className="flex-1"
-                    contentContainerStyle={{
-                        paddingRight: 24,
-                        paddingVertical: 12,
-                        gap: 10,
-                        paddingLeft: 16,
-                    }}
+                    style={{ flex: 1 }}
+                    contentContainerStyle={{ paddingRight: 24, paddingBottom: 10, gap: 8, paddingLeft: 20 }}
                 >
                     {filters.map((f) => {
                         const isActive = f === active;
@@ -50223,16 +50976,19 @@ const DiscoverFilter = <FilterCategory extends string>({
                                 key={f}
                                 onPress={() => handlePillPress(f)}
                                 activeOpacity={0.8}
-                                className={`px-4 py-2 rounded-full
-                  ${isCustomOpen ? 'bg-gray-900'
-                                        : isActive ? 'bg-green-600'
-                                            : 'bg-gray-100'}
-                `}
+                                style={{
+                                    paddingHorizontal: 16,
+                                    paddingVertical: 8,
+                                    borderRadius: 20,
+                                    backgroundColor: isCustomOpen ? '#111827' : isActive ? GREEN : '#F3F4F6',
+                                }}
                             >
                                 <Text
-                                    className={`text-base font-semibold
-                    ${isCustomOpen || isActive ? 'text-white' : 'text-gray-700'}
-                  `}
+                                    style={{
+                                        fontSize: 14,
+                                        fontWeight: '600',
+                                        color: isCustomOpen || isActive ? '#fff' : '#374151',
+                                    }}
                                 >
                                     {f}
                                 </Text>
@@ -50242,48 +50998,79 @@ const DiscoverFilter = <FilterCategory extends string>({
                 </ScrollView>
             </View>
 
-            {/* Custom Input */}
+            {/* Custom size input */}
             <Animated.View
-                style={{ height: inputHeight, opacity: inputOpacity }}
-                className="overflow-hidden px-4 bg-gray-50 border-t border-gray-200"
+                style={{
+                    height: inputHeight,
+                    opacity: inputOpacity,
+                    overflow: 'hidden',
+                    paddingHorizontal: 20,
+                    backgroundColor: '#F9FAFB',
+                    borderTopWidth: customExpanded ? 1 : 0,
+                    borderColor: '#E5E7EB',
+                }}
             >
-                <View className="flex-row items-center gap-2 py-3">
-
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 12 }}>
                     <TextInput
                         ref={inputRef}
                         value={customValue}
-                        onChangeText={(t) => {
-                            setCustomValue(t);
-                            if (customError) setCustomError('');
-                        }}
+                        onChangeText={(t) => { setCustomValue(t); if (customError) setCustomError(''); }}
                         placeholder="e.g. 10.5 or 11W"
                         placeholderTextColor="#9CA3AF"
                         returnKeyType="done"
                         onSubmitEditing={handleCustomConfirm}
-                        className={`flex-1 h-11 px-3 rounded-xl text-base font-semibold bg-white border
-              ${customError ? 'border-red-500' : 'border-gray-300'}
-            `}
+                        style={{
+                            flex: 1,
+                            height: 44,
+                            paddingHorizontal: 12,
+                            borderRadius: 12,
+                            fontSize: 15,
+                            fontWeight: '600',
+                            backgroundColor: '#fff',
+                            borderWidth: 1,
+                            borderColor: customError ? '#EF4444' : '#D1D5DB',
+                        }}
                     />
-
                     <TouchableOpacity
                         onPress={handleCustomConfirm}
-                        className="h-11 px-5 rounded-xl bg-gray-900 justify-center items-center"
+                        style={{ height: 44, paddingHorizontal: 20, borderRadius: 12, backgroundColor: '#111827', justifyContent: 'center', alignItems: 'center' }}
                     >
-                        <Text className="text-white font-bold text-base">Add</Text>
+                        <Text style={{ color: '#fff', fontWeight: '700', fontSize: 15 }}>Add</Text>
                     </TouchableOpacity>
-
                     <TouchableOpacity
                         onPress={closeCustomInput}
-                        className="h-11 w-11 rounded-xl border border-gray-300 justify-center items-center bg-white"
+                        style={{ height: 44, width: 44, borderRadius: 12, borderWidth: 1, borderColor: '#D1D5DB', justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' }}
                     >
-                        <Text className="text-gray-500 text-base">✕</Text>
+                        <Text style={{ color: '#6B7280', fontSize: 15 }}>✕</Text>
                     </TouchableOpacity>
                 </View>
-
-                {!!customError && (
-                    <Text className="text-red-500 text-xs ml-1 -mt-1">{customError}</Text>
-                )}
+                {!!customError && <Text style={{ color: '#EF4444', fontSize: 11, marginLeft: 4, marginTop: -6 }}>{customError}</Text>}
             </Animated.View>
+
+            {/* My sizes + Filters row */}
+            <View
+                style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    paddingHorizontal: 20,
+                    paddingVertical: 10,
+                    borderTopWidth: 1,
+                    borderTopColor: '#F3F4F6',
+                }}
+            >
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                    <Feather name="user" size={14} color="#6B7280" />
+                    <Text style={{ fontSize: 13, color: '#6B7280', fontWeight: '500' }}>
+                        My sizes: <Text style={{ fontWeight: '700', color: '#374151' }}>{mySizes}</Text>
+                    </Text>
+                </View>
+                <TouchableOpacity onPress={onFiltersPress} activeOpacity={0.7} style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                    <Feather name="sliders" size={14} color={GREEN} />
+                    <Text style={{ fontSize: 13, fontWeight: '700', color: GREEN }}>Filters</Text>
+                    <Feather name="chevron-down" size={14} color={GREEN} />
+                </TouchableOpacity>
+            </View>
         </View>
     );
 };
@@ -50296,7 +51083,7 @@ export default DiscoverFilter;
 import React from 'react';
 import { View, Text, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { FollowedStore, StockStatus } from '@/services/hooks/discover/useDiscover';
+import { FollowedStore } from '@/services/hooks/discover/useDiscover';
 
 interface DiscoverStoresProps {
   stores: FollowedStore[];
@@ -50307,183 +51094,67 @@ interface DiscoverStoresProps {
   onBuyPress?: (s: FollowedStore) => void;
 }
 
-const STOCK_BG: Record<StockStatus, string> = {
-  'In Stock': '#00C853',
-  'Low Stock': '#FF6D00',
-  'Dropping Soon': '#1565C0',
-};
-
-// ─── Story-row avatar (messenger style) ──────────────────────────────────
-const StoreAvatar = ({ 
-  store, 
-  onPress 
-}: { 
-  store: FollowedStore; 
-  onPress?: () => void 
+const StoreAvatar = ({
+  store,
+  onPress,
+}: {
+  store: FollowedStore;
+  onPress?: () => void;
 }) => (
-  <TouchableOpacity 
-    className="items-center w-16 gap-1" 
-    onPress={onPress} 
+  <TouchableOpacity
+    style={{ alignItems: 'center', width: 64, gap: 6 }}
+    onPress={onPress}
     activeOpacity={0.85}
   >
-    <View 
-      className="w-[60px] h-[60px] rounded-full border-[2.5px] p-[2px] items-center justify-center overflow-hidden"
-      style={{ borderColor: store.isFollowing ? '#00C853' : '#D0D0D0' }}
+    <View
+      style={{
+        width: 56,
+        height: 56,
+        borderRadius: 28,
+        borderWidth: 2,
+        borderColor: store.brandColor || '#22C55E',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#111827',
+      }}
     >
-      <Image 
-        source={{ uri: store.avatar }} 
-        className="w-[52px] h-[52px] rounded-full" 
-        resizeMode="cover" 
-      />
+      <Text style={{ color: '#fff', fontSize: 18, fontWeight: '800' }}>
+        {store.brandInitial}
+      </Text>
     </View>
-    <Text className="text-[10px] font-semibold text-neutral-600 text-center" numberOfLines={1}>
+    <Text style={{ fontSize: 11, fontWeight: '600', color: '#374151', textAlign: 'center' }} numberOfLines={1}>
       {store.name}
     </Text>
   </TouchableOpacity>
 );
 
-// ─── Full store card (Brand-style sizing) ────────────────────────────────
-const StoreCard = ({
-  store,
-  isLast,
-  onPress,
-  onBuy,
-  onWishlist,
-}: {
-  store: FollowedStore;
-  isLast: boolean;
-  onPress?: () => void;
-  onBuy?: () => void;
-  onWishlist?: () => void;
-}) => {
-  const stockBg = store.stockStatus ? STOCK_BG[store.stockStatus] : '#00C853';
-
-  return (
-    <TouchableOpacity
-      className={`flex-row items-center px-4 py-4 gap-4 ${!isLast ? 'border-b border-neutral-100' : ''}`}
-      onPress={onPress}
-      activeOpacity={0.85}
-    >
-      {/* Left: Image (120x120 matching BrandProduct) */}
-      <View className="w-[120px] h-[120px] rounded-xl overflow-hidden bg-neutral-200 relative">
-        <Image source={{ uri: store.image }} className="w-full h-full" resizeMode="cover" />
-
-        {/* Stock badge */}
-        {store.stockStatus && (
-          <View 
-            className="absolute top-2 left-2 px-2.5 py-0.5 rounded-full" 
-            style={{ backgroundColor: stockBg }}
-          >
-            <Text className="text-white text-[11px] font-extrabold">{store.stockStatus}</Text>
-          </View>
-        )}
-
-        {/* Heart icon */}
-<TouchableOpacity
-  onPress={(e) => {
-    e.stopPropagation(); // Stops the card's onStorePress from firing
-    onWishlist?.();      // Calls the toggleStoreWishlist(id) function
-  }}
-  className="absolute top-2 right-2 w-10 h-10 items-center justify-center z-10"
->
-  <Ionicons
-    name={store.isWishlisted ? 'heart' : 'heart-outline'}
-    size={28}
-    color={store.isWishlisted ? '#FF3B6B' : '#fff'}
-  />
-</TouchableOpacity>
-
-        {/* Brand initial badge */}
-        <View
-          className="absolute bottom-2 left-2 px-2.5 py-0.5 rounded-md"
-          style={{ backgroundColor: store.brandColor }}
-        >
-          <Text className="text-white text-[11px] font-extrabold">{store.brandInitial}</Text>
-        </View>
-      </View>
-
-      {/* Middle: Info */}
-      <View className="flex-1">
-        <Text className="text-lg font-bold text-neutral-900" numberOfLines={1}>
-          {store.name}
-        </Text>
-        <Text className="text-sm text-neutral-400 mt-1">{store.location}</Text>
-        <Text className="text-sm text-neutral-400">{store.distance}</Text>
-      </View>
-
-      {/* Right: Price, stock, buy */}
-      <View className="items-end gap-2">
-        {store.price != null && (
-          <Text className="text-xl font-extrabold text-neutral-900">${store.price}</Text>
-        )}
-        
-        {store.stockStatus && (
-          <View 
-            className="px-3 py-1.5 rounded-full" 
-            style={{ backgroundColor: stockBg }}
-          >
-            <Text className="text-white text-sm font-extrabold">{store.stockStatus}</Text>
-          </View>
-        )}
-
-        <TouchableOpacity 
-          onPress={onBuy} 
-          className="bg-green-600 px-5 py-2 rounded-full"
-        >
-          <Text className="text-white text-sm font-extrabold">Buy</Text>
-        </TouchableOpacity>
-      </View>
-    </TouchableOpacity>
-  );
-};
-
-// ─── Main Component ───────────────────────────────────────────────────────
 export const DiscoverStores: React.FC<DiscoverStoresProps> = ({
   stores,
   onManagePress,
   onStorePress,
-  onWishlistToggle,
-  onBuyPress,
 }) => (
-  <View className="mt-7">
-    {/* Section Header */}
-    <View className="flex-row items-center justify-between px-5 mb-4">
-      <Text className="text-2xl font-extrabold text-neutral-900">From Followed Stores</Text>
+  <View style={{ marginTop: 24, marginBottom: 12 }}>
+    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, marginBottom: 12 }}>
+      <Text style={{ fontSize: 18, fontWeight: '800', color: '#111827' }}>Your stores</Text>
       <TouchableOpacity onPress={onManagePress}>
-        <Text className="text-lg font-semibold text-green-600">Manage</Text>
+        <Text style={{ fontSize: 14, fontWeight: '700', color: '#22C55E' }}>Manage</Text>
       </TouchableOpacity>
     </View>
 
-    {/* Horizontal Story Row */}
-    <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      className="mb-4"
-      contentContainerStyle={{ paddingHorizontal: 20, gap: 14 }}
-    >
-      {stores.map(s => (
-        <StoreAvatar key={s.id} store={s} onPress={() => onStorePress?.(s)} />
-      ))}
-    </ScrollView>
-
-    {/* Store Cards List */}
     {stores.length > 0 ? (
-      <View className="mx-5 bg-white rounded-2xl overflow-hidden shadow-sm">
-        {stores.map((s, i) => (
-          <StoreCard
-            key={s.id}
-            store={s}
-            isLast={i === stores.length - 1}
-            onPress={() => onStorePress?.(s)}
-            onBuy={() => onBuyPress?.(s)}
-            onWishlist={() => onWishlistToggle?.(s.id)}
-          />
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ paddingHorizontal: 20, gap: 14 }}
+      >
+        {stores.map((s) => (
+          <StoreAvatar key={s.id} store={s} onPress={() => onStorePress?.(s)} />
         ))}
-      </View>
+      </ScrollView>
     ) : (
-      <View className="items-center py-10 gap-2 px-5">
-        <Ionicons name="storefront-outline" size={32} color="#ddd" />
-        <Text className="text-neutral-400 font-medium">No followed stores yet</Text>
+      <View style={{ alignItems: 'center', paddingVertical: 30, gap: 8, paddingHorizontal: 20 }}>
+        <Ionicons name="storefront-outline" size={28} color="#ddd" />
+        <Text style={{ color: '#9CA3AF', fontWeight: '500' }}>No followed stores yet</Text>
       </View>
     )}
   </View>
@@ -50696,104 +51367,213 @@ export default OrderCard
 
 ## File: components/profile/MyLocker.tsx
 ```typescript
-import React from 'react';
-import { View, Text, TouchableOpacity, Image, ScrollView } from 'react-native';
-import { Feather } from '@expo/vector-icons';
-import { useRouter } from 'expo-router'; // Correct placement of import
-import type { LockerItem } from '@/services/hooks/profile/useProfile';
+// components/profile/MyLocker.tsx
+import React from 'react'
+import { View, Text, TouchableOpacity, Image, ScrollView } from 'react-native'
+import { Feather } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
+import type { LockerItem } from '@/services/hooks/profile/useProfile'
 
 interface MyLockerProps {
-  items: LockerItem[];
-  lockerCount: number;
-  lockerPublic: boolean;
-  onToggleVisibility: () => void;
-  onAddItem?: () => void; // Made optional so we can use internal navigation
-  onViewAll: () => void;
+  items: LockerItem[]
+  lockerCount: number
+  lockerPublic: boolean
+  onToggleVisibility: () => void
+  onAddItem?: () => void
+  onViewAll: () => void
 }
 
 const MyLocker: React.FC<MyLockerProps> = ({
   items,
-  lockerCount,
   lockerPublic,
   onToggleVisibility,
   onAddItem,
   onViewAll,
 }) => {
-  // 1. Hook MUST be inside the component body
-  const router = useRouter();
+  const router = useRouter()
 
-  // 2. Navigation handler
   const handleAddPress = () => {
-
-     router.push('/screens/profile/lockerScreen');
-
-  };
+    if (onAddItem) return onAddItem()
+    router.push('/screens/profile/lockerScreen')
+  }
 
   return (
     <View
-      className="bg-white rounded-3xl mb-4"
+      className="bg-white rounded-2xl px-4 py-4 mb-4"
       style={{
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.08,
-        shadowRadius: 12,
-        elevation: 4,
+        shadowOpacity: 0.06,
+        shadowRadius: 10,
+        elevation: 3,
       }}
     >
-      {/* Header */}
-      <View className="flex-row justify-between items-center mb-5 px-5 pt-5">
-        <Text className="text-lg font-black text-gray-900 tracking-tight">My Locker</Text>
+      <View className="flex-row justify-between items-center mb-3.5">
+        <Text className="text-base font-extrabold text-gray-900">My locker</Text>
 
-        <TouchableOpacity
-          onPress={onToggleVisibility}
-          activeOpacity={0.7}
-          className="flex-row items-center gap-2 px-3.5 py-1.5 rounded-full bg-gray-50 border border-gray-100"
-        >
-          <Feather
-            name={lockerPublic ? 'globe' : 'lock'}
-            size={14}
-            color="#4B5563"
-          />
-          <Text className="text-xs font-bold text-gray-600">
-            {lockerPublic ? 'Public' : 'Private'}
-          </Text>
-        </TouchableOpacity>
+        <View className="flex-row items-center gap-3">
+          <TouchableOpacity onPress={onViewAll} className="flex-row items-center gap-0.5">
+            <Text className="text-xs font-bold text-green-600">Manage</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={onToggleVisibility}
+            activeOpacity={0.7}
+            className="flex-row items-center gap-1"
+          >
+            <Text className="text-xs font-semibold text-gray-500">
+              {lockerPublic ? 'Public' : 'Private'}
+            </Text>
+            <Feather name="chevron-down" size={13} color="#9CA3AF" />
+          </TouchableOpacity>
+        </View>
       </View>
 
-      {/* Items ScrollView */}
+      <Text className="text-xs text-gray-400 mb-3">Your personal collection</Text>
+
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: 20, gap: 12 }}
-        className="mb-4"
+        contentContainerStyle={{ gap: 10 }}
       >
         {items.map((item) => (
           <View
             key={item.id}
-            className="w-24 h-24 bg-gray-100 rounded-2xl overflow-hidden border border-gray-50 shadow-sm"
+            className="w-20 h-20 bg-gray-100 rounded-xl overflow-hidden border border-gray-50"
           >
-            <Image
-              source={{ uri: item.image }}
-              className="w-full h-full"
-              resizeMode="contain"
-            />
+            <Image source={{ uri: item.image }} className="w-full h-full" resizeMode="contain" />
           </View>
         ))}
 
-        {/* Add button */}
         <TouchableOpacity
           onPress={handleAddPress}
           activeOpacity={0.6}
-          className="w-24 h-24 rounded-2xl border-2 border-dashed border-gray-200 items-center justify-center bg-gray-50/50"
+          className="w-20 h-20 rounded-xl border-2 border-dashed border-gray-200 items-center justify-center bg-gray-50/50"
         >
-          <Feather name="plus" size={28} color="#9CA3AF" />
+          <Feather name="plus" size={22} color="#9CA3AF" />
+          <Text className="text-[10px] text-gray-400 font-semibold mt-1">Add item</Text>
         </TouchableOpacity>
       </ScrollView>
     </View>
-  );
-};
+  )
+}
 
-export default MyLocker;
+export default MyLocker
+```
+
+## File: components/retailer/home/analytics/AnalyticsHeader.tsx
+```typescript
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { Feather } from '@expo/vector-icons';
+import { router } from 'expo-router';
+
+interface AnalyticsHeaderProps {
+    locationLabel?: string;
+    brandLabel?: string;
+    onLocationPress?: () => void;
+    onBrandPress?: () => void;
+    onCalendarPress?: () => void;
+    onExportPress?: () => void;
+}
+
+const AnalyticsHeader: React.FC<AnalyticsHeaderProps> = ({
+    locationLabel = 'All Locations',
+    brandLabel = 'GoSNKR Sales',
+    onLocationPress,
+    onBrandPress,
+    onCalendarPress,
+    onExportPress,
+}) => (
+    <View style={s.wrapper}>
+        <View style={s.header}>
+            <TouchableOpacity style={s.backBtn} onPress={() => router.back()}>
+                <Feather name="arrow-left" size={20} color="#111" />
+            </TouchableOpacity>
+            <Text style={s.title}>Retailer Analytics</Text>
+            <View style={s.headerActions}>
+                <TouchableOpacity onPress={onCalendarPress} hitSlop={8}>
+                    <Feather name="calendar" size={19} color="#111" />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={onExportPress} hitSlop={8}>
+                    <Feather name="share" size={19} color="#111" />
+                </TouchableOpacity>
+            </View>
+        </View>
+
+        <View style={s.dropdownRow}>
+            <TouchableOpacity style={s.dropdown} onPress={onLocationPress} activeOpacity={0.7}>
+                <Feather name="home" size={13} color="#6B7280" />
+                <Text style={s.dropdownText} numberOfLines={1}>{locationLabel}</Text>
+                <Feather name="chevron-down" size={14} color="#9CA3AF" />
+            </TouchableOpacity>
+
+            <TouchableOpacity style={s.dropdown} onPress={onBrandPress} activeOpacity={0.7}>
+                <Text style={s.dropdownText} numberOfLines={1}>{brandLabel}</Text>
+                <Feather name="chevron-down" size={14} color="#9CA3AF" />
+            </TouchableOpacity>
+        </View>
+    </View>
+);
+
+const s = StyleSheet.create({
+    wrapper: {
+        backgroundColor: '#fff',
+        paddingBottom: 8,
+    },
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: 16,
+        paddingBottom: 12,
+        backgroundColor: '#fff',
+    },
+    backBtn: {
+        width: 32,
+        height: 32,
+        borderRadius: 16,
+        backgroundColor: '#F3F4F6',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    title: {
+        fontSize: 16,
+        fontWeight: '800',
+        color: '#111',
+    },
+    headerActions: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 16,
+        width: 60,
+        justifyContent: 'flex-end',
+    },
+    dropdownRow: {
+        flexDirection: 'row',
+        gap: 8,
+        paddingHorizontal: 16,
+    },
+    dropdown: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 6,
+        backgroundColor: '#F9FAFB',
+        borderWidth: 1,
+        borderColor: '#F3F4F6',
+        borderRadius: 10,
+        paddingHorizontal: 10,
+        height: 38,
+    },
+    dropdownText: {
+        flex: 1,
+        fontSize: 12,
+        fontWeight: '600',
+        color: '#374151',
+    },
+});
+
+export default AnalyticsHeader;
 ```
 
 ## File: components/retailer/home/HomeActions.tsx
@@ -50962,19 +51742,11 @@ const HomeStats: React.FC<HomeStatsProps> = ({ stats }) => {
               styles.card,
               {
                 borderColor: v.border,
+                borderLeftColor: v.solidColor,
+                borderLeftWidth: 4,
               },
             ]}
           >
-            {/* Curved side accent */}
-            <View
-              style={[
-                styles.sideAccent,
-                {
-                  backgroundColor: v.solidColor,
-                },
-              ]}
-            />
-
             {/* Icon + Number */}
             <View style={styles.topRow}>
               {stat.iconFilled ? (
@@ -51050,20 +51822,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 13,
     paddingVertical: 14,
     backgroundColor: '#fff',
-
-    // Needed for the curved accent
-    position: 'relative',
-    overflow: 'visible',
-  },
-
-  // The curved vertical line from your reference
-  sideAccent: {
-    position: 'absolute',
-    left: -2,
-    top: 12,
-    bottom: 12,
-    width: 3,
-    borderRadius: 3,
   },
 
   topRow: {
@@ -51115,6 +51873,213 @@ const styles = StyleSheet.create({
 });
 
 export default HomeStats;
+```
+
+## File: components/retailer/inventory/InventoryCard.tsx
+```typescript
+import React from 'react'
+import { View, Text, TouchableOpacity, Image } from 'react-native'
+import { Feather } from '@expo/vector-icons'
+import {
+  InventoryProduct,
+  StockStatus,
+} from '@/services/hooks/retailer/inventory/useInventory'
+
+interface InventoryCardProps {
+  product: InventoryProduct
+  onPress?: (product: InventoryProduct) => void
+  onEditPress?: (product: InventoryProduct) => void
+}
+
+const statusBadge: Record<StockStatus, { bg: string; text: string }> = {
+  'In Stock': { bg: '#00C853', text: '#fff' },
+  'Low Stock': { bg: '#F97316', text: '#fff' },
+  'Out of Stock': { bg: '#EF4444', text: '#fff' },
+  'On Hold': { bg: '#374151', text: '#fff' },
+}
+
+const productTypeBadge = {
+  Sneakers: { bg: '#ECFDF5', text: '#047857' },
+  Clothing: { bg: '#EFF6FF', text: '#1D4ED8' },
+}
+
+const SIZES_VISIBLE = 4
+
+const InventoryCard: React.FC<InventoryCardProps> = ({
+  product,
+  onPress,
+  onEditPress,
+}) => {
+  const badge = statusBadge[product.status]
+  const typeBadge = productTypeBadge[product.productType]
+  const badgeLabel =
+    product.status === 'Low Stock' && product.lowCount != null
+      ? `Low: ${product.lowCount}`
+      : product.status
+
+  const visibleSizes = product.sizes.slice(0, SIZES_VISIBLE)
+  const hiddenCount = product.sizes.length - SIZES_VISIBLE
+
+  return (
+    <TouchableOpacity
+      onPress={() => onPress?.(product)}
+      activeOpacity={0.85}
+      style={{
+        backgroundColor: '#fff',
+        borderWidth: 1,
+        borderColor: '#F3F4F6',
+        borderRadius: 18,
+        padding: 12,
+        flexDirection: 'row',
+        gap: 12,
+        alignItems: 'flex-start',
+        marginBottom: 10,
+      }}
+    >
+      <View style={{ position: 'relative', flexShrink: 0 }}>
+        {product.imageUri ? (
+          <Image
+            source={{ uri: product.imageUri }}
+            style={{ width: 76, height: 76, borderRadius: 12 }}
+            resizeMode="cover"
+          />
+        ) : (
+          <View
+            style={{
+              width: 76,
+              height: 76,
+              borderRadius: 12,
+              backgroundColor: product.imageBg,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Feather name="package" size={28} color="#9CA3AF" />
+          </View>
+        )}
+
+        <View
+          style={{
+            position: 'absolute',
+            bottom: 5,
+            left: 5,
+            backgroundColor: badge.bg,
+            borderRadius: 6,
+            paddingHorizontal: 6,
+            paddingVertical: 2,
+          }}
+        >
+          <Text style={{ color: badge.text, fontSize: 9, fontWeight: '700' }}>
+            {badgeLabel}
+          </Text>
+        </View>
+      </View>
+
+      <View style={{ flex: 1, minWidth: 0 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexShrink: 1 }}>
+            <Text
+              style={{
+                fontSize: 10,
+                fontWeight: '700',
+                color: '#9CA3AF',
+                letterSpacing: 0.5,
+                textTransform: 'uppercase',
+              }}
+            >
+              {product.brand}
+            </Text>
+            <View
+              style={{
+                backgroundColor: typeBadge.bg,
+                borderRadius: 999,
+                paddingHorizontal: 8,
+                paddingVertical: 2,
+              }}
+            >
+              <Text style={{ fontSize: 10, fontWeight: '700', color: typeBadge.text }}>
+                {product.productType}
+              </Text>
+            </View>
+          </View>
+
+          <TouchableOpacity onPress={() => onEditPress?.(product)} hitSlop={8}>
+            <Feather name="edit-2" size={15} color="#9CA3AF" />
+          </TouchableOpacity>
+        </View>
+
+        <Text
+          style={{ fontSize: 14, fontWeight: '800', color: '#111', marginTop: 3 }}
+          numberOfLines={1}
+        >
+          {product.name}
+        </Text>
+
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 6 }}>
+          {visibleSizes.map(({ size, qty }) => {
+            const available = qty > 0
+
+            return (
+              <View
+                key={size}
+                style={{
+                  backgroundColor: available ? '#DCFCE7' : '#F3F4F6',
+                  borderRadius: 8,
+                  paddingHorizontal: 7,
+                  paddingVertical: 3,
+                  marginRight: 4,
+                  marginBottom: 4,
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 10,
+                    fontWeight: '700',
+                    color: available ? '#15803D' : '#9CA3AF',
+                  }}
+                >
+                  {size} · {qty}
+                </Text>
+              </View>
+            )
+          })}
+
+          {hiddenCount > 0 && (
+            <View
+              style={{
+                backgroundColor: '#F3F4F6',
+                borderRadius: 8,
+                paddingHorizontal: 7,
+                paddingVertical: 3,
+                marginRight: 4,
+                marginBottom: 4,
+              }}
+            >
+              <Text style={{ fontSize: 10, fontWeight: '700', color: '#9CA3AF' }}>
+                +{hiddenCount}
+              </Text>
+            </View>
+          )}
+        </View>
+
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4 }}>
+          <Text style={{ fontSize: 15, fontWeight: '800', color: '#111' }}>
+            ${product.price}
+          </Text>
+          <Text style={{ fontSize: 11, color: '#9CA3AF' }}>
+            | Cost: ${product.cost}
+          </Text>
+        </View>
+
+        <Text style={{ fontSize: 10, color: '#D1D5DB', marginTop: 2 }}>
+          {product.sku}
+        </Text>
+      </View>
+    </TouchableOpacity>
+  )
+}
+
+export default InventoryCard
 ```
 
 ## File: services/hooks/auth/useSignin.ts
@@ -51271,6 +52236,7 @@ export function useSignin() {
 
 ## File: services/hooks/profile/useProfile.ts
 ```typescript
+// services/hooks/profile/useProfile.ts
 import { useState, useCallback } from 'react'
 import { useRouter } from 'expo-router'
 
@@ -51299,12 +52265,21 @@ export interface ProfileData {
     mySize: string
   }
   sizes: string[]
+  sizeCategories: {
+    id: string
+    label: string
+    icon: 'sneaker' | 'shirt'
+    editableLabel: string
+    values: { label: string; value: string }[]
+  }[]
   favoriteBrands: { id: string; label: string; color: string }[]
+  followedStoresCount: number
   lockerItems: LockerItem[]
   lockerCount: number
   lockerPublic: boolean
   orders: number
   wishlistCount: number
+  stockAlerts: number
   wantedPairs: number
   reviewsCount: number
   referralCode: string
@@ -51315,18 +52290,41 @@ const MOCK_PROFILE: ProfileData = {
   lastName: 'Garcia',
   username: 'sonnysgr',
   avatarInitials: 'SG',
-  avatarColor: '#F97316',
+  avatarColor: '#22C55E',
   memberTier: 'Gold',
   points: 1720,
   pointsToNextTier: 2000,
   nextTier: 'Platinum',
   stats: { drops: 34, wishlist: 14, reviews: 8, mySize: '10.5 / L' },
   sizes: ["10.5 Men's", "8.5 Women's", "L Men's", "S Women's"],
-  favoriteBrands: [
-    { id: 'nike', label: 'N', color: '#111111' },
-    { id: 'jordan', label: 'J', color: '#E11D48' },
-    { id: 'adidas', label: 'A', color: '#1D4ED8' },
+  sizeCategories: [
+    {
+      id: 'sneakers',
+      label: 'Sneakers',
+      icon: 'sneaker',
+      editableLabel: 'US',
+      values: [
+        { label: "Men", value: '10.5' },
+        { label: "Women", value: '8.5' },
+      ],
+    },
+    {
+      id: 'clothing',
+      label: 'Clothing',
+      icon: 'shirt',
+      editableLabel: '',
+      values: [
+        { label: 'Men', value: 'L' },
+        { label: 'Women', value: 'S' },
+      ],
+    },
   ],
+  favoriteBrands: [
+    { id: 'nike', label: 'Nike', color: '#111111' },
+    { id: 'jordan', label: 'Jordan', color: '#E11D48' },
+    { id: 'adidas', label: 'Adidas', color: '#1D4ED8' },
+  ],
+  followedStoresCount: 5,
   lockerItems: [
     {
       id: '1',
@@ -51339,17 +52337,12 @@ const MOCK_PROFILE: ProfileData = {
       image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400',
       name: 'Essentials Hoodie',
     },
-    {
-      id: '3',
-      image:
-        'https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/3d8d5a28-e6bf-4de8-8831-4e7f5a7afb8e/air-force-1-07-mens-shoes-WrpDWH.png',
-      name: 'AF1',
-    },
   ],
   lockerCount: 6,
   lockerPublic: true,
   orders: 3,
   wishlistCount: 14,
+  stockAlerts: 2,
   wantedPairs: 5,
   reviewsCount: 8,
   referralCode: 'SONNY20',
@@ -51388,7 +52381,15 @@ export const useProfile = () => {
 
   const addBrand = useCallback(() => console.log('Open brand picker'), [])
   const viewBenefits = useCallback(() => router.push('/screens/profile/vipStatusScreen'), [router])
-  const addToLocker = useCallback(() => console.log('Add to locker'), [])
+  const addToLocker = useCallback(() => router.push('/screens/profile/lockerScreen'), [router])
+  const manageLocker = useCallback(() => console.log('Manage locker'), [])
+  const viewFollowedStores = useCallback(() => console.log('Followed stores'), [])
+  const openDiscoverCollections = useCallback(
+    () => router.push('/screens/profile/lockerBrowserScreen'),
+    [router],
+  )
+  const inviteFriends = useCallback(() => router.push('/screens/profile/referralScreen'), [router])
+  const openHelpSupport = useCallback(() => console.log('Help & support'), [])
 
   return {
     profile,
@@ -51401,171 +52402,13 @@ export const useProfile = () => {
     editBrands,
     viewBenefits,
     addToLocker,
+    manageLocker,
+    viewFollowedStores,
+    openDiscoverCollections,
+    inviteFriends,
+    openHelpSupport,
   }
 }
-```
-
-## File: services/hooks/retailer/home/useHome.ts
-```typescript
-import { useState, useCallback } from 'react';
-import { StoreInfo } from '@/components/retailer/home/HomeStoreInto';
-import { StatCard } from '@/components/retailer/home/HomeStats';
-import { StockAlert } from '@/components/retailer/home/HomeAlert';
-import { ActionItem } from '@/components/retailer/home/HomeActions';
-import { RecentOrder } from '@/components/retailer/home/HomeRecentOrders';
-import { SyncStatus } from '@/components/retailer/home/HomeLiveSync';
-import { router } from 'expo-router';
-
-export const useHome = () => {
-  const [isRefreshing, setIsRefreshing] = useState(false);
-
-  const storeInfo: StoreInfo = {
-    name: "Sonny's Kicks",
-    location: 'Novi, MI',
-    isVerified: true,
-    lastSyncedLabel: 'Synced 2 min ago',
-  };
-
-  const stats: StatCard[] = [
-    {
-      id: 'orders',
-      value: 12,
-      label: 'Orders today',
-      subLine: '↓ 3 fewer than yesterday',
-      icon: 'shopping-cart',
-      variant: 'green',
-    },
-    {
-      id: 'needs-action',
-      value: 5,
-      label: 'Needs action',
-      subLine: '3 overdue',
-      icon: 'alert-circle',
-      iconFilled: true,
-      variant: 'orange',
-    },
-    {
-      id: 'revenue',
-      value: '$2,840',
-      label: 'Revenue today',
-      subLine: '↑ +$420 vs average',
-      icon: 'bar-chart-2',
-      variant: 'green',
-    },
-    {
-      id: 'low-stock',
-      value: 3,
-      label: 'Low-stock products',
-      subLine: 'Review inventory',
-      icon: 'box',
-      variant: 'orange',
-    },
-  ];
-
-  const stockAlerts: StockAlert[] = [
-    { id: 'alert-1', message: '3 products are running low' },
-  ];
-
-  const actions: ActionItem[] = [
-    {
-      id: 'add-product',
-      label: 'Add Product',
-      icon: 'plus',
-      bgColor: '#DCFCE7',
-      iconColor: '#16A34A',
-      onPress: () => router.push('/screens/retailer/home/product/AddProductScreen'),
-    },
-    {
-      id: 'orders',
-      label: 'Orders',
-      icon: 'shopping-bag',
-      bgColor: '#FFEDD5',
-      iconColor: '#F97316',
-      badgeCount: 5,
-      onPress: () => router.push('/retailerTabs/orders'),
-    },
-    {
-      id: 'analytics',
-      label: 'Analytics',
-      icon: 'bar-chart-2',
-      bgColor: '#F3F4F6',
-      iconColor: '#6B7280',
-      onPress: () => router.push('/retailerTabs/inventory'),
-    },
-    {
-      id: 'more',
-      label: 'More',
-      icon: 'grid',
-      bgColor: '#F6F5FF',
-      iconColor: '#6B7280',
-      onPress: () => router.push("/screens/retailer/home/more/moreScreen"),
-    },
-  ];
-
-  const recentOrders: RecentOrder[] = [
-    {
-      id: 'order-1',
-      productName: 'Air Jordan 1 Retro High',
-      size: 'Size 10.5',
-      customer: 'Marcus L.',
-      placedAgo: 'Placed 8 min ago',
-      price: 220,
-      status: 'Pickup Ready',
-    },
-    {
-      id: 'order-2',
-      productName: 'Yeezy Boost 350 V2',
-      size: 'Size 9',
-      customer: 'Sarah K.',
-      placedAgo: 'Placed 15 min ago',
-      price: 280,
-      status: 'Hold Confirmed',
-    },
-    {
-      id: 'order-3',
-      productName: 'Nike Dunk Low',
-      size: 'Size 11',
-      customer: 'James P.',
-      placedAgo: 'Placed 32 min ago',
-      price: 150,
-      status: 'Processing',
-    },
-  ];
-
-  const syncStatus: SyncStatus = {
-    isSynced: true,
-    lastSyncedLabel: 'Synced 2 min ago',
-    activePairs: 83,
-    syncErrors: 0,
-  };
-
-  const handleRefresh = useCallback(async () => {
-    setIsRefreshing(true);
-    await new Promise((res) => setTimeout(res, 1200));
-    setIsRefreshing(false);
-  }, []);
-
-  const handleViewAllOrders = useCallback(() => {
-    console.log('view all orders');
-  }, []);
-
-  const handleViewAlert = (alert: StockAlert) => {
-    router.push('/retailerTabs/inventory');
-  };
-
-  return {
-    storeInfo,
-    stats,
-    stockAlerts,
-    actions,
-    recentOrders,
-    syncStatus,
-    isRefreshing,
-    handleRefresh,
-    handleViewAllOrders,
-    handleViewAlert,
-  };
-};
 ```
 
 ## File: services/hooks/retailer/home/useMore.ts
@@ -51611,6 +52454,238 @@ export const useDashboard = () => {
 
     return { storeInfo, menuItems, handlePress };
 };
+```
+
+## File: services/hooks/retailer/inventory/useInventory.ts
+```typescript
+import { useState, useCallback, useMemo } from 'react'
+import type { ProductType } from '@/types/catalog'
+
+export type StockStatus = 'In Stock' | 'Low Stock' | 'Out of Stock' | 'On Hold'
+export type FilterTab = 'All' | ProductType | 'In Stock' | 'Low Stock' | 'Out of Stock'
+
+export interface SizeEntry {
+  size: string
+  qty: number
+}
+
+export interface InventoryProduct {
+  id: string
+  brand: string
+  name: string
+  sku: string
+  price: number
+  cost: number
+  status: StockStatus
+  productType: ProductType
+  lowCount?: number
+  sizes: SizeEntry[]
+  imageUri?: string
+  imageBg: string
+}
+
+export interface InventorySummary {
+  active: number
+  lowStock: number
+  outOfStock: number
+  onHold: number
+}
+
+export interface SyncInfo {
+  isSynced: boolean
+  lastSyncedLabel: string
+  isPosConnected: boolean
+}
+
+const INVENTORY_PRODUCTS: InventoryProduct[] = [
+  {
+    id: 'prod-1',
+    brand: 'NIKE',
+    name: 'Air Jordan 1 Retro High OG',
+    sku: 'DJ1237-010',
+    price: 220,
+    cost: 140,
+    status: 'In Stock',
+    productType: 'Sneakers',
+    imageBg: '#E8F5E9',
+    sizes: [
+      { size: '9', qty: 1 },
+      { size: '9.5', qty: 1 },
+      { size: '10', qty: 3 },
+      { size: '10.5', qty: 2 },
+      { size: '11', qty: 4 },
+      { size: '11.5', qty: 1 },
+      { size: '12', qty: 1 },
+    ],
+  },
+  {
+    id: 'prod-2',
+    brand: 'ESSENTIALS',
+    name: 'Pullover Hoodie',
+    sku: 'ESS-HOODIE-CRM',
+    price: 120,
+    cost: 68,
+    status: 'Low Stock',
+    productType: 'Clothing',
+    lowCount: 3,
+    imageBg: '#FEF3C7',
+    sizes: [
+      { size: 'S', qty: 2 },
+      { size: 'M', qty: 1 },
+      { size: 'L', qty: 0 },
+      { size: 'XL', qty: 0 },
+    ],
+  },
+  {
+    id: 'prod-3',
+    brand: 'NIKE',
+    name: 'Nike Dunk Low Retro',
+    sku: 'DD1391-100',
+    price: 150,
+    cost: 90,
+    status: 'In Stock',
+    productType: 'Sneakers',
+    imageBg: '#E8F0FE',
+    sizes: [
+      { size: '8', qty: 1 },
+      { size: '10', qty: 2 },
+      { size: '11', qty: 1 },
+      { size: '12', qty: 1 },
+    ],
+  },
+  {
+    id: 'prod-4',
+    brand: 'STUSSY',
+    name: 'Varsity Jacket',
+    sku: 'STU-VARSITY-BLK',
+    price: 320,
+    cost: 210,
+    status: 'On Hold',
+    productType: 'Clothing',
+    imageBg: '#FDE8E8',
+    sizes: [
+      { size: 'M', qty: 1 },
+      { size: 'L', qty: 1 },
+      { size: 'XL', qty: 1 },
+    ],
+  },
+  {
+    id: 'prod-5',
+    brand: 'ADIDAS',
+    name: 'Yeezy Boost 350 V2',
+    sku: 'FZ5246',
+    price: 220,
+    cost: 180,
+    status: 'Out of Stock',
+    productType: 'Sneakers',
+    imageBg: '#F3F4F6',
+    sizes: [
+      { size: '8', qty: 0 },
+      { size: '9', qty: 0 },
+      { size: '9.5', qty: 0 },
+      { size: '10', qty: 0 },
+    ],
+  },
+  {
+    id: 'prod-6',
+    brand: 'ADIDAS',
+    name: 'Firebird Track Pants',
+    sku: 'ADI-FB-TRK-BLU',
+    price: 95,
+    cost: 54,
+    status: 'Out of Stock',
+    productType: 'Clothing',
+    imageBg: '#DBEAFE',
+    sizes: [
+      { size: 'S', qty: 0 },
+      { size: 'M', qty: 0 },
+      { size: 'L', qty: 0 },
+    ],
+  },
+]
+
+export const useInventory = () => {
+  const [activeFilter, setActiveFilter] = useState<FilterTab>('All')
+  const [isRefreshing, setIsRefreshing] = useState(false)
+
+  // Matches the tabs shown in the design: All, Sneakers, Clothing, Low Stock
+  const filterTabs: FilterTab[] = [
+    'All',
+    'Sneakers',
+    'Clothing',
+    'Low Stock',
+  ]
+
+  const summary: InventorySummary = useMemo(
+    () => ({
+      active: INVENTORY_PRODUCTS.filter((product) => product.status !== 'Out of Stock').length,
+      lowStock: INVENTORY_PRODUCTS.filter((product) => product.status === 'Low Stock').length,
+      outOfStock: INVENTORY_PRODUCTS.filter((product) => product.status === 'Out of Stock').length,
+      onHold: INVENTORY_PRODUCTS.filter((product) => product.status === 'On Hold').length,
+    }),
+    [],
+  )
+
+  const syncInfo: SyncInfo = {
+    isSynced: true,
+    lastSyncedLabel: 'Synced 2 min ago',
+    isPosConnected: true,
+  }
+
+  const filterCounts: Record<FilterTab, number> = useMemo(
+    () => ({
+      All: INVENTORY_PRODUCTS.length,
+      Sneakers: INVENTORY_PRODUCTS.filter((product) => product.productType === 'Sneakers').length,
+      Clothing: INVENTORY_PRODUCTS.filter((product) => product.productType === 'Clothing').length,
+      'In Stock': INVENTORY_PRODUCTS.filter((product) => product.status === 'In Stock').length,
+      'Low Stock': INVENTORY_PRODUCTS.filter((product) => product.status === 'Low Stock').length,
+      'Out of Stock': INVENTORY_PRODUCTS.filter((product) => product.status === 'Out of Stock').length,
+    }),
+    [],
+  )
+
+  const filteredProducts = useMemo(() => {
+    if (activeFilter === 'All') return INVENTORY_PRODUCTS
+
+    if (activeFilter === 'Sneakers' || activeFilter === 'Clothing') {
+      return INVENTORY_PRODUCTS.filter((product) => product.productType === activeFilter)
+    }
+
+    return INVENTORY_PRODUCTS.filter((product) => product.status === activeFilter)
+  }, [activeFilter])
+
+  const handleFilterChange = useCallback((tab: FilterTab) => {
+    setActiveFilter(tab)
+  }, [])
+
+  const handleRefresh = useCallback(async () => {
+    setIsRefreshing(true)
+    await new Promise((resolve) => setTimeout(resolve, 1200))
+    setIsRefreshing(false)
+  }, [])
+
+  const handleEditProduct = useCallback((product: InventoryProduct) => {
+    console.log('edit product', product.id)
+  }, [])
+
+  const handleProductPress = useCallback((product: InventoryProduct) => {
+    console.log('product pressed', product.id)
+  }, [])
+
+  return {
+    activeFilter,
+    filterTabs,
+    filterCounts,
+    summary,
+    syncInfo,
+    filteredProducts,
+    isRefreshing,
+    handleFilterChange,
+    handleRefresh,
+    handleEditProduct,
+    handleProductPress,
+  }
+}
 ```
 
 ## File: services/hooks/store/useStoreProfile.ts
@@ -51994,6 +53069,453 @@ const styles = StyleSheet.create({
 });
 
 export default HomeScreen;
+```
+
+## File: app/retailerTabs/profile.tsx
+```typescript
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ImageBackground } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Feather, Ionicons } from '@expo/vector-icons';
+import BaseContainer from '@/components/shared/BaseContainer';
+import { useStoreProfile } from '@/services/hooks/retailer/profile/useStoreProfile';
+
+const COVER_IMAGE_URL =
+  'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&q=80';
+
+export const StoreProfileScreen: React.FC = () => {
+  const router = useRouter();
+  const {
+    profile,
+    groupedHours,
+    isSaving,
+    hasUnsavedChanges,
+    updateField,
+    toggleDay,
+    updateHour,
+    copyHoursToAllDays,
+    addSocialLink,
+    updateSocialLink,
+    handleSave,
+    handlePickCoverImage,
+  } = useStoreProfile();
+
+  return (
+    <BaseContainer backgroundColor="#F9FAFB" scrollable>
+      <View style={{ flex: 1, paddingBottom: 120 }}>
+        {/* Header */}
+        <View style={s.header}>
+          <TouchableOpacity onPress={() => router.back()} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+            <Feather name="arrow-left" size={22} color="#111827" />
+          </TouchableOpacity>
+          <Text style={s.headerTitle}>Store Profile</Text>
+          <TouchableOpacity>
+            <Text style={s.previewLink}>Preview</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Location selector */}
+        <TouchableOpacity style={s.locationSelector}>
+          <Feather name="map-pin" size={14} color="#6B7280" />
+          <Text style={s.locationSelectorText}>Sonny's Kicks — Main St</Text>
+          <Feather name="chevron-down" size={16} color="#6B7280" />
+        </TouchableOpacity>
+
+        {/* Public profile note */}
+        <View style={s.publicNoteRow}>
+          <View style={s.publicDot} />
+          <View style={{ flex: 1 }}>
+            <Text style={s.publicNoteTitle}>Public profile</Text>
+            <Text style={s.publicNoteSubtitle}>This is how your store appears to customers on GoSNKR.</Text>
+          </View>
+        </View>
+
+        {/* Cover image */}
+        <View style={s.coverWrap}>
+          <ImageBackground
+            source={{ uri: profile.coverImageUri ?? COVER_IMAGE_URL }}
+            style={s.coverImage}
+            imageStyle={{ borderRadius: 22 }}
+          >
+            <TouchableOpacity style={s.editCoverBtn} onPress={handlePickCoverImage}>
+              <Feather name="edit-2" size={12} color="#111827" />
+              <Text style={s.editCoverText}>Edit cover</Text>
+            </TouchableOpacity>
+          </ImageBackground>
+
+          {/* Avatar overlapping cover */}
+          <View style={s.avatarWrap}>
+            <View style={s.avatar}>
+              <Text style={s.avatarText}>{profile.avatarLabel}</Text>
+            </View>
+            <TouchableOpacity style={s.avatarEditBadge} onPress={handlePickCoverImage}>
+              <Feather name="edit-2" size={10} color="#fff" />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Name + verified + location */}
+        <View style={s.nameSection}>
+          <View style={s.nameRow}>
+            <Text style={s.storeName}>{profile.name}</Text>
+            {profile.isVerified && <Feather name="check-circle" size={17} color="#10B981" />}
+          </View>
+          <Text style={s.storeLocation}>{profile.location}</Text>
+        </View>
+
+        {/* Basic information */}
+        <View style={s.card}>
+          <Text style={s.cardTitle}>Basic information</Text>
+
+          <Text style={s.fieldLabel}>Store name</Text>
+          <View style={s.inputBox}>
+            <TextInput
+              value={profile.name}
+              onChangeText={(v) => updateField('name', v)}
+              style={s.inputText}
+            />
+          </View>
+
+          <Text style={[s.fieldLabel, { marginTop: 14 }]}>Store description</Text>
+          <View style={s.textareaBox}>
+            <TextInput
+              value={profile.description}
+              onChangeText={(v) => updateField('description', v)}
+              multiline
+              maxLength={300}
+              style={s.textareaText}
+            />
+          </View>
+          <Text style={s.charCounter}>{profile.description.length}/300</Text>
+
+          <Text style={[s.fieldLabel, { marginTop: 14 }]}>Address</Text>
+          <View style={s.addressRow}>
+            <Feather name="map-pin" size={14} color="#9CA3AF" />
+            <Text style={s.addressText}>{profile.address}</Text>
+          </View>
+          <TouchableOpacity>
+            <Text style={s.verifyLink}>Verify on map</Text>
+          </TouchableOpacity>
+
+          <View style={s.contactRow}>
+            <View style={{ flex: 1 }}>
+              <Text style={s.fieldLabel}>Phone</Text>
+              <View style={s.inputBox}>
+                <TextInput
+                  value={profile.phone}
+                  onChangeText={(v) => updateField('phone', v)}
+                  keyboardType="phone-pad"
+                  style={s.inputText}
+                />
+              </View>
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={s.fieldLabel}>Website</Text>
+              <View style={s.inputBox}>
+                <TextInput
+                  value={profile.website}
+                  onChangeText={(v) => updateField('website', v)}
+                  autoCapitalize="none"
+                  style={s.inputText}
+                />
+              </View>
+            </View>
+          </View>
+        </View>
+
+        {/* Business hours */}
+        <View style={s.card}>
+          <View style={s.cardHeaderRow}>
+            <Text style={s.cardTitle}>Business hours</Text>
+            <TouchableOpacity onPress={copyHoursToAllDays}>
+              <Text style={s.editMultipleLink}>Edit multiple days</Text>
+            </TouchableOpacity>
+          </View>
+
+          {groupedHours.map((group, i) => (
+            <View key={i} style={s.hourRow}>
+              <Text style={s.hourDayLabel}>{group.label}</Text>
+              <Text style={s.hourTimeLabel}>
+                {group.isEnabled ? `${group.open} - ${group.close}` : 'Closed'}
+              </Text>
+              <View style={[s.hourStatusPill, group.isEnabled ? s.hourStatusOpen : s.hourStatusClosed]}>
+                <Text style={[s.hourStatusText, { color: group.isEnabled ? '#059669' : '#9CA3AF' }]}>
+                  {group.isEnabled ? 'Open' : 'Closed'}
+                </Text>
+              </View>
+              <Feather name="chevron-right" size={16} color="#D1D5DB" />
+            </View>
+          ))}
+
+          <TouchableOpacity style={s.addHoursBtn}>
+            <Feather name="plus" size={14} color="#4B5563" />
+            <Text style={s.addHoursText}>Add special or holiday hours</Text>
+          </TouchableOpacity>
+          <Text style={s.hoursFootnote}>Hours are shown in the store's local time.</Text>
+        </View>
+
+        {/* Social links */}
+        <View style={s.card}>
+          <Text style={s.cardTitle}>Social links</Text>
+
+          {profile.socialLinks.map((link) => (
+            <View key={link.id} style={{ marginBottom: 12 }}>
+              <Text style={s.fieldLabel}>{capitalize(link.platform)}</Text>
+              <View style={s.socialInputBox}>
+                <Ionicons name={getSocialIcon(link.platform)} size={16} color="#9CA3AF" />
+                <TextInput
+                  value={link.handle}
+                  onChangeText={(v) => updateSocialLink(link.id, v)}
+                  placeholder="@yourstore"
+                  placeholderTextColor="#9CA3AF"
+                  autoCapitalize="none"
+                  style={s.socialInputText}
+                />
+              </View>
+            </View>
+          ))}
+
+          <TouchableOpacity style={s.addSocialBtn} onPress={addSocialLink}>
+            <Feather name="plus" size={14} color="#4B5563" />
+            <Text style={s.addSocialText}>Add another social link</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Account */}
+        <View style={s.card}>
+          <View style={s.accountRow}>
+            <View style={{ flex: 1 }}>
+              <Text style={s.cardTitle}>Account</Text>
+              <Text style={s.accountSubtitle}>Manage your account, security, and sign out</Text>
+            </View>
+            <TouchableOpacity style={s.accountLinkBtn}>
+              <Text style={s.accountLinkText}>Account & security</Text>
+              <Feather name="chevron-right" size={15} color="#9CA3AF" />
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+
+      {/* Sticky save bar */}
+      <View style={s.saveBar}>
+        {hasUnsavedChanges && (
+          <View style={s.unsavedRow}>
+            <View style={s.unsavedDot} />
+            <Text style={s.unsavedText}>Unsaved changes</Text>
+          </View>
+        )}
+        <TouchableOpacity
+          onPress={handleSave}
+          disabled={isSaving}
+          style={[s.saveBtn, isSaving && { opacity: 0.7 }]}
+        >
+          <Text style={s.saveBtnText}>{isSaving ? 'Saving…' : 'Save Changes'}</Text>
+        </TouchableOpacity>
+      </View>
+    </BaseContainer>
+  );
+};
+
+function capitalize(str: string) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+function getSocialIcon(platform: string): any {
+  switch (platform) {
+    case 'instagram':
+      return 'logo-instagram';
+    case 'tiktok':
+      return 'logo-tiktok';
+    case 'twitter':
+      return 'logo-twitter';
+    case 'facebook':
+      return 'logo-facebook';
+    default:
+      return 'link';
+  }
+}
+
+const s = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 12,
+  },
+  headerTitle: { fontSize: 17, fontWeight: '800', color: '#111827' },
+  previewLink: { fontSize: 13, fontWeight: '800', color: '#10B981' },
+
+  locationSelector: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginHorizontal: 16,
+    marginBottom: 10,
+  },
+  locationSelectorText: { fontSize: 13, fontWeight: '700', color: '#111827' },
+
+  publicNoteRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 8,
+    marginHorizontal: 16,
+    marginBottom: 14,
+  },
+  publicDot: { width: 7, height: 7, borderRadius: 4, backgroundColor: '#10B981', marginTop: 5 },
+  publicNoteTitle: { fontSize: 12, fontWeight: '800', color: '#111827' },
+  publicNoteSubtitle: { fontSize: 11, color: '#9CA3AF', marginTop: 2, fontWeight: '600' },
+
+  coverWrap: { marginHorizontal: 16, marginBottom: 44 },
+  coverImage: { height: 150, borderRadius: 22, overflow: 'hidden', justifyContent: 'flex-start', alignItems: 'flex-end' },
+  editCoverBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: 'rgba(255,255,255,0.92)',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 10,
+    margin: 10,
+  },
+  editCoverText: { fontSize: 11, fontWeight: '800', color: '#111827' },
+  avatarWrap: { position: 'absolute', left: 16, bottom: -30 },
+  avatar: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: '#111827',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 3,
+    borderColor: '#F9FAFB',
+  },
+  avatarText: { color: '#fff', fontSize: 20, fontWeight: '900' },
+  avatarEditBadge: {
+    position: 'absolute',
+    right: -2,
+    bottom: -2,
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: '#10B981',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#F9FAFB',
+  },
+
+  nameSection: { paddingHorizontal: 16, marginBottom: 18 },
+  nameRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  storeName: { fontSize: 19, fontWeight: '900', color: '#111827' },
+  storeLocation: { fontSize: 12, color: '#9CA3AF', marginTop: 2, fontWeight: '600' },
+
+  card: {
+    backgroundColor: '#fff',
+    marginHorizontal: 16,
+    borderRadius: 20,
+    padding: 18,
+    marginBottom: 14,
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+  },
+  cardHeaderRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 },
+  cardTitle: { fontSize: 15, fontWeight: '900', color: '#111827', marginBottom: 14 },
+  editMultipleLink: { fontSize: 12, fontWeight: '800', color: '#10B981' },
+
+  fieldLabel: { fontSize: 12, color: '#6B7280', fontWeight: '700', marginBottom: 8 },
+  inputBox: { backgroundColor: '#F9FAFB', borderRadius: 14, paddingHorizontal: 14, paddingVertical: 12 },
+  inputText: { fontSize: 14, color: '#111827', fontWeight: '600' },
+  textareaBox: { backgroundColor: '#F9FAFB', borderRadius: 14, padding: 14, minHeight: 70 },
+  textareaText: { fontSize: 13, color: '#111827', fontWeight: '600', textAlignVertical: 'top' },
+  charCounter: { fontSize: 10, color: '#D1D5DB', textAlign: 'right', marginTop: 4, fontWeight: '600' },
+
+  addressRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 2 },
+  addressText: { fontSize: 13, color: '#111827', fontWeight: '600', flexShrink: 1 },
+  verifyLink: { fontSize: 12, fontWeight: '800', color: '#10B981', marginTop: 6, alignSelf: 'flex-end' },
+
+  contactRow: { flexDirection: 'row', gap: 12, marginTop: 16 },
+
+  hourRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingVertical: 11,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F3F4F6',
+  },
+  hourDayLabel: { width: 60, fontSize: 13, fontWeight: '800', color: '#111827' },
+  hourTimeLabel: { flex: 1, fontSize: 12, color: '#6B7280', fontWeight: '600' },
+  hourStatusPill: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10 },
+  hourStatusOpen: { backgroundColor: '#ECFDF5' },
+  hourStatusClosed: { backgroundColor: '#F3F4F6' },
+  hourStatusText: { fontSize: 11, fontWeight: '800' },
+
+  addHoursBtn: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 6,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderRadius: 14,
+    paddingVertical: 12,
+    marginTop: 14,
+  },
+  addHoursText: { fontSize: 12, fontWeight: '700', color: '#4B5563' },
+  hoursFootnote: { fontSize: 11, color: '#9CA3AF', marginTop: 10, fontWeight: '600' },
+
+  socialInputBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: '#F9FAFB',
+    borderRadius: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+  },
+  socialInputText: { flex: 1, fontSize: 13, color: '#111827', fontWeight: '600' },
+  addSocialBtn: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 6,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderRadius: 14,
+    paddingVertical: 12,
+    marginTop: 4,
+  },
+  addSocialText: { fontSize: 12, fontWeight: '700', color: '#4B5563' },
+
+  accountRow: { flexDirection: 'row', alignItems: 'center' },
+  accountSubtitle: { fontSize: 11, color: '#9CA3AF', marginTop: -8, fontWeight: '600' },
+  accountLinkBtn: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  accountLinkText: { fontSize: 12, fontWeight: '700', color: '#6B7280' },
+
+  saveBar: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: '#fff',
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#F3F4F6',
+  },
+  unsavedRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 8 },
+  unsavedDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#F59E0B' },
+  unsavedText: { fontSize: 11, color: '#D97706', fontWeight: '700' },
+  saveBtn: { backgroundColor: '#111827', height: 52, borderRadius: 16, justifyContent: 'center', alignItems: 'center' },
+  saveBtnText: { color: '#fff', fontSize: 14, fontWeight: '800' },
+});
+
+export default StoreProfileScreen;
 ```
 
 ## File: app/screens/discover/offerFromStoreScreen.tsx
@@ -52384,9 +53906,8 @@ import Animated, {
   useSharedValue,
 } from 'react-native-reanimated';
 
-const ACTIVE_COLOR = '#000000'; 
+const ACTIVE_COLOR = '#22C55E'; 
 const INACTIVE_COLOR = '#94a3b8'; 
-const DOT_COLOR = '#22C55E'; 
 const BAR_BG = '#FFFFFF';
 
 const tabConfig = [
@@ -52437,38 +53958,10 @@ const AnimatedTabItem = ({ isFocused, navigation, route, label, icon, activeIcon
 const CustomTabBar = ({ state, navigation }: any) => {
   const { width } = useWindowDimensions();
  const TAB_BAR_WIDTH = width;
-  const TAB_WIDTH = TAB_BAR_WIDTH / tabConfig.length;
-  
-  // Shared value for the dot's X position
-  const translateX = useSharedValue(0);
-
-  useEffect(() => {
-    // Update position whenever the index changes
-    translateX.value = withSpring(state.index * TAB_WIDTH, {
-        damping: 20,
-        stiffness: 150,
-    });
-  }, [state.index]);
-
-  const dotStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: translateX.value }],
-  }));
 
   return (
     <View style={styles.tabBarContainer}>
       <View style={[styles.tabBarInner, { width: TAB_BAR_WIDTH }]}>
-        
-        {/* The Sliding Green Dot Indicator */}
-        <Animated.View 
-          style={[
-            styles.slidingDotContainer, 
-            { width: TAB_WIDTH }, 
-            dotStyle
-          ]}
-        >
-          <View style={styles.activeDot} />
-        </Animated.View>
-
         {state.routes.map((route: any, index: number) => {
           const isFocused = state.index === index;
           const config = tabConfig[index];
@@ -52525,20 +54018,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     height: 28,
     justifyContent: 'center',
-  },
-  slidingDotContainer: {
-    position: 'absolute',
-    height: 75,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 1,
-  },
-  activeDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: DOT_COLOR,
-    marginTop: 10, // Position it under the icon
   },
   label: {
     fontSize: 16,
@@ -52870,10 +54349,10 @@ interface DiscoverBrandsProps {
   onWishlistToggle?: (id: string) => void
 }
 
-const STOCK_BG: Record<StockStatus, string> = {
-  'In Stock': '#00C853',
-  'Low Stock': '#FF6D00',
-  'Dropping Soon': '#1565C0',
+const STOCK_COLOR: Record<StockStatus, string> = {
+  'In Stock': '#22C55E',
+  'Low Stock': '#F59E0B',
+  'Dropping Soon': '#3B82F6',
 }
 
 const BrandRow = ({
@@ -52892,86 +54371,43 @@ const BrandRow = ({
   <TouchableOpacity
     onPress={onPress}
     activeOpacity={0.85}
-    className={`flex-row items-center px-4 py-4 gap-4 ${!isLast ? 'border-b border-neutral-100' : ''}`}
+    style={{
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 14,
+      gap: 12,
+      borderBottomWidth: isLast ? 0 : 1,
+      borderBottomColor: '#F3F4F6',
+    }}
   >
-    <View className="w-[120px] h-[120px] rounded-xl overflow-hidden bg-neutral-200 relative">
-      <Image
-        source={{ uri: brand.image }}
-        className="w-full h-full"
-        resizeMode="cover"
-      />
-
-      <View
-        className="absolute top-2 left-2 px-2.5 py-0.5 rounded-full"
-        style={{ backgroundColor: STOCK_BG[brand.stockStatus] }}
-      >
-        <Text className="text-white text-[11px] font-extrabold">
-          {brand.stockStatus}
-        </Text>
-      </View>
-
-      <TouchableOpacity
-        onPress={onWishlist}
-        className="absolute top-2 right-2 w-10 h-10 items-center justify-center"
-      >
-        <Ionicons
-          name={brand.isWishlisted ? 'heart' : 'heart-outline'}
-          size={28}
-          color={brand.isWishlisted ? '#FF3B6B' : '#fff'}
-        />
-      </TouchableOpacity>
-
-      <View
-        className="absolute bottom-2 left-2 px-2.5 py-0.5 rounded-md"
-        style={{ backgroundColor: brand.brandColor }}
-      >
-        <Text className="text-white text-[11px] font-extrabold">
-          {brand.brandInitial}
-        </Text>
-      </View>
+    <View style={{ width: 64, height: 64, borderRadius: 12, overflow: 'hidden', backgroundColor: '#F3F4F6' }}>
+      <Image source={{ uri: brand.image }} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
     </View>
 
-    <View className="flex-1">
-      <Text className="text-[11px] font-bold text-green-600 uppercase tracking-wide">
-        {brand.productType} · {brand.audience}
-      </Text>
-      <Text
-        numberOfLines={1}
-        className="text-lg font-bold text-neutral-900"
-      >
+    <View style={{ flex: 1 }}>
+      <Text numberOfLines={2} style={{ fontSize: 14, fontWeight: '700', color: '#111827', lineHeight: 18 }}>
         {brand.name}
       </Text>
-
-      <Text className="text-sm text-neutral-400 mt-1">
-        {brand.store}
+      <Text style={{ fontSize: 12, color: '#9CA3AF', marginTop: 3 }}>
+        {brand.store} · {brand.distance}
       </Text>
-
-      <Text className="text-sm text-neutral-400">
-        {brand.distance}
-      </Text>
-    </View>
-
-    <View className="items-end gap-2">
-      <Text className="text-xl font-extrabold text-neutral-900">
-        ${brand.price}
-      </Text>
-
-      <View
-        className="px-3 py-1.5 rounded-full"
-        style={{ backgroundColor: STOCK_BG[brand.stockStatus] }}
-      >
-        <Text className="text-white text-sm font-extrabold">
-          {brand.stockStatus}
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 4 }}>
+        <Ionicons name="checkmark-circle" size={12} color={STOCK_COLOR[brand.stockStatus]} />
+        <Text style={{ fontSize: 11, fontWeight: '600', color: STOCK_COLOR[brand.stockStatus] }}>
+          {brand.stockStatus === 'Dropping Soon' ? 'Dropping soon' : `${brand.stockStatus === 'In Stock' ? 'Size M' : 'Size M'} · ${brand.stockStatus.toLowerCase()}`}
         </Text>
       </View>
+    </View>
 
+    <View style={{ alignItems: 'flex-end', gap: 8 }}>
+      <Text style={{ fontSize: 16, fontWeight: '800', color: '#111827' }}>
+        ${brand.price}
+      </Text>
       <TouchableOpacity
         onPress={onBuy}
-        className="bg-green-600 px-5 py-2 rounded-full"
+        style={{ backgroundColor: '#22C55E', paddingHorizontal: 14, paddingVertical: 8, borderRadius: 999 }}
       >
-        <Text className="text-white text-sm font-extrabold">
-          Buy
-        </Text>
+        <Text style={{ color: '#fff', fontSize: 12, fontWeight: '700' }}>View item</Text>
       </TouchableOpacity>
     </View>
   </TouchableOpacity>
@@ -52984,24 +54420,17 @@ export const DiscoverBrands: React.FC<DiscoverBrandsProps> = ({
   onBrandPress,
   onWishlistToggle,
 }) => (
-  <View className="mt-7 px-5">
-    <View className="flex-row items-center justify-between">
-      <Text className="text-2xl font-extrabold text-neutral-900">
-        From Your Brands
+  <View style={{ marginTop: 24, paddingHorizontal: 20 }}>
+    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+      <Text style={{ fontSize: 18, fontWeight: '800', color: '#111827' }}>
+        From your brands
       </Text>
-
       <TouchableOpacity onPress={onSeeAll}>
-        <Text className="text-lg font-semibold text-green-600">
-          See all
-        </Text>
+        <Text style={{ fontSize: 14, fontWeight: '700', color: '#22C55E' }}>See all</Text>
       </TouchableOpacity>
     </View>
 
-    <Text className="text-sm text-neutral-400 mt-1 mb-3">
-      Sneakers and apparel from the brands you follow
-    </Text>
-
-    <View className="bg-white rounded-2xl overflow-hidden shadow-sm">
+    <View style={{ marginTop: 4 }}>
       {brands.map((brand, index) => (
         <BrandRow
           key={brand.id}
@@ -53023,61 +54452,103 @@ export default DiscoverBrands
 ```typescript
 import React from 'react';
 import { View, Text, TouchableOpacity, Platform } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 
 interface DiscoverHeaderProps {
   notificationCount?: number;
+  location?: string;
+  radius?: string;
   onAvatarPress?: () => void;
+  onLocationPress?: () => void;
 }
 
 export const DiscoverHeader: React.FC<DiscoverHeaderProps> = ({
   notificationCount = 2,
+  location = 'Novi, MI',
+  radius = '10 mi',
   onAvatarPress,
+  onLocationPress,
 }) => {
   const router = useRouter();
 
   const handleNotificationPress = () => {
-    router.push('/screens/discover/notificationsScreen'); // update this path to your actual route
+    router.push('/screens/discover/notificationsScreen');
   };
 
   return (
     <View
-      className={`flex-row items-center justify-between px-6 bg-white ${
-        Platform.OS === 'ios' ? 'pt-[60px]' : 'pt-[40px]'
-      }`}
-      style={{ paddingBottom: 16 }}
+      style={{
+        paddingTop: Platform.OS === 'ios' ? 54 : 36,
+        paddingBottom: 10,
+        paddingHorizontal: 20,
+        backgroundColor: '#fff',
+      }}
     >
-      <Text className="text-3xl font-black">
-        <Text className="text-black">GO</Text>
-        <Text className="text-[#36B161]">SNKR</Text>
-      </Text>
+      {/* Logo row */}
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Text style={{ fontSize: 24, fontWeight: '900' }}>
+          <Text style={{ color: '#000' }}>GO</Text>
+          <Text style={{ color: '#22C55E' }}>SNKR</Text>
+        </Text>
 
-      <View className="flex-row items-center space-x-5">
-        
-        <TouchableOpacity
-          onPress={handleNotificationPress}
-          activeOpacity={0.7}
-          hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
-          className="relative items-center justify-center w-10 h-10"
-        >
-          <Ionicons name="notifications-outline" size={32} color="#1C1C1E" />
-          {notificationCount > 0 && (
-            <View className="absolute top-0 right-0 w-3.5 h-3.5 bg-[#ED4F4F] rounded-full border-[2.5px] border-white" />
-          )}
-        </TouchableOpacity>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+          <TouchableOpacity
+            onPress={handleNotificationPress}
+            activeOpacity={0.7}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            style={{ width: 28, height: 28, alignItems: 'center', justifyContent: 'center' }}
+          >
+            <Ionicons name="notifications-outline" size={24} color="#1C1C1E" />
+            {notificationCount > 0 && (
+              <View
+                style={{
+                  position: 'absolute',
+                  top: -1,
+                  right: -1,
+                  width: 9,
+                  height: 9,
+                  borderRadius: 5,
+                  backgroundColor: '#EF4444',
+                  borderWidth: 1.5,
+                  borderColor: '#fff',
+                }}
+              />
+            )}
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          onPress={onAvatarPress}
-          activeOpacity={0.75}
-          className="items-center justify-center"
-        >
-          <View className="w-18 h-18 rounded-full border-[2px] border-[#36B161] items-center justify-center bg-[#F1F3F5]">
-            <Ionicons name="person-outline" size={30} color="#727981" />
-          </View>
-        </TouchableOpacity>
-
+          <TouchableOpacity onPress={onAvatarPress} activeOpacity={0.75}>
+            <View
+              style={{
+                width: 30,
+                height: 30,
+                borderRadius: 15,
+                borderWidth: 1.5,
+                borderColor: '#E5E7EB',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: '#F3F4F6',
+              }}
+            >
+              <Ionicons name="person-outline" size={16} color="#6B7280" />
+            </View>
+          </TouchableOpacity>
+        </View>
       </View>
+
+      {/* Location row */}
+      <TouchableOpacity
+        onPress={onLocationPress}
+        activeOpacity={0.7}
+        style={{ flexDirection: 'row', alignItems: 'center', marginTop: 8, gap: 4 }}
+      >
+        <Text style={{ fontSize: 13, fontWeight: '600', color: '#374151' }}>{location}</Text>
+        <Feather name="chevron-down" size={14} color="#374151" />
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 10, gap: 4 }}>
+          <Ionicons name="navigate-circle-outline" size={14} color="#9CA3AF" />
+          <Text style={{ fontSize: 12, color: '#9CA3AF' }}>{radius}</Text>
+        </View>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -53092,11 +54563,16 @@ import {
   View,
   Text,
   TouchableOpacity,
-  ScrollView,
   Image,
+  Dimensions,
 } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { NearbyProduct, StockStatus } from '@/services/hooks/discover/useDiscover'
+
+const { width: SCREEN_W } = Dimensions.get('window')
+const H_PADDING = 20
+const GAP = 12
+const CARD_W = (SCREEN_W - H_PADDING * 2 - GAP) / 2
 
 interface DiscoverNearByProps {
   products: NearbyProduct[]
@@ -53105,106 +54581,60 @@ interface DiscoverNearByProps {
   onWishlistToggle?: (id: string) => void
 }
 
-const STOCK_BG: Record<StockStatus, string> = {
-  'In Stock': '#00C853',
-  'Low Stock': '#FF6D00',
-  'Dropping Soon': '#1565C0',
+const STOCK_STYLE: Record<StockStatus, { bg: string; color: string; label: string }> = {
+  'In Stock': { bg: '#F0FDF4', color: '#22C55E', label: 'In stock' },
+  'Low Stock': { bg: '#FFF7ED', color: '#F59E0B', label: 'Low stock' },
+  'Dropping Soon': { bg: '#EFF6FF', color: '#3B82F6', label: 'Dropping soon' },
 }
-
-const StockBadge: React.FC<{ status: StockStatus }> = ({ status }) => (
-  <View
-    className="px-4 py-1.5 rounded-full"
-    style={{ backgroundColor: STOCK_BG[status] }}
-  >
-    <Text className="text-white text-sm font-extrabold tracking-wide">
-      {status}
-    </Text>
-  </View>
-)
 
 const NearbyCard: React.FC<{
   product: NearbyProduct
   onPress?: () => void
   onWishlist?: () => void
 }> = ({ product, onPress, onWishlist }) => {
-  const sizeYear = [product.size].filter(Boolean).join(' · ')
-  const sizePrefix = product.productType === 'Clothing' ? 'Size' : 'Sz'
+  const stock = STOCK_STYLE[product.stockStatus]
+  const sizePrefix = product.productType === 'Clothing' ? 'Size' : 'US'
 
   return (
     <TouchableOpacity
-      className="mb-4"
-      style={{
-        width: 230,
-        borderRadius: 24,
-        backgroundColor: '#fff',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 12,
-        elevation: 12,
-      }}
+      style={{ width: CARD_W }}
       onPress={onPress}
       activeOpacity={0.9}
     >
-      <View className="rounded-3xl overflow-hidden">
-     <View className="relative" style={{ width: 230, height: 240 }}>
-  <Image
-    source={{ uri: product.image }}
-    className="w-full h-full"
-    style={{ borderTopLeftRadius: 24, borderTopRightRadius: 24 }}
-    resizeMode="cover"
-  />
+      <View style={{ width: CARD_W, height: CARD_W, borderRadius: 16, backgroundColor: '#F3F4F6', overflow: 'hidden' }}>
+        <Image source={{ uri: product.image }} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
+        <TouchableOpacity
+          onPress={onWishlist}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          style={{ position: 'absolute', top: 8, right: 8, width: 30, height: 30, borderRadius: 15, backgroundColor: 'rgba(255,255,255,0.9)', alignItems: 'center', justifyContent: 'center' }}
+        >
+          <Ionicons
+            name={product.isWishlisted ? 'heart' : 'heart-outline'}
+            size={16}
+            color={product.isWishlisted ? '#FF3B6B' : '#374151'}
+          />
+        </TouchableOpacity>
+      </View>
 
-  <View className="absolute top-3 left-3">
-    <StockBadge status={product.stockStatus} />
-  </View>
+      <View style={{ paddingTop: 8 }}>
+        <Text style={{ fontSize: 13, fontWeight: '600', color: '#111827' }} numberOfLines={1}>
+          {product.name}
+        </Text>
+        <Text style={{ fontSize: 14, fontWeight: '700', color: '#111827', marginTop: 2 }}>
+          ${product.price}
+        </Text>
+        <Text style={{ fontSize: 11, color: '#9CA3AF', marginTop: 2 }} numberOfLines={1}>
+          {product.store} · {product.distance}
+        </Text>
 
-  <TouchableOpacity
-    className="absolute top-3 right-3 w-12 h-12 items-center justify-center"
-    onPress={onWishlist}
-    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-  >
-    <Ionicons
-      name={product.isWishlisted ? 'heart' : 'heart-outline'}
-      size={32}
-      color={product.isWishlisted ? '#FF3B6B' : '#fff'}
-    />
-  </TouchableOpacity>
-</View>
-
-        <View className="p-4 gap-1.5">
-          <Text className="text-xs text-green-600 font-bold uppercase tracking-wide">
-            {product.productType} · {product.audience}
-          </Text>
-          <Text className="text-sm text-neutral-400 font-medium">
-            {product.store} · {product.distance}
-          </Text>
-
-          <Text
-            className="text-lg font-bold text-neutral-900 leading-6"
-            numberOfLines={2}
-          >
-            {product.name}
-          </Text>
-
-          <View className="flex-row items-center justify-between mt-2">
-            <Text className="text-xl font-extrabold text-neutral-900">
-              ${product.price}
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 6 }}>
+          {product.size ? (
+            <Text style={{ fontSize: 11, color: '#6B7280', fontWeight: '600' }}>
+              {sizePrefix} {product.size}
             </Text>
-
-            {sizeYear ? (
-              <View
-                className="px-3 py-1 rounded-full"
-                style={{ backgroundColor: '#E8F8EE' }}
-              >
-                <Text
-                  className="text-sm font-bold"
-                  style={{ color: '#00C853' }}
-                >
-                  {sizePrefix} {sizeYear}
-                </Text>
-              </View>
-            ) : null}
+          ) : <View />}
+          <View style={{ backgroundColor: stock.bg, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 999 }}>
+            <Text style={{ fontSize: 10, fontWeight: '700', color: stock.color }}>{stock.label}</Text>
           </View>
         </View>
       </View>
@@ -53218,24 +54648,17 @@ export const DiscoverNearBy: React.FC<DiscoverNearByProps> = ({
   onProductPress,
   onWishlistToggle,
 }) => (
-  <View className="mt-6">
-    <View className="flex-row items-center justify-between px-5 mb-4">
-      <Text className="text-2xl font-extrabold text-neutral-900">
-        Nearby Finds
+  <View style={{ marginTop: 12, paddingHorizontal: H_PADDING }}>
+    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+      <Text style={{ fontSize: 18, fontWeight: '800', color: '#111827' }}>
+        Nearby in your size
       </Text>
-
       <TouchableOpacity onPress={onSeeAll}>
-        <Text className="text-lg font-semibold" style={{ color: '#00C853' }}>
-          See all
-        </Text>
+        <Text style={{ fontSize: 14, fontWeight: '700', color: '#22C55E' }}>See all</Text>
       </TouchableOpacity>
     </View>
 
-    <ScrollView
-  horizontal
-  showsHorizontalScrollIndicator={false}
-  contentContainerStyle={{ paddingLeft: 20, paddingRight: 10, paddingTop: 12, gap: 16 }}
->
+    <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: GAP }}>
       {products.map((product) => (
         <NearbyCard
           key={product.id}
@@ -53244,7 +54667,7 @@ export const DiscoverNearBy: React.FC<DiscoverNearByProps> = ({
           onWishlist={() => onWishlistToggle?.(product.id)}
         />
       ))}
-    </ScrollView>
+    </View>
   </View>
 )
 
@@ -53255,30 +54678,21 @@ export default DiscoverNearBy
 ```typescript
 // components/profile/QuickActions.tsx
 import React from 'react'
-import { View, Text, TouchableOpacity, Dimensions } from 'react-native'
-import { Ionicons, Feather, MaterialCommunityIcons } from '@expo/vector-icons'
-
-const { width } = Dimensions.get('window')
-const CARD_WIDTH = (width - 48) / 2
+import { View, Text, TouchableOpacity } from 'react-native'
+import { Ionicons, Feather } from '@expo/vector-icons'
 
 interface QuickActionsProps {
   orders: number
   wishlistCount: number
-  wantedPairs: number
+  stockAlerts: number
   reviewsCount: number
-  followingsCount?: number
-  collectionsCount?: number
   onOrders: () => void
   onWishlist: () => void
-  onWantedPairs: () => void
+  onStockAlerts: () => void
   onReviews: () => void
-  onFollowings: () => void
-  onCollections: () => void
-  onTransactions?: () => void
-  onBag?: () => void
 }
 
-interface ActionItem {
+interface RowItem {
   id: string
   label: string
   count?: number
@@ -53289,93 +54703,239 @@ interface ActionItem {
 const QuickActions: React.FC<QuickActionsProps> = ({
   orders,
   wishlistCount,
-  wantedPairs,
+  stockAlerts,
   reviewsCount,
-  followingsCount,
-  collectionsCount,
   onOrders,
   onWishlist,
-  onWantedPairs,
+  onStockAlerts,
   onReviews,
-  onFollowings,
-  onCollections,
-  onTransactions,
-  onBag,
 }) => {
-  const actions: ActionItem[] = [
+  const items: RowItem[] = [
     {
       id: 'orders',
-      label: 'My Orders',
-      icon: <Feather name="shopping-bag" size={28} color="#10B981" />,
+      label: 'My orders',
+      icon: <Feather name="shopping-bag" size={18} color="#22C55E" />,
       onPress: onOrders,
     },
     {
       id: 'wishlist',
-      label: 'Wishlist',
-      count: wishlistCount,
-      icon: <Ionicons name="heart-outline" size={30} color="#EF4444" />,
+      label: `Wishlist · ${wishlistCount}`,
+      icon: <Ionicons name="heart-outline" size={19} color="#EF4444" />,
       onPress: onWishlist,
     },
     {
-      id: 'wanted',
-      label: 'Wanted Pairs',
-      icon: <Feather name="bell" size={28} color="#3B82F6" />,
-      onPress: onWantedPairs,
+      id: 'stockAlerts',
+      label: 'Stock alerts',
+      icon: <Feather name="bell" size={18} color="#3B82F6" />,
+      onPress: onStockAlerts,
     },
     {
       id: 'reviews',
-      label: 'My Reviews',
-      icon: <Ionicons name="star-outline" size={30} color="#F59E0B" />,
+      label: `My reviews · ${reviewsCount}`,
+      icon: <Ionicons name="star-outline" size={19} color="#F59E0B" />,
       onPress: onReviews,
-    },
-    {
-      id: 'followings',
-      label: 'Followings',
-      count: followingsCount,
-      icon: <Ionicons name="people-outline" size={30} color="#8B5CF6" />,
-      onPress: onFollowings,
-    },
-    {
-      id: 'collections',
-      label: 'Discover Collections',
-      count: collectionsCount,
-      icon: <MaterialCommunityIcons name="shoe-sneaker" size={30} color="#EC4899" />,
-      onPress: onCollections,
     },
   ]
 
   return (
-    <View className="flex-row flex-wrap justify-between gap-y-4 mb-6">
-      {actions.map((action) => (
-        <TouchableOpacity
-          key={action.id}
-          onPress={action.onPress}
-          activeOpacity={0.8}
-          className="bg-white rounded-3xl items-center justify-center py-6"
-          style={{
-            width: CARD_WIDTH,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.05,
-            shadowRadius: 10,
-            elevation: 2,
-          }}
-        >
-          <View className="mb-3">
-            {action.icon}
-          </View>
-
-          <Text className="text-[15px] font-black text-gray-900 text-center">
-            {action.label}
-            {action.count !== undefined && action.count > 0 ? ` (${action.count})` : ''}
-          </Text>
-        </TouchableOpacity>
-      ))}
+    <View
+      className="bg-white rounded-2xl px-4 py-2 mb-4"
+      style={{
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.06,
+        shadowRadius: 10,
+        elevation: 3,
+      }}
+    >
+      <View className="flex-row flex-wrap">
+        {items.map((item, index) => (
+          <TouchableOpacity
+            key={item.id}
+            onPress={item.onPress}
+            activeOpacity={0.7}
+            className="w-1/2 flex-row items-center gap-2.5 py-3.5"
+            style={{
+              borderBottomWidth: index < 2 ? 1 : 0,
+              borderBottomColor: '#F3F4F6',
+              paddingRight: index % 2 === 0 ? 8 : 0,
+            }}
+          >
+            {item.icon}
+            <Text className="text-[13px] font-semibold text-gray-800" numberOfLines={1}>
+              {item.label}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
     </View>
   )
 }
 
 export default QuickActions
+```
+
+## File: services/hooks/retailer/home/useHome.ts
+```typescript
+import { useState, useCallback } from 'react';
+import { StoreInfo } from '@/components/retailer/home/HomeStoreInto';
+import { StatCard } from '@/components/retailer/home/HomeStats';
+import { StockAlert } from '@/components/retailer/home/HomeAlert';
+import { ActionItem } from '@/components/retailer/home/HomeActions';
+import { RecentOrder } from '@/components/retailer/home/HomeRecentOrders';
+import { SyncStatus } from '@/components/retailer/home/HomeLiveSync';
+import { router } from 'expo-router';
+
+export const useHome = () => {
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const storeInfo: StoreInfo = {
+    name: "Sonny's Kicks",
+    location: 'Novi, MI',
+    isVerified: true,
+    lastSyncedLabel: 'Synced 2 min ago',
+  };
+
+  const stats: StatCard[] = [
+    {
+      id: 'orders',
+      value: 12,
+      label: 'Orders today',
+      subLine: '↓ 3 fewer than yesterday',
+      icon: 'shopping-cart',
+      variant: 'green',
+    },
+    {
+      id: 'needs-action',
+      value: 5,
+      label: 'Needs action',
+      subLine: '3 overdue',
+      icon: 'alert-circle',
+      iconFilled: true,
+      variant: 'orange',
+    },
+    {
+      id: 'revenue',
+      value: '$2,840',
+      label: 'Revenue today',
+      subLine: '↑ +$420 vs average',
+      icon: 'bar-chart-2',
+      variant: 'green',
+    },
+    {
+      id: 'low-stock',
+      value: 3,
+      label: 'Low-stock products',
+      subLine: 'Review inventory',
+      icon: 'box',
+      variant: 'orange',
+    },
+  ];
+
+  const stockAlerts: StockAlert[] = [
+    { id: 'alert-1', message: '3 products are running low' },
+  ];
+
+  const actions: ActionItem[] = [
+    {
+      id: 'add-product',
+      label: 'Add Product',
+      icon: 'plus',
+      bgColor: '#DCFCE7',
+      iconColor: '#16A34A',
+      onPress: () => router.push('/screens/retailer/home/product/AddProductScreen'),
+    },
+    {
+      id: 'orders',
+      label: 'Orders',
+      icon: 'shopping-bag',
+      bgColor: '#FFEDD5',
+      iconColor: '#F97316',
+      badgeCount: 5,
+      onPress: () => router.push('/retailerTabs/orders'),
+    },
+    {
+      id: 'analytics',
+      label: 'Analytics',
+      icon: 'bar-chart-2',
+      bgColor: '#F3F4F6',
+      iconColor: '#6B7280',
+      onPress: () => router.push('/retailerTabs/inventory'),
+    },
+    {
+      id: 'more',
+      label: 'More',
+      icon: 'grid',
+      bgColor: '#F6F5FF',
+      iconColor: '#6B7280',
+      onPress: () => router.push("/screens/retailer/home/more/moreScreen"),
+    },
+  ];
+
+  const recentOrders: RecentOrder[] = [
+    {
+      id: 'order-1',
+      productName: 'Air Jordan 1 Retro High',
+      size: 'Size 10.5',
+      customer: 'Marcus L.',
+      placedAgo: 'Placed 8 min ago',
+      price: 220,
+      status: 'Pickup Ready',
+    },
+    {
+      id: 'order-2',
+      productName: 'Yeezy Boost 350 V2',
+      size: 'Size 9',
+      customer: 'Sarah K.',
+      placedAgo: 'Placed 15 min ago',
+      price: 280,
+      status: 'Hold Confirmed',
+    },
+    {
+      id: 'order-3',
+      productName: 'Nike Dunk Low',
+      size: 'Size 11',
+      customer: 'James P.',
+      placedAgo: 'Placed 32 min ago',
+      price: 150,
+      status: 'Processing',
+    },
+  ];
+
+  const syncStatus: SyncStatus = {
+    isSynced: true,
+    lastSyncedLabel: 'Synced 2 min ago',
+    activePairs: 83,
+    syncErrors: 0,
+  };
+
+  const handleRefresh = useCallback(async () => {
+    setIsRefreshing(true);
+    await new Promise((res) => setTimeout(res, 1200));
+    setIsRefreshing(false);
+  }, []);
+
+  const handleViewAllOrders = useCallback(() => {
+    console.log('view all orders');
+  }, []);
+
+  const handleViewAlert = (alert: StockAlert) => {
+    router.push('/retailerTabs/inventory');
+  };
+
+  return {
+    storeInfo,
+    stats,
+    stockAlerts,
+    actions,
+    recentOrders,
+    syncStatus,
+    isRefreshing,
+    handleRefresh,
+    handleViewAllOrders,
+    handleViewAlert,
+  };
+};
 ```
 
 ## File: app/auth/createAccountScreen.tsx
@@ -53906,12 +55466,14 @@ import { useCallback, useMemo, useState } from 'react'
 import type { Audience, ProductType } from '@/types/catalog'
 
 export type FilterCategory =
+  | 'All'
   | 'Sneakers'
   | 'Clothing'
   | "Men's"
   | "Women's"
-  | "Kids'"
   | 'Custom'
+
+export type FeedTab = 'For You' | 'Following'
 
 export type StockStatus = 'In Stock' | 'Low Stock' | 'Dropping Soon'
 
@@ -53976,23 +55538,22 @@ export interface FollowedStore {
 }
 
 const FILTERS: FilterCategory[] = [
+  'All',
   'Sneakers',
   'Clothing',
   "Men's",
   "Women's",
-  "Kids'",
-  'Custom',
 ]
 
 const NEARBY: NearbyProduct[] = [
   {
     id: 'n1',
-    name: 'Air Jordan 4 "Black Cat"',
+    name: 'Air Jordan 4 Black Cat',
     brand: 'Jordan',
-    store: 'Kicks City',
-    distance: '0.9km',
+    store: 'Sonnys',
+    distance: '0.9 mi',
     price: 220,
-    size: 'US 10',
+    size: '10',
     year: '2024',
     image: 'https://images.unsplash.com/photo-1556906781-9a412961d28a?w=400&q=80',
     productType: 'Sneakers',
@@ -54002,25 +55563,25 @@ const NEARBY: NearbyProduct[] = [
   },
   {
     id: 'n2',
-    name: 'Nike Air Max 97 OG',
-    brand: 'Nike',
-    store: 'Sneaker Lab',
-    distance: '1.2km',
-    price: 180,
-    size: 'US 9.5',
+    name: 'New Balance 550',
+    brand: 'New Balance',
+    store: 'Kicks City',
+    distance: '1.2 mi',
+    price: 140,
+    size: '10',
     year: '2023',
-    image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=80',
+    image: 'https://images.unsplash.com/photo-1539185441755-769473a23570?w=400&q=80',
     productType: 'Sneakers',
-    audience: "Women's",
+    audience: "Men's",
     stockStatus: 'Low Stock',
-    isWishlisted: true,
+    isWishlisted: false,
   },
   {
     id: 'n3',
     name: 'Essentials Pullover Hoodie',
     brand: 'Fear of God',
     store: 'Wardrobe Society',
-    distance: '1.1km',
+    distance: '1.1 mi',
     price: 120,
     size: 'M',
     year: '2024',
@@ -54035,7 +55596,7 @@ const NEARBY: NearbyProduct[] = [
     name: 'Nike Sportswear Club Tee',
     brand: 'Nike',
     store: 'Street House',
-    distance: '0.7km',
+    distance: '0.7 mi',
     price: 38,
     size: 'S',
     year: '2023',
@@ -54047,17 +55608,17 @@ const NEARBY: NearbyProduct[] = [
   },
   {
     id: 'n5',
-    name: 'New Balance 550 White',
-    brand: 'New Balance',
-    store: 'Retro Shop',
-    distance: '1.8km',
-    price: 140,
-    size: 'US 10.5',
+    name: 'Adidas UltraBoost 22',
+    brand: 'Adidas',
+    store: 'Boost Zone',
+    distance: '2.5 mi',
+    price: 190,
+    size: '11.5',
     year: '2024',
-    image: 'https://images.unsplash.com/photo-1539185441755-769473a23570?w=400&q=80',
+    image: 'https://images.unsplash.com/photo-1587563871167-1ee9c731aefb?w=400&q=80',
     productType: 'Sneakers',
     audience: "Men's",
-    stockStatus: 'Low Stock',
+    stockStatus: 'Dropping Soon',
     isWishlisted: false,
   },
   {
@@ -54065,7 +55626,7 @@ const NEARBY: NearbyProduct[] = [
     name: 'Stussy Varsity Jacket',
     brand: 'Stussy',
     store: 'Union Archive',
-    distance: '1.4km',
+    distance: '1.4 mi',
     price: 195,
     size: 'L',
     year: '2024',
@@ -54075,67 +55636,37 @@ const NEARBY: NearbyProduct[] = [
     stockStatus: 'In Stock',
     isWishlisted: true,
   },
-  {
-    id: 'n7',
-    name: 'Adidas Firebird Track Pants',
-    brand: 'Adidas',
-    store: 'Originals Corner',
-    distance: '3.0km',
-    price: 75,
-    size: 'Kids L',
-    year: '2023',
-    image: 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=400&q=80',
-    productType: 'Clothing',
-    audience: "Kids'",
-    stockStatus: 'In Stock',
-    isWishlisted: false,
-  },
-  {
-    id: 'n8',
-    name: 'Adidas UltraBoost 22',
-    brand: 'Adidas',
-    store: 'Boost Zone',
-    distance: '2.5km',
-    price: 190,
-    size: 'US 11.5',
-    year: '2024',
-    image: 'https://images.unsplash.com/photo-1587563871167-1ee9c731aefb?w=400&q=80',
-    productType: 'Sneakers',
-    audience: "Men's",
-    stockStatus: 'Dropping Soon',
-    isWishlisted: false,
-  },
 ]
 
 const BRANDS: BrandProduct[] = [
   {
     id: 'b1',
-    name: 'Jordan 1 Retro High OG',
-    brand: 'Jordan',
-    store: 'Flight Club',
-    distance: '1.5mi',
-    price: 250,
-    image: 'https://images.unsplash.com/photo-1556906781-9a412961d28a?w=400&q=80',
-    productType: 'Sneakers',
+    name: 'Fear of God Essentials Pullover Hoodie',
+    brand: 'Fear of God',
+    store: 'Sonnys',
+    distance: '0.8 mi',
+    price: 90,
+    image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&q=80',
+    productType: 'Clothing',
     audience: "Men's",
-    brandInitial: 'J',
-    brandColor: '#C41E3A',
+    brandInitial: 'F',
+    brandColor: '#111111',
     stockStatus: 'In Stock',
     isWishlisted: false,
   },
   {
     id: 'b2',
-    name: 'Nike Tech Fleece Set',
+    name: 'Nike Tech Fleece Full-Zip Hoodie',
     brand: 'Nike',
-    store: 'Sportswear Hub',
-    distance: '0.3km',
-    price: 190,
+    store: 'Kicks City',
+    distance: '1.5 mi',
+    price: 110,
     image: 'https://images.unsplash.com/photo-1506629905607-c29d0cd7c32d?w=400&q=80',
     productType: 'Clothing',
     audience: "Men's",
     brandInitial: 'N',
     brandColor: '#111111',
-    stockStatus: 'Low Stock',
+    stockStatus: 'In Stock',
     isWishlisted: true,
   },
   {
@@ -54143,7 +55674,7 @@ const BRANDS: BrandProduct[] = [
     name: 'Adidas Essentials Fleece',
     brand: 'Adidas',
     store: 'Boost Zone',
-    distance: '2.3km',
+    distance: '2.3 mi',
     price: 88,
     image: 'https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=400&q=80',
     productType: 'Clothing',
@@ -54153,231 +55684,91 @@ const BRANDS: BrandProduct[] = [
     stockStatus: 'In Stock',
     isWishlisted: false,
   },
-  {
-    id: 'b4',
-    name: 'Converse Chuck 70 Hi',
-    brand: 'Converse',
-    store: 'Vintage Kicks',
-    distance: '3.1km',
-    price: 80,
-    image: 'https://images.unsplash.com/photo-1463100099107-aa0980c362e6?w=400&q=80',
-    productType: 'Sneakers',
-    audience: "Women's",
-    brandInitial: 'C',
-    brandColor: '#374151',
-    stockStatus: 'In Stock',
-    isWishlisted: false,
-  },
-  {
-    id: 'b5',
-    name: 'Reebok Classics Track Top',
-    brand: 'Reebok',
-    store: 'Classic Store',
-    distance: '1.9km',
-    price: 110,
-    image: 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=400&q=80',
-    productType: 'Clothing',
-    audience: 'Unisex',
-    brandInitial: 'R',
-    brandColor: '#FF5722',
-    stockStatus: 'Low Stock',
-    isWishlisted: false,
-  },
-  {
-    id: 'b6',
-    name: 'Asics Gel-Kayano 29',
-    brand: 'Asics',
-    store: 'RunFast Shop',
-    distance: '2.7km',
-    price: 160,
-    image: 'https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=400&q=80',
-    productType: 'Sneakers',
-    audience: "Men's",
-    brandInitial: 'G',
-    brandColor: '#1976D2',
-    stockStatus: 'Dropping Soon',
-    isWishlisted: false,
-  },
-  {
-    id: 'b7',
-    name: 'New Balance Athletics Tee',
-    brand: 'New Balance',
-    store: 'Retro Shop',
-    distance: '1.8km',
-    price: 54,
-    image: 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=400&q=80',
-    productType: 'Clothing',
-    audience: "Men's",
-    brandInitial: 'N',
-    brandColor: '#6B4226',
-    stockStatus: 'In Stock',
-    isWishlisted: true,
-  },
-  {
-    id: 'b8',
-    name: 'Puma Suede Classic',
-    brand: 'Puma',
-    store: 'Street Kicks',
-    distance: '0.7km',
-    price: 95,
-    image: 'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=400&q=80',
-    productType: 'Sneakers',
-    audience: "Kids'",
-    brandInitial: 'P',
-    brandColor: '#7B1FA2',
-    stockStatus: 'In Stock',
-    isWishlisted: false,
-  },
 ]
 
 const AD_BANNERS: AdBanner[] = [
   {
     id: 'ad1',
-    brandLabel: 'Fear of God',
-    tag: 'DROPPING SOON',
-    productName: 'Essentials Spring Capsule',
-    productType: 'Clothing',
-    releaseDate: 'Sat, Apr 12',
-    ctaLabel: 'Notify Me',
+    brandLabel: 'Jordan',
+    tag: 'UPCOMING DROP',
+    productName: 'Jordan 4 Retro',
+    productType: 'Sneakers',
+    releaseDate: 'Release date - Oct 3',
+    ctaLabel: 'Notify me',
     ctaVariant: 'primary',
-    image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&q=80',
+    image: 'https://images.unsplash.com/photo-1556906781-9a412961d28a?w=600&q=80',
   },
   {
     id: 'ad2',
-    brandLabel: 'Nike',
+    brandLabel: 'Sponsored · Sonnys',
     tag: 'AD',
-    productName: 'Nike Tech Fleece',
+    productName: 'Discover new arrivals',
     productType: 'Clothing',
-    releaseDate: 'Sat, Apr 5',
-    ctaLabel: 'Save 30%',
+    releaseDate: 'The latest sneakers and apparel from top brands.',
+    ctaLabel: 'Shop store',
     ctaVariant: 'discount',
-    image: 'https://images.unsplash.com/photo-1506629905607-c29d0cd7c32d?w=600&q=80',
-  },
-  {
-    id: 'ad3',
-    brandLabel: 'Puma',
-    tag: 'DROPPING SOON',
-    productName: 'Puma RS-X Reinvention',
-    productType: 'Sneakers',
-    releaseDate: 'Mon, Apr 14',
-    ctaLabel: 'Notify Me',
-    ctaVariant: 'primary',
-    image: 'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=600&q=80',
-  },
-  {
-    id: 'ad4',
-    brandLabel: 'Stussy',
-    tag: 'AD',
-    productName: 'Workwear Capsule',
-    productType: 'Clothing',
-    releaseDate: 'Sun, Apr 6',
-    ctaLabel: 'Shop Now',
-    ctaVariant: 'discount',
-    image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&q=80',
+    image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&q=80',
   },
 ]
 
 const STORES: FollowedStore[] = [
   {
     id: 's1',
-    name: 'New Balance',
+    name: 'Sonnys',
     location: 'Kicks City',
-    distance: '0.8km',
+    distance: '0.8 mi',
     avatar: 'https://images.unsplash.com/photo-1539185441755-769473a23570?w=120&q=80',
     image: 'https://images.unsplash.com/photo-1539185441755-769473a23570?w=400&q=80',
     stockStatus: 'In Stock',
     price: 185,
     isFollowing: true,
     isWishlisted: false,
-    brandInitial: 'N',
-    brandColor: '#6B4226',
+    brandInitial: 'S',
+    brandColor: '#111827',
     featuredTypes: ['Sneakers', 'Clothing'],
   },
   {
     id: 's2',
-    name: 'Nike Sportswear',
+    name: 'Kicks City',
     location: 'Market Street',
-    distance: '1.5km',
+    distance: '1.5 mi',
     avatar: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=120&q=80',
     image: 'https://images.unsplash.com/photo-1506629905607-c29d0cd7c32d?w=400&q=80',
     stockStatus: 'Low Stock',
     price: 200,
     isFollowing: true,
     isWishlisted: true,
-    brandInitial: 'N',
-    brandColor: '#111111',
+    brandInitial: 'K',
+    brandColor: '#22C55E',
     featuredTypes: ['Clothing'],
   },
   {
     id: 's3',
-    name: 'Adidas Originals',
+    name: 'Sneaker Lab',
     location: 'City Center',
-    distance: '2.0km',
+    distance: '2.0 mi',
     avatar: 'https://images.unsplash.com/photo-1587563871167-1ee9c731aefb?w=120&q=80',
     image: 'https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=400&q=80',
     stockStatus: 'In Stock',
     price: 210,
     isFollowing: true,
     isWishlisted: false,
-    brandInitial: 'A',
+    brandInitial: 'S',
     brandColor: '#000000',
     featuredTypes: ['Sneakers', 'Clothing'],
-  },
-  {
-    id: 's4',
-    name: 'Wardrobe Society',
-    location: 'Fashion Street',
-    distance: '1.2km',
-    avatar: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=120&q=80',
-    image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&q=80',
-    stockStatus: 'Dropping Soon',
-    price: 140,
-    isFollowing: false,
-    isWishlisted: false,
-    brandInitial: 'W',
-    brandColor: '#7C2D12',
-    featuredTypes: ['Clothing'],
-  },
-  {
-    id: 's5',
-    name: 'Jordan House',
-    location: 'Downtown',
-    distance: '0.5km',
-    avatar: 'https://images.unsplash.com/photo-1556906781-9a412961d28a?w=120&q=80',
-    image: 'https://images.unsplash.com/photo-1556906781-9a412961d28a?w=400&q=80',
-    stockStatus: 'In Stock',
-    price: 260,
-    isFollowing: true,
-    isWishlisted: true,
-    brandInitial: 'J',
-    brandColor: '#C41E3A',
-    featuredTypes: ['Sneakers'],
-  },
-  {
-    id: 's6',
-    name: 'Stussy Lab',
-    location: 'West Side',
-    distance: '3.1km',
-    avatar: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=120&q=80',
-    image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&q=80',
-    stockStatus: 'In Stock',
-    price: 85,
-    isFollowing: false,
-    isWishlisted: false,
-    brandInitial: 'S',
-    brandColor: '#374151',
-    featuredTypes: ['Clothing'],
   },
 ]
 
 export function useDiscover() {
-  const [activeFilter, setActiveFilter] = useState<FilterCategory>('Sneakers')
+  const [activeFilter, setActiveFilter] = useState<FilterCategory>('All')
+  const [feedTab, setFeedTab] = useState<FeedTab>('For You')
   const [searchQuery, setSearchQuery] = useState('')
   const [nearbyInventory, setNearbyInventory] = useState<NearbyProduct[]>(NEARBY)
   const [brandInventory, setBrandInventory] = useState<BrandProduct[]>(BRANDS)
   const [adBanners] = useState<AdBanner[]>(AD_BANNERS)
   const [followedStores, setFollowedStores] = useState<FollowedStore[]>(STORES)
   const [isRefreshing, setIsRefreshing] = useState(false)
+  const [mySizes] = useState('US 10, M')
 
   const greeting = getGreeting()
   const userName = 'Sonny'
@@ -54389,12 +55780,14 @@ export function useDiscover() {
   const matchesFilter = useCallback(
     (item: { productType: ProductType; audience: Audience }) => {
       switch (activeFilter) {
+        case 'All':
+        case 'Custom':
+          return true
         case 'Sneakers':
         case 'Clothing':
           return item.productType === activeFilter
         case "Men's":
         case "Women's":
-        case "Kids'":
           return item.audience === activeFilter
         default:
           return true
@@ -54428,33 +55821,25 @@ export function useDiscover() {
 
   const toggleWishlist = useCallback((id: string) => {
     setNearbyInventory((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, isWishlisted: !item.isWishlisted } : item,
-      ),
+      prev.map((item) => (item.id === id ? { ...item, isWishlisted: !item.isWishlisted } : item)),
     )
   }, [])
 
   const toggleBrandWishlist = useCallback((id: string) => {
     setBrandInventory((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, isWishlisted: !item.isWishlisted } : item,
-      ),
+      prev.map((item) => (item.id === id ? { ...item, isWishlisted: !item.isWishlisted } : item)),
     )
   }, [])
 
   const toggleStoreWishlist = useCallback((id: string) => {
     setFollowedStores((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, isWishlisted: !item.isWishlisted } : item,
-      ),
+      prev.map((item) => (item.id === id ? { ...item, isWishlisted: !item.isWishlisted } : item)),
     )
   }, [])
 
   const toggleFollow = useCallback((id: string) => {
     setFollowedStores((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, isFollowing: !item.isFollowing } : item,
-      ),
+      prev.map((item) => (item.id === id ? { ...item, isFollowing: !item.isFollowing } : item)),
     )
   }, [])
 
@@ -54467,6 +55852,8 @@ export function useDiscover() {
   return {
     filters: FILTERS,
     activeFilter,
+    feedTab,
+    setFeedTab,
     searchQuery,
     setSearchQuery,
     nearbyProducts,
@@ -54476,6 +55863,7 @@ export function useDiscover() {
     isRefreshing,
     greeting,
     userName,
+    mySizes,
     handleFilterChange,
     toggleWishlist,
     toggleFollow,
@@ -54991,6 +56379,8 @@ export const DiscoverScreen: React.FC = () => {
   const {
     filters,
     activeFilter,
+    feedTab,
+    setFeedTab,
     searchQuery,
     setSearchQuery,
     nearbyProducts,
@@ -55000,6 +56390,7 @@ export const DiscoverScreen: React.FC = () => {
     isRefreshing,
     greeting,
     userName,
+    mySizes,
     handleFilterChange,
     toggleWishlist,
     toggleFollow,
@@ -55008,7 +56399,27 @@ export const DiscoverScreen: React.FC = () => {
     handleRefresh,
   } = useDiscover();
 
-  const onProductPress = useCallback((p: NearbyProduct) => router.push("/screens/product/productScreen"), []);
+  // In app/tabs/discoverScreen.tsx, replace:
+//
+//   const onProductPress = useCallback((p: NearbyProduct) => router.push("/screens/product/productScreen"), []);
+//
+// with:
+
+const onProductPress = useCallback((p: NearbyProduct) => {
+  router.push({
+    pathname: '/screens/product/productScreen',
+    params: {
+      productId: p.id,
+      name: p.name,
+      brand: p.brand,
+      image: p.image,
+      price: String(p.price),
+      size: p.size ?? '',
+      store: p.store,
+      distance: p.distance,
+    },
+  } as any)
+}, [router]);
   const onBrandPress = useCallback((b: BrandProduct) => router.push("/screens/product/productScreen"), []);
   const onBuyBrand = useCallback((b: BrandProduct) => router.push("/screens/product/productScreen"), []);
   const onAdPress = useCallback((ad: AdBanner) => router.push("/screens/product/productScreen"), []);
@@ -55030,6 +56441,10 @@ export const DiscoverScreen: React.FC = () => {
             onChange={handleFilterChange}
             greeting={greeting}
             userName={userName}
+            feedTab={feedTab}
+            onFeedTabChange={setFeedTab}
+            mySizes={mySizes}
+            onFiltersPress={() => console.log('open filters')}
             searchValue={searchQuery}
             onSearchChange={setSearchQuery}
             onSearchSubmit={() => console.log('search submit', searchQuery)}
@@ -55056,6 +56471,15 @@ export const DiscoverScreen: React.FC = () => {
             onWishlistToggle={toggleWishlist}
           />
 
+          <DiscoverStores
+            stores={followedStores}
+            onManagePress={() => console.log('manage stores')}
+            onStorePress={onStorePress}
+            onFollowToggle={toggleFollow}
+            onBuyPress={onBuyStore}
+            onWishlistToggle={toggleStoreWishlist}
+          />
+
           <DiscoverBrands
             brands={brandProducts}
             onSeeAll={() => console.log('see all brands')}
@@ -55067,15 +56491,6 @@ export const DiscoverScreen: React.FC = () => {
           <DiscoverAd
             ads={adBanners}
             onPress={onAdPress}
-          />
-
-          <DiscoverStores
-            stores={followedStores}
-            onManagePress={() => console.log('manage stores')}
-            onStorePress={onStorePress}
-            onFollowToggle={toggleFollow}
-            onBuyPress={onBuyStore}
-            onWishlistToggle={toggleStoreWishlist}
           />
         </ScrollView>
       </View>
@@ -55131,6 +56546,7 @@ export default DiscoverScreen;
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "react-native": "0.83.4",
+    "react-native-gesture-handler": "~2.30.0",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-maps": "^1.27.2",
     "react-native-reanimated": "4.2.1",
@@ -55154,19 +56570,20 @@ export default DiscoverScreen;
 ## File: app/tabs/profileScreen.tsx
 ```typescript
 import React from 'react'
-import { View, ScrollView, TouchableOpacity } from 'react-native'
+import { View, ScrollView, Text, TouchableOpacity } from 'react-native'
 import { Feather } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
 import { useProfile } from '@/services/hooks/profile/useProfile'
 import ProfileHeader from '@/components/profile/ProfileHeader'
-import ProfileStats from '@/components/profile/ProfileStats'
+import QuickActions from '@/components/profile/QuickActions'
+import MembershipCard from '@/components/profile/MemberShipCard'
 import MySizes from '@/components/profile/MySizes'
 import FavoriteBrands from '@/components/profile/FavoriteBrands'
-import MembershipCard from '@/components/profile/MemberShipCard'
-import QuickActions from '@/components/profile/QuickActions'
 import MySales from '@/components/profile/mysales/MySales'
 import MyLocker from '@/components/profile/MyLocker'
+import DiscoverCollectionsRow from '@/components/profile/DiscoverCollectionsRow'
 import ReferralRow from '@/components/profile/ReferralRow'
+import HelpSupportRow from '@/components/profile/HelpSupportRow'
 import BaseContainer from '@/components/shared/BaseContainer'
 
 const ProfileScreen = () => {
@@ -55177,50 +56594,51 @@ const ProfileScreen = () => {
     tierColor,
     pointsProgress,
     toggleLockerVisibility,
-    addBrand,
     editSizes,
     editBrands,
     viewBenefits,
     addToLocker,
+    viewFollowedStores,
+    openDiscoverCollections,
+    inviteFriends,
+    openHelpSupport,
   } = useProfile()
 
   return (
-    <BaseContainer backgroundColor="#ffffff">
-      <View style={{ flex: 1 }} className="pb-10">
+    <BaseContainer backgroundColor="#F9FAFB">
+      <View style={{ flex: 1 }}>
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
             paddingHorizontal: 16,
             paddingBottom: 40,
-            paddingTop: 30,
+            paddingTop: 16,
           }}
         >
-          {/* Icons row */}
-          <View className="flex-row justify-end gap-4 bg-white mb-2" style={{ zIndex: 10 }}>
-            <TouchableOpacity
-              onPress={() => console.log('Share')}
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-              style={{ padding: 6 }}
-            >
-              <Feather name="share-2" size={26} color="#374151" />
-            </TouchableOpacity>
+          {/* Top bar */}
+          <View className="flex-row items-center justify-between mb-4 mt-10">
+            <Text className="text-2xl font-extrabold text-gray-900">Profile</Text>
             <TouchableOpacity
               onPress={() => router.push('/screens/profilesetup/settingsScreen')}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-              style={{ padding: 6 }}
             >
-              <Feather name="settings" size={26} color="#374151" />
+              <Feather name="settings" size={22} color="#374151" />
             </TouchableOpacity>
           </View>
 
           <ProfileHeader profile={profile} tierColor={tierColor} />
-          <ProfileStats stats={profile.stats} />
-          <MySizes sizes={profile.sizes} onEdit={editSizes} />
-          <FavoriteBrands
-            brands={profile.favoriteBrands}
-            onEdit={editBrands}
-            onAdd={addBrand}
+
+          <QuickActions
+            orders={profile.orders}
+            wishlistCount={profile.wishlistCount}
+            stockAlerts={profile.stockAlerts}
+            reviewsCount={profile.reviewsCount}
+            onOrders={() => router.push('/screens/order/ordersListScreen')}
+            onWishlist={() => router.push('/screens/profile/wishlistScreen')}
+            onStockAlerts={() => console.log('Stock alerts')}
+            onReviews={() => console.log('My Reviews')}
           />
+
           <MembershipCard
             memberTier={profile.memberTier}
             nextTier={profile.nextTier}
@@ -55230,25 +56648,17 @@ const ProfileScreen = () => {
             tierColor={tierColor}
             onViewBenefits={viewBenefits}
           />
-          <QuickActions
-            orders={profile.orders}
-            wishlistCount={profile.wishlistCount}
-            wantedPairs={profile.wantedPairs}
-            reviewsCount={profile.reviewsCount}
-            onOrders={() => router.push('/screens/order/ordersListScreen')}
-            onWishlist={() => router.push('/screens/profile/wishlistScreen')}
-            onWantedPairs={() => router.push('/screens/profile/wantedPairScreen')}
-            onReviews={() => console.log('My Reviews')}
-            onFollowings={() => router.push('/screens/profile/followingScreen')}
-            onCollections={() => router.push('/screens/profile/lockerBrowserScreen')}
-            onTransactions={() => router.push('/screens/profile/transactionHistoryScreen')}
-            onBag={() => router.push('/screens/profile/bagScreen')}
+
+          <MySizes categories={profile.sizeCategories} onEdit={editSizes} />
+
+          <FavoriteBrands
+            brands={profile.favoriteBrands}
+            followedStoresCount={profile.followedStoresCount}
+            onEdit={editBrands}
+            onFollowedStores={viewFollowedStores}
           />
 
-          {/* My Sales — taps navigate to full screen */}
-          <MySales
-            onSeeAll={() => router.push('/screens/profile/mySalesScreen')}
-          />
+          <MySales onSeeAll={() => router.push('/screens/profile/mySalesScreen')} />
 
           <MyLocker
             items={profile.lockerItems}
@@ -55256,12 +56666,14 @@ const ProfileScreen = () => {
             lockerPublic={lockerPublic}
             onToggleVisibility={toggleLockerVisibility}
             onAddItem={addToLocker}
-            onViewAll={() => console.log('View all locker')}
+            onViewAll={() => console.log('Manage locker')}
           />
-          <ReferralRow
-            referralCode={profile.referralCode}
-            onPress={() => router.push('/screens/profile/referralScreen')}
-          />
+
+          <DiscoverCollectionsRow onPress={openDiscoverCollections} />
+
+          <ReferralRow referralCode={profile.referralCode} onPress={inviteFriends} />
+
+          <HelpSupportRow onPress={openHelpSupport} />
         </ScrollView>
       </View>
     </BaseContainer>
@@ -55280,6 +56692,6 @@ SplashScreen.preventAutoHideAsync();
 
 export default function Index() {
   SplashScreen.hideAsync();
-  return <Redirect href="/retailerTabs/home" />; // or resellerTabs/dashboard, or tabs/discoverScreen
+  return <Redirect href="/tabs/discoverScreen" />; // or resellerTabs/dashboard, or tabs/discoverScreen
 }
 ```

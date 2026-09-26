@@ -23,62 +23,52 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
   pointsProgress,
   tierColor,
   onViewBenefits,
-}) => (
-  <View className="mb-4 shadow-lg" style={{ shadowColor: tierColor, shadowOpacity: 0.15, shadowRadius: 15, elevation: 5 }}>
+}) => {
+  const percent = Math.min(pointsProgress * 100, 100)
+  const remaining = Math.max(pointsToNextTier - points, 0)
+
+  return (
     <LinearGradient
-      // Approximating your 135deg gradient with the simplified yellow palette
-      colors={['#FEF9C3', '#FFFBEB']}
+      colors={['#FEF3C7', '#FFFBEB']}
       start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      className="rounded-3xl px-5 py-6 border border-white/50"
+      end={{ x: 1, y: 0.3 }}
+      className="rounded-2xl px-4 py-4 mb-4"
     >
-      {/* Top row - Scaled Up */}
-      <View className="flex-row justify-between items-center mb-2">
+      <View className="flex-row justify-between items-center mb-2.5">
         <View className="flex-row items-center gap-2">
-          <View className="bg-white/40 p-1.5 rounded-lg">
-            <MaterialCommunityIcons name="trophy" size={22} color={tierColor} />
-          </View>
-          <Text className="text-lg font-black tracking-tight" style={{ color: tierColor }}>
-            {memberTier} Member
+          <MaterialCommunityIcons name="trophy" size={18} color={tierColor} />
+          <Text className="text-[15px] font-extrabold" style={{ color: tierColor }}>
+            {memberTier} member
           </Text>
         </View>
 
-        <TouchableOpacity 
-          onPress={onViewBenefits} 
-          className="flex-row items-center gap-1 bg-white/40 px-3 py-1 rounded-full"
-        >
-          <Text className="text-xs font-black uppercase tracking-wider" style={{ color: tierColor }}>
-            Benefits
-          </Text>
-          <Feather name="chevron-right" size={14} color={tierColor} />
+        <TouchableOpacity onPress={onViewBenefits} className="flex-row items-center gap-0.5">
+          <Text className="text-xs font-bold text-gray-500">View benefits</Text>
+          <Feather name="chevron-right" size={13} color="#6B7280" />
         </TouchableOpacity>
       </View>
 
-      {/* Subtitle - More readable */}
-      <Text className="text-sm font-semibold text-gray-600/80 mb-5 ml-1">
-        {(pointsToNextTier - points).toLocaleString()} points to reach {nextTier}
-      </Text>
+      <View className="flex-row items-baseline gap-1.5 mb-2">
+        <Text className="text-[13px] font-bold text-gray-700">
+          {points.toLocaleString()} / {pointsToNextTier.toLocaleString()} points
+        </Text>
+        <Text className="text-xs font-bold" style={{ color: tierColor }}>
+          {Math.round(percent)}%
+        </Text>
+      </View>
 
-      {/* Progress bar - Thicker (h-3) */}
-      <View className="h-3 bg-white/60 rounded-full overflow-hidden mb-2 shadow-inner">
+      <View className="h-2 bg-white/70 rounded-full overflow-hidden">
         <View
           className="h-full rounded-full"
-          style={{
-            width: `${Math.min(pointsProgress * 100, 100)}%`,
-            backgroundColor: tierColor,
-          }}
+          style={{ width: `${percent}%`, backgroundColor: tierColor }}
         />
       </View>
 
-      {/* Points label - Larger font */}
-      <View className="flex-row justify-between items-center px-1">
-        <Text className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Progress</Text>
-        <Text className="text-xs font-black" style={{ color: tierColor }}>
-          {points.toLocaleString()} <Text className="text-gray-400">/ {pointsToNextTier.toLocaleString()}</Text>
-        </Text>
-      </View>
+      <Text className="text-xs text-gray-500 mt-2">
+        {remaining.toLocaleString()} points to {nextTier}
+      </Text>
     </LinearGradient>
-  </View>
-)
+  )
+}
 
 export default MembershipCard

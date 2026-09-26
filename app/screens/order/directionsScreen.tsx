@@ -1,15 +1,17 @@
-// app/screens/store/directionsScreen.tsx
+// app/screens/order/directionsScreen.tsx
 import React from 'react'
-import { View, Text, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native'
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
 import { useRouter } from 'expo-router'
 import { Feather, Ionicons } from '@expo/vector-icons'
+import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from 'react-native-maps'
 import { useDirections } from '@/services/hooks/order/useDirections'
 import DirectionStepRow from '@/components/profile/orders/DirectionStepRow'
 import Button from '@/components/shared/Button'
 import BaseContainer from '@/components/shared/BaseContainer'
+
 export default function DirectionsScreen() {
   const router = useRouter()
-  const { directions, openInMaps, shareLocation } = useDirections()
+  const { directions, mapRegion, openInMaps, shareLocation } = useDirections()
 
   return (
     <BaseContainer scrollable backgroundColor='#fff'>
@@ -26,6 +28,29 @@ export default function DirectionsScreen() {
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 120 }}>
+
+        {/* In-app map with route */}
+        <View className="mx-4 mt-4 rounded-2xl overflow-hidden border border-gray-100" style={{ height: 220 }}>
+          <MapView
+            provider={PROVIDER_GOOGLE}
+            style={{ flex: 1 }}
+            initialRegion={mapRegion}
+            showsUserLocation
+            showsMyLocationButton={false}
+            showsCompass={false}
+            scrollEnabled
+            zoomEnabled
+          >
+            <Marker coordinate={directions.origin} pinColor="#3B82F6" title="You" />
+            <Marker coordinate={directions.destination} pinColor="#22C55E" title={directions.storeName} />
+
+            <Polyline
+              coordinates={directions.routeCoordinates}
+              strokeColor="#22C55E"
+              strokeWidth={4}
+            />
+          </MapView>
+        </View>
 
         {/* Store + ETA */}
         <View className="mx-4 mt-4 bg-green-50 border border-green-100 rounded-2xl px-4 py-4">
@@ -68,8 +93,8 @@ export default function DirectionsScreen() {
       {/* Bottom actions */}
       <View className="absolute bottom-0 left-0 right-0 px-4 pb-8 pt-3 bg-white border-t border-gray-100 gap-3">
         <Button
-          text="Open in Maps"
-          onPress={openInMaps}
+          text="Share Location"
+          onPress={shareLocation}
           backgroundColor="#22C55E"
           borderRadius={16}
           paddingVertical={16}
@@ -77,8 +102,8 @@ export default function DirectionsScreen() {
           fontWeight="700"
         />
         <Button
-          text="Share Location"
-          onPress={shareLocation}
+          text="Open in Google Maps"
+          onPress={openInMaps}
           variant="outline"
           borderColor="#E5E7EB"
           borderWidth={1.5}

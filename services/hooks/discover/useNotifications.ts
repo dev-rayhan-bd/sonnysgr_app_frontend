@@ -1,87 +1,100 @@
-// hooks/notifications/useNotifications.ts
+// services/hooks/discover/useNotifications.ts
 import { useState, useCallback, useMemo } from 'react'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-export type NotificationCategory = 'All' | 'Restocks' | 'Orders' | 'Drops' | 'Stores'
-export type NotificationGroup = 'NOW' | 'TODAY' | 'YESTERDAY' | 'THIS WEEK'
+export type NotificationCategory =
+  | 'All'
+  | 'Unread'
+  | 'Orders'
+  | 'Restocks'
+  | 'Drops'
+  | 'PriceDrops'
+  | 'Offers'
+
+export type NotificationGroup = 'Today' | 'Yesterday'
+
+export interface NotificationAction {
+  label: string
+  variant: 'filled' | 'outline'
+}
 
 export interface Notification {
   id: string
-  category: Exclude<NotificationCategory, 'All'>
+  category: Exclude<NotificationCategory, 'All' | 'Unread'>
   group: NotificationGroup
   title: string
   subtitle: string
   time: string
   read: boolean
-  // ✅ ADD THESE
   brand?: string
   imageUri?: string
   icon: 'restock' | 'order' | 'drop' | 'store' | 'system'
+  price?: number
+  originalPrice?: number
+  action?: NotificationAction
+  ended?: boolean
 }
 
-// ─── Mock Data ────────────────────────────────────────────────────────────────
+// ─── Mock Data (matches mockup exactly) ────────────────────────────────────────
 
 const MOCK_NOTIFICATIONS: Notification[] = [
   {
     id: '1',
     category: 'Restocks',
-    group: 'NOW',
-    title: "Air Jordan 4 'Black Cat' is back! 🔥",
-    subtitle: "Size 10.5 now in stock at Sonny's Kicks · 1.1 mi",
+    group: 'Today',
+    title: 'Back in your size',
+    subtitle: 'Air Jordan 4 Black Cat\nUS Men 10.5 · Sonnys · 1.1 mi',
     time: 'Just now',
     read: false,
     icon: 'restock',
+    action: { label: 'View item', variant: 'outline' },
   },
   {
     id: '2',
     category: 'Orders',
-    group: 'NOW',
-    title: 'Your order is ready for pickup',
-    subtitle: 'GS-2024-7843 · Kicks City · Ready now',
+    group: 'Today',
+    title: 'Ready for pickup',
+    subtitle: 'Order GS-7843 · Kicks City',
     time: '15 min ago',
     read: false,
     icon: 'order',
+    action: { label: 'View pickup details', variant: 'outline' },
   },
   {
     id: '3',
     category: 'Drops',
-    group: 'TODAY',
-    title: "Nike Dunk Low 'Panda' dropping Saturday",
-    subtitle: "3 followed stores are stocking this. Set reminder →",
-    time: '2 hrs ago',
+    group: 'Today',
+    title: 'Upcoming drop',
+    subtitle: 'Nike Dunk Low Panda\nOct 3 · 10 AM ET · 3 followed stores',
+    time: '2 hr ago',
     read: true,
     icon: 'drop',
+    action: { label: 'Set reminder', variant: 'outline' },
   },
   {
     id: '4',
-    category: 'Restocks',
-    group: 'YESTERDAY',
-    title: "Price drop: Yeezy Boost 350 'Carbon'",
-    subtitle: 'Now $320, down from $350 · Available in your size',
-    time: 'Yesterday',
+    category: 'PriceDrops',
+    group: 'Yesterday',
+    title: 'Price dropped by $30',
+    subtitle: 'Yeezy Boost 350 Carbon · US Men 10.5',
+    time: 'Yesterday · 4:20 PM',
     read: true,
     icon: 'restock',
+    price: 320,
+    originalPrice: 350,
+    action: { label: 'View item', variant: 'outline' },
   },
   {
     id: '5',
-    category: 'Stores',
-    group: 'YESTERDAY',
-    title: "Flash Sale at Sonny's Kicks — 20% off today!",
-    subtitle: "Today only · Tap to see what's on sale",
-    time: 'Yesterday',
+    category: 'Offers',
+    group: 'Yesterday',
+    title: 'Sonnys flash sale',
+    subtitle: '20% off selected items',
+    time: 'Yesterday · 10:00 AM',
     read: true,
     icon: 'store',
-  },
-  {
-    id: '6',
-    category: 'Stores',
-    group: 'THIS WEEK',
-    title: 'Profile updated successfully',
-    subtitle: "Size preferences saved · Size 10.5 Men's",
-    time: '3 days ago',
-    read: true,
-    icon: 'system',
+    ended: true,
   },
 ]
 
@@ -92,30 +105,30 @@ export const useNotifications = () => {
   const [activeCategory, setActiveCategory] = useState<NotificationCategory>('All')
 
   const unreadCount = useMemo(
-    () => notifications.filter(n => !n.read).length,
-    [notifications]
+    () => notifications.filter((n) => !n.read).length,
+    [notifications],
   )
 
   const filtered = useMemo(() => {
     if (activeCategory === 'All') return notifications
-    return notifications.filter(n => n.category === activeCategory)
+    if (activeCategory === 'Unread') return notifications.filter((n) => !n.read)
+    return notifications.filter((n) => n.category === activeCategory)
   }, [notifications, activeCategory])
 
-  // Group filtered notifications by their group label
   const grouped = useMemo(() => {
-    const order: NotificationGroup[] = ['NOW', 'TODAY', 'YESTERDAY', 'THIS WEEK']
+    const order: NotificationGroup[] = ['Today', 'Yesterday']
     const map: Partial<Record<NotificationGroup, Notification[]>> = {}
-    filtered.forEach(n => {
+    filtered.forEach((n) => {
       if (!map[n.group]) map[n.group] = []
       map[n.group]!.push(n)
     })
     return order
-      .filter(g => map[g] && map[g]!.length > 0)
-      .map(g => ({ group: g, items: map[g]! }))
+      .filter((g) => map[g] && map[g]!.length > 0)
+      .map((g) => ({ group: g, items: map[g]! }))
   }, [filtered])
 
   const markAllRead = useCallback(() => {
-    setNotifications(prev => prev.map(n => ({ ...n, read: true })))
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })))
   }, [])
 
   const clearAll = useCallback(() => {
@@ -123,13 +136,11 @@ export const useNotifications = () => {
   }, [])
 
   const markRead = useCallback((id: string) => {
-    setNotifications(prev =>
-      prev.map(n => (n.id === id ? { ...n, read: true } : n))
-    )
+    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)))
   }, [])
 
   const dismiss = useCallback((id: string) => {
-    setNotifications(prev => prev.filter(n => n.id !== id))
+    setNotifications((prev) => prev.filter((n) => n.id !== id))
   }, [])
 
   return {
